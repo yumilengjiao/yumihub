@@ -1,14 +1,10 @@
 use crate::{
-    config::{
-        entity::{SyncData, UpdateConfig},
-        util::extract_game_list,
-        GLOBAL_CONFIG,
-    },
-    state,
+    config::{entity::UpdateConfig, util::extract_game_list, GLOBAL_CONFIG},
+    state::{self, traits::SyncData},
 };
 
-// 用于更改全局配置文件某些数据内容配置信息,通过传GameList，GameMeta等数据
-// 来自动实现GLOBAL_CONFIG的动态更新,并且实现数据同步到STATE_SYSTEM
+/// 用于更改全局配置文件某些数据内容配置信息,通过传GameList，GameMeta等数据
+/// 来自动实现GLOBAL_CONFIG的动态更新,并且实现数据同步到STATE_SYSTEM
 pub fn update_data<T: UpdateConfig + SyncData>(new_value: T) {
     {
         let mut global_config = GLOBAL_CONFIG.write().expect("获取写锁失败");
@@ -19,7 +15,7 @@ pub fn update_data<T: UpdateConfig + SyncData>(new_value: T) {
     new_value.sync_data();
 }
 
-// 用于定义需要同步到STATE_SYSTEM的数据的类型
+/// 用于定义需要同步到STATE_SYSTEM的数据的类型
 pub enum SyncType {
     ALL,
     GAME,
@@ -33,12 +29,12 @@ pub fn synchronize_data_to_state_system(sync_type: SyncType) {
         // TODO: 这里将来要加载所有数据而不仅仅是集合
         ALL => {
             let game_list = extract_game_list();
-            println!("提取的游戏元数据集合: {:?}", game_list);
             state::set_game_list(game_list);
         }
         GAME => println!("ALL"),
         GAMELIST => {
             let game_list = extract_game_list();
+            state::set_game_list(game_list);
         }
     }
 }

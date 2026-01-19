@@ -1,18 +1,14 @@
-use chrono::{DateTime, Local};
+use chrono::{DateTime, Duration, Local};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::config::synchronize::{synchronize_data_to_state_system, SyncType};
+use crate::state::traits::SyncData;
 
 /// 实现了该特征通过调用update方法更改自己在config模块的全局config变量,
 /// 该特征并不保证数据同步到state_system
 pub trait UpdateConfig {
     fn update(&self, config: &mut Config);
-}
-
-/// 实现特征的实体需要实现sync_data方法来让自己的数据同步到STATE_SYSTEM
-pub trait SyncData {
-    fn sync_data(self);
 }
 
 /// 游戏元数据结构体
@@ -23,7 +19,7 @@ pub struct GameMeta {
     pub name: String,
     pub abs_path: String,
     pub cover: String,
-    pub play_time: u64,
+    pub play_time: Duration,
     pub size: u64,
     pub last_played_at: Option<DateTime<Local>>,
 }
@@ -69,7 +65,6 @@ impl SyncData for GameMetaList {
 #[serde(rename_all = "camelCase")]
 pub struct Config {
     pub gui_config: Value,
-    pub hot_key: Value,
     pub game_meta_list: GameMetaList,
 }
 

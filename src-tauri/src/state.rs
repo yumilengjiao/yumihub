@@ -7,7 +7,13 @@ use crate::{config::entity::GameMetaList, state::game::update_game_list};
 mod game;
 mod gui;
 mod resource;
+pub mod traits;
 mod user;
+
+// TODO: 用来自定义状态管理模块初始化逻辑，比如设定环境变量什么的
+pub fn init() {
+    println!("状态管理中心初始化");
+}
 
 /// 得到所有游戏元数据
 pub fn get_game_list() {}
