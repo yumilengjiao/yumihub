@@ -1,6 +1,6 @@
 //! #该模块用于控制各个模块初始化的顺序
 
-use crate::{config, state};
+use crate::{config, state, user};
 use std::error::Error;
 use tauri::App;
 
@@ -8,5 +8,6 @@ use tauri::App;
 pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
     state::init();
     config::init(app)?;
+    user::init(app)?;
     Ok(())
 }

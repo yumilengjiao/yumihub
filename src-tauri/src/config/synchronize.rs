@@ -1,11 +1,14 @@
 use crate::{
-    config::{entity::UpdateConfig, util::extract_game_list, GLOBAL_CONFIG},
-    state::{self, traits::SyncData},
+    config::{entity::Config, util::extract_game_list, GLOBAL_CONFIG},
+    state::{
+        self,
+        traits::{SyncData, UpdateConfig},
+    },
 };
 
 /// 用于更改全局配置文件某些数据内容配置信息,通过传GameList，GameMeta等数据
 /// 来自动实现GLOBAL_CONFIG的动态更新,并且实现数据同步到STATE_SYSTEM
-pub fn update_data<T: UpdateConfig + SyncData>(new_value: T) {
+pub fn update_data<T: UpdateConfig<Config> + SyncData>(new_value: T) {
     {
         let mut global_config = GLOBAL_CONFIG.write().expect("获取写锁失败");
         new_value.update(&mut global_config);

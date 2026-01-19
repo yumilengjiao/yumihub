@@ -24,8 +24,6 @@ pub fn load_config() -> Result<(), Box<dyn Error>> {
         save_config()?
     }
 
-    println!("{:?}", config_file_name);
-
     //读取配置文件并加载到全局变量
     let file_text = fs::read_to_string(config_file_name).map_err(|e| AppError::Config {
         action: FileAction::Read,

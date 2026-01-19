@@ -3,7 +3,11 @@
 //! 改,也就是说只有那个数据的模块能调用set函数，不允许其他模块如
 //! Controller模块更改，方便数据的同步处理
 
-use crate::{config::entity::GameMetaList, state::game::update_game_list};
+use crate::{
+    config::entity::GameMetaList,
+    state::{game::update_game_list, user::update_user_info},
+    user::entity::User,
+};
 mod game;
 mod gui;
 mod resource;
@@ -35,7 +39,11 @@ pub fn set_game() {}
 pub fn get_user_info() {}
 
 /// 设置用户数据
-pub fn set_user_info() {}
+pub fn set_user_info(new_user: User) {
+    tauri::async_runtime::spawn(async move {
+        update_user_info(&new_user).await;
+    });
+}
 
 /// 得到gui配置数据
 pub fn get_gui_info() {}

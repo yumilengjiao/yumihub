@@ -15,8 +15,6 @@ pub fn extract_game(id: String) -> Option<GameMeta> {
 
 /// 从全局配置中提取游戏元数据列表
 pub fn extract_game_list() -> GameMetaList {
-    println!("开始提取列表");
     let global_config = GLOBAL_CONFIG.read().expect("提取出现错误");
-    println!("提取的游戏列表为{:?}", global_config);
     global_config.game_meta_list.clone()
 }
