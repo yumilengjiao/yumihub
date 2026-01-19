@@ -1,13 +1,13 @@
 use std::{error::Error, fs};
 
 use crate::{
-    config::{entity::UpdateConfig, CONFIG_PATH_BUF, GLOBAL_CONFIG},
+    config::{entity::Config, synchronize::update_data, CONFIG_PATH_BUF, GLOBAL_CONFIG},
     error::{AppError, FileAction},
 };
 
-/// 此函数用于加载配置文件，若配置文件不存在则会在用户配置文件目录创建配置文件
-/// 并写入默认配置，若文件存在则读取文件内容并加载到全局config变量中,文件格式
-/// 默认使用json
+// 此函数用于加载配置文件，若配置文件不存在则会在用户配置文件目录创建配置文件
+// 并写入默认配置，若文件存在则读取文件内容并加载到全局config变量中,文件格式
+// 默认使用json
 pub fn load_config() -> Result<(), Box<dyn Error>> {
     let config_path_buf = CONFIG_PATH_BUF.get().unwrap().join("config.json");
     let config_file_name = config_path_buf.to_str().unwrap();
@@ -32,19 +32,26 @@ pub fn load_config() -> Result<(), Box<dyn Error>> {
         path: config_file_name.to_string(),
         message: e.to_string(),
     })?;
-    println!("{}", file_text);
+    // json解析配置文件
+    match serde_json::from_str::<Config>(&file_text) {
+        Ok(config) => {
+            println!("解析json文件成功");
+            update_data(config);
+        }
+        Err(e) => {
+            eprintln!("解析 JSON 失败: {}", e);
+        }
+    }
     Ok(())
 }
 
-/// 用于更改全局配置文件配置信息
-/// 程序关闭时也会默认执行此任务
-pub fn update_config<T: UpdateConfig>(new_value: T) {
-    let mut global_config = GLOBAL_CONFIG.write().expect("获取写锁失败");
-    new_value.update(&mut *global_config);
-    synchronize_global_config_to_the_state();
-}
-
-/// 保存全局config变量到config.json文件中持久化存储
+// 保存全局config变量到config.json文件中持久化存储,此函数是同步阻塞地将全局
+// 配置保存到磁盘上,一般会在程序退出时调用,而对于每种数据类型自己也有实现一
+// 个update方法，update方法用于更新本模块的GLOBAL_CONFIG(全局配置信息变量)内
+// 的数据
+// feature: 未来可能会在update方法里面异步的动态保存配置信息，动态维护一个配
+// 置文件内容的hash值来决定save_config函数是否调用，目前是程序推出前save_config
+// 函数被调用
 pub fn save_config() -> Result<(), Box<dyn Error>> {
     let config_path_buf = CONFIG_PATH_BUF.get().unwrap().join("config.json");
     let config_file_name = config_path_buf.to_str().unwrap();
@@ -58,5 +65,3 @@ pub fn save_config() -> Result<(), Box<dyn Error>> {
     })?;
     Ok(())
 }
-
-pub fn synchronize_global_config_to_the_state() {}

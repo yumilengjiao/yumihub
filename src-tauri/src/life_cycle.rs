@@ -1,6 +1,6 @@
 //! #该模块用于控制各个模块初始化的顺序
 
-use crate::config;
+use crate::{config, state};
 use std::error::Error;
 use tauri::App;
 

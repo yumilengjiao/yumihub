@@ -1,36 +1,66 @@
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-/// 实现了该特性通过调用update方法更改自己在全局config
-/// 变量内的信息
+use crate::config::synchronize::{synchronize_data_to_state_system, SyncType};
+
+/// 实现了该特征通过调用update方法更改自己在config模块的全局config变量,
+/// 该特征并不保证数据同步到state_system
 pub trait UpdateConfig {
-    fn update(self, config: &mut Config);
+    fn update(&self, config: &mut Config);
 }
+
+/// 实现特征的实体需要实现sync_data方法来让自己的数据同步到STATE_SYSTEM
+pub trait SyncData {
+    fn sync_data(self);
+}
+
 /// 游戏元数据结构体
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct GameMeta {
-    id: String,
-    name: String,
-    abs_path: String,
-    cover: String,
-    play_time: u64,
-    size: u64,
+    pub id: String,
+    pub name: String,
+    pub abs_path: String,
+    pub cover: String,
+    pub play_time: u64,
+    pub size: u64,
+    pub last_played_at: Option<DateTime<Local>>,
 }
 
 impl UpdateConfig for GameMeta {
-    fn update(self, config: &mut Config) {
+    fn update(&self, config: &mut Config) {
         if let Some(game) = config.game_meta_list.iter_mut().find(|g| g.id == self.id) {
-            *game = self;
+            *game = self.clone();
         }
     }
 }
 
+impl SyncData for GameMeta {
+    fn sync_data(self) {
+        synchronize_data_to_state_system(SyncType::GAME);
+    }
+}
+
+/// 修改最后一次游玩的时间
+impl GameMeta {
+    fn update_last_played(&mut self) {
+        self.last_played_at = Some(Local::now());
+    }
+}
+
 /// 游戏元数据集合
-type GameMetaList = Vec<GameMeta>;
+pub type GameMetaList = Vec<GameMeta>;
 
 impl UpdateConfig for GameMetaList {
-    fn update(self, config: &mut Config) {
-        config.game_meta_list = self;
+    fn update(&self, config: &mut Config) {
+        config.game_meta_list = self.clone();
+    }
+}
+
+impl SyncData for GameMetaList {
+    fn sync_data(self) {
+        synchronize_data_to_state_system(SyncType::GAMELIST);
     }
 }
 
@@ -41,4 +71,17 @@ pub struct Config {
     pub gui_config: Value,
     pub hot_key: Value,
     pub game_meta_list: GameMetaList,
+}
+
+impl UpdateConfig for Config {
+    fn update(&self, config: &mut Config) {
+        println!("config开始自更新");
+        *config = self.clone();
+    }
+}
+
+impl SyncData for Config {
+    fn sync_data(self) {
+        synchronize_data_to_state_system(SyncType::ALL);
+    }
 }

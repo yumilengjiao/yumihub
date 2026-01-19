@@ -9,17 +9,21 @@ use tauri::{App, Manager};
 
 use crate::config::{entity::Config, fs::load_config};
 
-mod entity;
+pub mod entity;
 mod fs;
+mod synchronize;
+mod util;
 
-/// config包下的全局变量
+/// config包下的全局变量: 配置文件路径
 pub static CONFIG_PATH_BUF: OnceLock<PathBuf> = OnceLock::new();
 lazy_static! {
+    /// config包下的全局变量: 配置文件变量
     pub static ref GLOBAL_CONFIG: RwLock<Config> = RwLock::new(Config::default());
 }
 
 /// config模块初始化函数
 pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
+    //设置配置文件路径
     set_config_path(app.path().app_config_dir()?);
     //加载配置文件
     load_config()?;
