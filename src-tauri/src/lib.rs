@@ -1,4 +1,5 @@
 mod config;
+mod error;
 mod life_cycle;
 mod state;
 mod user;
