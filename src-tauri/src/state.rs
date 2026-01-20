@@ -5,6 +5,7 @@
 
 use crate::{
     config::entity::GameMetaList,
+    error::AppError,
     state::{game::update_game_list, user::update_user_info},
     user::entity::User,
 };
@@ -20,7 +21,9 @@ pub fn init() {
 }
 
 /// 得到所有游戏元数据
-pub fn get_game_list() {}
+pub fn get_game_list() -> Result<GameMetaList, AppError> {
+    game::get_game_list()
+}
 
 /// 设置所有游戏元数据
 pub fn set_game_list(game_list: GameMetaList) {

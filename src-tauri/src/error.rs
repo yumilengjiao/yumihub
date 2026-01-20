@@ -25,4 +25,7 @@ pub enum AppError {
 
     #[error("系统路径获取失败: {0}")]
     Env(String),
+
+    #[error("从状态管理系统获取值失败: {0}")]
+    Fetch(String),
 }

@@ -1,7 +1,7 @@
 use lazy_static::lazy_static;
 use tokio::sync::RwLock;
 
-use crate::config::entity::GameMetaList;
+use crate::{config::entity::GameMetaList, error::AppError};
 
 lazy_static! {
     pub static ref game_list: RwLock<GameMetaList> = RwLock::new(GameMetaList::default());
@@ -16,4 +16,12 @@ pub async fn update_game_list(new_game_list: &GameMetaList) {
     }
     let games = game_list.read().await;
     println!("成功同步数据,同步成功的数据是{:?}", games);
+}
+
+pub fn get_game_list() -> Result<GameMetaList, AppError> {
+    if let Ok(games) = game_list.try_read() {
+        Ok(games.clone())
+    } else {
+        Err(AppError::Fetch("无法获取游戏列表".to_string()))
+    }
 }
