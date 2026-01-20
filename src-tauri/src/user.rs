@@ -10,13 +10,14 @@ use tauri::Manager;
 
 use crate::error::AppError;
 use crate::error::FileAction;
-use crate::state::set_gui_info;
 use crate::state::set_user_info;
 use crate::state::traits::SyncData;
 use crate::state::traits::UpdateConfig;
 use crate::user::entity::User;
+use crate::user::synchronize::update_data;
 
 pub mod entity;
+pub mod synchronize;
 
 lazy_static! {
     pub static ref USER_PROFILE: RwLock<User> = RwLock::new(User::default());
@@ -70,18 +71,6 @@ pub fn load_user_config() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-/// 用于更改全局配置文件某些数据内容配置信息,通过传GameList，GameMeta等数据
-/// 来自动实现GLOBAL_CONFIG的动态更新,并且实现数据同步到STATE_SYSTEM
-pub fn update_data<T: UpdateConfig<User> + SyncData>(new_value: T) {
-    {
-        let mut user_profile = USER_PROFILE.write().expect("获取写锁失败");
-        new_value.update(&mut user_profile);
-    }
-
-    //方法不放在update里,而是用sync_data，不然会造成死锁问题
-    new_value.sync_data();
-}
-
 // 保存全局user变量到user.json文件中持久化存储,此函数是同步阻塞地将全局
 // 配置保存到磁盘上,一般会在程序退出时调用,而对于每种数据类型自己也有实现一
 // 个update方法，update方法用于更新本模块的GLOBAL_CONFIG(全局配置信息变量)内
@@ -101,8 +90,4 @@ pub fn save_config() -> Result<(), Box<dyn Error>> {
         message: format!("{},具体错误:{}", "写入config文件失败", e),
     })?;
     Ok(())
-}
-
-pub fn synchronize_user_to_state_system(new_user: &User) {
-    set_user_info(new_user.clone());
 }

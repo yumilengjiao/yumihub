@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     state::traits::{Entity, SyncData, UpdateConfig},
-    user::synchronize_user_to_state_system,
+    user::synchronize,
 };
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -25,6 +25,6 @@ impl UpdateConfig<User> for User {
 
 impl SyncData for User {
     fn sync_data(self) {
-        synchronize_user_to_state_system(&self);
+        synchronize::synchronize_user_to_state_system(&self);
     }
 }
