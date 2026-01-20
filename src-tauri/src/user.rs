@@ -10,9 +10,6 @@ use tauri::Manager;
 
 use crate::error::AppError;
 use crate::error::FileAction;
-use crate::state::set_user_info;
-use crate::state::traits::SyncData;
-use crate::state::traits::UpdateConfig;
 use crate::user::entity::User;
 use crate::user::synchronize::update_data;
 
