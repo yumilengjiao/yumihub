@@ -117,7 +117,19 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+:root,
+body,
+#root,
+.home,
+.library,
+.setting,
+.user {
+  height: 100%;
+  overflow: hidden;
 }
