@@ -19,6 +19,7 @@ export const GameList = (props: {}) => {
   async function getGamelist() {
     try {
       const gameList = await invoke<GameMetaList>('get_game_meta_list_cmd')
+      console.log(gameList)
       setGameMetaList(gameList)
     } catch (err) {
       console.error(err)
@@ -47,7 +48,7 @@ export const GameList = (props: {}) => {
         opts={{
           dragFree: true,
           align: "start",
-          duration: 60,
+          duration: 30,
           containScroll: false,
         }}
         className="pl-4"

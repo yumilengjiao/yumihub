@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import './index.css'
 import { GameList } from "@/components/GameList";
+import { convertFileSrc } from '@tauri-apps/api/core';
 
 
 export default function Home() {

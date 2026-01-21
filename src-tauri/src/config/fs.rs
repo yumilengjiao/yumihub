@@ -34,6 +34,7 @@ pub fn load_config() -> Result<(), Box<dyn Error>> {
     match serde_json::from_str::<Config>(&file_text) {
         Ok(config) => {
             println!("解析json文件成功");
+            println!("解析的config.json文件:{:?}", config);
             update_data(config);
         }
         Err(e) => {
