@@ -31,12 +31,10 @@ export const GameList = (props: {}) => {
 
   return (
     <div className="overflow-hidden">
-      <div className={cn(
-        "pl-8 pb-4 text-6xl"
-      )}>
+      {/* 总宽大小 */}
+      <div className="pl-8 pb-2 text-6xl text-primary">
         {selectedGame?.name}
       </div>
-      {/* 总宽大小 */}
       <Carousel
         opts={{
           dragFree: true,
@@ -54,7 +52,7 @@ export const GameList = (props: {}) => {
               key={g.id}
               className={cn(
                 "duration-300 aspect-165/225", // 动画放在这里
-                "rounded-b-2xl lg:basis-1/6 pl-4",
+                "rounded-b-2xl lg:basis-1/6 pl-4 ",
               )}
               onClick={(_) => {
                 setCurrentIndex(index)

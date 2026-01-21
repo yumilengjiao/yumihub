@@ -1,3 +1,8 @@
 .home {
-  background-color: white;
+
+  .vague {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to top, black 20%, transparent 100%);
+    mask-image: linear-gradient(to top, black 20%, transparent 100%);
+  }
 }
