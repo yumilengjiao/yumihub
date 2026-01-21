@@ -9,8 +9,8 @@ export default function Home() {
     <div className={clsx(
       'home'
     )}>
-      <div className="grid grid-cols-12 gap-4 px-6 min-0 h-full">
-        <div className="bg-blue-500 col-span-12 flex items-end">
+      <div className="grid grid-cols-12 gap-4 pl-6 min-0 h-full">
+        <div className="bg-gray-400 col-span-12 flex items-end">
           <GameList />
         </div>
       </div>
