@@ -13,6 +13,7 @@ pub struct GameMeta {
     pub name: String,
     pub abs_path: String,
     pub cover: String,
+    pub background: String,
     pub play_time: usize,
     pub size: u64,
     pub last_played_at: Option<DateTime<Local>>,
