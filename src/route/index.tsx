@@ -1,25 +1,33 @@
 import { createBrowserRouter } from "react-router";
-import Home from "../page/Home";
-import Library from "../page/Library";
-import User from "../page/User";
-import Setting from "../page/Setting";
+import Home from "@/page/Home";
+import Library from "@/page/Library";
+import User from "@/page/User";
+import Setting from "@/page/Setting";
+import Layout from "@/layout/index";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: 'library',
-    element: <Library />
-  },
-  {
-    path: 'user',
-    element: <User />
-  },
-  {
-    path: 'setting',
-    element: <Setting />
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: 'library',
+        element: <Library />
+      },
+      {
+        path: 'user',
+        element: <User />
+      },
+      {
+        path: 'setting',
+        element: <Setting />
+      }
+
+    ]
   }
 ]);
 
