@@ -7,7 +7,7 @@ interface SeparatorProps {
 
 export function ButtonGroupSeparator({ className, height = "h-[30%]" }: SeparatorProps) {
   return (
-    <div className="flex items-center justify-center h-full px-1">
+    <div className="flex items-center justify-center h-full px-1 mx-5">
       <div
         className={cn(
           "w-0.5 rounded-full",

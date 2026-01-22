@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { Outlet } from "react-router";
 
 interface MainButtonProps {
   children: React.ReactNode; // 声明接收 React 节点作为插槽
@@ -10,7 +9,7 @@ interface MainButtonProps {
 export default function MainButton({ children, onClick, className }: MainButtonProps) {
   return (
     <button onClick={onClick} className={cn(
-      "h-full w-auto block p-2",
+      "h-full w-auto  p-2 cursor-pointer flex items-center justify-center",
       className
     )}>
       {children}

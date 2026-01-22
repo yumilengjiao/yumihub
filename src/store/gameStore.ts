@@ -3,7 +3,7 @@ import { convertFileSrc } from '@tauri-apps/api/core'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
-type GameStore = {
+interface GameStore {
   selectedGame: GameMeta | null,
   gameMetaList: GameMetaList,
   updateSelectedGame: (game: GameMeta) => void,
