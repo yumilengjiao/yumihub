@@ -7,7 +7,7 @@ import useGameStore from "@/store/gameStore";
 import { GameMetaList } from "@/types/game";
 
 
-export const GameList = (props: {}) => {
+export const GameList = () => {
   // ... 在你的组件内部
   const [api, setApi] = useState<CarouselApi>()
   const [currentIndex, setCurrentIndex] = useState<number>(0)
