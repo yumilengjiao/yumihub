@@ -1,13 +1,12 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
-  "identifier": "fs",
-  "description": "控制对文件访问,dialog和fs的权限",
+  "identifier": "dialog",
+  "description": "控制对文件访问的权限",
   "windows": [
     "main"
   ],
   "permissions": [
     "dialog:default",
-    "dialog:allow-open",
-    "fs:default"
+    "dialog:allow-open"
   ]
 }

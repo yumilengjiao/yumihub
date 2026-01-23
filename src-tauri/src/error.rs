@@ -19,6 +19,8 @@ pub enum AppError {
         path: String,
         message: String, // 将原始错误转为字符串存储，以便序列化
     },
+    #[error("解析路径失败,路径:{0}---原始错误消息:{1}")]
+    Resolve(String, String),
 
     #[error("JSON 解析失败: {0}")]
     JSON(String),

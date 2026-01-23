@@ -8,22 +8,29 @@ import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { CirclePlus } from "lucide-react";
 import { useState } from "react";
+import { requestVNDB } from '@/lib/request';
+import { createVNDBParamsFromBootFile } from '@/lib/resolve';
+
+
 
 export default function AddGameDialog() {
-  const [readyToAddGame, setReadyToAddGame] = useState(true)
+  const [readyToAddGame, setReadyToAddGame] = useState(false)
+
   const handleSelectPath = async () => {
-    alert("打开系统选择框")
     // 唤起原生对话框
     const selected = await open({
       multiple: false,      // 是否允许多选
-      directory: true,     // 是选择文件还是文件夹 (选游戏 exe 就设为 false)
+      directory: false,     // 是选择文件还是文件夹
     });
 
     if (selected) {
-      console.log("用户选择了路径:", selected);
-      // selected 返回的是文件的绝对路径字符串（单选）或数组（多选）
+      const vndbParams = createVNDBParamsFromBootFile(selected)
+      const res = await requestVNDB(vndbParams)
+      console.log(res)
+      setReadyToAddGame(true)
     } else {
       console.log("用户取消了选择");
+      setReadyToAddGame(false)
     }
   };
   return (
@@ -40,7 +47,7 @@ export default function AddGameDialog() {
         >
           <div className="mb-2">选择导入方式</div>
           <div className="flex justify-between">
-            <Dialog>
+            <Dialog open={readyToAddGame} onOpenChange={setReadyToAddGame}>
               <DialogTrigger asChild>
                 <Button size="lg" onClick={handleSelectPath}>单个</Button>
               </DialogTrigger>
@@ -80,7 +87,7 @@ export default function AddGameDialog() {
             </Dialog>
           </div>
         </PopoverContent>
-      </Popover>
+      </Popover >
     </>
   )
 }

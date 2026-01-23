@@ -6,36 +6,49 @@ use crate::{
         entity::{GameMeta, GameMetaList},
     },
     error::AppError,
+    resolve::{resolve_game, resolve_games},
     state,
     user::{self, entity::User},
 };
 
+// ---------------用户类---------------
 #[tauri::command]
-pub fn get_user_info_cmd() {
+pub fn get_user_info() {
     println!("I was invoked from JavaScript!");
 }
 
+#[tauri::command]
+pub fn set_user_info(user: User) {
+    user::synchronize::update_data(user);
+}
+
+// -----------游戏类信息类-------------
 #[tauri::command]
 pub fn get_game_meta_list_cmd() -> Result<GameMetaList, AppError> {
     state::get_game_list()
 }
 
 #[tauri::command]
-pub fn get_game_meta_cmd() {
+pub fn get_game_meta() {
     println!("I was invoked from JavaScript!");
 }
 
 #[tauri::command]
-pub fn set_user_info_cmd(user: User) {
-    user::synchronize::update_data(user);
-}
-
-#[tauri::command]
-pub fn set_game_meta_list_cmd(games: GameMetaList) {
+pub fn update_game_meta_list(games: GameMetaList) {
     config::synchronize::update_data(games);
 }
 
 #[tauri::command]
-pub fn set_game_meta_cmd(game: GameMeta) {
+pub fn update_game_meta(game: GameMeta) {
     config::synchronize::update_data(game);
+}
+
+#[tauri::command]
+pub fn add_batch_games(parent_path: String) {
+    resolve_games(&parent_path);
+}
+
+#[tauri::command]
+pub fn add_game(game_path: String) {
+    resolve_game(&game_path);
 }

@@ -5,7 +5,7 @@ use crate::{
     config::entity::{GameMeta, GameMetaList},
     error::AppError,
 };
-
+// 所有游戏信息
 lazy_static! {
     pub static ref game_list: RwLock<GameMetaList> = RwLock::new(GameMetaList::default());
 }
