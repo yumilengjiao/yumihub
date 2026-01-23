@@ -13,10 +13,12 @@
     "windows": [
       {
         "title": "galhub",
-        "width": 1024,
-        "height": 768,
+        "width": 900,
+        "height": 600,
         "minWidth": 800,
-        "minHeight": 600
+        "minHeight": 600,
+        "decorations": false,
+        "transparent": true
       }
     ],
     "security": {
@@ -27,7 +29,8 @@
         ]
       },
       "capabilities": [
-        "asset"
+        "window",
+        "fs"
       ],
       "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: https://asset.localhost http://asset.localhost data: blob: *;"
     }

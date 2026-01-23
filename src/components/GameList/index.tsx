@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react"
-import { Card, CardContent } from "../ui/card"
+import { Card } from "../ui/card"
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "../ui/carousel"
 import { cn } from "@/lib/utils"
-import { invoke } from '@tauri-apps/api/core';
+import { convertFileSrc, invoke } from '@tauri-apps/api/core';
 import useGameStore from "@/store/gameStore";
-import { GameMeta, GameMetaList } from "@/types/game";
+import { GameMetaList } from "@/types/game";
 
 
-export const GameList = (props: {}) => {
+export const GameList = () => {
   // ... 在你的组件内部
   const [api, setApi] = useState<CarouselApi>()
   const [currentIndex, setCurrentIndex] = useState<number>(0)
-  const [selectedGame, setSelectedGame] = useState<GameMeta>()
-  const { gameMetaList, setGameMetaList } = useGameStore()
+  const { selectedGame, updateSelectedGame, gameMetaList, setGameMetaList } = useGameStore()
 
 
   //向状态管理系统拿数据
@@ -21,29 +20,22 @@ export const GameList = (props: {}) => {
       const gameList = await invoke<GameMetaList>('get_game_meta_list_cmd')
       console.log(gameList)
       setGameMetaList(gameList)
+
+      updateSelectedGame(gameList[0])
     } catch (err) {
       console.error(err)
     }
   }
-
   useEffect(() => {
     getGamelist()
-    if (!api) return
-    // 监听滚动事件
-    api.on("select", () => {
-      // selectedScrollSnap() 会返回当前对齐在“激活位置”的索引
-      // setCurrentIndex(api.selectedScrollSnap())
-    })
+  }, [])
 
-  }, [api])
   return (
     <div className="overflow-hidden">
-      <div className={cn(
-        "pl-8 pb-4 text-6xl"
-      )}>
+      {/* 总宽大小 */}
+      <div className="pl-8 pb-2 text-6xl text-background">
         {selectedGame?.name}
       </div>
-      {/* 总宽大小 */}
       <Carousel
         opts={{
           dragFree: true,
@@ -61,22 +53,26 @@ export const GameList = (props: {}) => {
               key={g.id}
               className={cn(
                 "duration-300 aspect-165/225", // 动画放在这里
-                "rounded-b-2xl lg:basis-1/6 pl-4",
+                "rounded-b-2xl lg:basis-1/6 pl-4 ",
               )}
               onClick={(_) => {
                 setCurrentIndex(index)
-                setSelectedGame(g)
+                updateSelectedGame(g)
                 api?.scrollTo(index, false)
               }}
             >
               <Card className={cn(
-                "bg-amber-950 object-cover border-none",
+                "object-cover border-none cursor-pointer relative",
                 "aspect-165/225  min-w-41.25 min-h-56.25 origin-bottom transition-all duration-300",
                 currentIndex != index && "scale-80"
               )}>
-                <CardContent className=" flex aspect-square items-center justify-center">
-                  <span className="text-3xl font-semibold">{index + 1}</span>
-                </CardContent>
+                {currentIndex != index && <div className="absolute bg-foreground opacity-45 w-full h-full" />}
+                <div className=" w-full">
+                  <img
+                    src={convertFileSrc(g.cover)}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
               </Card>
             </CarouselItem>
           ))}
