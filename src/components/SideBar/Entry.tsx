@@ -21,7 +21,7 @@ export default function Entry({ location, children, secondTitle, onClick }: Entr
         className={cn(
           " flex items-center justify-between gap-3 px-4 py-3 rounded-2xl ",
           "px-20 min-h-20 cursor-pointer transition-all duration-200",
-          "active:scale-[0.97] select-none text-muted-foreground hover:text-accent-foreground"
+          "active:scale-[0.97] select-none text-primary/80 hover:text-accent-foreground"
         )}
       >
         {/* 图标 */}

@@ -32,7 +32,7 @@ export const GameList = () => {
   return (
     <div className="overflow-hidden">
       {/* 总宽大小 */}
-      <div className="pl-8 pb-2 text-6xl text-primary">
+      <div className="pl-8 pb-2 text-6xl text-background">
         {selectedGame?.name}
       </div>
       <Carousel
@@ -65,7 +65,7 @@ export const GameList = () => {
                 "aspect-165/225  min-w-41.25 min-h-56.25 origin-bottom transition-all duration-300",
                 currentIndex != index && "scale-80"
               )}>
-                {currentIndex != index && <div className="absolute bg-background opacity-45 w-full h-full" />}
+                {currentIndex != index && <div className="absolute bg-foreground opacity-45 w-full h-full" />}
                 <div className=" w-full">
                   <img
                     src={convertFileSrc(g.cover)}

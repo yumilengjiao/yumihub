@@ -16,7 +16,7 @@ export default function Home() {
           // 这里根据 currentIndex 控制透明度，实现无缝切换
           className={cn(
             "absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0 pointer-events-none",
-            selectedGame?.id === g.id ? "opacity-100 " : "opacity-[0.01]"
+            selectedGame?.id === g.id ? "opacity-100 " : "opacity-[0.001]"
           )}
         />
       ))}
