@@ -2,6 +2,8 @@ import MainButton from "@/components/TitleBar/MainButton";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { ArrowDownWideNarrow, CirclePlus, Search, Trash } from "lucide-react";
+import AddGameDialog from "./AddGameDialog";
+import { Popover } from "@/components/ui/popover";
 
 export default function TopBar() {
   return (
@@ -15,13 +17,11 @@ export default function TopBar() {
       <MainButton>
         <ArrowDownWideNarrow className="h-full w-auto" />
       </MainButton>
-      <MainButton>
-        <CirclePlus className="h-full w-auto" />
-      </MainButton>
+      <AddGameDialog />
       <MainButton>
         <Trash className="h-full w-auto" />
       </MainButton>
-    </div>
+    </div >
   )
 }
 
