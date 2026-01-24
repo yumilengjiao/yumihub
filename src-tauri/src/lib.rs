@@ -1,3 +1,5 @@
+use tauri::RunEvent;
+
 mod cmd;
 mod config;
 mod error;
@@ -10,16 +12,31 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_dialog::init())
-        .setup(life_cycle::init)
         .plugin(tauri_plugin_opener::init())
+        .setup(life_cycle::init)
         .invoke_handler(tauri::generate_handler![
             cmd::get_user_info,
-            cmd::set_user_info,
+            cmd::update_user_info,
             cmd::get_game_meta,
-            cmd::get_game_meta_list_cmd,
+            cmd::get_game_meta_list,
             cmd::update_game_meta,
             cmd::update_game_meta_list,
+            cmd::add_new_game,
+            cmd::add_new_game_list
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|_app_handle, event| {
+            match event {
+                RunEvent::Exit => {
+                    // TODO:此处保存config
+                    life_cycle::exit()
+                }
+                RunEvent::ExitRequested { .. } => {
+                    // TODO:此处保存config
+                    life_cycle::exit()
+                }
+                _ => {}
+            }
+        })
 }

@@ -8,9 +8,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { CirclePlus } from "lucide-react";
 import { useState } from "react";
-import { requestVNDB } from '@/api/vndbApi';
-import { createBangumiParamsFromBootFile, createVNDBParamsFromBootFile, createYmgalQueryFromBootFile } from '@/lib/resolve';
-import { requestBangumi } from '@/api/bangumiApi';
+import { createYmgalQueryFromBootFile } from '@/lib/resolve';
 import { requestYml } from '@/api/ymGalApi';
 
 

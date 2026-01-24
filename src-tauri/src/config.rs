@@ -10,7 +10,7 @@ use tauri::{App, Manager};
 use crate::config::{entity::Config, fs::load_config};
 
 pub mod entity;
-mod fs;
+pub mod fs;
 pub mod synchronize;
 mod util;
 
