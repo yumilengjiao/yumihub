@@ -1,6 +1,11 @@
 import { BangumiReq, VNDBReq, YmgalReq } from "@/types/game"
 
-//用于从dialog读取的路径构造vndb的请求体
+
+/**
+ * 通过传入的游戏启动路径创建向VNDB发送请求所需要的请求体
+ * @param absPath 传入的启动程序名字的绝对路径,如/home/user/rance/rance01.exe
+ * @returns
+ */
 export const createVNDBParamsFromBootFile = (absPath: string) => {
   const arr = absPath.split("/")
   const name = arr[arr.length - 2]
@@ -15,7 +20,11 @@ export const createVNDBParamsFromBootFile = (absPath: string) => {
   return vndbParam
 }
 
-//用于从dialog读取的路径构造bangumi的请求体
+/**
+ * 通过传入的游戏启动路径创建向Bangumi发送请求所需要的请求体
+ * @param absPath 传入的启动程序名字的绝对路径,如/home/user/rance/rance01.exe
+ * @returns
+ */
 export const createBangumiParamsFromBootFile = (absPath: string) => {
   const arr = absPath.split("/")
   const name = arr[arr.length - 2]
@@ -35,7 +44,11 @@ export const createBangumiParamsFromBootFile = (absPath: string) => {
   return bangumiParam
 }
 
-//用于从dialog读取的路径构造ymgal请求参数
+/**
+ * 通过传入的游戏启动路径创建向Ymlgal发送请求所需要的请求参数
+ * @param absPath 传入的启动程序名字的绝对路径,如/home/user/rance/rance01.exe
+ * @returns
+ */
 export const createYmgalQueryFromBootFile = (absPath: string) => {
   const arr = absPath.split("/")
   const name = arr[arr.length - 2]

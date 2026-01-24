@@ -24,7 +24,7 @@ impl UpdateConfig<User> for User {
 }
 
 impl SyncData for User {
-    fn sync_data(self) {
-        synchronize::synchronize_user_to_state_system(&self);
+    fn sync_data(&self) {
+        synchronize::synchronize_user_to_state_system(self);
     }
 }
