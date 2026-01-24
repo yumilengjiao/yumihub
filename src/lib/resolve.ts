@@ -1,4 +1,4 @@
-import { BangumiReq, VNDBReq } from "@/types/game"
+import { BangumiReq, VNDBReq, YmgalReq } from "@/types/game"
 
 //用于从dialog读取的路径构造vndb的请求体
 export const createVNDBParamsFromBootFile = (absPath: string) => {
@@ -31,6 +31,19 @@ export const createBangumiParamsFromBootFile = (absPath: string) => {
       ],
       "nsfw": true
     }
+  }
+  return bangumiParam
+}
+
+//用于从dialog读取的路径构造ymgal请求参数
+export const createYmgalQueryFromBootFile = (absPath: string) => {
+  const arr = absPath.split("/")
+  const name = arr[arr.length - 2]
+  const bangumiParam: YmgalReq = {
+    keyword: name,
+    mode: "list",
+    pageNum: 1,
+    pageSize: 1
   }
   return bangumiParam
 }

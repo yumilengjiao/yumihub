@@ -136,3 +136,21 @@ export interface Tag {
 
 }
 
+//月幕请求时是Get请求没有对应的请求体,但对应的query参数在这依旧组织成一个结构
+export interface YmgalReq {
+  mode: string,
+  keyword: string,
+  pageNum: number,
+  pageSize: number
+}
+//月幕的响应结构
+export interface YmgalRes {
+  success: boolean;
+  code: number;
+  msg: string;
+  data: Data;
+}
+
+export interface Data {
+}
+
