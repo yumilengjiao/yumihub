@@ -84,7 +84,7 @@ pub fn save_config() -> Result<(), Box<dyn Error>> {
     fs::write(config_path_buf, json_data).map_err(|e| AppError::Config {
         action: FileAction::Write,
         path: config_file_name.to_string(),
-        message: format!("{},具体错误:{}", "写入config文件失败", e),
+        message: format!("{},具体错误:{}", "写入user.json文件失败", e),
     })?;
     Ok(())
 }

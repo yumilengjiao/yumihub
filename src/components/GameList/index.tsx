@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { convertFileSrc, invoke } from '@tauri-apps/api/core';
 import useGameStore from "@/store/gameStore";
 import { GameMetaList } from "@/types/game";
+import { Cmds } from "@/lib/enum";
 
 
 export const GameList = () => {
@@ -17,7 +18,7 @@ export const GameList = () => {
   //向状态管理系统拿数据
   async function getGamelist() {
     try {
-      const gameList = await invoke<GameMetaList>('get_game_meta_list_cmd')
+      const gameList = await invoke<GameMetaList>(Cmds.GET_GAME_META_LIST)
       console.log(gameList)
       setGameMetaList(gameList)
 

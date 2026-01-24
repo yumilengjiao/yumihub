@@ -1,7 +1,11 @@
 import { YmgalReq } from "@/types/game";
 import { fetch } from "@tauri-apps/plugin-http";
 
-// VNDB - 使用其 HTTPS API v1
+/**
+ * 向Ymlgal平台发送游戏查询的请求,官方endpoint版本 v1
+ * @param param 用于发送bangumi资源请求的请求体
+ * @returns 模糊匹配,返回查找到的游戏数据(数组)
+ */
 export const requestYml = async (params: YmgalReq) => {
   const url = new URL(import.meta.env.VITE_API_YMGAL_VN_URL)
   url.searchParams.set("mode", params.mode)

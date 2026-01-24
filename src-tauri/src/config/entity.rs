@@ -2,8 +2,9 @@ use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::config::synchronize::{synchronize_data_to_state_system, SyncType};
-use crate::state::traits::{Entity, SyncData, UpdateConfig};
+use crate::config::util::extract_game_list;
+use crate::state;
+use crate::state::traits::{Entity, Registerable, SyncData, UpdateConfig};
 
 /// 游戏元数据结构体
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Default)]
@@ -19,6 +20,7 @@ pub struct GameMeta {
     pub last_played_at: Option<DateTime<Local>>,
 }
 
+//更新本模块变量
 impl UpdateConfig<Config> for GameMeta {
     fn update(&self, config: &mut Config) {
         if let Some(game) = config.game_meta_list.iter_mut().find(|g| g.id == self.id) {
@@ -27,31 +29,42 @@ impl UpdateConfig<Config> for GameMeta {
     }
 }
 
+//同步到STATE_SYSTEM
 impl SyncData for GameMeta {
-    fn sync_data(self) {
-        synchronize_data_to_state_system(SyncType::GAME);
+    fn sync_data(&self) {
+        state::game::update_game(self.clone())
     }
 }
 
-/// 修改最后一次游玩的时间
-impl GameMeta {
-    fn update_last_played(&mut self) {
-        self.last_played_at = Some(Local::now());
+//添加新的数据到本模块全局变量
+impl Registerable<Config> for GameMeta {
+    fn add_to_self_module(&self, config: &mut Config) {
+        config.game_meta_list.push(self.clone());
     }
 }
 
 /// 游戏元数据集合
 pub type GameMetaList = Vec<GameMeta>;
 
+//更新本模块变量
 impl UpdateConfig<Config> for GameMetaList {
     fn update(&self, config: &mut Config) {
         config.game_meta_list = self.clone();
     }
 }
 
+//同步到STATE_SYSTEM
 impl SyncData for GameMetaList {
-    fn sync_data(self) {
-        synchronize_data_to_state_system(SyncType::GAMELIST);
+    fn sync_data(&self) {
+        let game_list = extract_game_list();
+        state::game::update_game_list(game_list);
+    }
+}
+
+//添加新的批量游戏数据到本模块全局变量
+impl Registerable<Config> for GameMetaList {
+    fn add_to_self_module(&self, config: &mut Config) {
+        config.game_meta_list.extend(self.clone());
     }
 }
 
@@ -73,7 +86,9 @@ impl UpdateConfig<Config> for Config {
 }
 
 impl SyncData for Config {
-    fn sync_data(self) {
-        synchronize_data_to_state_system(SyncType::ALL);
+    // TODO:同步所有数据信息,目前数据不够所以和上面的GameList同步方法一样只是覆盖更新游戏列表数据
+    fn sync_data(&self) {
+        let game_list = extract_game_list();
+        state::game::update_game_list(game_list);
     }
 }

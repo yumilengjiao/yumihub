@@ -10,7 +10,7 @@ lazy_static! {
     pub static ref game_list: RwLock<GameMetaList> = RwLock::new(GameMetaList::default());
 }
 
-// 从state中获取完整的游戏信息列表
+/// cmd调用-从state中获取完整的游戏信息列表
 pub fn get_game_list() -> Result<GameMetaList, AppError> {
     if let Ok(games) = game_list.try_read() {
         Ok(games.clone())
@@ -19,7 +19,9 @@ pub fn get_game_list() -> Result<GameMetaList, AppError> {
     }
 }
 
-//用id查找返回单个游戏信息
+/// cmd调用-用id查找返回单个游戏信息
+///
+/// * `id`: 游戏信息的id
 pub fn get_game_by_id(id: &str) -> Result<GameMeta, AppError> {
     let guard = game_list
         .try_read()
@@ -33,20 +35,31 @@ pub fn get_game_by_id(id: &str) -> Result<GameMeta, AppError> {
         .ok_or_else(|| AppError::Fetch(format!("未找到 id={} 的游戏", id)))
 }
 
-//用于异步更新游戏列表元数据
-pub async fn update_game_list(new_game_list: &GameMetaList) {
-    {
-        println!("传如带同步的newgamelist: {:?}", new_game_list);
+/// 模块调用-用于异步覆盖更新整个游戏列表数据
+///
+/// * `new_game_list`: 新的游戏列表
+pub fn update_game_list(new_game_list: GameMetaList) {
+    tauri::async_runtime::spawn(async move {
         let mut write = game_list.write().await;
         *write = new_game_list.clone();
-    }
-    let games = game_list.read().await;
-    println!("成功同步数据,同步成功的数据是{:?}", games);
+    });
 }
 
-/// 用于异步更新单个游戏元数据,若数据存在则修改，数据不存在则添加
-pub async fn update_game(new_game: GameMeta) {
-    {
+/// 模块调用-用于异步添加一整个游戏列表数据到此系统
+///
+/// * `new_game_list`: 要添加的游戏列表
+pub async fn add_game_list(new_game_list: GameMetaList) {
+    tauri::async_runtime::spawn(async move {
+        let mut write = game_list.write().await;
+        write.extend(new_game_list);
+    });
+}
+
+/// 模块调用-用于异步更新STATE_SYSTEM的单个游戏数据,存在则更新,不存在则添加
+///
+/// * `new_game`: [TODO:parameter]
+pub fn update_game(new_game: GameMeta) {
+    tauri::async_runtime::spawn(async move {
         println!("传如带同步的newgamelist: {:?}", new_game);
         let mut write = game_list.write().await;
         if let Some(old_game) = write.iter_mut().find(|g| g.id == new_game.id) {
@@ -54,7 +67,5 @@ pub async fn update_game(new_game: GameMeta) {
         } else {
             game_list.write().await.push(new_game);
         }
-    }
-    let games = game_list.read().await;
-    println!("成功同步数据,同步成功的数据是{:?}", games);
+    });
 }

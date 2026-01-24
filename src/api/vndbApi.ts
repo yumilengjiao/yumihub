@@ -1,7 +1,11 @@
 import { VNDBReq } from "@/types/game";
 import { fetch } from "@tauri-apps/plugin-http";
 
-// VNDB - 使用其 HTTPS API v2
+/**
+ * 向VNDB平台发送游戏查询的请求,官方endpoint版本v2
+ * @param param 用于发送VNDB资源请求的请求体
+ * @returns 模糊匹配,返回查找到的游戏数据(数组)
+ */
 export const requestVNDB = async (param: VNDBReq) => {
   try {
     const response = await fetch(import.meta.env.VITE_API_VNDB_VN_URL, {
