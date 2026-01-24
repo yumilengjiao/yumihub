@@ -11,6 +11,9 @@
       "allow": [
         {
           "url": "https://*.vndb.org/*"
+        },
+        {
+          "url": "https://*.bgm.tv/*"
         }
       ]
     }

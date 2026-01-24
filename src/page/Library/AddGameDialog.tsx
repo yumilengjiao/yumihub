@@ -8,8 +8,9 @@ import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { CirclePlus } from "lucide-react";
 import { useState } from "react";
-import { requestVNDB } from '@/lib/request';
-import { createVNDBParamsFromBootFile } from '@/lib/resolve';
+import { requestVNDB } from '@/api/vndbApi';
+import { createBangumiParamsFromBootFile, createVNDBParamsFromBootFile } from '@/lib/resolve';
+import { requestBangumi } from '@/api/bangumiApi';
 
 
 
@@ -24,8 +25,8 @@ export default function AddGameDialog() {
     });
 
     if (selected) {
-      const vndbParams = createVNDBParamsFromBootFile(selected)
-      const res = await requestVNDB(vndbParams)
+      const vndbParams = createBangumiParamsFromBootFile(selected)
+      const res = await requestBangumi(vndbParams)
       console.log(res)
       setReadyToAddGame(true)
     } else {

@@ -19,8 +19,6 @@ pub fn run() {
             cmd::get_game_meta_list_cmd,
             cmd::update_game_meta,
             cmd::update_game_meta_list,
-            cmd::add_game,
-            cmd::add_batch_games
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

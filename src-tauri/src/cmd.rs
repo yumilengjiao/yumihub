@@ -6,7 +6,6 @@ use crate::{
         entity::{GameMeta, GameMetaList},
     },
     error::AppError,
-    resolve::{resolve_game, resolve_games},
     state,
     user::{self, entity::User},
 };
@@ -41,14 +40,4 @@ pub fn update_game_meta_list(games: GameMetaList) {
 #[tauri::command]
 pub fn update_game_meta(game: GameMeta) {
     config::synchronize::update_data(game);
-}
-
-#[tauri::command]
-pub fn add_batch_games(parent_path: String) {
-    resolve_games(&parent_path);
-}
-
-#[tauri::command]
-pub fn add_game(game_path: String) {
-    resolve_game(&game_path);
 }
