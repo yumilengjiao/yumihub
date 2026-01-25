@@ -38,7 +38,7 @@ pub fn load_config() -> Result<(), AppError> {
             update_data(config);
         }
         Err(e) => {
-            eprintln!("解析 JSON 失败: {}", e);
+            eprintln!("解析JSON 失败: {}", e);
         }
     }
     Ok(())

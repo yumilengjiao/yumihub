@@ -2,32 +2,50 @@ import { BangumiReq, VNDBReq, YmgalReq } from "@/types/game"
 
 
 /**
- * 通过传入的游戏启动路径创建向VNDB发送请求所需要的请求体
- * @param absPath 传入的启动程序名字的绝对路径,如/home/user/rance/rance01.exe
+ * 通过传入的游戏名创建向VNDB发送请求所需要的请求体
+ * @param name 传入游戏名
  * @returns
  */
-export const createVNDBParamsFromBootFile = (absPath: string) => {
-  const arr = absPath.split("/")
-  const name = arr[arr.length - 2]
+export const createVNDBParamsFromBootFile = (name: string) => {
   const vndbParam: VNDBReq = {
     filters: [
-      "search",
-      "=",
-      name
+      "and",
+      [
+        "search",
+        "=",
+        name
+      ],
+      [
+        "or",
+        [
+          "lang",
+          "=",
+          "zh"
+        ],
+        [
+          "lang",
+          "=",
+          "ja"
+        ],
+        [
+          "lang",
+          "=",
+          "en"
+        ]
+      ]
+
     ],
-    fields: "title, image.url"
+    fields: "title, image.url, alttitle, titles.lang, titles.title, titles.official, olang, length, average, description, screenshots.url"
   }
   return vndbParam
 }
 
 /**
- * 通过传入的游戏启动路径创建向Bangumi发送请求所需要的请求体
- * @param absPath 传入的启动程序名字的绝对路径,如/home/user/rance/rance01.exe
+ * 通过传入的游戏名向Bangumi发送请求所需要的请求体
+ * @param name 传入的游戏名字
  * @returns
  */
-export const createBangumiParamsFromBootFile = (absPath: string) => {
-  const arr = absPath.split("/")
-  const name = arr[arr.length - 2]
+export const createBangumiParamsFromBootFile = (name: string) => {
   const bangumiParam: BangumiReq = {
     keyword: name,
     sort: "match",
@@ -45,13 +63,11 @@ export const createBangumiParamsFromBootFile = (absPath: string) => {
 }
 
 /**
- * 通过传入的游戏启动路径创建向Ymlgal发送请求所需要的请求参数
- * @param absPath 传入的启动程序名字的绝对路径,如/home/user/rance/rance01.exe
+ * 通过传入的游戏名创建向Ymlgal发送请求所需要的请求参数
+ * @param absPath 传入的游戏名 rance01
  * @returns
  */
-export const createYmgalQueryFromBootFile = (absPath: string) => {
-  const arr = absPath.split("/")
-  const name = arr[arr.length - 2]
+export const createYmgalQueryFromBootFile = (name: string) => {
   const bangumiParam: YmgalReq = {
     keyword: name,
     mode: "list",

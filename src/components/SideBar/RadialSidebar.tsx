@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Home, Gamepad2, Settings, Trophy, Library } from 'lucide-react';
 import { cn } from "@/lib/utils";
 

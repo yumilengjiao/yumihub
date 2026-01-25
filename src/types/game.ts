@@ -6,7 +6,9 @@ export interface GameMeta {
   cover: string
   background: string
   playTime: number
-  size: number
+  size: number | undefined
+  length: number
+  lastPlayedAt: Date | null
 }
 
 export type GameMetaList = GameMeta[]
@@ -16,13 +18,6 @@ export interface GameInfo {
   name: string
   bootPath: string | null
   parentPath: String
-}
-
-//查询游戏获取的来自三个平台所有的数据
-export interface PossibleGameInfo {
-  vndb: VNDBResponse | null
-  bangumi: BangumiResponse | null
-  ymlgal: YmlgalResponse | null
 }
 
 //vndb查询的格式
@@ -52,10 +47,9 @@ export interface VNDBResult {
   description: string;
   id: string;
   image: Image;
-  languages: string[];
   length: number;
   olang: string;
-  platforms: string[];
+  screenshots: Image[];
   title: string;
   titles: Title[];
 }
@@ -68,6 +62,7 @@ export interface Image {
 //别名(其他)标题
 export interface Title {
   lang: string;
+  official: boolean;
   title: string;
 }
 
@@ -159,28 +154,28 @@ export interface Tag {
 }
 
 //月幕请求时是Get请求没有对应的请求体,但对应的query参数在这依旧组织成一个结构
-export interface YmlgalReq {
+export interface YmgalReq {
   mode: string
   keyword: string
   pageNum: number
   pageSize: number
 }
 //月幕的响应结构
-export interface YmlgalResponse {
+export interface YmgalResponse {
   success: boolean
   code: number
   data: Data
 }
 
 export interface Data {
-  result: YmlResult[]
+  result: YmResult[]
   total: number
   hasNext: boolean
   pageNum: number
   pageSize: number
 }
 
-export interface YmlResult {
+export interface YmResult {
   id: number
   name: string
   chineseName: string

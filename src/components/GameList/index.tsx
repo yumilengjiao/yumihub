@@ -6,7 +6,7 @@ import { convertFileSrc, invoke } from '@tauri-apps/api/core';
 import useGameStore from "@/store/gameStore";
 import { GameMetaList } from "@/types/game";
 import { Cmds } from "@/lib/enum";
-
+import { info } from '@tauri-apps/plugin-log';
 
 export const GameList = () => {
   // ... 在你的组件内部
@@ -18,11 +18,14 @@ export const GameList = () => {
   //向状态管理系统拿数据
   async function getGamelist() {
     try {
+      info("程序启动,开始向后端获取游戏数据列表")
       const gameList = await invoke<GameMetaList>(Cmds.GET_GAME_META_LIST)
       console.log(gameList)
       setGameMetaList(gameList)
 
-      updateSelectedGame(gameList[0])
+      if (gameList && gameList.length > 0) {
+        updateSelectedGame(gameList[0])
+      }
     } catch (err) {
       console.error(err)
     }

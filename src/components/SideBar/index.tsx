@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import Trigger from "./Trigger";
 import { useState } from "react";
 import Entry from "./Entry";
-import { BetweenHorizonalEnd, Gamepad2, House, Palette, Settings2, UserRound } from "lucide-react";
+import { Gamepad2, House, Settings2, UserRound } from "lucide-react";
 import { Avatar } from "./Avatar";
 import { useNavigate } from "react-router";
 

@@ -11,6 +11,7 @@ type GameStore = {
   setGameMeta: (game: GameMeta) => void,
 }
 
+// 存储当前存在的所有的游戏元信息
 const useGameStore = create<GameStore>()(
   immer((set) => ({
     selectedGame: null,
