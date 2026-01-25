@@ -1,5 +1,3 @@
-import { n } from "node_modules/react-router/dist/development/router-5iOvts3c.d.mts"
-
 // 用于加载本地游戏配置的接口
 export interface GameMeta {
   id: string
@@ -24,7 +22,7 @@ export interface GameInfo {
 export interface PossibleGameInfo {
   vndb: VNDBResponse | null
   bangumi: BangumiResponse | null
-  ymlgal: YmgalResponse | null
+  ymlgal: YmlgalResponse | null
 }
 
 //vndb查询的格式
@@ -44,11 +42,11 @@ export interface VNDBReq {
 //vndb返回的格式
 export interface VNDBResponse {
   more: boolean
-  results: Result[]
+  results: VNDBResult[]
 }
 
 //vndb返回的结果
-export interface Result {
+export interface VNDBResult {
   alttitle: string;
   average: number;
   description: string;
@@ -161,20 +159,41 @@ export interface Tag {
 }
 
 //月幕请求时是Get请求没有对应的请求体,但对应的query参数在这依旧组织成一个结构
-export interface YmgalReq {
-  mode: string,
-  keyword: string,
-  pageNum: number,
+export interface YmlgalReq {
+  mode: string
+  keyword: string
+  pageNum: number
   pageSize: number
 }
 //月幕的响应结构
-export interface YmgalResponse {
-  success: boolean;
-  code: number;
-  msg: string;
-  data: Data;
+export interface YmlgalResponse {
+  success: boolean
+  code: number
+  data: Data
 }
 
 export interface Data {
+  result: YmlResult[]
+  total: number
+  hasNext: boolean
+  pageNum: number
+  pageSize: number
+}
+
+export interface YmlResult {
+  id: number
+  name: string
+  chineseName: string
+  state: string
+  weights: number
+  mainImg: string
+  publishVersion: number
+  publishTime: Date
+  publisher: number
+  score: string
+  orgId: number
+  orgName: string
+  releaseDate: Date
+  haveChinese: boolean
 }
 

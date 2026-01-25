@@ -60,23 +60,21 @@ export default function AddGameDialog() {
                 <Button size="lg" onClick={handleSelectPath}>单个</Button>
               </DialogTrigger>
               <DialogPortal>
-                {/* 这个 Overlay 是背后的黑色遮罩，也能帮你占满全屏 */}
                 <DialogOverlay className="fixed inset-0 bg-black/50 z-50" />
 
                 <DialogContent className={cn(
                   "fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%]",
                   "bg-primary-foreground border border-zinc-800 shadow-2xl",
-                  "max-w-none! w-[80vw] h-[70vh] rounded-2xl p-10"
+                  "max-w-none! w-[80vw] h-[70vh] rounded-2xl p-6"
                 )}>
                   <DialogHeader>
                     <DialogTitle>候选游戏</DialogTitle>
                   </DialogHeader>
                   <div className='w-full h-full bg-slate-300 overflow-y-scroll'>
                     <div className='aspect-auto'>
-                      <PossibleGameCard name='nihao'></PossibleGameCard>
-                      <PossibleGameCard name='nihao'></PossibleGameCard>
-                      <PossibleGameCard name='nihao'></PossibleGameCard>
-                      <PossibleGameCard name='nihao'></PossibleGameCard>
+                      {possibleGames.map((possibleGameInfo) => {
+                        return <PossibleGameCard data={possibleGameInfo}></PossibleGameCard>
+                      })}
                     </div>
                   </div>
                 </DialogContent>
