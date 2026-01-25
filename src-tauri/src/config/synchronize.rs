@@ -10,8 +10,11 @@ use crate::{
 ///
 /// * `new_value`: 需要同步到本模块和同步到STATE_SYSTEM全局静态变量的数据
 pub fn update_data<T: UpdateConfig<Config> + SyncData>(new_value: T) {
-    let mut global_config = GLOBAL_CONFIG.write().expect("获取写锁失败");
-    new_value.update(&mut global_config); //更新自模块
+    // 这里必须缩小作用域否则有死锁问题
+    {
+        let mut global_config = GLOBAL_CONFIG.write().expect("获取写锁失败");
+        new_value.update(&mut global_config); //更新自模块
+    }
     new_value.sync_data(); //同步到STATE_SYSTEM
 }
 
@@ -19,7 +22,10 @@ pub fn update_data<T: UpdateConfig<Config> + SyncData>(new_value: T) {
 ///
 /// * `new_data`: 新的游戏数据
 pub fn add_data<T: Registerable<Config> + SyncData>(new_data: T) {
-    let mut global_config = GLOBAL_CONFIG.write().expect("获取写锁失败");
-    new_data.add_to_self_module(&mut global_config); //添加到自模块
+    // 这里必须缩小作用域否则有死锁问题
+    {
+        let mut global_config = GLOBAL_CONFIG.write().expect("获取写锁失败");
+        new_data.add_to_self_module(&mut global_config); //添加到自模块
+    }
     new_data.sync_data(); //同步到STATE_SYSTEM
 }
