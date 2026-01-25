@@ -1,14 +1,12 @@
-import { BangumiReq } from "@/types/game";
+import { BangumiReq, BangumiResponse } from "@/types/game";
 import { fetch } from "@tauri-apps/plugin-http";
-
-//Bangumi - 官方 API v0
 
 /**
  * 向bangumi平台发送游戏查询的请求,官方endpoint版本 v0
  * @param param 用于发送bangumi资源请求的请求体
  * @returns 模糊匹配,返回查找到的游戏数据(数组)
  */
-export const requestBangumi = async (param: BangumiReq) => {
+export const requestBangumi = async (param: BangumiReq): Promise<BangumiResponse | null> => {
   try {
     const response = await fetch(import.meta.env.VITE_API_BANGUMI_VN_URL, {
       method: "POST",

@@ -1,3 +1,5 @@
+import { n } from "node_modules/react-router/dist/development/router-5iOvts3c.d.mts"
+
 // 用于加载本地游戏配置的接口
 export interface GameMeta {
   id: string
@@ -16,6 +18,13 @@ export interface GameInfo {
   name: string
   bootPath: string | null
   parentPath: String
+}
+
+//查询游戏获取的来自三个平台所有的数据
+export interface PossibleGameInfo {
+  vndb: VNDBResponse | null
+  bangumi: BangumiResponse | null
+  ymlgal: YmgalResponse | null
 }
 
 //vndb查询的格式
@@ -40,14 +49,28 @@ export interface VNDBResponse {
 
 //vndb返回的结果
 export interface Result {
-  id: string
-  image: Image
-  title: string
+  alttitle: string;
+  average: number;
+  description: string;
+  id: string;
+  image: Image;
+  languages: string[];
+  length: number;
+  olang: string;
+  platforms: string[];
+  title: string;
+  titles: Title[];
 }
 
 //图片地址
 export interface Image {
   url: string
+}
+
+//别名(其他)标题
+export interface Title {
+  lang: string;
+  title: string;
 }
 
 
@@ -74,6 +97,7 @@ export interface BangumiResponse {
   offset: number
 }
 
+//bangumi返回的结果
 export interface Datum {
   date: Date
   platform: string
@@ -144,7 +168,7 @@ export interface YmgalReq {
   pageSize: number
 }
 //月幕的响应结构
-export interface YmgalRes {
+export interface YmgalResponse {
   success: boolean;
   code: number;
   msg: string;

@@ -17,7 +17,6 @@ export default function Library() {
           "grid-cols-[repeat(auto-fill,minmax(250px,1fr))]",
         )}>
           {gameMetaList.map((g) => (
-            /* 关键 3: 必须锁死比例，防止内容溢出导致重叠 */
             <Card key={g.id} className="overflow-hidden cursor-pointer border-3 ring-1 ring-black/5 shadow-xl shadow-blue-500/10">
               <img
                 src={convertFileSrc(g.cover)}
