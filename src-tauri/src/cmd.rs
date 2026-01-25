@@ -63,5 +63,6 @@ pub fn update_game_meta(game: GameMeta) {
 /// * `games`: 要覆盖更新的游戏列表数据
 #[tauri::command]
 pub fn update_game_meta_list(games: GameMetaList) {
+    println!("开始更新游戏数据");
     config::synchronize::update_data(games);
 }

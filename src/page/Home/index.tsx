@@ -28,7 +28,7 @@ export default function Home() {
           <GameList />
         </div>
       </div>
-    </ div >
+    </div>
   )
 }
 

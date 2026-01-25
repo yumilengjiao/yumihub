@@ -1,5 +1,3 @@
-import { n } from "node_modules/react-router/dist/development/router-5iOvts3c.d.mts"
-
 // 用于加载本地游戏配置的接口
 export interface GameMeta {
   id: string
@@ -8,7 +6,9 @@ export interface GameMeta {
   cover: string
   background: string
   playTime: number
-  size: number
+  size: number | undefined
+  length: number
+  lastPlayedAt: Date | null
 }
 
 export type GameMetaList = GameMeta[]
@@ -18,13 +18,6 @@ export interface GameInfo {
   name: string
   bootPath: string | null
   parentPath: String
-}
-
-//查询游戏获取的来自三个平台所有的数据
-export interface PossibleGameInfo {
-  vndb: VNDBResponse | null
-  bangumi: BangumiResponse | null
-  ymlgal: YmgalResponse | null
 }
 
 //vndb查询的格式
@@ -44,20 +37,19 @@ export interface VNDBReq {
 //vndb返回的格式
 export interface VNDBResponse {
   more: boolean
-  results: Result[]
+  results: VNDBResult[]
 }
 
 //vndb返回的结果
-export interface Result {
+export interface VNDBResult {
   alttitle: string;
   average: number;
   description: string;
   id: string;
   image: Image;
-  languages: string[];
   length: number;
   olang: string;
-  platforms: string[];
+  screenshots: Image[];
   title: string;
   titles: Title[];
 }
@@ -70,6 +62,7 @@ export interface Image {
 //别名(其他)标题
 export interface Title {
   lang: string;
+  official: boolean;
   title: string;
 }
 
@@ -162,19 +155,40 @@ export interface Tag {
 
 //月幕请求时是Get请求没有对应的请求体,但对应的query参数在这依旧组织成一个结构
 export interface YmgalReq {
-  mode: string,
-  keyword: string,
-  pageNum: number,
+  mode: string
+  keyword: string
+  pageNum: number
   pageSize: number
 }
 //月幕的响应结构
 export interface YmgalResponse {
-  success: boolean;
-  code: number;
-  msg: string;
-  data: Data;
+  success: boolean
+  code: number
+  data: Data
 }
 
 export interface Data {
+  result: YmResult[]
+  total: number
+  hasNext: boolean
+  pageNum: number
+  pageSize: number
+}
+
+export interface YmResult {
+  id: number
+  name: string
+  chineseName: string
+  state: string
+  weights: number
+  mainImg: string
+  publishVersion: number
+  publishTime: Date
+  publisher: number
+  score: string
+  orgId: number
+  orgName: string
+  releaseDate: Date
+  haveChinese: boolean
 }
 
