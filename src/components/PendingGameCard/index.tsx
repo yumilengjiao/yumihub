@@ -1,14 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
-import usePossibleGameStore, { PendingGameInfo } from '@/store/possibleGamesStore';
 import { GameMeta } from '@/types/game';
 import { nanoid } from 'nanoid'
+import usePendingGameStore, { PendingGameInfo } from '@/store/pendingGamesStore';
 
 const PendingCard: React.FC<{ data: PendingGameInfo }> = ({ data }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeSource, setActiveSource] = useState<'vndb' | 'bangumi' | 'ymgal'>('vndb');
-  const { updateReadyGame } = usePossibleGameStore()
+  const { updateReadyGame } = usePendingGameStore()
 
   // 此钩子函数用与保存最终选了的那些要持久化存储数据的游戏的资源
   useEffect(() => {

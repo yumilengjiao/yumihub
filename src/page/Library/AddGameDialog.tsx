@@ -8,17 +8,18 @@ import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { CirclePlus } from "lucide-react";
 import { useState } from "react";
-import PossibleGameCard from '@/components/PossibleGameCard';
-import usePossibleGameStore from '@/store/possibleGamesStore';
+import usePendingGamesStore from '@/store/pendingGamesStore';
 import { invoke } from '@tauri-apps/api/core';
 import { Cmds } from '@/lib/enum';
+import PendingCard from '@/components/PendingGameCard';
+import BigPendingCard from '@/components/BigPendingCard';
 
 export default function AddGameDialog() {
   // 控制单个按钮的弹框
-  const [readyToAddGameFirst, setReadyToAddGameFirest] = useState(false)
+  const [readyToAddGameFirst, setReadyToAddGameFirst] = useState(false)
   // 控制批量按钮的弹框
   const [readyToAddGameSecond, setReadyToAddGameSecond] = useState(false)
-  const { possibleGames, readyGames, extendPossibleGames, reset, resetReadyGames } = usePossibleGameStore()
+  const { pendingGames, readyGames, extendPendingGames, reset, resetReadyGames } = usePendingGamesStore()
 
   // 处理选择单个文件
   const handleOneGame = async () => {
@@ -30,11 +31,11 @@ export default function AddGameDialog() {
 
     if (selected) {
       const res = await recognizeGame(selected, 0)
-      extendPossibleGames(res)
-      setReadyToAddGameFirest(true)
+      extendPendingGames(res)
+      setReadyToAddGameFirst(true)
     } else {
       console.log("用户取消了选择");
-      // setReadyToAddGameFirst(false)
+      setReadyToAddGameFirst(false)
       reset()
     }
   }
@@ -64,7 +65,7 @@ export default function AddGameDialog() {
 
     for (const absPath of paths) {
       const res = await recognizeGame(absPath, 1);
-      extendPossibleGames(res);
+      extendPendingGames(res);
       setReadyToAddGameSecond(true);
     }
   }
@@ -74,7 +75,7 @@ export default function AddGameDialog() {
     if (!open) {
       reset()
     }
-    setReadyToAddGameFirest(open)
+    setReadyToAddGameFirst(open)
   }
   const onOpenChangeSecond = (open: boolean) => {
     if (!open) {
@@ -128,6 +129,11 @@ export default function AddGameDialog() {
                   <DialogHeader>
                     <DialogTitle>导入游戏</DialogTitle>
                   </DialogHeader>
+                  {pendingGames[0] && <BigPendingCard data={pendingGames[0]}></BigPendingCard>}
+                  <div className='flex gap-2 justify-end pb-2 pr-2 absolute bottom-3 right-6'>
+                    <Button size={"lg"} onClick={() => onOpenChangeFirst(false)}>取消</Button>
+                    <Button size={"lg"} onClick={() => saveData(1)}>确定</Button>
+                  </div>
                 </DialogContent>
               </DialogPortal>
             </Dialog>
@@ -147,8 +153,8 @@ export default function AddGameDialog() {
                   </DialogHeader>
                   <div className='w-full h-full bg-slate-300 overflow-y-scroll'>
                     <div className='aspect-auto'>
-                      {possibleGames.map((possibleGameInfo, index) => {
-                        return <PossibleGameCard key={index} data={possibleGameInfo}></PossibleGameCard>
+                      {pendingGames.map((pendingGame, index) => {
+                        return <PendingCard key={index} data={pendingGame}></PendingCard>
                       })}
                     </div>
                   </div>

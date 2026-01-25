@@ -16,12 +16,12 @@ export interface PendingGameInfo {
   ymgal: YmgalResponse | null
 }
 
-interface PossibleGameStore {
+interface PendingGameStore {
   //获取的所有数据
-  possibleGames: PendingGameInfo[]
+  pendingGames: PendingGameInfo[]
   //最终决定要持久化的数据
   readyGames: GameMetaList
-  extendPossibleGames: (param: PendingGameInfo | PendingGameInfo[]) => void
+  extendPendingGames: (param: PendingGameInfo | PendingGameInfo[]) => void
   addReadyGames: (game: GameMeta) => void
   updateReadyGame: (game: GameMeta) => void
   reset: () => void
@@ -29,20 +29,20 @@ interface PossibleGameStore {
 }
 
 // 用来存储网络io时获取结果的仓库
-const usePossibleGameStore = create<PossibleGameStore>()(
+const usePendingGameStore = create<PendingGameStore>()(
   immer((set) => ({
-    possibleGames: [] as PendingGameInfo[],
+    pendingGames: [] as PendingGameInfo[],
     readyGames: [] as GameMetaList,
-    extendPossibleGames(param) {
+    extendPendingGames(param) {
       let isArray = Array.isArray(param)
       if (isArray) {
         set((state) => {
-          state.possibleGames.push(...(param as PendingGameInfo[]))
+          state.pendingGames.push(...(param as PendingGameInfo[]))
         })
       } else {
         set((state) => {
           console.log("添加单个游戏")
-          state.possibleGames.push(param as PendingGameInfo)
+          state.pendingGames.push(param as PendingGameInfo)
         })
       }
     },
@@ -64,7 +64,7 @@ const usePossibleGameStore = create<PossibleGameStore>()(
     },
     reset() {
       set((state) => {
-        state.possibleGames = []
+        state.pendingGames = []
       })
     },
     resetReadyGames() {
@@ -75,4 +75,4 @@ const usePossibleGameStore = create<PossibleGameStore>()(
   }))
 )
 
-export default usePossibleGameStore
+export default usePendingGameStore
