@@ -1,4 +1,4 @@
-import { YmgalReq } from "@/types/game";
+import { YmgalReq, YmgalResponse } from "@/types/game";
 import { fetch } from "@tauri-apps/plugin-http";
 
 /**
@@ -6,7 +6,7 @@ import { fetch } from "@tauri-apps/plugin-http";
  * @param param 用于发送bangumi资源请求的请求体
  * @returns 模糊匹配,返回查找到的游戏数据(数组)
  */
-export const requestYml = async (params: YmgalReq) => {
+export const requestYml = async (params: YmgalReq): Promise<YmgalResponse | null> => {
   const url = new URL(import.meta.env.VITE_API_YMGAL_VN_URL)
   url.searchParams.set("mode", params.mode)
   url.searchParams.set("keyword", params.keyword)

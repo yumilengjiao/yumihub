@@ -63,11 +63,10 @@ export const GameList = () => {
               }}
             >
               <Card className={cn(
-                "object-cover border-none cursor-pointer relative",
+                "object-cover border-none",
                 "aspect-165/225  min-w-41.25 min-h-56.25 origin-bottom transition-all duration-300",
                 currentIndex != index && "scale-80"
               )}>
-                {currentIndex != index && <div className="absolute bg-foreground opacity-45 w-full h-full" />}
                 <div className=" w-full">
                   <img
                     src={convertFileSrc(g.cover)}

@@ -1,4 +1,4 @@
-import { VNDBReq } from "@/types/game";
+import { VNDBReq, VNDBResponse } from "@/types/game";
 import { fetch } from "@tauri-apps/plugin-http";
 
 /**
@@ -6,7 +6,7 @@ import { fetch } from "@tauri-apps/plugin-http";
  * @param param 用于发送VNDB资源请求的请求体
  * @returns 模糊匹配,返回查找到的游戏数据(数组)
  */
-export const requestVNDB = async (param: VNDBReq) => {
+export const requestVNDB = async (param: VNDBReq): Promise<VNDBResponse | null> => {
   try {
     const response = await fetch(import.meta.env.VITE_API_VNDB_VN_URL, {
       method: "POST",
