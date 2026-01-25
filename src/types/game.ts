@@ -1,3 +1,5 @@
+import { n } from "node_modules/react-router/dist/development/router-5iOvts3c.d.mts"
+
 // 用于加载本地游戏配置的接口
 export interface GameMeta {
   id: string
