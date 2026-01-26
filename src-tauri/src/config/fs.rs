@@ -1,7 +1,7 @@
 use std::fs;
 
 use crate::{
-    config::{entity::Config, synchronize::update_data, CONFIG_PATH_BUF, GLOBAL_CONFIG},
+    config::{entity::Config, CONFIG_PATH_BUF, GLOBAL_CONFIG},
     error::{AppError, FileAction},
 };
 
@@ -35,7 +35,6 @@ pub fn load_config() -> Result<(), AppError> {
         Ok(config) => {
             println!("解析json文件成功");
             println!("解析的config.json文件:{:?}", config);
-            update_data(config, false);
         }
         Err(e) => {
             eprintln!("解析JSON 失败: {}", e);

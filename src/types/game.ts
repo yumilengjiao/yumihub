@@ -8,8 +8,8 @@ export interface GameMeta {
   local_cover?: string
   local_background?: string
   playTime: number
-  size?: number
   length: number
+  size?: number
   lastPlayedAt?: Date
 }
 

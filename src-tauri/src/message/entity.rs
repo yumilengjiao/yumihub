@@ -7,11 +7,7 @@ use crate::config::entity::GameMeta;
 #[derive(Clone, Debug)]
 pub enum SystemEvent {
     // 资源任务消息
-    ResourceTaskCreated {
-        meta: GameMeta,
-        // 只有在为真的时候资源模块才会下载资源
-        needs_resource_sync: bool,
-    },
+    ResourceTaskCreated { meta: GameMeta },
     // 系统状态消息
     BackendReady,
 }
