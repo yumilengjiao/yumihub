@@ -2,11 +2,11 @@ use tauri::RunEvent;
 
 mod cmd;
 mod config;
+mod db;
 mod error;
 mod life_cycle;
 mod message;
 mod resource;
-mod state;
 mod user;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -24,9 +24,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             cmd::get_user_info,
             cmd::update_user_info,
-            cmd::get_game_meta,
+            cmd::get_game_meta_by_id,
             cmd::get_game_meta_list,
-            cmd::update_game_meta,
             cmd::update_game_meta_list,
             cmd::add_new_game,
             cmd::add_new_game_list

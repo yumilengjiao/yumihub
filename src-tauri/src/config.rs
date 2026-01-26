@@ -11,7 +11,6 @@ use crate::config::{entity::Config, fs::load_config};
 
 pub mod entity;
 pub mod fs;
-pub mod synchronize;
 mod util;
 
 /// config包下的全局变量: 配置文件路径

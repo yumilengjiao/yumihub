@@ -1,7 +1,7 @@
 //! #该模块用于控制整个程序的生命周期
 use crate::{
     config::{self, fs},
-    resource, state,
+    db, resource,
     user::{self},
 };
 use std::error::Error;
@@ -9,10 +9,10 @@ use tauri::App;
 
 /// 初始化函数
 pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
-    state::init();
+    db::init(app.handle());
     config::init(app)?;
     user::init(app)?;
-    resource::init(&app.handle());
+    resource::init(app.handle());
     Ok(())
 }
 

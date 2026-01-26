@@ -30,4 +30,7 @@ pub enum AppError {
 
     #[error("从状态管理系统获取值失败: {0}")]
     Fetch(String),
+
+    #[error("数据库错误: {0}")]
+    DB(String),
 }

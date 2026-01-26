@@ -11,10 +11,8 @@ use tauri::Manager;
 use crate::error::AppError;
 use crate::error::FileAction;
 use crate::user::entity::User;
-use crate::user::synchronize::update_data;
 
 pub mod entity;
-pub mod synchronize;
 
 lazy_static! {
     pub static ref USER_PROFILE: RwLock<User> = RwLock::new(User::default());
@@ -59,7 +57,6 @@ pub fn load_user_config() -> Result<(), Box<dyn Error>> {
     match serde_json::from_str::<User>(&file_text) {
         Ok(user) => {
             println!("解析json文件成功");
-            update_data(user);
         }
         Err(e) => {
             eprintln!("解析 JSON 失败: {}", e);

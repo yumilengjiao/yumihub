@@ -91,7 +91,8 @@ export default function AddGameDialog() {
       case 1:
         onOpenChangeFirst(false)
         await invoke(Cmds.ADD_NEW_GAME, {
-          game: readyGames[0]
+          game: readyGames[0],
+          model: true
         })
         resetReadyGames()
         break
