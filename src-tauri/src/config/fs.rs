@@ -35,7 +35,7 @@ pub fn load_config() -> Result<(), AppError> {
         Ok(config) => {
             println!("解析json文件成功");
             println!("解析的config.json文件:{:?}", config);
-            update_data(config);
+            update_data(config, false);
         }
         Err(e) => {
             eprintln!("解析JSON 失败: {}", e);

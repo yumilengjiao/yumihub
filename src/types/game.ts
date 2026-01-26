@@ -5,20 +5,15 @@ export interface GameMeta {
   absPath: string
   cover: string
   background: string
+  local_cover?: string
+  local_background?: string
   playTime: number
-  size: number | undefined
+  size?: number
   length: number
-  lastPlayedAt: Date | null
+  lastPlayedAt?: Date
 }
 
 export type GameMetaList = GameMeta[]
-
-// 用于远程获取游戏元数据的接口
-export interface GameInfo {
-  name: string
-  bootPath: string | null
-  parentPath: String
-}
 
 //vndb查询的格式
 export interface VNDBReq {

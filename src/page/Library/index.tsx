@@ -19,7 +19,7 @@ export default function Library() {
           {gameMetaList.map((g) => (
             <Card key={g.id} className="overflow-hidden cursor-pointer border-3 ring-1 ring-black/5 shadow-xl shadow-blue-500/10">
               <img
-                src={convertFileSrc(g.cover)}
+                src={g.local_cover ? convertFileSrc(g.local_cover) : g.cover}
                 className="w-full h-full object-cover"
               />
             </Card>

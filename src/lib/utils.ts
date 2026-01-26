@@ -28,10 +28,11 @@ export async function recognizeGame(absPath: string, mode: number): Promise<Poss
   let name: string | undefined = "";
 
   if (mode) {
-    arr.filter(Boolean).pop()
-    name = arr.pop()!
+    name = arr.filter(Boolean).pop()
   } else {
-    name = arr.filter(Boolean).pop()!
+    const cleanArr = arr.filter(Boolean)
+    name = cleanArr[cleanArr.length - 2]; // 倒数第二个
+    console.log("单个文件的名字是:{}", name)
   }
 
   if (!name) {

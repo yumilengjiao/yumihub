@@ -28,7 +28,7 @@ export default function AddGameDialog() {
       directory: false,     // 是选择文件还是文件夹
       title: '请选择对应目录',
     });
-
+    console.log("选择的路径是:{}", selected)
     if (selected) {
       const res = await recognizeGame(selected, 0)
       extendPendingGames(res)
@@ -84,20 +84,24 @@ export default function AddGameDialog() {
     setReadyToAddGameSecond(open)
   }
 
-  // mode用于告知是哪个Dialog需要关闭
+  // mode用于告知是哪个Dialog需要关闭,以及报错单个数据还是多个
   const saveData = async (mode: number) => {
-    await invoke(Cmds.UPDATE_GAME_META_LIST, {
-      games: readyGames
-    })
-    resetReadyGames()
     switch (mode) {
       // 1代表关闭第一个Dialog
       case 1:
         onOpenChangeFirst(false)
+        await invoke(Cmds.ADD_NEW_GAME, {
+          game: readyGames[0]
+        })
+        resetReadyGames()
         break
       // 2代表关闭第二个Dialog
       case 2:
         onOpenChangeSecond(false)
+        await invoke(Cmds.ADD_NEW_GAME_LIST, {
+          games: readyGames
+        })
+        resetReadyGames()
         break
     }
   }

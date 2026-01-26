@@ -10,7 +10,10 @@ pub trait UpdateConfig<T: Entity> {
 }
 /// 实现特征的实体需要实现sync_data方法来让自己的数据同步到STATE_SYSTEM
 pub trait SyncData {
+    // 同步数据到STATE_SYSTEM
     fn sync_data(&self);
+    // 数据需要第二次处理
+    fn publish_sync_event(&self);
 }
 
 /// 实现此特征的元素可以被添加到自己模块中的全局变量中

@@ -4,6 +4,8 @@ mod cmd;
 mod config;
 mod error;
 mod life_cycle;
+mod message;
+mod resource;
 mod state;
 mod user;
 

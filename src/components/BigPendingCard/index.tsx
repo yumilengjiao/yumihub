@@ -2,21 +2,18 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import usePendingGameStore from '@/store/pendingGamesStore';
+import usePendingGameStore, { PendingGameInfo } from '@/store/pendingGamesStore';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { nanoid } from 'nanoid'
 import { GameMeta } from '@/types/game';
 
-interface Props {
-  data: any; // 搜索结果原始数据
-}
 
-const BigPendingCard: React.FC<Props> = ({ data }) => {
+const BigPendingCard: React.FC<{ data: PendingGameInfo }> = ({ data }) => {
   const { updateReadyGame } = usePendingGameStore();
   const [activeSource, setActiveSource] = useState<'vndb' | 'bangumi' | 'ymgal'>('vndb');
 
-  // 1. 提取不同源的数据快照
+  // 提取不同源的数据快照
   const metaDisplay = useMemo(() => {
     const sources = {
       vndb: () => {
@@ -26,7 +23,6 @@ const BigPendingCard: React.FC<Props> = ({ data }) => {
           cover: res.image?.url,
           bg: res.screenshots?.[0]?.url || res.image?.url,
           desc: res.description,
-          tags: res.tags?.slice(0, 8).map((t: any) => t.name) || []
         } : null;
       },
       bangumi: () => {
@@ -36,7 +32,6 @@ const BigPendingCard: React.FC<Props> = ({ data }) => {
           cover: res.image,
           bg: res.images?.large || res.image,
           desc: res.summary,
-          tags: []
         } : null;
       },
       ymgal: () => {
@@ -46,7 +41,6 @@ const BigPendingCard: React.FC<Props> = ({ data }) => {
           cover: res.mainImg,
           bg: res.mainImg,
           desc: "暂无简介",
-          tags: []
         } : null;
       }
     };
@@ -65,7 +59,6 @@ const BigPendingCard: React.FC<Props> = ({ data }) => {
         background: data.vndb.results[0].screenshots[0].url,
         playTime: 0,
         size: undefined,
-        lastPlayedAt: null
       }
       updateReadyGame(gameMeta)
     }
@@ -79,7 +72,6 @@ const BigPendingCard: React.FC<Props> = ({ data }) => {
         background: data.bangumi.data[0].images.large,
         playTime: 0,
         size: undefined,
-        lastPlayedAt: null
       }
       updateReadyGame(gameMeta)
     }
@@ -93,7 +85,6 @@ const BigPendingCard: React.FC<Props> = ({ data }) => {
         background: data.ymgal.data.result[0].mainImg,
         playTime: 0,
         size: undefined,
-        lastPlayedAt: null
       }
       updateReadyGame(gameMeta)
     }
@@ -130,17 +121,6 @@ const BigPendingCard: React.FC<Props> = ({ data }) => {
 
             <CardContent className="flex-1 space-y-4">
               <Separator />
-
-              {/* 标签展示 (如果有) */}
-              {metaDisplay?.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {metaDisplay?.tags.map((tag: string) => (
-                    <Badge key={tag} variant="secondary" className="text-[10px] px-1.5 py-0">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              )}
 
               {/* 简介滚动区域 */}
               <div className="space-y-2">

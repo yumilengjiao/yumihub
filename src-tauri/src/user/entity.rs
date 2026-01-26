@@ -27,4 +27,7 @@ impl SyncData for User {
     fn sync_data(&self) {
         synchronize::synchronize_user_to_state_system(self);
     }
+    fn publish_sync_event(&self) {
+        // TODO:这里目前什么都不做
+    }
 }

@@ -55,7 +55,7 @@ pub fn add_new_game_list(games: GameMetaList) {
 /// * `game`: 要更新的游戏数据
 #[tauri::command]
 pub fn update_game_meta(game: GameMeta) {
-    config::synchronize::update_data(game);
+    config::synchronize::update_data(game, true);
 }
 
 /// 异步覆盖更新所有游戏数据
@@ -64,5 +64,5 @@ pub fn update_game_meta(game: GameMeta) {
 #[tauri::command]
 pub fn update_game_meta_list(games: GameMetaList) {
     println!("开始更新游戏数据");
-    config::synchronize::update_data(games);
+    config::synchronize::update_data(games, true);
 }

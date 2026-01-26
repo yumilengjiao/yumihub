@@ -20,7 +20,6 @@ export const GameList = () => {
     try {
       info("程序启动,开始向后端获取游戏数据列表")
       const gameList = await invoke<GameMetaList>(Cmds.GET_GAME_META_LIST)
-      console.log(gameList)
       setGameMetaList(gameList)
 
       if (gameList && gameList.length > 0) {
@@ -37,7 +36,7 @@ export const GameList = () => {
   return (
     <div className="overflow-hidden">
       {/* 总宽大小 */}
-      <div className="pl-8 pb-2 text-6xl text-background">
+      <div className="pl-8 pb-2 text-6xl text-white font-bold" style={{ WebkitTextStroke: '2px black' }}>
         {selectedGame?.name}
       </div>
       <Carousel
@@ -72,7 +71,7 @@ export const GameList = () => {
               )}>
                 <div className=" w-full">
                   <img
-                    src={convertFileSrc(g.cover)}
+                    src={g.local_cover ? convertFileSrc(g.local_cover) : g.cover}
                     className="h-full w-full object-cover"
                   />
                 </div>

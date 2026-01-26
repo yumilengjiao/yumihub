@@ -23,7 +23,6 @@ const useGameStore = create<GameStore>()(
     },
     setGameMetaList(gameMetaList) {
       set((state) => {
-        gameMetaList.forEach((g) => g.background = convertFileSrc(g.background))
         state.gameMetaList = gameMetaList
       })
     },

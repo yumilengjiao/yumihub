@@ -22,7 +22,6 @@ const PendingCard: React.FC<{ data: PendingGameInfo }> = ({ data }) => {
         background: data.vndb.results[0].screenshots[0].url,
         playTime: 0,
         size: undefined,
-        lastPlayedAt: null
       }
       updateReadyGame(gameMeta)
     }
@@ -36,7 +35,6 @@ const PendingCard: React.FC<{ data: PendingGameInfo }> = ({ data }) => {
         background: data.bangumi.data[0].images.large,
         playTime: 0,
         size: undefined,
-        lastPlayedAt: null
       }
       updateReadyGame(gameMeta)
     }
@@ -50,7 +48,6 @@ const PendingCard: React.FC<{ data: PendingGameInfo }> = ({ data }) => {
         background: data.ymgal.data.result[0].mainImg,
         playTime: 0,
         size: undefined,
-        lastPlayedAt: null
       }
       updateReadyGame(gameMeta)
     }
@@ -108,7 +105,7 @@ const PendingCard: React.FC<{ data: PendingGameInfo }> = ({ data }) => {
 
         {/* 左侧：封面/头像 (宽度固定，高度自适应) */}
         <div className={`
-          flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden rounded-lg bg-zinc-800
+          shrink-0 transition-all duration-300 ease-in-out overflow-hidden rounded-lg bg-zinc-800
           ${isExpanded ? 'w-44 h-full shadow-2xl' : 'w-12 h-12'}
         `}>
           <img
@@ -134,7 +131,7 @@ const PendingCard: React.FC<{ data: PendingGameInfo }> = ({ data }) => {
 
           {/* 只有展开时显示的简介和换源栏 */}
           {isExpanded && (
-            <div className="flex flex-col flex-grow min-h-0 animate-in fade-in duration-500">
+            <div className="flex flex-col grow min-h-0 animate-in fade-in duration-500">
               {/* 简介文字：占据剩余空间 */}
               <p className="text-zinc-400 text-sm leading-relaxed line-clamp-5 overflow-y-auto pr-2 mt-2">
                 {displayData.description || "暂无简介内容。"}
