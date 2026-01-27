@@ -7,6 +7,7 @@ pub struct User {
     pub id: String,
     pub user_name: String,
     pub avatar: String,
+    pub local_avatar: String,
     pub games_count: i64,
     pub favorite_vn_id: String,
     pub total_play_time: i64,

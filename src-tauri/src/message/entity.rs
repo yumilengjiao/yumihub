@@ -2,12 +2,14 @@
 
 use tokio::sync::broadcast;
 
-use crate::config::entity::GameMeta;
+use crate::{config::entity::GameMeta, user::entity::User};
 
 #[derive(Clone, Debug)]
 pub enum SystemEvent {
-    // 资源任务消息
-    ResourceTaskCreated { meta: GameMeta },
+    // 用户资源任务
+    UserResourceTask { meta: User },
+    // 游戏资源任务消息
+    GameResourceTask { meta: GameMeta },
     // 系统状态消息
     BackendReady,
 }
