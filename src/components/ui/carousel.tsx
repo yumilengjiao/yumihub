@@ -228,6 +228,47 @@ function CarouselNext({
   )
 }
 
+const CarouselDots = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+  const { api } = useCarousel()
+  const [selectedIndex, setSelectedIndex] = React.useState(0)
+  const [scrollSnaps, setScrollSnaps] = React.useState<number[]>([])
+
+  const onSelect = React.useCallback(() => {
+    if (!api) return
+    setSelectedIndex(api.selectedScrollSnap())
+  }, [api])
+
+  React.useEffect(() => {
+    if (!api) return
+    setScrollSnaps(api.scrollSnapList())
+    api.on("select", onSelect)
+    api.on("reInit", onSelect)
+  }, [api, onSelect])
+
+  return (
+    <div
+      ref={ref}
+      className={cn("flex justify-center gap-1.5", className)}
+      {...props}
+    >
+      {scrollSnaps.map((_, index) => (
+        <button
+          key={index}
+          className={cn(
+            "h-1.5 w-1.5 rounded-full transition-all",
+            index === selectedIndex ? "bg-zinc-200 w-3" : "bg-zinc-600"
+          )}
+          onClick={() => api?.scrollTo(index)}
+        />
+      ))}
+    </div>
+  )
+})
+CarouselDots.displayName = "CarouselDots"
+
 export {
   type CarouselApi,
   Carousel,
@@ -235,4 +276,5 @@ export {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
+  CarouselDots
 }

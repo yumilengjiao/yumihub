@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { Card } from "../ui/card"
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "../ui/carousel"
+import { Card } from "@/components/ui/card"
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
 import { convertFileSrc, invoke } from '@tauri-apps/api/core';
 import useGameStore from "@/store/gameStore";
@@ -67,14 +67,13 @@ export const GameList = () => {
               <Card className={cn(
                 "object-cover border-none",
                 "aspect-165/225  min-w-41.25 min-h-56.25 origin-bottom transition-all duration-300",
-                currentIndex != index && "scale-80"
+                currentIndex != index && "scale-80",
               )}>
-                <div className=" w-full">
-                  <img
-                    src={g.local_cover ? convertFileSrc(g.local_cover) : g.cover}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
+                {currentIndex != index && <div className="absolute bg-foreground opacity-45 w-full h-full" />}
+                <img
+                  src={g.local_cover ? convertFileSrc(g.local_cover) : g.cover}
+                  className="h-full w-full object-cover"
+                />
               </Card>
             </CarouselItem>
           ))}

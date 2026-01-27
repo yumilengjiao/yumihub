@@ -1,4 +1,4 @@
-import { GameList } from "@/components/GameList";
+import { GameList } from "@/page/Home/GameList";
 import './index.css'
 import useGameStore from "@/store/gameStore";
 import { cn } from "@/lib/utils";

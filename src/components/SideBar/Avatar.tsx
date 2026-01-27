@@ -8,12 +8,9 @@ interface AvatarProps {
 
 export const Avatar = ({ src, className }: AvatarProps) => {
   return (
-    /* 1. h-fit w-fit 确保容器不撑开空间
-      2. rounded-full 是实现圆形的唯一核心类
-    */
     <div className={cn(
-      "relative shrink-0 rounded-full overflow-hidden border-2 border-border/50 bg-muted shadow-inner",
-      "w-16 h-16", // 默认大小
+      "relative shrink-0 rounded-full overflow-hidden border-border/50 bg-muted shadow-inner",
+      "w-16 h-16 aspect-square", // 默认大小
       className
     )}>
       {src ? (

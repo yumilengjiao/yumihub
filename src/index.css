@@ -123,11 +123,24 @@
   }
 }
 
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* 禁止图片、链接、元素拖拽 */
+* {
+  -webkit-user-drag: none;
+}
+
 :root,
 body,
 #root,
 .layout,
-.home {
+.home,
+.user {
   height: 100%;
   overflow: hidden;
 }
