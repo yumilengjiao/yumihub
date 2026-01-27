@@ -19,8 +19,6 @@ use crate::{
 ///
 /// * `pool`: 连接池,tauri自动注入
 pub async fn get_user_info(pool: State<'_, Pool<Sqlite>>) -> Result<User, AppError> {
-    // 假设你目前只有一个用户，我们可以直接取第一条
-    // 如果没有用户，这里会返回错误，你可以根据需要返回一个默认 User
     let user = sqlx::query_as::<_, User>("SELECT * FROM user LIMIT 1")
         .fetch_optional(&*pool) // 使用 fetch_optional 防止表为空时直接崩溃
         .await
@@ -35,7 +33,18 @@ pub async fn get_user_info(pool: State<'_, Pool<Sqlite>>) -> Result<User, AppErr
 ///
 /// * `pool`: 连接池,tauri自动注入
 /// * `user`: 用户信息
-pub async fn update_user_info(pool: State<'_, Pool<Sqlite>>, user: User) -> Result<(), String> {
+pub async fn update_user_info(pool: State<'_, Pool<Sqlite>>, user: User) -> Result<(), AppError> {
+    // 先查询旧头像,若不相同就下载网络资源到本地
+    let old_avatar: Option<String> = sqlx::query_scalar("SELECT avatar FROM user WHERE id = ?")
+        .bind(&user.id)
+        .fetch_optional(&*pool)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    if old_avatar.unwrap() != user.avatar {
+        MESSAGE_HUB.publish(SystemEvent::UserResourceTask { meta: user.clone() });
+    }
+
     sqlx::query(
         r#"
         INSERT OR REPLACE INTO user 
@@ -46,6 +55,7 @@ pub async fn update_user_info(pool: State<'_, Pool<Sqlite>>, user: User) -> Resu
     .bind(&user.id)
     .bind(&user.user_name)
     .bind(&user.avatar)
+    .bind(&user.local_avatar)
     .bind(user.games_count)
     .bind(&user.favorite_vn_id)
     .bind(user.total_play_time)
@@ -54,7 +64,7 @@ pub async fn update_user_info(pool: State<'_, Pool<Sqlite>>, user: User) -> Resu
     .bind(user.created_at)
     .execute(&*pool)
     .await
-    .map_err(|e| e.to_string())?;
+    .map_err(|e| AppError::DB(e.to_string()))?;
 
     info!("用户信息修改成功");
     Ok(())
@@ -133,7 +143,7 @@ pub async fn add_new_game(
 
     // 向消息模块发布信息说明有资源需要下载
     if model {
-        MESSAGE_HUB.publish(SystemEvent::ResourceTaskCreated { meta: game })
+        MESSAGE_HUB.publish(SystemEvent::GameResourceTask { meta: game })
     }
     Ok(())
 }
@@ -168,7 +178,7 @@ pub async fn add_new_game_list(
         .execute(&mut *tx) // 注意这里是在事务中执行
         .await
         .map_err(|e|AppError::DB(e.to_string()))?;
-        MESSAGE_HUB.publish(SystemEvent::ResourceTaskCreated { meta: game });
+        MESSAGE_HUB.publish(SystemEvent::GameResourceTask { meta: game });
     }
 
     // 提交事务
