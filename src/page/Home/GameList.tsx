@@ -8,7 +8,7 @@ import { GameMetaList } from "@/types/game";
 import { Cmds } from "@/lib/enum";
 import { info } from '@tauri-apps/plugin-log';
 
-export const GameList = () => {
+const GameList = () => {
   // ... 在你的组件内部
   const [api, setApi] = useState<CarouselApi>()
   const [currentIndex, setCurrentIndex] = useState<number>(0)
@@ -82,3 +82,5 @@ export const GameList = () => {
     </div >
   )
 }
+
+export default GameList

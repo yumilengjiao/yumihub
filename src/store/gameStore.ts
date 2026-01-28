@@ -8,11 +8,12 @@ type GameStore = {
   updateSelectedGame: (game: GameMeta) => void,
   setGameMetaList: (gameMetaList: GameMetaList) => void,
   setGameMeta: (game: GameMeta) => void,
+  filterGameMetaListByName: (name: string) => GameMetaList
 }
 
 // 存储当前存在的所有的游戏元信息
 const useGameStore = create<GameStore>()(
-  immer((set) => ({
+  immer((set, get) => ({
     selectedGame: null,
     gameMetaList: [],
 
@@ -49,6 +50,24 @@ const useGameStore = create<GameStore>()(
           state.gameMetaList.push(game)
         }
       })
+    },
+
+    /**
+     * 根据名称过滤游戏列表
+     * @param name - 搜索关键词
+     * @returns 过滤后的新数组，如果关键词为空则返回原数组
+    */
+    filterGameMetaListByName(name: string): GameMeta[] {
+      // 处理空字符串逻辑：如果是空串、空格或 null/undefined，直接返回原始集合
+      if (!name || name.trim() === "") {
+        // 这里假设你的 state 里存原始数据的是 state.gameMetaList
+        return get().gameMetaList;
+      }
+      const searchKeyword = name.trim().toLowerCase();
+
+      return get().gameMetaList.filter((game) => {
+        return game.name.trim().toLowerCase().includes(searchKeyword);
+      });
     }
   }))
 )

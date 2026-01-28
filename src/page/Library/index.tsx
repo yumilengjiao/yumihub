@@ -3,11 +3,16 @@ import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { convertFileSrc } from "@tauri-apps/api/core"
 import TopBar from "./TopBar"
+import AddGameButton from "./AddGameButton"
+import { open } from "@tauri-apps/plugin-dialog"
 
 export default function Library() {
   const { gameMetaList } = useGameStore()
+
+
   return (
     <div className="w-full h-full flex flex-col pt-[5vh] bg-primary-foreground">
+      <AddGameButton />
       <div className="w-full flex-1/8 p-2">
         <TopBar />
       </div>
