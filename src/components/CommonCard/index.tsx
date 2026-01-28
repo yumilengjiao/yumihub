@@ -5,7 +5,7 @@ interface GameCardProps extends React.HTMLAttributes<HTMLDivElement> {
   headerAction?: React.ReactNode;
 }
 
-const UserCard = React.forwardRef<HTMLDivElement, GameCardProps>(
+const CommonCard = React.forwardRef<HTMLDivElement, GameCardProps>(
   ({ className, title, children, headerAction, ...props }, ref) => {
     return (
       <div
@@ -34,6 +34,6 @@ const UserCard = React.forwardRef<HTMLDivElement, GameCardProps>(
     )
   }
 )
-UserCard.displayName = "GameCard"
+CommonCard.displayName = "CommonCard"
 
-export default UserCard 
+export default CommonCard 

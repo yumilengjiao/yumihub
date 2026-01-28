@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const MoreOptions: React.FC<{ entries?: string[] }> = ({ entries }) => {
+interface Entry {
+  entryName: string
+  entryFunc: () => void
+}
+
+const MoreOptions: React.FC<{ entries?: Entry[] }> = ({ entries }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   // 1. 修复点：添加 <HTMLDivElement> 类型定义
@@ -45,8 +50,11 @@ const MoreOptions: React.FC<{ entries?: string[] }> = ({ entries }) => {
             {entries?.map((entry) => {
               return (
                 <>
-                  <button className="flex w-full items-center px-4 py-2 text-xs text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
-                    {entry}
+                  <button
+                    onClick={entry.entryFunc}
+                    className="flex w-full items-center px-4 py-2 text-xs
+                    text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                    {entry.entryName}
                   </button>
                   <div className="h-px bg-gray-100 my-1" />
                 </>

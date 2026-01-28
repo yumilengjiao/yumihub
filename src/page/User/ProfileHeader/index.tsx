@@ -24,7 +24,7 @@ const ProfileHeader = ({ username }: { username: string }) => {
   const randomTip = tips[Math.floor(Math.random() * tips.length)];
 
   return (
-    <div className="w-full h-full flex flex-col justify-center px-10 py-6 pt-2 relative overflow-hidden rounded-2xl">
+    <div className="w-full h-full flex flex-col justify-center px-10 py-6 pt-0 relative overflow-hidden rounded-2xl">
 
       <div className="flex items-center gap-6">
         {/* 左侧：动态图标 */}

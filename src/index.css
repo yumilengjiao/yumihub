@@ -140,7 +140,8 @@ body,
 #root,
 .layout,
 .home,
-.user {
+.user,
+.setting {
   height: 100%;
   overflow: hidden;
 }

@@ -4,8 +4,8 @@ import {
   CarouselItem,
   CarouselDots, // 确保你的 shadcn carousel 包含 dots 扩展
 } from "@/components/ui/carousel"
-import { Switch } from "@/components/ui/switch"
-import { Settings2, Quote, Link2, Rocket } from "lucide-react"
+import { Link2, Rocket } from "lucide-react"
+import SuperSwitch from "@/components/SuperSwitch";
 
 // 定义组件接收的 Props，直接使用你的 GameMeta 类型逻辑
 interface DashboardToolsProps {
@@ -35,10 +35,9 @@ export function ToolBox({
                 <Rocket className="w-15 h-15 text-blue-400" />
                 <span className="font-bold text-zinc-300 uppercase tracking-wider text-[35px]">流畅模式</span>
               </div>
-              <Switch
+              <SuperSwitch
                 checked={isCompanionEnabled}
-                onCheckedChange={onCompanionToggle}
-                className="scale-175"
+                onChange={onCompanionToggle}
               />
             </div>
           </CarouselItem>
@@ -50,10 +49,9 @@ export function ToolBox({
                 <Link2 className="w-18 h-18 text-blue-400" />
                 <span className="font-bold text-zinc-300 uppercase tracking-wider text-[35px]">伴随模式</span>
               </div>
-              <Switch
+              <SuperSwitch
                 checked={isCompanionEnabled}
-                onCheckedChange={onCompanionToggle}
-                className="scale-175"
+                onChange={onCompanionToggle}
               />
             </div>
           </CarouselItem>
@@ -66,13 +64,13 @@ export function ToolBox({
                 <Link2 className="w-25 h-25 text-blue-400" />
                 <span className="font-bold text-zinc-300 uppercase tracking-wider text-[35px]">伴随模式</span>
               </div>
-              <Switch
+              <SuperSwitch
                 checked={isCompanionEnabled}
-                onCheckedChange={onCompanionToggle}
-                className="scale-175"
+                onChange={onCompanionToggle}
               />
             </div>
-          </CarouselItem>        </CarouselContent>
+          </CarouselItem>
+        </CarouselContent>
       </Carousel>
     </div >
   )
