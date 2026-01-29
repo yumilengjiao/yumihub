@@ -3,7 +3,7 @@ import MainButton from "./MainButton";
 import { getCurrentWindow, Window } from '@tauri-apps/api/window';
 import { cn } from "@/lib/utils";
 import { ButtonGroupSeparator } from "./ButtonGroupSeparator";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const minisizeWindow = (window: Window) => {
   window.minimize()
@@ -18,10 +18,39 @@ const switchTheme = () => {
   const html = document.documentElement
 }
 
+
 export default function index() {
   const [isMax, setIsMax] = useState(false)
 
   const appWindow = getCurrentWindow()
+
+  useEffect(() => {
+    // 定义一个更新状态的函数
+    const updateIsMax = async () => {
+      const maximized = await appWindow.isMaximized();
+      setIsMax(maximized);
+    };
+
+    // 初始化检查一次
+    updateIsMax();
+
+    //  监听窗口大小改变事件
+    // 无论是手动拖拽还是点击按钮，只要窗口大小变了就重新检测
+    const unlisten = appWindow.onResized(() => {
+      updateIsMax();
+    });
+
+    // 监听最大化事件
+    const unlistenMax = appWindow.onResized(() => {
+      updateIsMax();
+    });
+
+    return () => {
+      // 组件卸载时取消监听
+      unlisten.then(f => f());
+    };
+  }, []);
+
   return (
     <div className="fixed w-full h-[5vh] z-10 flex justify-end cursor-pointer" data-tauri-drag-region >
       <div className={cn(
@@ -42,14 +71,12 @@ export default function index() {
           ?
           <MainButton onClick={() => {
             toogleMaximizeWindow(appWindow)
-            setIsMax(true)
           }} >
             <Expand className="h-full w-auto block" />
           </MainButton>
           :
           <MainButton onClick={() => {
             toogleMaximizeWindow(appWindow)
-            setIsMax(false)
           }} >
             <Minimize2 className="h-full w-auto block" />
           </MainButton>

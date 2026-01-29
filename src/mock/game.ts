@@ -1,4 +1,5 @@
-export const data = {
+const gameData = {
+  absPath: "/home/yumi/gals/Air/Air.exe",
   // 模拟来自 Bangumi 的数据 (通常信息最全)
   bangumi: {
     total: 1,
@@ -72,5 +73,8 @@ export const data = {
   },
 
   // 月幕数据暂时留空
-  ymlgal: null
+  ymgal: null
 }
+
+
+export default gameData

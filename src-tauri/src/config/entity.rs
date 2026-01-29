@@ -14,7 +14,7 @@ pub struct GameMeta {
     pub local_cover: Option<String>,
     pub local_background: Option<String>,
     pub play_time: i64,
-    pub length: i64,
+    pub length: Option<i64>,
     pub size: Option<i64>,
     pub last_played_at: Option<DateTime<Local>>,
 }

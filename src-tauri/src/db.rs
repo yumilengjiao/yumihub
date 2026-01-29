@@ -1,7 +1,7 @@
 //! db模块用来进行数据库的一些初始化操作
 
 use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
-use std::{fs, time::Duration};
+use std::fs;
 use tauri::{AppHandle, Manager};
 
 /// db模块初始化函数
