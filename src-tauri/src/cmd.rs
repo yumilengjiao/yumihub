@@ -1,6 +1,6 @@
 //! 前端发送的所有调用请求命令在此定义，get方法只会调用state_system,
 use sqlx::{Pool, Sqlite};
-use tauri::State;
+use tauri::{App, State};
 use tauri_plugin_log::log::{error, info};
 
 use crate::{
@@ -8,6 +8,7 @@ use crate::{
     error::AppError,
     message::{entity::SystemEvent, MESSAGE_HUB},
     user::entity::User,
+    util,
 };
 
 // --------------------------------------------------------
@@ -183,6 +184,33 @@ pub async fn add_new_game_list(
     Ok(())
 }
 
+/// 用于删除单个游戏信息
+///
+/// * `pool`: 连接池,tauri自动注入
+/// * `id`: 游戏信息id
+pub async fn delete_game(pool: State<'_, Pool<Sqlite>>, id: String) -> Result<(), AppError> {
+    // 开启事务
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    sqlx::query(
+        r#"
+        delete from games where id = {?}
+    "#,
+    )
+    .bind(id)
+    .execute(&mut *tx)
+    .await
+    .map_err(|e| {
+        error!("删除游戏信息出错: {}", e);
+        AppError::DB(e.to_string())
+    })?;
+    tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
+    Ok(())
+}
+
 /// 异步删除所有游戏数据
 ///
 /// * `pool`: 连接池,tauri自动注入
@@ -190,4 +218,16 @@ pub async fn add_new_game_list(
 pub async fn delete_game_list(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppError> {
     sqlx::query("DELETE FROM games").execute(&*pool).await.ok();
     Ok(())
+}
+
+// --------------------------------------------------------
+// ------------------------工具类--------------------------
+// --------------------------------------------------------
+
+/// 从父目录获取游戏的启动文件的文件名字
+///
+/// * `parent_path`: 游戏父目录
+#[tauri::command]
+pub fn get_start_up_path(parent_path: String) -> Result<String, AppError> {
+    util::get_start_up_program(parent_path)
 }

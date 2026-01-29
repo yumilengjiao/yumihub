@@ -8,6 +8,7 @@ mod life_cycle;
 mod message;
 mod resource;
 mod user;
+mod util;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -28,7 +29,8 @@ pub fn run() {
             cmd::get_game_meta_by_id,
             cmd::get_game_meta_list,
             cmd::add_new_game,
-            cmd::add_new_game_list
+            cmd::add_new_game_list,
+            cmd::get_start_up_path
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
