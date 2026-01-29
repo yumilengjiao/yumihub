@@ -123,35 +123,34 @@ fn start_resource_manager(app_handle: &AppHandle) {
                     }
                 }
                 SystemEvent::UserResourceTask { meta } => {
-                    let asset_path = ASSETS_DIR.get();
-                    if let Some(path) = asset_path {
-                        let file_name = format!("{}-{}.jpg", meta.id, "avatar");
-                        let mut updated_meta = meta.clone();
-                        let res = reqwest::get(meta.avatar).await;
-                        match res {
-                            Ok(response) => {
-                                if response.status().is_success() {
-                                    if let Ok(data) = response.bytes().await {
-                                        if tokio::fs::write(&file_name, data).await.is_ok() {
-                                            let local_avatar =
-                                                path.join(file_name).to_string_lossy().to_string();
-                                            updated_meta.local_avatar = local_avatar;
-                                        }
+                    info!("接受到用户资源下载任务,开始下载任务");
+                    let asset_path = ASSETS_DIR.get().expect("路径未初始化");
+                    let file_name = format!("{}-{}.jpg", meta.id, "avatar");
+                    let local_avatar = asset_path.join(&file_name).to_string_lossy().to_string();
+                    let mut updated_meta = meta.clone();
+                    let res = reqwest::get(meta.avatar).await;
+                    match res {
+                        Ok(response) => {
+                            if response.status().is_success() {
+                                if let Ok(data) = response.bytes().await {
+                                    if tokio::fs::write(&local_avatar, data).await.is_ok() {
+                                        updated_meta.avatar = local_avatar;
+                                        info!("用户头像下载完毕")
                                     }
                                 }
                             }
-                            Err(e) => error!("下载网络资源错误: {}", e),
                         }
-                        // 处理完字段后对user数据进行更新
-                        let pool = handle.state::<Pool<Sqlite>>();
-                        let db_result = update_user_into_db(&pool, &updated_meta).await;
-                        match db_result {
-                            Ok(_) => {
-                                info!("用户数据已成功同步至数据库: {}", updated_meta.id)
-                            }
-                            Err(e) => {
-                                error!("用户数据保存失败: {}, 错误: {}", updated_meta.id, e)
-                            }
+                        Err(e) => error!("下载网络资源错误: {}", e),
+                    }
+                    // 处理完字段后对user数据进行更新
+                    let pool = handle.state::<Pool<Sqlite>>();
+                    let db_result = update_user_into_db(&pool, &updated_meta).await;
+                    match db_result {
+                        Ok(_) => {
+                            info!("用户数据已成功同步至数据库: {}", updated_meta.id)
+                        }
+                        Err(e) => {
+                            error!("用户数据保存失败: {}, 错误: {}", updated_meta.id, e)
                         }
                     }
                 }
@@ -197,18 +196,17 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
 async fn update_user_into_db(pool: &Pool<Sqlite>, updated_meta: &User) -> Result<(), AppError> {
     sqlx::query(
         r#"
-    INSERT OR REPLACE INTO games 
-    (id, user_name, avatar, local_avatar, games_count, favorite_vn_id, total_play_time, games_completed_number, last_play_at, created_at) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
+    INSERT OR REPLACE INTO user 
+    (id, user_name, avatar,  games_count, favorite_game, total_play_time, games_completed_number, last_play_at, created_at) 
+    VALUES (?, ?,  ?, ?, ?, ?, ?, ?, ? )
     "#,
     )
     .bind(&updated_meta.id)
     .bind(&updated_meta.user_name)
     .bind(&updated_meta.avatar)
-    .bind(&updated_meta.local_avatar)
-    .bind(&updated_meta.games_count)
-    .bind(&updated_meta.favorite_vn_id)
-    .bind(&updated_meta.total_play_time)
+    .bind(updated_meta.games_count)
+    .bind(&updated_meta.favorite_game)
+    .bind(updated_meta.total_play_time)
     .bind(updated_meta.games_completed_number)
     .bind(updated_meta.last_play_at)
     .bind(updated_meta.created_at)

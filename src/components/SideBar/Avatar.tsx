@@ -1,5 +1,8 @@
 import { cn } from "@/lib/utils";
 import defaultAvatar from "@/assets/runasama😍😍😍😍.jpg"
+import useUserStore from "@/store/userStore";
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { useEffect, useState } from "react";
 
 interface AvatarProps {
   src?: string;
@@ -7,6 +10,20 @@ interface AvatarProps {
 }
 
 export const Avatar = ({ src, className }: AvatarProps) => {
+  const { user } = useUserStore()
+  const [userAvatar, setUserAvatar] = useState<string>("")
+  useEffect(() => {
+    if (user?.avatar.startsWith("http://") || user?.avatar.startsWith("https://")) {
+      setUserAvatar(user.avatar)
+    } else {
+      if (user?.avatar) {
+        setUserAvatar(convertFileSrc(user.avatar))
+        console.log(user.avatar)
+      } else {
+        setUserAvatar("")
+      }
+    }
+  }, [user])
   return (
     <div className={cn(
       "relative shrink-0 rounded-full overflow-hidden border-border/50 bg-muted shadow-inner",
@@ -24,7 +41,7 @@ export const Avatar = ({ src, className }: AvatarProps) => {
         <div className={cn(
           "h-full w-full bg-cover",
         )}
-          style={{ backgroundImage: `url(${defaultAvatar})` }}
+          style={{ backgroundImage: `url(${userAvatar})` || `url(${defaultAvatar})` }}
         />
       )}
 

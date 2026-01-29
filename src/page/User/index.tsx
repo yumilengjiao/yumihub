@@ -10,7 +10,8 @@ import ToolBox from "./Tool";
 import CommonCard from "@/components/CommonCard"
 import { CircleEllipsis, Clock, Trophy } from "lucide-react"
 import "overlayscrollbars/overlayscrollbars.css";
-import useDialogStore from "@/store/dialogStore";
+import { useState } from "react";
+import EditUserInfoDialog from "./EditUserInfoDialog";
 
 const radarData = [
   {
@@ -36,25 +37,16 @@ const radarData = [
 ]
 
 export default function User() {
-  const { confirm } = useDialogStore()
+  const [isEditingUser, setIsEditingUser] = useState(false)
   const handleUserInfo = () => {
-    confirm({
-      title: "保存更改？",
-      description: "你刚才修改了用户信息，如果不保存，更改将会丢失。",
-      confirmText: "立即保存",
-      cancelText: "我再想想",
-      onConfirm: () => {
-        console.log("用户点击了确定！在这里写你的保存逻辑");
-        // 例如：invoke('update_user_info', { user: ... })
-      },
-      onCancel: () => {
-        console.log("用户点击了取消");
-      }
-    });
+    setIsEditingUser(true)
   }
 
   return (
     <div className="h-full flex justify-center items-center bg-zinc-300">
+      {/* ------------各种对话框组件------------- */}
+      <EditUserInfoDialog isOpen={isEditingUser} onClose={() => setIsEditingUser(false)} />
+
       <div className="flex h-[90vh] w-[93vw] gap-4 mt-3">
         {/* 左侧长条卡片 (头像/成就/时间) */}
         <CommonCard className="w-35 h-full flex flex-col">

@@ -17,6 +17,9 @@
         },
         {
           "url": "https://*.ymgal.games/*"
+        },
+        {
+          "url": "https://**"
         }
       ]
     }

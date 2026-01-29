@@ -1,7 +1,7 @@
 //! 前端发送的所有调用请求命令在此定义，get方法只会调用state_system,
 use sqlx::{Pool, Sqlite};
 use tauri::State;
-use tauri_plugin_log::log::info;
+use tauri_plugin_log::log::{error, info};
 
 use crate::{
     config::entity::{GameMeta, GameMetaList},
@@ -22,7 +22,10 @@ pub async fn get_user_info(pool: State<'_, Pool<Sqlite>>) -> Result<User, AppErr
     let user = sqlx::query_as::<_, User>("SELECT * FROM user LIMIT 1")
         .fetch_optional(&*pool) // 使用 fetch_optional 防止表为空时直接崩溃
         .await
-        .map_err(|e| AppError::DB(e.to_string()))?;
+        .map_err(|e| {
+            error!("获取用户信息失败: {}", e);
+            AppError::DB(e.to_string())
+        })?;
 
     // 如果数据库没数据，返回一个默认值，或者报错
     Ok(user.unwrap_or_default())
@@ -34,30 +37,22 @@ pub async fn get_user_info(pool: State<'_, Pool<Sqlite>>) -> Result<User, AppErr
 /// * `pool`: 连接池,tauri自动注入
 /// * `user`: 用户信息
 pub async fn update_user_info(pool: State<'_, Pool<Sqlite>>, user: User) -> Result<(), AppError> {
-    // 先查询旧头像,若不相同就下载网络资源到本地
-    let old_avatar: Option<String> = sqlx::query_scalar("SELECT avatar FROM user WHERE id = ?")
-        .bind(&user.id)
-        .fetch_optional(&*pool)
-        .await
-        .map_err(|e| AppError::DB(e.to_string()))?;
-
-    if old_avatar.unwrap() != user.avatar {
-        MESSAGE_HUB.publish(SystemEvent::UserResourceTask { meta: user.clone() });
-    }
+    // 先查询头像是否是网络资源是就下载资源
+    let is_network_resource =
+        user.avatar.starts_with("http://") || user.avatar.starts_with("https://");
 
     sqlx::query(
         r#"
         INSERT OR REPLACE INTO user 
-        (id, user_name, avatar, games_count, favorite_vn_id, total_play_time, games_completed_number, last_play_at, created_at) 
+        (id, user_name, avatar, games_count, favorite_game, total_play_time, games_completed_number, last_play_at, created_at) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         "#
     )
     .bind(&user.id)
     .bind(&user.user_name)
     .bind(&user.avatar)
-    .bind(&user.local_avatar)
     .bind(user.games_count)
-    .bind(&user.favorite_vn_id)
+    .bind(&user.favorite_game)
     .bind(user.total_play_time)
     .bind(user.games_completed_number)
     .bind(user.last_play_at)
@@ -65,6 +60,11 @@ pub async fn update_user_info(pool: State<'_, Pool<Sqlite>>, user: User) -> Resu
     .execute(&*pool)
     .await
     .map_err(|e| AppError::DB(e.to_string()))?;
+
+    if is_network_resource {
+        info!("发送消息到消息平台下载用户头像资源");
+        MESSAGE_HUB.publish(SystemEvent::UserResourceTask { meta: user.clone() });
+    }
 
     info!("用户信息修改成功");
     Ok(())
@@ -117,7 +117,6 @@ pub async fn get_game_meta_by_id(
 pub async fn add_new_game(
     pool: State<'_, Pool<Sqlite>>,
     game: GameMeta, // 确保 GameMeta 的字段已经是 i64
-    model: bool,    //说明是否需要再次下载静态资源
 ) -> Result<(), AppError> {
     sqlx::query(
         r#"
@@ -142,9 +141,7 @@ pub async fn add_new_game(
     .map_err(|e| AppError::DB(e.to_string()))?;
 
     // 向消息模块发布信息说明有资源需要下载
-    if model {
-        MESSAGE_HUB.publish(SystemEvent::GameResourceTask { meta: game })
-    }
+    MESSAGE_HUB.publish(SystemEvent::GameResourceTask { meta: game });
     Ok(())
 }
 
@@ -186,15 +183,11 @@ pub async fn add_new_game_list(
     Ok(())
 }
 
-/// 异步覆盖更新所有游戏数据
+/// 异步删除所有游戏数据
 ///
 /// * `pool`: 连接池,tauri自动注入
-/// * `games`: 要覆盖更新的游戏列表数据
 #[tauri::command]
-pub async fn update_game_meta_list(
-    pool: State<'_, Pool<Sqlite>>,
-    games: Vec<GameMeta>,
-) -> Result<(), AppError> {
+pub async fn delete_game_list(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppError> {
     sqlx::query("DELETE FROM games").execute(&*pool).await.ok();
-    add_new_game_list(pool, games).await
+    Ok(())
 }

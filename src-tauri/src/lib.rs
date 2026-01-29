@@ -27,7 +27,6 @@ pub fn run() {
             cmd::update_user_info,
             cmd::get_game_meta_by_id,
             cmd::get_game_meta_list,
-            cmd::update_game_meta_list,
             cmd::add_new_game,
             cmd::add_new_game_list
         ])
