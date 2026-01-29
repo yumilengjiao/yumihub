@@ -1,4 +1,4 @@
-import { BangumiReq, BangumiResponse } from "@/types/game";
+import { BangumiReq, BangumiResponse, Datum } from "@/types/game";
 import { fetch } from "@tauri-apps/plugin-http";
 
 /**
@@ -8,7 +8,7 @@ import { fetch } from "@tauri-apps/plugin-http";
  */
 export const requestBangumi = async (param: BangumiReq): Promise<BangumiResponse | null> => {
   try {
-    const response = await fetch(import.meta.env.VITE_API_BANGUMI_VN_URL, {
+    const response = await fetch(import.meta.env.VITE_API_BANGUMI_VN_URL + "?limit=1", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -31,3 +31,27 @@ export const requestBangumi = async (param: BangumiReq): Promise<BangumiResponse
     return null;
   }
 };
+
+/**
+ * 通过指定的id来获取bangumi上关于游戏信息
+ * @param id bangumi条目id
+ * @returns
+ */
+export const requestBangumiById = async (id: string): Promise<Datum | null> => {
+  try {
+    const response = await fetch(import.meta.env.VITE_API_BANGUMI_VN_SUBJECT_URL + id, {
+      method: "GET"
+    })
+    const rawData = await response.text();
+
+    if (!response.ok) {
+      console.error("服务器返回错误:", rawData);
+      return null
+    }
+    // 确定是字符串后再手动解析，或者确认没问题后直接 await response.json()
+    return JSON.parse(rawData);
+  } catch (e) {
+    console.error("请求根本没发出去，检查 net.json 权限配置:", e);
+    return null;
+  }
+}
