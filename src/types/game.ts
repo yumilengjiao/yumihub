@@ -7,6 +7,8 @@ export interface GameMeta {
   background: string
   local_cover?: string
   local_background?: string
+  saveDataPath?: string,
+  backupDataPath?: string,
   playTime: number
   length: number
   size?: number

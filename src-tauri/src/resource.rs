@@ -1,34 +1,19 @@
 //! 资源模块,用于缓存二进制文件到本地而不走网络io
 
-use lazy_static::lazy_static;
 use sqlx::{Pool, Sqlite};
-use std::{path::PathBuf, sync::OnceLock};
 use tauri::{AppHandle, Manager};
-use tauri_plugin_log::log::{error, info};
+use tauri_plugin_log::log::{debug, error, info};
 
 use crate::{
-    config::entity::GameMeta,
+    config::GLOBAL_CONFIG,
     error::AppError,
-    message::{entity::SystemEvent, MESSAGE_HUB},
+    game::entity::{GameEvent, GameMeta},
+    message::{traits::MessageHub, GAME_MESSAGE_HUB},
     user::entity::User,
 };
 
-lazy_static! {
-    pub static ref ASSETS_DIR: OnceLock<PathBuf> = OnceLock::new();
-}
-
 /// 资源模块初始化函数
 pub fn init(app_handle: &AppHandle) {
-    let path = app_handle
-        .path()
-        .app_data_dir()
-        .expect("无法获取AppData目录")
-        .join("assets");
-    // 确保物理文件夹存在
-    if !path.exists() {
-        std::fs::create_dir_all(&path).ok();
-    }
-    ASSETS_DIR.set(path).expect("初始化时获取路径变量写锁失败");
     start_resource_manager(app_handle);
     info!("资源模块初始化函数成功")
 }
@@ -36,7 +21,7 @@ pub fn init(app_handle: &AppHandle) {
 /// 启动一个监听器负责监听游戏数据是否更新是否需要下载新的静态资源到本地
 fn start_resource_manager(app_handle: &AppHandle) {
     // 获取一个新的接收者
-    let mut rx = MESSAGE_HUB.subscribe();
+    let mut rx = GAME_MESSAGE_HUB.subscribe();
     let handle = app_handle.clone();
 
     // 启动一个下载图片的任务
@@ -45,8 +30,8 @@ fn start_resource_manager(app_handle: &AppHandle) {
 
         while let Ok(event) = rx.recv().await {
             match event {
-                SystemEvent::GameResourceTask { meta } => {
-                    info!("收到新游戏通知: {}, 准备下载资源...", meta.name);
+                GameEvent::GameResourceTask { meta } => {
+                    debug!("收到新游戏通知: {}, 准备下载资源...", meta.name);
                     let res = reqwest::get(&meta.cover).await;
                     match res {
                         Ok(res) => {
@@ -72,7 +57,13 @@ fn start_resource_manager(app_handle: &AppHandle) {
                                 // 只有网络地址才处理
                                 if url.starts_with("http") {
                                     let file_name = format!("{}_{}.jpg", meta.id, label);
-                                    let assets_dir = ASSETS_DIR.get().expect("路径未初始化");
+                                    let assets_dir = GLOBAL_CONFIG
+                                        .read()
+                                        .expect("路径未初始化")
+                                        .storage
+                                        .meta_save_path
+                                        .clone();
+                                    debug!("资源路径是:{}", assets_dir.to_string_lossy());
                                     let save_path = assets_dir.join(file_name);
 
                                     // 执行请求
@@ -98,7 +89,12 @@ fn start_resource_manager(app_handle: &AppHandle) {
                                                         _ => {}
                                                     }
 
-                                                    info!("{} 下载成功: {}", label, meta.id);
+                                                    debug!(
+                                                        "{} 下载成功: {} , 下载至:{}",
+                                                        label,
+                                                        meta.id,
+                                                        save_path.to_string_lossy(),
+                                                    );
                                                 }
                                             }
                                         }
@@ -107,7 +103,7 @@ fn start_resource_manager(app_handle: &AppHandle) {
                             }
                             // 处理完字段后对meta数据进行更新
                             let pool = handle.state::<Pool<Sqlite>>();
-                            let db_result = update_game_into_db(&*pool, &updated_meta).await;
+                            let db_result = update_game_into_db(&pool, &updated_meta).await;
                             match db_result {
                                 Ok(_) => {
                                     info!("游戏数据已成功同步至数据库: {}", updated_meta.id)
@@ -122,9 +118,14 @@ fn start_resource_manager(app_handle: &AppHandle) {
                         }
                     }
                 }
-                SystemEvent::UserResourceTask { meta } => {
+                GameEvent::UserResourceTask { meta } => {
                     info!("接受到用户资源下载任务,开始下载任务");
-                    let asset_path = ASSETS_DIR.get().expect("路径未初始化");
+                    let asset_path = GLOBAL_CONFIG
+                        .read()
+                        .expect("路径未初始化")
+                        .storage
+                        .meta_save_path
+                        .join("user");
                     let file_name = format!("{}-{}.jpg", meta.id, "avatar");
                     let local_avatar = asset_path.join(&file_name).to_string_lossy().to_string();
                     let mut updated_meta = meta.clone();
@@ -168,8 +169,8 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
     sqlx::query(
         r#"
     INSERT OR REPLACE INTO games 
-    (id, name, abs_path, cover, background, local_cover, local_background, play_time, length, size, last_played_at) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (id, name, abs_path, cover, background, local_cover, local_background,save_data_path,backup_data_path, play_time, length, size, last_played_at) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     "#,
     )
     .bind(&updated_meta.id)
@@ -179,6 +180,8 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
     .bind(&updated_meta.background)
     .bind(&updated_meta.local_cover)
     .bind(&updated_meta.local_background)
+    .bind(&updated_meta.save_data_path)
+    .bind(&updated_meta.backup_data_path)
     .bind(updated_meta.play_time)
     .bind(updated_meta.length)
     .bind(updated_meta.size)

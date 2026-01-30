@@ -4,8 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from "@/lib/utils";
 import BigPendingCard from './BigPendingCard';
 import { open } from '@tauri-apps/plugin-dialog';
-import { recognizeGame } from '@/api/uniform';
-import gameData from '@/mock/game';
 import PendingCard from './PendingCard';
 
 interface AddGameButtonProps {
@@ -61,7 +59,6 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({
         && <BigPendingCard
           absPath={singleGameBootPath}
           onCancel={() => setMatchSuccess(false)}
-          onConfirm={() => setMatchSuccess(false)}
         />}
       {matchMutiSuccess
         && <PendingCard

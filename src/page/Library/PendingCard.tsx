@@ -108,7 +108,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
       setItems(initialItems);
       for (let i = 0; i < initialItems.length; i++) {
         try {
-          const realExe: string = await invoke('getGameStartUpProgram', { gamePath: initialItems[i].originalPath });
+          const realExe: string = await invoke('get_start_up_path', { parentPath: initialItems[i].originalPath });
           if (realExe) {
             setItems(prev => prev.map((it, idx) => idx === i ? { ...it, exePath: realExe.replace(/[\\/]+/g, '/') } : it));
           }
@@ -242,7 +242,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                         <h4 className="font-black text-zinc-900 text-2xl truncate italic uppercase tracking-tighter">{meta.name}</h4>
                         <div className="flex items-center gap-2 px-3 py-1 mt-1 bg-white/50 border border-zinc-200 rounded-lg w-fit">
                           <HardDrive size={12} className="text-zinc-400" />
-                          <span className="text-[10px] font-mono text-zinc-400 truncate max-w-[350px]">{item.exePath}</span>
+                          <span className="text-[10px] font-mono text-zinc-400 truncate max-w-100">{item.exePath}</span>
                         </div>
                       </div>
                       <div className="shrink-0 flex items-center gap-4">

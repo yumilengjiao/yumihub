@@ -1,13 +1,21 @@
 //! 前端发送的所有调用请求命令在此定义，get方法只会调用state_system,
+use std::path::PathBuf;
+
+use sqlx::Row;
 use sqlx::{Pool, Sqlite};
-use tauri::State;
+use tauri::{async_runtime, State};
 use tauri_plugin_log::log::{error, info};
 
 use crate::{
-    config::entity::{GameMeta, GameMetaList},
+    config::{
+        entity::{Config, ConfigEvent},
+        GLOBAL_CONFIG,
+    },
     error::AppError,
-    message::{entity::SystemEvent, MESSAGE_HUB},
+    game::entity::{GameEvent, GameMeta, GameMetaList},
+    message::{traits::MessageHub, CONFIG_MESSAGE_HUB, GAME_MESSAGE_HUB},
     user::entity::User,
+    util::{self, zip_directory_sync},
 };
 
 // --------------------------------------------------------
@@ -19,7 +27,7 @@ use crate::{
 ///
 /// * `pool`: 连接池,tauri自动注入
 pub async fn get_user_info(pool: State<'_, Pool<Sqlite>>) -> Result<User, AppError> {
-    let user = sqlx::query_as::<_, User>("SELECT * FROM user LIMIT 1")
+    let user = sqlx::query_as::<_, User>("SELECT * FROM account LIMIT 1")
         .fetch_optional(&*pool) // 使用 fetch_optional 防止表为空时直接崩溃
         .await
         .map_err(|e| {
@@ -31,39 +39,53 @@ pub async fn get_user_info(pool: State<'_, Pool<Sqlite>>) -> Result<User, AppErr
     Ok(user.unwrap_or_default())
 }
 
-#[tauri::command]
 /// 更新用户数据
 ///
 /// * `pool`: 连接池,tauri自动注入
-/// * `user`: 用户信息
-pub async fn update_user_info(pool: State<'_, Pool<Sqlite>>, user: User) -> Result<(), AppError> {
+/// * `account`: 用户信息
+#[tauri::command]
+pub async fn update_user_info(
+    pool: State<'_, Pool<Sqlite>>,
+    account: User,
+) -> Result<(), AppError> {
     // 先查询头像是否是网络资源是就下载资源
     let is_network_resource =
-        user.avatar.starts_with("http://") || user.avatar.starts_with("https://");
+        account.avatar.starts_with("http://") || account.avatar.starts_with("https://");
 
     sqlx::query(
         r#"
-        INSERT OR REPLACE INTO user 
-        (id, user_name, avatar, games_count, favorite_game, total_play_time, games_completed_number, last_play_at, created_at) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        "#
+        INSERT OR REPLACE INTO account
+        (
+            id,
+            user_name,
+            avatar,
+            games_count,
+            favorite_game,
+            total_play_time,
+            games_completed_number,
+            last_play_at,
+            created_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
     )
-    .bind(&user.id)
-    .bind(&user.user_name)
-    .bind(&user.avatar)
-    .bind(user.games_count)
-    .bind(&user.favorite_game)
-    .bind(user.total_play_time)
-    .bind(user.games_completed_number)
-    .bind(user.last_play_at)
-    .bind(user.created_at)
+    .bind(&account.id)
+    .bind(&account.user_name)
+    .bind(&account.avatar)
+    .bind(&account.favorite_game)
+    .bind(account.games_count)
+    .bind(account.total_play_time)
+    .bind(account.games_completed_number)
+    .bind(account.last_play_at)
+    .bind(account.created_at)
     .execute(&*pool)
     .await
     .map_err(|e| AppError::DB(e.to_string()))?;
 
     if is_network_resource {
         info!("发送消息到消息平台下载用户头像资源");
-        MESSAGE_HUB.publish(SystemEvent::UserResourceTask { meta: user.clone() });
+        GAME_MESSAGE_HUB.publish(GameEvent::UserResourceTask {
+            meta: account.clone(),
+        });
     }
 
     info!("用户信息修改成功");
@@ -81,7 +103,20 @@ pub async fn update_user_info(pool: State<'_, Pool<Sqlite>>, user: User) -> Resu
 pub async fn get_game_meta_list(pool: State<'_, Pool<Sqlite>>) -> Result<GameMetaList, AppError> {
     println!("开始查询数据");
     let games = sqlx::query_as(
-        "SELECT id, name, abs_path, cover, background, local_cover, local_background, play_time, length, size, last_played_at FROM games"
+        "SELECT id,
+                name,
+                abs_path,
+                cover,
+                background, 
+                local_cover,
+                local_background,
+                save_data_path,
+                backup_data_path,
+                play_time,
+                length,
+                size,
+                last_played_at 
+        FROM games",
     )
     .fetch_all(&*pool)
     .await
@@ -100,11 +135,24 @@ pub async fn get_game_meta_by_id(
     id: String,
 ) -> Result<GameMeta, AppError> {
     let game = sqlx::query_as(
-        "SELECT id, name, abs_path, cover, background,local_cover,local_background, play_time, length, size, last_played_at FROM games"
+        "SELECT id,
+                name,
+                abs_path,
+                cover,
+                background,
+                local_cover,
+                local_background,
+                save_data_path,
+                backup_data_path,
+                play_time,
+                length,
+                size,
+                last_played_at
+        FROM games where id = ?",
     )
-        .bind(id)
-        .fetch_one(&*pool)
-        .await
+    .bind(id)
+    .fetch_one(&*pool)
+    .await
     .map_err(|e| AppError::DB(e.to_string()))?;
     Ok(game)
 }
@@ -121,9 +169,23 @@ pub async fn add_new_game(
     sqlx::query(
         r#"
         INSERT OR REPLACE INTO games 
-        (id, name, abs_path, cover, background, local_cover, local_background, play_time, length, size, last_played_at) 
+        (
+            id,
+            name,
+            abs_path,
+            cover,
+            background,
+            local_cover,
+            local_background,
+            save_data_path,
+            backup_data_path,
+            play_time,
+            length,
+            size,
+            last_played_at
+        ) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        "#
+        "#,
     )
     .bind(&game.id)
     .bind(&game.name)
@@ -133,15 +195,15 @@ pub async fn add_new_game(
     .bind(&game.local_cover)
     .bind(&game.local_background)
     .bind(game.play_time) // i64
-    .bind(game.length)    // i64
-    .bind(game.size)      // Option<i64>
+    .bind(game.length) // i64
+    .bind(game.size) // Option<i64>
     .bind(game.last_played_at) // DateTime<Local> (需开启 chrono feature)
     .execute(&*pool)
     .await
     .map_err(|e| AppError::DB(e.to_string()))?;
 
     // 向消息模块发布信息说明有资源需要下载
-    MESSAGE_HUB.publish(SystemEvent::GameResourceTask { meta: game });
+    GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask { meta: game });
     Ok(())
 }
 
@@ -175,10 +237,38 @@ pub async fn add_new_game_list(
         .execute(&mut *tx) // 注意这里是在事务中执行
         .await
         .map_err(|e|AppError::DB(e.to_string()))?;
-        MESSAGE_HUB.publish(SystemEvent::GameResourceTask { meta: game });
+        GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask { meta: game });
     }
 
     // 提交事务
+    tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
+    Ok(())
+}
+
+/// 用于删除单个游戏信息
+///
+/// * `pool`: 连接池,tauri自动注入
+/// * `id`: 游戏信息id
+#[tauri::command]
+pub async fn delete_game(pool: State<'_, Pool<Sqlite>>, id: String) -> Result<(), AppError> {
+    // 开启事务
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    sqlx::query(
+        r#"
+        delete from games where id = {?}
+    "#,
+    )
+    .bind(id)
+    .execute(&mut *tx)
+    .await
+    .map_err(|e| {
+        error!("删除游戏信息出错: {}", e);
+        AppError::DB(e.to_string())
+    })?;
     tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
     Ok(())
 }
@@ -189,5 +279,94 @@ pub async fn add_new_game_list(
 #[tauri::command]
 pub async fn delete_game_list(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppError> {
     sqlx::query("DELETE FROM games").execute(&*pool).await.ok();
+    Ok(())
+}
+
+// --------------------------------------------------------
+// ------------------------配置类--------------------------
+// --------------------------------------------------------
+
+/// 更新配置信息
+///
+/// * `app`: app句柄，自动注入
+/// * `config`: 要更新的配置信息
+#[tauri::command]
+pub async fn update_config(config: Config) {
+    let result = GLOBAL_CONFIG.read();
+    match result {
+        Ok(old_config) => {
+            if old_config.basic != config.basic {
+                CONFIG_MESSAGE_HUB.publish(ConfigEvent::Basic { base: config.basic });
+            }
+            if old_config.interface != config.interface {
+                CONFIG_MESSAGE_HUB.publish(ConfigEvent::Interface {
+                    interface: config.interface,
+                });
+            }
+            if old_config.storage != config.storage {
+                CONFIG_MESSAGE_HUB.publish(ConfigEvent::Storage {
+                    stroage: config.storage,
+                });
+            }
+            if old_config.system != config.system {
+                CONFIG_MESSAGE_HUB.publish(ConfigEvent::System { sys: config.system });
+            }
+        }
+        Err(e) => {
+            error!("无法获取全局配置信息,无法更新配置,错误: {}", e);
+        }
+    }
+}
+
+// --------------------------------------------------------
+// ------------------------工具类--------------------------
+// --------------------------------------------------------
+
+/// 从父目录获取游戏的启动文件的文件名字
+///
+/// * `parent_path`: 游戏父目录
+#[tauri::command]
+pub fn get_start_up_path(parent_path: String) -> Result<String, AppError> {
+    util::get_start_up_program(parent_path)
+}
+
+/// 将数据库的所有指定了游戏存档的游戏都进行备份
+///
+/// * `pool`: 数据库连接池，由tauri自动注入
+#[tauri::command]
+pub async fn backup_archive(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppError> {
+    let games = sqlx::query("SELECT id, save_data_path FROM games")
+        .fetch_all(&*pool)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    // 获取备份根目录
+    let backup_root = {
+        let config = GLOBAL_CONFIG.read().unwrap();
+        config.storage.backup_save_path.clone()
+    };
+
+    // 遍历并异步执行打包
+    for row in games {
+        let save_path: Option<String> = row.get("save_data_path");
+        let backup_dir = backup_root.clone();
+        let game_id: String = row.get("id");
+
+        if save_path.is_none() {
+            continue;
+        }
+        let save_path: PathBuf = save_path.unwrap().into();
+
+        // 使用 spawn_blocking 将同步的压缩逻辑丢到后台线程池，不阻塞主异步流
+        async_runtime::spawn_blocking(move || {
+            let zip_file_path = backup_dir.join(format!("game_{}.zip", game_id));
+            if let Err(e) = zip_directory_sync(&save_path, &zip_file_path) {
+                eprintln!("备份游戏 {} 失败: {}", game_id, e);
+            }
+        })
+        .await
+        .map_err(|e| AppError::File(e.to_string()))?;
+    }
+
     Ok(())
 }

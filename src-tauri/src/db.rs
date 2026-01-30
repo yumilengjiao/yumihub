@@ -45,6 +45,8 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
             background TEXT,
             local_cover TEXT,
             local_background TEXT,
+            save_data_path TEXT,
+            backup_data_path TEXT,
             play_time INTEGER DEFAULT 0,
             length INTEGER DEFAULT 0,
             size INTEGER,
@@ -52,7 +54,7 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
         );
 
         -- 用户信息表
-        CREATE TABLE IF NOT EXISTS user (
+        CREATE TABLE IF NOT EXISTS account (
             id TEXT PRIMARY KEY,
             user_name TEXT NOT NULL,
             avatar TEXT,
@@ -65,7 +67,7 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
         );
 
         -- 初始化默认用户 (如果不存在)
-        INSERT OR IGNORE INTO user (id, user_name, created_at) 
+        INSERT OR IGNORE INTO account (id, user_name, created_at) 
         VALUES ('default', '本地用户', datetime('now'));
     "#;
     // 执行建表语句

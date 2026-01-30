@@ -4,14 +4,17 @@ mod cmd;
 mod config;
 mod db;
 mod error;
+mod game;
 mod life_cycle;
 mod message;
 mod resource;
 mod user;
+mod util;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_autostart::Builder::new().build())
         .plugin(
             tauri_plugin_log::Builder::new()
                 .level(tauri_plugin_log::log::LevelFilter::Info)
@@ -23,26 +26,28 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .setup(life_cycle::init)
         .invoke_handler(tauri::generate_handler![
+            //用户
             cmd::get_user_info,
             cmd::update_user_info,
+            //游戏
             cmd::get_game_meta_by_id,
             cmd::get_game_meta_list,
+            cmd::delete_game,
+            cmd::delete_game_list,
             cmd::add_new_game,
-            cmd::add_new_game_list
+            cmd::add_new_game_list,
+            //配置
+            cmd::update_config,
+            //存档
+            cmd::backup_archive,
+            //其他
+            cmd::get_start_up_path
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
-        .run(|_app_handle, event| {
-            match event {
-                RunEvent::Exit => {
-                    // TODO:此处保存config
-                    life_cycle::exit()
-                }
-                RunEvent::ExitRequested { .. } => {
-                    // TODO:此处保存config
-                    life_cycle::exit()
-                }
-                _ => {}
-            }
+        .run(|_app_handle, event| match event {
+            RunEvent::Exit => life_cycle::exit(),
+            RunEvent::ExitRequested { .. } => life_cycle::exit(),
+            _ => {}
         })
 }
