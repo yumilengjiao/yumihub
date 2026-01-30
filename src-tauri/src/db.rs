@@ -45,6 +45,8 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
             background TEXT,
             local_cover TEXT,
             local_background TEXT,
+            save_data_path TEXT,
+            backup_data_path TEXT,
             play_time INTEGER DEFAULT 0,
             length INTEGER DEFAULT 0,
             size INTEGER,

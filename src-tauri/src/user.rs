@@ -1,11 +1,11 @@
 use std::error::Error;
 
-use tauri::App;
+use tauri::AppHandle;
 
 pub mod entity;
 
-/// config模块初始化函数
-pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
+/// user模块初始化函数
+pub fn init(app: &AppHandle) -> Result<(), Box<dyn Error>> {
     //加载用户配置文件
     load_user_config()?;
     Ok(())

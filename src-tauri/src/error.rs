@@ -32,4 +32,7 @@ pub enum AppError {
 
     #[error("数据库错误: {0}")]
     DB(String),
+
+    #[error("文件系统错误: {0}")]
+    File(String),
 }

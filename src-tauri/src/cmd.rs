@@ -1,12 +1,13 @@
 //! 前端发送的所有调用请求命令在此定义，get方法只会调用state_system,
 use sqlx::{Pool, Sqlite};
-use tauri::{App, State};
+use tauri::{AppHandle, State};
 use tauri_plugin_log::log::{error, info};
 
 use crate::{
-    config::entity::{GameMeta, GameMetaList},
+    config::entity::Config,
     error::AppError,
-    message::{entity::SystemEvent, MESSAGE_HUB},
+    game::entity::{GameEvent, GameMeta, GameMetaList},
+    message::{traits::MessageHub, GAME_MESSAGE_HUB},
     user::entity::User,
     util,
 };
@@ -64,7 +65,7 @@ pub async fn update_user_info(pool: State<'_, Pool<Sqlite>>, user: User) -> Resu
 
     if is_network_resource {
         info!("发送消息到消息平台下载用户头像资源");
-        MESSAGE_HUB.publish(SystemEvent::UserResourceTask { meta: user.clone() });
+        GAME_MESSAGE_HUB.publish(GameEvent::UserResourceTask { meta: user.clone() });
     }
 
     info!("用户信息修改成功");
@@ -142,7 +143,7 @@ pub async fn add_new_game(
     .map_err(|e| AppError::DB(e.to_string()))?;
 
     // 向消息模块发布信息说明有资源需要下载
-    MESSAGE_HUB.publish(SystemEvent::GameResourceTask { meta: game });
+    GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask { meta: game });
     Ok(())
 }
 
@@ -176,7 +177,7 @@ pub async fn add_new_game_list(
         .execute(&mut *tx) // 注意这里是在事务中执行
         .await
         .map_err(|e|AppError::DB(e.to_string()))?;
-        MESSAGE_HUB.publish(SystemEvent::GameResourceTask { meta: game });
+        GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask { meta: game });
     }
 
     // 提交事务
@@ -219,6 +220,17 @@ pub async fn delete_game_list(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppEr
     sqlx::query("DELETE FROM games").execute(&*pool).await.ok();
     Ok(())
 }
+
+// --------------------------------------------------------
+// ------------------------配置类--------------------------
+// --------------------------------------------------------
+
+/// 更新配置信息
+///
+/// * `app`: app句柄，自动注入
+/// * `config`: 要更新的配置信息
+#[tauri::command]
+pub async fn update_config(app: AppHandle, config: Config) {}
 
 // --------------------------------------------------------
 // ------------------------工具类--------------------------

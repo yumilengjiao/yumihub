@@ -10,8 +10,8 @@ use tauri::App;
 /// 初始化函数
 pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
     db::init(app.handle());
-    config::init(app)?;
-    user::init(app)?;
+    config::init(app.handle())?;
+    user::init(app.handle())?;
     resource::init(app.handle());
     Ok(())
 }
