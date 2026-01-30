@@ -20,8 +20,12 @@ export const createVNDBParamsFromBootFile = (name: string) => {
         [
           "lang",
           "=",
-          "zh"
+          "zh-Hans"
         ],
+        [
+          "lang",
+          "=",
+          "zh-Hant"],
         [
           "lang",
           "=",
@@ -35,6 +39,7 @@ export const createVNDBParamsFromBootFile = (name: string) => {
       ]
 
     ],
+    sort: "searchrank",
     fields: "title, image.url, alttitle, titles.lang, titles.title, titles.official, olang, length, average, description, screenshots.url"
   }
   return vndbParam

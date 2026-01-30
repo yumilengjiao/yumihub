@@ -9,6 +9,7 @@ type GameStore = {
   setGameMetaList: (gameMetaList: GameMetaList) => void,
   setGameMeta: (game: GameMeta) => void,
   filterGameMetaListByName: (name: string) => GameMetaList
+  addGameMeta: (game: GameMeta) => void
 }
 
 // 存储当前存在的所有的游戏元信息
@@ -68,7 +69,17 @@ const useGameStore = create<GameStore>()(
       return get().gameMetaList.filter((game) => {
         return game.name.trim().toLowerCase().includes(searchKeyword);
       });
-    }
+    },
+
+    /**
+     * 添加一个游戏到列表
+     * @param game -新游戏信息
+     */
+    addGameMeta(game) {
+      set((state) => {
+        state.gameMetaList.push(game)
+      })
+    },
   }))
 )
 

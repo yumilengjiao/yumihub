@@ -5,20 +5,20 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import {
   FileCode, Check, HardDrive, Loader2, Search,
-  X, WifiOff, ListChecks, Edit3, Sparkles, ChevronDown, Plus
+  X, WifiOff, ListChecks, ChevronDown, RefreshCw, Sparkles
 } from 'lucide-react';
 import { toast } from "sonner";
 import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
 
-// 导入你的类型和仓库
-import { GameMeta } from "@/types/game";
-import usePendingGameStore, { PendingGameInfo } from "@/store/pendingGamesStore";
+import { requestBangumiById } from '@/api/bangumiApi';
+import { requestVNDBById } from '@/api/vndbApi';
 import { recognizeGame } from '@/api/uniform';
 
-// 假设这是你定义的接口调用函数
-// import { recognizeGame } from "@/api/game"; 
+import { GameMeta } from "@/types/game";
+import usePendingGameStore, { PendingGameInfo } from "@/store/pendingGamesStore";
+import useGameStore from '@/store/gameStore';
 
 interface PendingCardProps {
   pathList: string[];
@@ -26,38 +26,44 @@ interface PendingCardProps {
   onCancel: () => void;
 }
 
-const PendingCard: React.FC<PendingCardProps> = ({ pathList, onConfirmAll, onCancel }) => {
+const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
   const [items, setItems] = useState<any[]>([]);
   const [isGlobalMatching, setIsGlobalMatching] = useState(false);
   const [matchProgress, setMatchProgress] = useState(0);
+  const [singleLoading, setSingleLoading] = useState<string | null>(null);
 
   const { addReadyGames, resetReadyGames } = usePendingGameStore();
+  const { addGameMeta } = useGameStore()
   const isMatchingRef = useRef(false);
+
+  // --- 补回超时引用 ---
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 初始化
+  const clearTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
   const createItemObject = (path: string) => {
     const normalizedPath = path.replace(/[\\/]+/g, '/');
     const folderName = normalizedPath.split('/').filter(Boolean).pop() || "Unknown";
     return {
-      id: Math.random().toString(36).substr(2, 9),
+      id: nanoid(),
       originalPath: normalizedPath,
       folderName: folderName,
       exePath: `${normalizedPath}/game.exe`,
       activeSource: 'bangumi' as 'vndb' | 'bangumi' | 'ymgal',
       data: null as PendingGameInfo | null,
-      expanded: false
+      expanded: false,
+      idInput: ''
     };
   };
 
-  /**
-   * 核心修正 1：对齐 PendingGameInfo 的真实嵌套结构
-   * 确保从 VNDBResponse, BangumiResponse, YmgalResponse 中提取正确字段
-   */
   const transformToGameMeta = (item: any): GameMeta => {
     const source = item.activeSource;
     const data = item.data as PendingGameInfo;
-
     let meta: GameMeta = {
       id: nanoid(),
       name: item.folderName,
@@ -66,33 +72,33 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onConfirmAll, onCan
       background: '',
       playTime: 0,
       length: 0,
+      lastPlayedAt: new Date(),
     };
-
     if (!data) return meta;
 
     try {
-      if (source === 'bangumi' && data.bangumi?.data?.[0]) {
-        const b = data.bangumi.data[0];
-        meta.name = b.name_cn || b.name;
-        meta.cover = b.images?.large || b.image || ''; // 适配 Images 对象
-        meta.background = b.images?.common || '';
-      }
-      if (source === 'vndb' && data.vndb?.results?.[0]) {
-        const v = data.vndb.results[0];
-        meta.name = v.title;
-        meta.cover = v.image?.url || '';
-        meta.background = v.screenshots?.[0]?.url || v.image?.url || '';
-        meta.length = v.length || 0;
-      }
-      else if (source === 'ymgal' && data.ymgal?.data?.result?.[0]) {
+      if (source === 'bangumi') {
+        const b = (data.bangumi as any)?.data ? (data.bangumi as any).data[0] : (data.bangumi as any);
+        if (b) {
+          meta.name = b.name_cn || b.name;
+          meta.cover = b.images?.large || b.image || '';
+          meta.background = b.images?.common || '';
+        }
+      } else if (source === 'vndb') {
+        const v = data.vndb?.results ? data.vndb.results[0] : (data.vndb as any);
+        if (v) {
+          meta.name = v.title || v.name;
+          meta.cover = v.image?.url || '';
+          meta.background = v.screenshots?.[0]?.url || v.image?.url || '';
+          meta.length = v.length || 0;
+        }
+      } else if (source === 'ymgal' && data.ymgal?.data?.result?.[0]) {
         const y = data.ymgal.data.result[0];
         meta.name = y.chineseName || y.name;
         meta.cover = y.mainImg || '';
         meta.background = y.mainImg || '';
       }
-    } catch (e) {
-      console.error("转换失败", e);
-    }
+    } catch (e) { console.error(e); }
     return meta;
   };
 
@@ -100,7 +106,6 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onConfirmAll, onCan
     const init = async () => {
       const initialItems = pathList.map(p => createItemObject(p));
       setItems(initialItems);
-      // 自动探测启动项 (Rust 后端逻辑)
       for (let i = 0; i < initialItems.length; i++) {
         try {
           const realExe: string = await invoke('getGameStartUpProgram', { gamePath: initialItems[i].originalPath });
@@ -111,31 +116,73 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onConfirmAll, onCan
       }
     };
     init();
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, []);
+    // 组件卸载时清除定时器
+    return () => clearTimer();
+  }, [pathList]);
 
+  // --- 全局匹配带超时保护 ---
   const handleGlobalMatch = async () => {
     if (isGlobalMatching) return;
     setIsGlobalMatching(true);
     isMatchingRef.current = true;
     setMatchProgress(0);
 
-    try {
-      const total = items.length;
-      for (let i = 0; i < total; i++) {
-        if (!isMatchingRef.current) break;
-
-        const res: PendingGameInfo = await recognizeGame(items[i].exePath)
-
-        setItems(prev => prev.map((it, idx) => i === idx ? { ...it, data: res } : it));
-        setMatchProgress(Math.round(((i + 1) / total) * 100));
+    // 设置全局匹配总超时 (60秒)
+    timerRef.current = setTimeout(() => {
+      if (isMatchingRef.current) {
+        isMatchingRef.current = false;
+        setIsGlobalMatching(false);
+        toast.error("匹配任务超时，请检查网络");
       }
-      toast.success("匹配完成");
+    }, 60000);
+
+    try {
+      for (let i = 0; i < items.length; i++) {
+        if (!isMatchingRef.current) break;
+        const res = await recognizeGame(items[i].exePath);
+        setItems(prev => prev.map((it, idx) => i === idx ? { ...it, data: res } : it));
+        setMatchProgress(Math.round(((i + 1) / items.length) * 100));
+      }
+      if (isMatchingRef.current) toast.success("全局匹配完成");
     } catch (err) {
-      toast.error("匹配失败");
+      toast.error("匹配中断");
     } finally {
+      clearTimer();
       setIsGlobalMatching(false);
       isMatchingRef.current = false;
+    }
+  };
+
+  // --- 单条 ID 检索带超时保护 ---
+  const handleSingleIdSearch = async (itemId: string) => {
+    const item = items.find(it => it.id === itemId);
+    if (!item || !item.idInput) return;
+
+    setSingleLoading(itemId);
+
+    // 设置单次请求超时 (15秒)
+    const singleTimer = setTimeout(() => {
+      if (singleLoading === itemId) {
+        setSingleLoading(null);
+        toast.error("请求超时");
+      }
+    }, 15000);
+
+    try {
+      if (item.activeSource === 'bangumi') {
+        const res = await requestBangumiById(item.idInput);
+        if (res) setItems(prev => prev.map(it => it.id === itemId ? { ...it, data: { ...it.data, bangumi: res } } : it));
+      } else if (item.activeSource === 'vndb') {
+        const res = await requestVNDBById(item.idInput);
+        if (res) setItems(prev => prev.map(it => it.id === itemId ? { ...it, data: { ...it.data, vndb: res } } : it));
+      }
+      clearTimeout(singleTimer);
+      toast.success("ID 检索成功");
+    } catch (err) {
+      clearTimeout(singleTimer);
+      toast.error("检索失败");
+    } finally {
+      setSingleLoading(null);
     }
   };
 
@@ -147,22 +194,22 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onConfirmAll, onCan
       finalGames.forEach(g => addReadyGames(g));
       await invoke("add_new_game_list", { games: finalGames });
       toast.success("导入成功", { id: loadingId });
-      onConfirmAll(finalGames);
-    } catch (err) {
-      toast.error("导入失败", { id: loadingId });
-    }
+      finalGames.forEach((game) => addGameMeta(game))
+      onCancel()
+    } catch (err) { toast.error("导入失败", { id: loadingId }); }
   };
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-zinc-950/60 backdrop-blur-xl p-8" onClick={onCancel}>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950/60 backdrop-blur-xl p-8" onClick={onCancel}>
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-6xl bg-white shadow-2xl rounded-[52px] flex flex-col h-[88vh] overflow-hidden relative">
+
         {/* Header */}
         <div className="px-12 py-10 flex items-center justify-between bg-white relative z-50">
           <div className="flex items-center gap-6">
             <div className="w-16 h-16 bg-zinc-900 rounded-[22px] flex items-center justify-center text-white"><ListChecks size={32} /></div>
             <div>
-              <h2 className="text-4xl font-black italic tracking-tighter uppercase">批量导入确认</h2>
-              <p className="text-zinc-400 font-bold text-[10px] mt-1 uppercase opacity-60 italic">{items.length} 个项目就绪</p>
+              <h2 className="text-4xl font-black italic tracking-tighter uppercase leading-none">批量导入确认</h2>
+              <p className="text-zinc-400 font-bold text-[10px] mt-2 uppercase opacity-60 italic">{items.length} 个项目就绪</p>
             </div>
           </div>
           <Button variant="ghost" onClick={onCancel} className="h-16 px-6 rounded-2xl group flex items-center gap-4 hover:bg-red-50">
@@ -171,36 +218,28 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onConfirmAll, onCan
           </Button>
         </div>
 
-        <div className="h-1.5 w-full bg-zinc-50 relative z-50"><motion.div animate={{ width: `${matchProgress}%` }} className="h-full bg-violet-600 shadow-[0_0_15px_rgba(124,58,237,0.5)]" /></div>
+        <div className="h-1.5 w-full bg-zinc-50 relative z-50">
+          <motion.div animate={{ width: `${matchProgress}%` }} className="h-full bg-violet-600 shadow-[0_0_15px_rgba(124,58,237,0.5)]" />
+        </div>
 
         <div className="flex-1 min-h-0 relative z-10">
           <ScrollArea className="h-full px-12 pt-6">
             <div className="grid grid-cols-1 gap-5 pb-10">
               {items.map((item) => {
+                const meta = transformToGameMeta(item);
                 const info = item.data as PendingGameInfo | null;
-
-                let view = { name: item.folderName, cover: '', desc: '' };
-                if (item.activeSource === 'bangumi' && info?.bangumi?.data?.[0]) {
-                  const d = info.bangumi.data[0];
-                  view = { name: d.name_cn || d.name, cover: d.images?.large || d.image || '', desc: d.summary };
-                }
-                else if (item.activeSource === 'vndb' && info?.vndb?.results?.[0]) {
-                  const d = info.vndb.results[0];
-                  view = { name: d.title, cover: d.image?.url || '', desc: d.description };
-                }
-                else if (item.activeSource === 'ymgal' && info?.ymgal?.data?.result?.[0]) {
-                  const d = info.ymgal.data.result[0];
-                  view = { name: d.chineseName || d.name, cover: d.mainImg, desc: `发行时间: ${d.releaseDate || '未知'}` };
-                }
+                let displayDesc = "抓取成功后将在此同步简介信息...";
+                if (item.activeSource === 'bangumi') displayDesc = (info?.bangumi as any)?.summary || (info?.bangumi as any)?.data?.[0]?.summary || displayDesc;
+                if (item.activeSource === 'vndb') displayDesc = (info?.vndb as any)?.description || (info?.vndb as any)?.results?.[0]?.description || displayDesc;
 
                 return (
                   <div key={item.id} className="bg-zinc-50/80 rounded-[40px] border border-zinc-100 overflow-hidden hover:bg-white transition-all duration-300 group/card">
                     <div className="p-6 flex items-center gap-7 cursor-pointer" onClick={() => setItems(prev => prev.map(it => it.id === item.id ? { ...it, expanded: !it.expanded } : it))}>
-                      <div className="w-16 h-16 shrink-0 rounded-2xl bg-zinc-200 overflow-hidden border-2 border-white shadow-sm transition-transform group-hover/card:scale-105">
-                        {view.cover ? <img src={view.cover} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-400"><FileCode size={24} /></div>}
+                      <div className="w-16 h-16 shrink-0 rounded-2xl bg-zinc-200 overflow-hidden border-2 border-white shadow-sm">
+                        {meta.cover ? <img src={meta.cover} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-400"><FileCode size={24} /></div>}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-black text-zinc-900 text-2xl truncate italic uppercase tracking-tighter">{view.name}</h4>
+                        <h4 className="font-black text-zinc-900 text-2xl truncate italic uppercase tracking-tighter">{meta.name}</h4>
                         <div className="flex items-center gap-2 px-3 py-1 mt-1 bg-white/50 border border-zinc-200 rounded-lg w-fit">
                           <HardDrive size={12} className="text-zinc-400" />
                           <span className="text-[10px] font-mono text-zinc-400 truncate max-w-[350px]">{item.exePath}</span>
@@ -217,19 +256,41 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onConfirmAll, onCan
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
                           <div className="px-8 pb-8 pt-2 flex gap-8">
                             <div className="w-44 h-60 shrink-0 rounded-[32px] bg-zinc-100 overflow-hidden shadow-2xl border-4 border-white">
-                              {view.cover && <img src={view.cover} className="w-full h-full object-cover" />}
+                              {meta.cover ? <img src={meta.cover} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-300 font-black">NO COVER</div>}
                             </div>
-                            <div className="flex-1 flex flex-col gap-5">
-                              <div className="flex justify-between items-center">
-                                <div className="flex gap-2">
+
+                            <div className="flex-1 flex flex-col gap-5 min-w-0">
+                              <div className="flex items-center justify-between gap-4">
+                                <div className="flex bg-zinc-100 p-1.5 rounded-2xl flex-none">
                                   {['bangumi', 'vndb', 'ymgal'].map(src => (
-                                    <button key={src} onClick={(e) => { e.stopPropagation(); setItems(prev => prev.map(it => it.id === item.id ? { ...it, activeSource: src as any } : it)); }} className={cn("px-5 py-2 text-[11px] font-black rounded-xl uppercase transition-all shadow-sm", item.activeSource === src ? "bg-violet-600 text-white" : "bg-white border border-zinc-100 text-zinc-400")}>{src}</button>
+                                    <button key={src} onClick={(e) => { e.stopPropagation(); setItems(prev => prev.map(it => it.id === item.id ? { ...it, activeSource: src as any } : it)); }} className={cn("px-5 py-2 text-[11px] font-black rounded-xl uppercase transition-all", item.activeSource === src ? "bg-white shadow-sm text-zinc-900" : "text-zinc-400 hover:text-zinc-600")}>{src}</button>
                                   ))}
                                 </div>
-                                <Button variant="outline" onClick={(e) => { e.stopPropagation(); open({ filters: [{ name: 'Exe', extensions: ['exe'] }] }).then(p => p && setItems(prev => prev.map(it => it.id === item.id ? { ...it, exePath: p.toString().replace(/\\/g, '/') } : it))); }} className="rounded-xl border-violet-100 text-violet-600 font-black px-6 hover:bg-violet-50">修正启动路径</Button>
+
+                                <div className="flex-none w-[240px] flex gap-2 p-1.5 bg-zinc-100 rounded-2xl border border-zinc-200/50">
+                                  <input
+                                    className="bg-transparent border-none outline-none flex-1 px-3 text-xs font-bold text-zinc-600 placeholder:text-zinc-400 min-w-0"
+                                    placeholder={`${item.activeSource.toUpperCase()} ID...`}
+                                    value={item.idInput}
+                                    onClick={(e) => e.stopPropagation()}
+                                    onChange={(e) => setItems(prev => prev.map(it => it.id === item.id ? { ...it, idInput: e.target.value } : it))}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSingleIdSearch(item.id)}
+                                  />
+                                  <Button
+                                    size="icon"
+                                    onClick={(e) => { e.stopPropagation(); handleSingleIdSearch(item.id); }}
+                                    disabled={singleLoading === item.id || !item.idInput}
+                                    className="h-8 w-8 rounded-xl bg-zinc-900 hover:bg-black shrink-0"
+                                  >
+                                    {singleLoading === item.id ? <Loader2 size={14} className="animate-spin text-white" /> : <RefreshCw size={14} className="text-white" />}
+                                  </Button>
+                                </div>
+
+                                <Button variant="outline" onClick={(e) => { e.stopPropagation(); open({ filters: [{ name: 'Exe', extensions: ['exe'] }] }).then(p => p && setItems(prev => prev.map(it => it.id === item.id ? { ...it, exePath: p.toString().replace(/\\/g, '/') } : it))); }} className="flex-none rounded-xl border-violet-100 text-violet-600 font-black px-6 hover:bg-violet-50">修正路径</Button>
                               </div>
+
                               <ScrollArea className="flex-1 bg-white rounded-[32px] p-6 border border-zinc-100 shadow-inner h-32">
-                                <p className="text-sm font-bold text-zinc-500 italic leading-relaxed">{view.desc || "抓取成功后将在此同步简介信息..."}</p>
+                                <p className="text-sm font-bold text-zinc-500 italic leading-relaxed">{displayDesc}</p>
                               </ScrollArea>
                             </div>
                           </div>
