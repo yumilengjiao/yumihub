@@ -1,37 +1,15 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
-import { convertFileSrc, invoke } from '@tauri-apps/api/core';
+import { convertFileSrc } from '@tauri-apps/api/core';
 import useGameStore from "@/store/gameStore";
-import { GameMetaList } from "@/types/game";
-import { Cmds } from "@/lib/enum";
-import { info } from '@tauri-apps/plugin-log';
 
 const GameList = () => {
   // ... 在你的组件内部
   const [api, setApi] = useState<CarouselApi>()
   const [currentIndex, setCurrentIndex] = useState<number>(0)
-  const { selectedGame, updateSelectedGame, gameMetaList, setGameMetaList } = useGameStore()
-
-
-  //向状态管理系统拿数据
-  async function getGamelist() {
-    try {
-      info("程序启动,开始向后端获取游戏数据列表")
-      const gameList = await invoke<GameMetaList>(Cmds.GET_GAME_META_LIST)
-      setGameMetaList(gameList)
-
-      if (gameList && gameList.length > 0) {
-        updateSelectedGame(gameList[0])
-      }
-    } catch (err) {
-      console.error(err)
-    }
-  }
-  useEffect(() => {
-    getGamelist()
-  }, [])
+  const { selectedGame, updateSelectedGame, gameMetaList } = useGameStore()
 
   return (
     <div className="overflow-hidden">

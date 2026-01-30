@@ -8,6 +8,7 @@ type GameStore = {
   updateSelectedGame: (game: GameMeta) => void,
   setGameMetaList: (gameMetaList: GameMetaList) => void,
   setGameMeta: (game: GameMeta) => void,
+  discardGame: (id: string) => void,
   filterGameMetaListByName: (name: string) => GameMetaList
   addGameMeta: (game: GameMeta) => void
 }
@@ -58,7 +59,7 @@ const useGameStore = create<GameStore>()(
      * @param name - 搜索关键词
      * @returns 过滤后的新数组，如果关键词为空则返回原数组
     */
-    filterGameMetaListByName(name: string): GameMeta[] {
+    filterGameMetaListByName(name: string): GameMetaList {
       // 处理空字符串逻辑：如果是空串、空格或 null/undefined，直接返回原始集合
       if (!name || name.trim() === "") {
         // 这里假设你的 state 里存原始数据的是 state.gameMetaList
@@ -69,6 +70,14 @@ const useGameStore = create<GameStore>()(
       return get().gameMetaList.filter((game) => {
         return game.name.trim().toLowerCase().includes(searchKeyword);
       });
+    },
+
+    discardGame(id) {
+      set(state => {
+        let index = state.gameMetaList.findIndex((g) => g.id = id)
+        if (index != -1)
+          state.gameMetaList.splice(index, 1)
+      })
     },
 
     /**
