@@ -1,5 +1,8 @@
+use tauri::{AppHandle, Manager};
+use tauri_plugin_log::log::error;
+
 use crate::{
-    config::{entity::Config, ASSETS_DIR, BACKUP_DIR, CONFIG_PATH, GLOBAL_CONFIG},
+    config::{entity::Config, CONFIG_PATH, GLOBAL_CONFIG},
     error::{AppError, FileAction},
 };
 use std::fs;
@@ -7,10 +10,21 @@ use std::fs;
 // 此函数用于加载配置文件，若配置文件不存在则会在用户配置文件目录创建配置文件
 // 并写入默认配置，若文件存在则读取文件内容并加载到全局config变量中,文件格式
 // 默认使用json
-pub fn load_config() -> Result<(), AppError> {
+pub fn load_config(app_handle: AppHandle) -> Result<(), AppError> {
     let mut config_dir = CONFIG_PATH.get().unwrap().clone();
     config_dir.pop();
     let config_path = CONFIG_PATH.get().unwrap();
+
+    let backup_dir = app_handle
+        .path()
+        .app_data_dir()
+        .expect("读取程序data目录失败")
+        .join("backup");
+    let assets_dir = app_handle
+        .path()
+        .app_data_dir()
+        .expect("读取程序data目录失败")
+        .join("assets");
 
     // 如果配置文件不存在则创建一个配置文件并赋予初始值
     if !config_dir.exists() {
@@ -22,25 +36,21 @@ pub fn load_config() -> Result<(), AppError> {
         })?;
         {
             let mut config = GLOBAL_CONFIG.write().unwrap();
-            config.storage.game_save_path =
-                BACKUP_DIR.read().expect("初始化无法地区存档路径").clone();
-            config.storage.meta_save_path =
-                ASSETS_DIR.read().expect("初始化无法读取资源路径").clone();
+            config.storage.backup_save_path = backup_dir.clone();
+            config.storage.meta_save_path = assets_dir.clone();
         }
         // 创建配置文件并写入默认配置
         save_config()?
     }
 
-    let assets_dir = ASSETS_DIR.read().unwrap();
     // 如果资源目录不存在则创建一个资源目录
     if !assets_dir.exists() {
         std::fs::create_dir_all(&*assets_dir).ok();
     }
 
-    let backkup_dir = BACKUP_DIR.read().unwrap();
     // 如果存档备份目录不存在则创建一个备份目录
-    if !backkup_dir.exists() {
-        std::fs::create_dir_all(&*backkup_dir).ok();
+    if !backup_dir.exists() {
+        std::fs::create_dir_all(&*backup_dir).ok();
     }
 
     // 读取配置文件并加载到全局变量
@@ -52,11 +62,11 @@ pub fn load_config() -> Result<(), AppError> {
     // json解析配置文件
     match serde_json::from_str::<Config>(&file_text) {
         Ok(config) => {
-            println!("解析json文件成功");
-            println!("解析的config.json文件:{:?}", config);
+            let mut origin_config = GLOBAL_CONFIG.write().unwrap();
+            *origin_config = config;
         }
         Err(e) => {
-            eprintln!("解析JSON 失败: {}", e);
+            error!("解析JSON 失败: {}", e);
         }
     }
     Ok(())
@@ -74,7 +84,7 @@ pub fn save_config() -> Result<(), AppError> {
     let config = GLOBAL_CONFIG.read().expect("获取读锁失败");
 
     let json_data = serde_json::to_string_pretty(&*config).unwrap();
-    fs::write(&config_path_buf, json_data).map_err(|e| AppError::Config {
+    fs::write(config_path_buf, json_data).map_err(|e| AppError::Config {
         action: FileAction::Write,
         path: config_file_abs_name.into(),
         message: format!("{},具体错误:{}", "写入config文件失败", e),

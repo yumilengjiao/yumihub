@@ -5,7 +5,7 @@ use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_log::log::{error, info, warn};
 
 use crate::{
-    config::{entity::ConfigEvent, ASSETS_DIR, GLOBAL_CONFIG},
+    config::{entity::ConfigEvent, GLOBAL_CONFIG},
     message::{traits::MessageHub, CONFIG_MESSAGE_HUB},
     util::copy_dir_recursive,
 };
@@ -13,14 +13,21 @@ use crate::{
 /// config模块的消息队列循环监听函数
 ///
 /// * `app_handler`: tauri_app句柄
-fn listening_loop(app_handler: &AppHandle) {
-    let handler = app_handler.clone();
+pub fn listening_loop(app_handler: AppHandle) {
     let mut rx = CONFIG_MESSAGE_HUB.subscribe();
     tauri::async_runtime::spawn(async move {
         while let Ok(e) = rx.recv().await {
             match e {
-                ConfigEvent::Basic { base } => {}
-                ConfigEvent::Storage { stroage } => {}
+                ConfigEvent::Basic { base } => {
+                    enable_auto_start(app_handler.clone(), base.auto_start);
+                    enable_slient_start(base.silent_start);
+                    enable_auto_update(base.auto_check_update);
+                    set_language(base.language);
+                }
+                ConfigEvent::Storage { stroage } => {
+                    set_game_meta_data_load_path(stroage.meta_save_path);
+                    set_backup_path(stroage.backup_save_path);
+                }
                 ConfigEvent::System { sys } => {}
                 ConfigEvent::Interface { interface } => {}
             }
@@ -104,23 +111,16 @@ fn set_language(language: String) {
 /// 用于改变资源下载路径,路径改变后开始迁移资源
 ///
 /// * `path`: 新的资源下载路径
-pub fn set_game_meta_data_load_path(path: String) {
+pub fn set_game_meta_data_load_path(path: PathBuf) {
     let result = GLOBAL_CONFIG.write();
     match result {
         Ok(mut config) => {
             let path_cp = path.clone();
-            let assets_path: PathBuf = path.into();
-            config.storage.game_save_path = assets_path;
+            let old_path = config.storage.meta_save_path.clone();
+            let assets_path: PathBuf = path;
+            config.storage.meta_save_path = assets_path;
             // 开始转移数据
             async_runtime::spawn(async move {
-                let old_path = {
-                    let guard = ASSETS_DIR.read();
-                    if guard.is_err() {
-                        warn!("无法获取资源路径");
-                        return;
-                    }
-                    guard.unwrap().clone()
-                };
                 let new_path = PathBuf::from(&path_cp);
 
                 // 检查旧路径是否存在
@@ -153,13 +153,44 @@ pub fn set_game_meta_data_load_path(path: String) {
     }
 }
 
-/// 设置全局的备份存档位置,在改变时转义备份文件
+/// 设置全局的备份存档位置,在改变时转移备份文件
 ///
 /// * `path`: 备份存档的目录
-pub fn set_backup_path(path: String) {
+pub fn set_backup_path(path: PathBuf) {
     let result = GLOBAL_CONFIG.write();
     match result {
-        Ok(mut config) => config.storage.game_save_path = path.into(),
+        Ok(mut config) => {
+            let old_path = config.storage.backup_save_path.clone();
+            //改config全变量数据
+            let cp_path = path.clone();
+            config.storage.backup_save_path = path;
+            async_runtime::spawn(async move {
+                let new_path: PathBuf = cp_path;
+
+                // 检查旧路径是否存在
+                if !old_path.exists() {
+                    warn!("旧路径 {:?} 不存在，跳过迁移", old_path);
+                    return;
+                }
+
+                // 创建新目标目录（确保父级目录都存在）
+                if let Err(e) = std::fs::create_dir_all(&new_path) {
+                    error!("无法创建新目录: {:?}", e);
+                    return;
+                }
+
+                // 执行迁移
+                match copy_dir_recursive(&old_path, &new_path).await {
+                    Ok(_) => {
+                        info!("资源复制成功，准备清理旧数据");
+                        // 4. 复制成功后，删除旧文件夹
+                        let _ = std::fs::remove_dir_all(old_path);
+                        info!("旧资源已清理完毕");
+                    }
+                    Err(e) => error!("迁移失败: {:?}", e),
+                }
+            });
+        }
         Err(_) => {
             error!("获取config写锁失败");
         }

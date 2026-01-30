@@ -27,7 +27,6 @@ pub fn run() {
         .setup(life_cycle::init)
         .invoke_handler(tauri::generate_handler![
             cmd::get_user_info,
-            cmd::update_user_info,
             cmd::get_game_meta_by_id,
             cmd::get_game_meta_list,
             cmd::add_new_game,

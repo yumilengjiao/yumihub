@@ -1,7 +1,13 @@
 //! 工具模块,用来写一些常用的工具
 
-use std::fs;
+use std::fs::{self, File};
+use std::io::Read;
+use std::io::Write;
 use std::path::{Path, PathBuf};
+
+use walkdir::WalkDir;
+use zip::write::FileOptions;
+use zip::ZipWriter;
 
 use crate::error::AppError;
 
@@ -123,5 +129,33 @@ pub async fn copy_dir_recursive(
         }
     }
 
+    Ok(())
+}
+
+/// 将一个目录打包成压缩包移动到另一个目录
+///
+/// * `src`: 原目录地址
+/// * `dst`: 目的目录地址
+pub fn zip_directory_sync(src: &Path, dst: &Path) -> Result<(), Box<dyn std::error::Error>> {
+    let file = File::create(dst)?;
+    let mut zip = ZipWriter::new(file);
+    let options: FileOptions<()> =
+        FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
+
+    for entry in WalkDir::new(src).into_iter().filter_map(|e| e.ok()) {
+        let path = entry.path();
+        let name = path.strip_prefix(src)?;
+
+        if path.is_file() {
+            zip.start_file(name.to_string_lossy(), options)?;
+            let mut f = File::open(path)?;
+            let mut buffer = Vec::new();
+            f.read_to_end(&mut buffer)?;
+            zip.write_all(&buffer)?;
+        } else if !name.as_os_str().is_empty() {
+            zip.add_directory(name.to_string_lossy(), options)?;
+        }
+    }
+    zip.finish()?;
     Ok(())
 }

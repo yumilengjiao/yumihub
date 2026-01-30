@@ -1,12 +1,11 @@
 //! 资源模块,用于缓存二进制文件到本地而不走网络io
 
-use lazy_static::lazy_static;
 use sqlx::{Pool, Sqlite};
 use tauri::{AppHandle, Manager};
-use tauri_plugin_log::log::{error, info};
+use tauri_plugin_log::log::{debug, error, info};
 
 use crate::{
-    config::ASSETS_DIR,
+    config::GLOBAL_CONFIG,
     error::AppError,
     game::entity::{GameEvent, GameMeta},
     message::{traits::MessageHub, GAME_MESSAGE_HUB},
@@ -58,8 +57,13 @@ fn start_resource_manager(app_handle: &AppHandle) {
                                 // 只有网络地址才处理
                                 if url.starts_with("http") {
                                     let file_name = format!("{}_{}.jpg", meta.id, label);
-                                    let assets_dir =
-                                        ASSETS_DIR.read().expect("路径未初始化").clone();
+                                    let assets_dir = GLOBAL_CONFIG
+                                        .read()
+                                        .expect("路径未初始化")
+                                        .storage
+                                        .meta_save_path
+                                        .clone();
+                                    info!("资源路径是:{}", assets_dir.to_string_lossy());
                                     let save_path = assets_dir.join(file_name);
 
                                     // 执行请求
@@ -85,7 +89,12 @@ fn start_resource_manager(app_handle: &AppHandle) {
                                                         _ => {}
                                                     }
 
-                                                    info!("{} 下载成功: {}", label, meta.id);
+                                                    info!(
+                                                        "{} 下载成功: {} , 下载至:{}",
+                                                        label,
+                                                        meta.id,
+                                                        save_path.to_string_lossy(),
+                                                    );
                                                 }
                                             }
                                         }
@@ -94,7 +103,7 @@ fn start_resource_manager(app_handle: &AppHandle) {
                             }
                             // 处理完字段后对meta数据进行更新
                             let pool = handle.state::<Pool<Sqlite>>();
-                            let db_result = update_game_into_db(&*pool, &updated_meta).await;
+                            let db_result = update_game_into_db(&pool, &updated_meta).await;
                             match db_result {
                                 Ok(_) => {
                                     info!("游戏数据已成功同步至数据库: {}", updated_meta.id)
@@ -111,7 +120,12 @@ fn start_resource_manager(app_handle: &AppHandle) {
                 }
                 GameEvent::UserResourceTask { meta } => {
                     info!("接受到用户资源下载任务,开始下载任务");
-                    let asset_path = ASSETS_DIR.read().expect("路径未初始化").clone();
+                    let asset_path = GLOBAL_CONFIG
+                        .read()
+                        .expect("路径未初始化")
+                        .storage
+                        .meta_save_path
+                        .join("user");
                     let file_name = format!("{}-{}.jpg", meta.id, "avatar");
                     let local_avatar = asset_path.join(&file_name).to_string_lossy().to_string();
                     let mut updated_meta = meta.clone();
@@ -155,8 +169,8 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
     sqlx::query(
         r#"
     INSERT OR REPLACE INTO games 
-    (id, name, abs_path, cover, background, local_cover, local_background, play_time, length, size, last_played_at) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (id, name, abs_path, cover, background, local_cover, local_background,save_data_path,backup_data_path, play_time, length, size, last_played_at) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     "#,
     )
     .bind(&updated_meta.id)

@@ -18,7 +18,7 @@ pub struct Config {
 // ------------------------界面配置---------------------
 // -----------------------------------------------------
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Interface {
     pub theme_mode: ThemeMode,
     pub theme_color: ThemeColor,
@@ -27,7 +27,7 @@ pub struct Interface {
     pub font_family: String,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub enum ThemeMode {
     #[default]
     Daytime,
@@ -35,13 +35,13 @@ pub enum ThemeMode {
     Custom,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub enum ThemeColor {
     #[default]
     White,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub enum SideBarMode {
     #[default]
     Trigger,
@@ -65,7 +65,7 @@ impl Default for Interface {
 // ------------------------基础配置---------------------
 // -----------------------------------------------------
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Basic {
     pub auto_start: bool,
     pub silent_start: bool,
@@ -88,23 +88,31 @@ impl Default for Basic {
 // ------------------------存储配置---------------------
 // -----------------------------------------------------
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 /// 游戏相关资源路径
 ///
-/// * `game_save_path`: 游戏存档备份路径
+/// * `backup_save_path`: 游戏存档备份路径
 /// * `meta_save_path`: 游戏资源下载路径
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct Storage {
-    pub game_save_path: PathBuf,
+    pub backup_save_path: PathBuf,
     pub meta_save_path: PathBuf,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone)]
+// -----------------------------------------------------
+// ------------------------系统配置---------------------
+// -----------------------------------------------------
+
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub struct System {
     pub close_button_behavior: String,
     pub enable_gpu_acceleration: bool,
     pub log_level: String,
     pub download_concurrency: i64,
 }
+
+// -----------------------------------------------------
+// ----------------------信息系统相关-------------------
+// -----------------------------------------------------
 
 /// config模块的消息事件
 #[derive(Clone, Debug)]

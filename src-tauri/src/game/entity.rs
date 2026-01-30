@@ -17,8 +17,8 @@ pub struct GameMeta {
     pub background: String,
     pub local_cover: Option<String>,
     pub local_background: Option<String>,
-    pub save_data_path: Option<String>,
-    pub backup_data_path: Option<String>,
+    pub save_data_path: Option<String>,   // 游戏自己的存档原始路径
+    pub backup_data_path: Option<String>, // 备份存档的路径
     pub play_time: i64,
     pub length: Option<i64>,
     pub size: Option<i64>,

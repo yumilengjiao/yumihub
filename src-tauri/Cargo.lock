@@ -1569,6 +1569,7 @@ dependencies = [
  "tauri-plugin-system-info",
  "thiserror 2.0.17",
  "tokio",
+ "walkdir",
  "zip",
 ]
 
