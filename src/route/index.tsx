@@ -4,6 +4,7 @@ import Library from "@/page/Library";
 import User from "@/page/User";
 import Setting from "@/page/Setting";
 import Layout from "@/layout/index";
+import GameDetail from "@/page/Library/GameDetail";
 
 const router = createBrowserRouter([
   {
@@ -16,7 +17,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'library',
-        element: <Library />
+        element: <Library />,
+      },
+      {
+        path: "game/:id",
+        element: <GameDetail />
       },
       {
         path: 'user',

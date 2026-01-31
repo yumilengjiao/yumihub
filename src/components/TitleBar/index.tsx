@@ -52,7 +52,7 @@ export default function index() {
   }, []);
 
   return (
-    <div className="fixed w-full h-[5vh] z-10 flex justify-end cursor-pointer" data-tauri-drag-region >
+    <div className="fixed w-full h-[5vh] z-50 flex justify-end cursor-pointer" data-tauri-drag-region >
       <div className={cn(
         "relative flex justify-end pl-8 pr-5 rounded-bl-[70px]",
         "bg-background/40 backdrop-blur-sm cursor-default"

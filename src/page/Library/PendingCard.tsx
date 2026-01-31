@@ -72,7 +72,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
       background: '',
       playTime: 0,
       length: 0,
-      lastPlayedAt: new Date(),
+      lastPlayedAt: undefined,
     };
     if (!data) return meta;
 
@@ -196,11 +196,14 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
       toast.success("导入成功", { id: loadingId });
       finalGames.forEach((game) => addGameMeta(game))
       onCancel()
-    } catch (err) { toast.error("导入失败", { id: loadingId }); }
+    } catch (err) {
+      toast.error("导入失败", { id: loadingId });
+      console.error(err)
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950/60 backdrop-blur-xl p-8" onClick={onCancel}>
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-zinc-950/60 backdrop-blur-xl p-8" onClick={onCancel}>
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-6xl bg-white shadow-2xl rounded-[52px] flex flex-col h-[88vh] overflow-hidden relative">
 
         {/* Header */}
@@ -267,7 +270,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                                   ))}
                                 </div>
 
-                                <div className="flex-none w-[240px] flex gap-2 p-1.5 bg-zinc-100 rounded-2xl border border-zinc-200/50">
+                                <div className="flex-none w-60 flex gap-2 p-1.5 bg-zinc-100 rounded-2xl border border-zinc-200/50">
                                   <input
                                     className="bg-transparent border-none outline-none flex-1 px-3 text-xs font-bold text-zinc-600 placeholder:text-zinc-400 min-w-0"
                                     placeholder={`${item.activeSource.toUpperCase()} ID...`}
@@ -305,7 +308,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-12 py-10 bg-white border-t-2 border-zinc-50 flex items-center gap-8 shrink-0 relative z-[100] shadow-[0_-20px_50px_rgba(255,255,255,1)]">
+        <div className="px-12 py-10 bg-white border-t-2 border-zinc-50 flex items-center gap-8 shrink-0 relative z-100 shadow-[0_-20px_50px_rgba(255,255,255,1)]">
           <Button onClick={handleGlobalMatch} disabled={isGlobalMatching} className={cn("h-24 flex-1 rounded-[36px] font-black text-3xl gap-4 border-none shadow-none", isGlobalMatching ? "bg-violet-100 text-violet-400 opacity-100" : "bg-violet-600 text-white hover:bg-violet-700")}>
             {isGlobalMatching ? <div className="flex items-center gap-4"><Loader2 className="animate-spin" size={36} /><span className="text-4xl font-black">{matchProgress}%</span></div> : <><Search size={36} strokeWidth={4} />匹配元数据</>}
           </Button>

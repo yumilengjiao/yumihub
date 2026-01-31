@@ -10,9 +10,9 @@ export interface GameMeta {
   saveDataPath?: string,
   backupDataPath?: string,
   playTime: number
-  length: number
+  length?: number
   size?: number
-  lastPlayedAt?: Date
+  lastPlayedAt?: string
 }
 
 export type GameMetaList = GameMeta[]

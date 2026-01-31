@@ -13,6 +13,7 @@ import { PendingGameInfo } from '@/store/pendingGamesStore';
 import { GameMeta, VNDBResult, YmResult } from '@/types/game';
 import { invoke } from '@tauri-apps/api/core';
 import useGameStore from '@/store/gameStore';
+import { nanoid } from 'nanoid';
 
 interface BigPendingCardProps {
   absPath: string;
@@ -135,14 +136,13 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
 
   const handleFinalConfirm = async (useAutoData: boolean) => {
     const finalGame: GameMeta = {
-      id: useAutoData ? (displayInfo?.id || Date.now().toString()) : Date.now().toString(),
+      id: nanoid(),
       absPath: absPath,
       name: useAutoData ? (displayInfo?.title || extractedName) : extractedName,
       cover: useAutoData ? (displayInfo?.cover || "") : "",
       background: "",
       playTime: 0,
       length: 0,
-      lastPlayedAt: new Date(),
     };
 
     try {
@@ -152,6 +152,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
       onCancel()
     } catch (err) {
       toast.error("导入失败", { id: finalGame.id });
+      console.error(err)
     }
 
   };
@@ -169,7 +170,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
   }, []);
 
   return (
-    <div className="fixed top-12 left-1/2 -translate-x-1/2 z-[100] w-[95%] max-w-6xl pointer-events-none">
+    <div className="fixed top-12 left-1/2 -translate-x-1/2 z-100 w-[95%] max-w-6xl pointer-events-none">
       <motion.div layout className="pointer-events-auto bg-white shadow-2xl rounded-[32px] overflow-hidden border border-zinc-100">
 
         {/* --- 状态一：顶部栏 --- */}
