@@ -11,8 +11,6 @@ use std::fs;
 // 并写入默认配置，若文件存在则读取文件内容并加载到全局config变量中,文件格式
 // 默认使用json
 pub fn load_config(app_handle: AppHandle) -> Result<(), AppError> {
-    let mut config_dir = CONFIG_PATH.get().unwrap().clone();
-    config_dir.pop();
     let config_path = CONFIG_PATH.get().unwrap();
 
     let backup_dir = app_handle
@@ -27,9 +25,9 @@ pub fn load_config(app_handle: AppHandle) -> Result<(), AppError> {
         .join("assets");
 
     // 如果配置文件不存在则创建一个配置文件并赋予初始值
-    if !config_dir.exists() {
+    if let Some(config_dir) = config_path.parent() {
         //创建程序目录
-        fs::create_dir_all(&config_dir).map_err(|e| AppError::Config {
+        fs::create_dir_all(config_dir).map_err(|e| AppError::Config {
             action: FileAction::Create,
             path: config_dir.to_string_lossy().into(),
             message: format!("无法创建配置目录: {}", e),
@@ -39,6 +37,8 @@ pub fn load_config(app_handle: AppHandle) -> Result<(), AppError> {
             config.storage.backup_save_path = backup_dir.clone();
             config.storage.meta_save_path = assets_dir.clone();
         }
+    }
+    if !config_path.exists() {
         // 创建配置文件并写入默认配置
         save_config()?
     }

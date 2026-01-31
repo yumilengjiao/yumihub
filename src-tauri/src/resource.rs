@@ -116,6 +116,13 @@ fn start_resource_manager(app_handle: &AppHandle) {
                                                             save_path.to_string_lossy(),
                                                         );
                                                     }
+
+                                                    debug!(
+                                                        "{} 下载成功: {} , 下载至:{}",
+                                                        label,
+                                                        meta.id,
+                                                        save_path.to_string_lossy(),
+                                                    );
                                                 }
                                             }
                                         }
@@ -175,9 +182,6 @@ fn start_resource_manager(app_handle: &AppHandle) {
                             error!("用户数据保存失败: {}, 错误: {}", updated_meta.id, e)
                         }
                     }
-                }
-                _ => {
-                    debug!("其他消息")
                 }
             }
         }

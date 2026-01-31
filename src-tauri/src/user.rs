@@ -1,11 +1,9 @@
 use std::error::Error;
 
-use tauri::AppHandle;
-
 pub mod entity;
 
 /// user模块初始化函数
-pub fn init(app: &AppHandle) -> Result<(), Box<dyn Error>> {
+pub fn init() -> Result<(), Box<dyn Error>> {
     //加载用户配置文件
     load_user_config()?;
     Ok(())
@@ -18,13 +16,7 @@ pub fn load_user_config() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-// 保存全局user变量到user.json文件中持久化存储,此函数是同步阻塞地将全局
-// 配置保存到磁盘上,一般会在程序退出时调用,而对于每种数据类型自己也有实现一
-// 个update方法，update方法用于更新本模块的GLOBAL_CONFIG(全局配置信息变量)内
-// 的数据
-// feature: 未来可能会在update方法里面异步的动态保存配置信息，动态维护一个配
-// 置文件内容的hash值来决定save_config函数是否调用，目前是程序推出前save_config
-// 函数被调用
-pub fn save_config() -> Result<(), Box<dyn Error>> {
+/// 持久化保存用户数据
+pub fn save_data() -> Result<(), Box<dyn Error>> {
     Ok(())
 }

@@ -7,6 +7,7 @@ use crate::message::traits::{MessageEvent, MessageHub};
 
 /// 全局配置类型
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Config {
     pub basic: Basic,
     pub interface: Interface,

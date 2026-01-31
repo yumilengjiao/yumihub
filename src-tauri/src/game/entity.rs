@@ -34,8 +34,6 @@ pub enum GameEvent {
     UserResourceTask { meta: User },
     // 游戏资源任务消息
     GameResourceTask { meta: GameMeta },
-    // 系统状态消息
-    BackendReady,
 }
 
 impl MessageEvent for GameEvent {}

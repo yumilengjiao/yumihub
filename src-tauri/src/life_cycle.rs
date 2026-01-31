@@ -11,13 +11,15 @@ use tauri::App;
 pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
     db::init(app.handle());
     config::init(app.handle())?;
-    user::init(app.handle())?;
+    user::init()?;
     resource::init(app.handle());
     Ok(())
 }
 
-/// 程序结束函数
+/// 程序结束函数,保存变量到本地
 pub fn exit() {
-    user::save_config().expect("保存用户数据失败");
+    // 保存到配置文件
     fs::save_config().expect("保存配置文件失败");
+    //保存用户数据
+    user::save_data().expect("保存用户数据失败");
 }
