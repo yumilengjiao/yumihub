@@ -6,6 +6,12 @@
 /**
  * 支持的调用后端的指令
  */
+/**
+ * [TODO:description]
+ */
+/**
+ * [TODO:description]
+ */
 export enum Cmds {
   /**
    * 获得用户信息
@@ -20,7 +26,7 @@ export enum Cmds {
   /**
    * 获取单个游戏元数据
    */
-  GET_GAME_META = "get_game_meta",
+  GET_GAME_META = "get_game_meta_by_id",
 
   /**
    * 获取所有游戏元数据
@@ -28,14 +34,14 @@ export enum Cmds {
   GET_GAME_META_LIST = "get_game_meta_list",
 
   /**
-   * 更新后端游戏信息
+   * 删除单个游戏信息
    */
-  UPDATE_GAME_META = "update_game_meta",
+  DELETE_GAME_BY_ID = "delete_game_by_id",
 
   /**
-   * 覆盖更新后端所有游戏列表信息
+   * 更新后端游戏信息
    */
-  UPDATE_GAME_META_LIST = "update_game_meta_list",
+  UPDATE_GAME_BY_ID = "update_game_by_id",
 
   /**
    * 添加一个新的游戏到库
@@ -45,6 +51,34 @@ export enum Cmds {
   /**
    * 添加批量游戏到库
    */
-  ADD_NEW_GAME_LIST = "add_new_game_list"
+  ADD_NEW_GAME_LIST = "add_new_game_list",
+
+  /**
+   * 获取配置信息
+   */
+  GET_CONFIG = "get_config",
+
+  /**
+   * 更新配置信息
+   */
+  UPDATE_CONFIG = "update_config",
+
+
+  /**
+   * 备份游戏存档
+   */
+  BACKUP_ARCHIVE = "backup_archive",
+
+
+  /**
+   * 获取游戏启动路径
+   */
+  GET_START_UP_PATH = "get_start_up_path",
+
+
+  /**
+   * 获取系统的所有字体
+   */
+  GET_SYSTEM_FONTS = "get_system_fonts"
 }
 

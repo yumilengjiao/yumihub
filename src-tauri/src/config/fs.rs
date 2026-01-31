@@ -1,5 +1,5 @@
 use tauri::{AppHandle, Manager};
-use tauri_plugin_log::log::error;
+use tauri_plugin_log::log::{debug, error, info};
 
 use crate::{
     config::{entity::Config, CONFIG_PATH, GLOBAL_CONFIG},
@@ -77,11 +77,13 @@ pub fn load_config(app_handle: AppHandle) -> Result<(), AppError> {
 /// 个update方法，update方法用于更新本模块的GLOBAL_CONFIG(全局配置信息变量)内
 /// 的数据
 pub fn save_config() -> Result<(), AppError> {
+    info!("保存配置文件更改");
     let config_path_buf = CONFIG_PATH.get().unwrap();
     let config_file_abs_name = config_path_buf.to_str().unwrap();
 
     //进行一些初始化操作
     let config = GLOBAL_CONFIG.read().expect("获取读锁失败");
+    debug!("配置信息:{:?}", config);
 
     let json_data = serde_json::to_string_pretty(&*config).unwrap();
     fs::write(config_path_buf, json_data).map_err(|e| AppError::Config {

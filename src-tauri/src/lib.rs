@@ -32,16 +32,18 @@ pub fn run() {
             //游戏
             cmd::get_game_meta_by_id,
             cmd::get_game_meta_list,
-            cmd::delete_game,
+            cmd::delete_game_by_id,
             cmd::delete_game_list,
             cmd::add_new_game,
             cmd::add_new_game_list,
             //配置
+            cmd::get_config,
             cmd::update_config,
             //存档
             cmd::backup_archive,
             //其他
-            cmd::get_start_up_path
+            cmd::get_start_up_path,
+            cmd::get_system_fonts
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

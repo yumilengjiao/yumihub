@@ -20,6 +20,7 @@ pub struct Config {
 // -----------------------------------------------------
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct Interface {
     pub theme_mode: ThemeMode,
     pub theme_color: ThemeColor,
@@ -64,6 +65,7 @@ impl Default for Interface {
 // -----------------------------------------------------
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct Basic {
     pub auto_start: bool,
     pub silent_start: bool,
@@ -91,6 +93,7 @@ impl Default for Basic {
 /// * `backup_save_path`: 游戏存档备份路径
 /// * `meta_save_path`: 游戏资源下载路径
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct Storage {
     pub backup_save_path: PathBuf,
     pub meta_save_path: PathBuf,
@@ -101,6 +104,7 @@ pub struct Storage {
 // -----------------------------------------------------
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct System {
     pub close_button_behavior: String,
     pub log_level: String,

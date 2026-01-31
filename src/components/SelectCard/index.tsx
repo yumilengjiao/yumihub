@@ -8,7 +8,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
-interface SettingOption {
+export interface SettingOption {
   label: string;
   value: string;
 }

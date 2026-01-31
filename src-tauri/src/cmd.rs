@@ -1,6 +1,7 @@
 //! 前端发送的所有调用请求命令在此定义，get方法只会调用state_system,
 use std::path::PathBuf;
 
+use font_kit::source::SystemSource;
 use sqlx::Row;
 use sqlx::{Pool, Sqlite};
 use tauri::{async_runtime, State};
@@ -270,7 +271,7 @@ pub async fn add_new_game_list(
 /// * `pool`: 连接池,tauri自动注入
 /// * `id`: 游戏信息id
 #[tauri::command]
-pub async fn delete_game(pool: State<'_, Pool<Sqlite>>, id: String) -> Result<(), AppError> {
+pub async fn delete_game_by_id(pool: State<'_, Pool<Sqlite>>, id: String) -> Result<(), AppError> {
     debug!("要删除的游戏信息: {}", id);
     // 开启事务
     let mut tx = pool
@@ -306,6 +307,19 @@ pub async fn delete_game_list(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppEr
 // --------------------------------------------------------
 // ------------------------配置类--------------------------
 // --------------------------------------------------------
+
+/// 获取配置信息
+#[tauri::command]
+pub fn get_config() -> Result<Config, AppError> {
+    let result = GLOBAL_CONFIG.read();
+    match result {
+        Ok(config) => Ok(config.clone()),
+        Err(e) => {
+            error!("{}", e);
+            Err(AppError::Mutex(e.to_string()))
+        }
+    }
+}
 
 /// 更新配置信息
 ///
@@ -390,4 +404,21 @@ pub async fn backup_archive(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppErro
     }
 
     Ok(())
+}
+
+/// 获取系统字体
+#[tauri::command]
+pub fn get_system_fonts() -> Vec<String> {
+    let source = SystemSource::new();
+
+    // 获取所有已安装的字体族名称
+    let mut fonts = source.all_families().unwrap_or_default();
+
+    fonts.sort();
+
+    // 过滤掉一些奇怪的系统符号字体
+    fonts
+        .into_iter()
+        .filter(|name| !name.starts_with('@')) // 过滤掉 Windows 里的垂直字体
+        .collect()
 }

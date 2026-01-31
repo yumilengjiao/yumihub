@@ -20,6 +20,4 @@ pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
 pub fn exit() {
     // 保存到配置文件
     fs::save_config().expect("保存配置文件失败");
-    //保存用户数据
-    user::save_data().expect("保存用户数据失败");
 }

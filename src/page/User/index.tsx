@@ -9,7 +9,6 @@ import { Avatar } from "@/components/SideBar/Avatar"
 import ToolBox from "./Tool";
 import CommonCard from "@/components/CommonCard"
 import { CircleEllipsis, Clock, Trophy } from "lucide-react"
-import "overlayscrollbars/overlayscrollbars.css";
 import { useState } from "react";
 import EditUserInfoDialog from "./EditUserInfoDialog";
 

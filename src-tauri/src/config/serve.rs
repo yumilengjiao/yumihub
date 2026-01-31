@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use tauri::{async_runtime, AppHandle};
 use tauri_plugin_autostart::ManagerExt;
-use tauri_plugin_log::log::{error, info, warn};
+use tauri_plugin_log::log::{debug, error, info, warn};
 
 use crate::{
     config::{
@@ -22,24 +22,29 @@ pub fn listening_loop(app_handler: AppHandle) {
         while let Ok(event) = rx.recv().await {
             match event {
                 ConfigEvent::Basic { base } => {
+                    debug!("基本设置开始更新");
                     enable_auto_start(app_handler.clone(), base.auto_start);
                     enable_slient_start(base.silent_start);
                     enable_auto_update(base.auto_check_update);
                     set_language(base.language);
                 }
                 ConfigEvent::Storage { stroage } => {
+                    debug!("备份设置开始更新");
                     set_game_meta_data_load_path(stroage.meta_save_path);
                     set_backup_path(stroage.backup_save_path);
                 }
                 ConfigEvent::System { sys } => {
+                    debug!("系统设置开始更新");
                     change_close_button_action(sys.close_button_behavior);
                     change_log_level(sys.log_level);
                     set_concurrent_number(sys.download_concurrency);
                 }
                 ConfigEvent::Interface { interface } => {
+                    debug!("界面设置开始更新");
                     change_interface_mode(interface.theme_mode);
                     change_interface_color(interface.theme_color);
                     change_sidebar_mode(interface.sidebar_mode);
+                    change_font_family(interface.font_family);
                 }
             }
         }
@@ -187,6 +192,16 @@ pub fn change_sidebar_mode(mode: SideBarMode) {
     let result = GLOBAL_CONFIG.write();
     match result {
         Ok(mut config) => config.interface.sidebar_mode = mode,
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
+
+pub fn change_font_family(font: String) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.interface.font_family = font,
         Err(e) => {
             error!("{}", e);
         }

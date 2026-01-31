@@ -27,4 +27,7 @@ pub enum AppError {
 
     #[error("文件系统错误: {0}")]
     File(String),
+
+    #[error("获取锁失败: {0}")]
+    Mutex(String),
 }

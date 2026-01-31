@@ -1,9 +1,36 @@
 import CommonCard from "@/components/CommonCard";
-import { PathCard } from "@/components/PathCard";
-import SelectCard from "@/components/SelectCard";
+import SelectCard, { SettingOption } from "@/components/SelectCard";
+import { Cmds } from "@/lib/enum";
+import useConfigStore from "@/store/configStore";
+import { invoke } from "@tauri-apps/api/core";
+import { useEffect, useState } from "react";
 
 export default function InterfaceSetting() {
   let opt = [{ label: "夜间模式", value: "1" }, { label: "浅色模式", value: "2" }]
+  const { config, updateConfig } = useConfigStore()
+  console.log(config)
+  // 字体
+  const [fontFamilyVec, setFontFamilyVec] = useState<SettingOption[]>([{ label: "sys", value: "sys" }])
+  useEffect(() => {
+    async function getFonts() {
+      const fontVec = await invoke<string[]>(Cmds.GET_SYSTEM_FONTS)
+      const opt = fontVec.map((font) => {
+        return {
+          label: font,
+          value: font
+        }
+      })
+      opt.push({ label: "sys", value: "sys" })
+      setFontFamilyVec(opt)
+    }
+    getFonts()
+  }, [])
+  // 更新字体配置
+  const updateFontFamily = (fontFamily: string) => {
+    updateConfig((config) => {
+      config.interface.fontFamily = fontFamily
+    })
+  }
   return (
     <CommonCard title="界面" className="col-span-3 row-span-3">
       <SelectCard
@@ -25,7 +52,12 @@ export default function InterfaceSetting() {
         options={opt}
         value="1"
         onValueChange={(n) => alert(n)} />
-      <PathCard title="字体" path="/home/user/nihao" onSelect={() => console.log("nihc")} />
+      <SelectCard
+        title="选择字体"
+        options={fontFamilyVec}
+        value={config.interface.fontFamily}
+        onValueChange={(font) => updateFontFamily(font)} />
+
 
     </CommonCard>
   )
