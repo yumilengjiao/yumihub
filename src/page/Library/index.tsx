@@ -64,12 +64,12 @@ export default function Library() {
       <div className="w-full h-full overflow-y-auto p-2">
         <div className={cn(
           "grid gap-6 px-15 w-full",
-          "grid-cols-[repeat(auto-fill,minmax(250px,1fr))]",
+          "grid-cols-[repeat(auto-fill,minmax(150px,1fr))]"
         )}>
           {displayGames.map((g: GameMeta) => (
             <Card
               key={g.id}
-              className="relative overflow-hidden cursor-pointer border-3 ring-1 ring-black/5 shadow-xl shadow-blue-500/10"
+              className="aspect-165/225 relative overflow-hidden cursor-pointer border-3 ring-1 ring-black/5 shadow-xl shadow-blue-500/10"
               onClick={() => navigate(`/game/${g.id}`)}
             >
               {/* 1. 垃圾桶模式下的红色叉叉 */}
@@ -103,7 +103,6 @@ export default function Library() {
                 />
               </div>
 
-              {/* 3. 如果想让卡片在删除模式下抖动，可以给外层加个动画容器 */}
               {discardMode && (
                 <motion.div
                   animate={{ rotate: [0, -1, 1, -1, 0] }}

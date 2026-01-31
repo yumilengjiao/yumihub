@@ -45,7 +45,7 @@ pub enum ThemeColor {
 pub enum SideBarMode {
     #[default]
     Trigger,
-    NormoalFixed,
+    NormalFixed,
     ShortFixed,
 }
 

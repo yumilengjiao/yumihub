@@ -35,7 +35,7 @@ const ProfileHeader = ({ username }: { username: string }) => {
         {/* 右侧：文字信息 */}
         <div className="space-y-2">
           <div className="flex items-baseline gap-2">
-            <h1 className="text-3xl font-black text-zinc-900 tracking-tight">
+            <h1 className="font-black text-zinc-900 tracking-tight">
               {greeting.text}，{username}
             </h1>
           </div>

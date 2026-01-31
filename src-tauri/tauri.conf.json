@@ -12,11 +12,12 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "galhub",
         "width": 900,
         "height": 600,
-        "minWidth": 800,
-        "minHeight": 600,
+        "minWidth": 1100,
+        "minHeight": 700,
         "decorations": false,
         "transparent": true
       }

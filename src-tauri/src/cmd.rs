@@ -109,6 +109,7 @@ pub async fn get_game_meta_list(pool: State<'_, Pool<Sqlite>>) -> Result<GameMet
                 abs_path,
                 cover,
                 background, 
+                description,
                 local_cover,
                 local_background,
                 save_data_path,
@@ -141,6 +142,7 @@ pub async fn get_game_meta_by_id(
                 abs_path,
                 cover,
                 background,
+                description,
                 local_cover,
                 local_background,
                 save_data_path,
@@ -177,6 +179,7 @@ pub async fn add_new_game(
             abs_path,
             cover,
             background,
+            description,
             local_cover,
             local_background,
             save_data_path,
@@ -186,7 +189,7 @@ pub async fn add_new_game(
             size,
             last_played_at
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         "#,
     )
     .bind(&game.id)
@@ -233,6 +236,7 @@ pub async fn add_new_game_list(
                     abs_path,
                     cover,
                     background,
+                    description,
                     local_cover,
                     local_background,
                     save_data_path,
@@ -242,7 +246,7 @@ pub async fn add_new_game_list(
                     size,
                     last_played_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         )
         .bind(&game.id)
         .bind(&game.name)

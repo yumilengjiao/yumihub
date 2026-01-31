@@ -1,40 +1,46 @@
 import { cn } from "@/lib/utils"
 import { ReactNode } from "react"
-import { useLocation } from "react-router"
 
 interface EntryProps {
-  location?: string;
-  children: ReactNode,
-  secondTitle: string,
-  onClick: () => void | null
+  children: ReactNode;
+  title: string;
+  isExpanded: boolean;
+  isActive?: boolean;
+  onClick: () => void;
 }
 
-export default function Entry({ location, children, secondTitle, onClick }: EntryProps) {
-  const currentLocation = useLocation()
+export default function Entry({ children, title, isExpanded, isActive, onClick }: EntryProps) {
   return (
-    <div className="py-1 w-full group mt-10 relative">
-      {currentLocation.pathname === location &&
-        <div className="absolute bg-primary h-full w-5 rounded-r-xl">
-        </div>}
-      <div
-        onClick={onClick}
-        className={cn(
-          " flex items-center justify-between gap-3 px-4 py-3 rounded-2xl ",
-          "px-20 min-h-20 cursor-pointer transition-all duration-200",
-          "active:scale-[0.97] select-none text-primary/80 hover:text-accent-foreground"
-        )}
-      >
-        {/* 图标 */}
-        <div className="shrink-0 transition-colors">
-          {children}
-        </div>
+    <div
+      onClick={onClick}
+      className={cn(
+        "group relative flex items-center h-16 cursor-pointer rounded-[24px] transition-all duration-300",
+        "justify-start overflow-hidden",
 
-        {/* 文字：主轴对齐，禁止换行 */}
-        <span className="text-5xl font-semibold tracking-wide whitespace-nowrap">
-          {secondTitle}
-        </span>
+        isActive
+          ? "bg-emerald-500 text-white shadow-lg shadow-emerald-100 scale-[1.02]"
+          : "text-white hover:bg-zinc-100 hover:text-emerald-600"
+      )}
+    >
+
+      <div className="flex items-center justify-center shrink-0 w-23 h-full transition-transform group-active:scale-90">
+        {children}
+      </div>
+
+      <div className={cn(
+        "font-black text-lg tracking-tight transition-all duration-300 whitespace-nowrap",
+        isExpanded
+          ? "opacity-100 translate-x-0"
+          : "opacity-0 -translate-x-4 pointer-events-none"
+      )}
+        // 使用宽度过渡来撑开容器
+        style={{
+          width: isExpanded ? 'auto' : '0',
+          marginLeft: isExpanded ? '4px' : '0'
+        }}
+      >
+        {title}
       </div>
     </div>
   )
 }
-

@@ -52,7 +52,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
   ] as const;
 
   return (
-    <div className="flex items-center justify-end gap-4 w-full px-12 pt-10">
+    <div className="flex items-center justify-end gap-8 w-full px-12 pt-10">
 
       {/* 搜索容器 */}
       <motion.div
@@ -72,9 +72,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
           className="w-20 h-20 flex-shrink-0 flex items-center justify-center text-zinc-900 active:scale-95 transition-all"
         >
           {isSearchOpen ? (
-            <X size={44} strokeWidth={4} className="text-zinc-500" />
+            <X size={34} strokeWidth={2} className="text-zinc-500" />
           ) : (
-            <Search size={44} strokeWidth={4} />
+            <Search size={34} strokeWidth={2} />
           )}
         </button>
 
@@ -106,7 +106,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
       <div className="relative">
         <ToolbarButton
           onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
-          icon={<ArrowUpDown size={44} strokeWidth={4} />}
+          icon={<ArrowUpDown size={34} strokeWidth={2} />}
           active={isSortMenuOpen}
         />
 
@@ -154,7 +154,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
       {/* 删除模式切换按钮 */}
       <ToolbarButton
         onClick={handleToggleDeleteMode}
-        icon={isDeleteMode ? <X size={44} strokeWidth={4} /> : <Trash2 size={44} strokeWidth={4} />}
+        icon={isDeleteMode ? <X size={34} strokeWidth={2} /> : <Trash2 size={34} strokeWidth={2} />}
         danger={!isDeleteMode}
         active={isDeleteMode}
         className={isDeleteMode ? "bg-red-600 text-white hover:bg-red-700" : ""}

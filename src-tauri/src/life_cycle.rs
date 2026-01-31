@@ -5,10 +5,21 @@ use crate::{
     user::{self},
 };
 use std::error::Error;
-use tauri::App;
+use tauri::{App, Manager};
+#[cfg(target_os = "windows")]
+use window_vibrancy::apply_acrylic;
+use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 /// 初始化函数
 pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
+    let window = app.get_webview_window("main").unwrap();
+
+    #[cfg(target_os = "macos")]
+    apply_vibrancy(&window, NSVisualEffectMaterial, None, None);
+
+    #[cfg(target_os = "windows")]
+    apply_acrylic(&window, None).expect("不支持当前平台");
+
     db::init(app.handle());
     config::init(app.handle())?;
     user::init()?;

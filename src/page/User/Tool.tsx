@@ -23,7 +23,7 @@ export function ToolBox({
     <div className="w-full h-full relative">
       <Carousel className="w-full h-full">
         {/* 轮播指示点放在头顶 */}
-        <div className="absolute -top-6 left-0 right-0 flex justify-center">
+        <div className="absolute -top-10 left-0 right-0 flex justify-center">
           <CarouselDots className="bg-zinc-800/50 rounded-full px-2 py-1" />
         </div>
 
@@ -61,7 +61,7 @@ export function ToolBox({
           <CarouselItem className="aspect-auto h-full basis-full w-full px-8">
             <div className="flex h-full justify-around items-center">
               <div className="flex items-center gap-2">
-                <Link2 className="w-25 h-25 text-blue-400" />
+                <Link2 className="w-18 h-18 text-blue-400" />
                 <span className="font-bold text-zinc-300 uppercase tracking-wider text-[35px]">伴随模式</span>
               </div>
               <SuperSwitch

@@ -1,3 +1,4 @@
+import { Cmds } from '@/lib/enum'
 import { GameMeta, GameMetaList } from '@/types/game'
 import { invoke } from '@tauri-apps/api/core'
 import { create } from 'zustand'
@@ -80,7 +81,7 @@ const useGameStore = create<GameStore>()(
      */
     async discardGame(id) {
       try {
-        await invoke("delete_game", { id: id })
+        await invoke(Cmds.DELETE_GAME_BY_ID, { id: id })
         set(state => {
           state.gameMetaList = state.gameMetaList.filter(g => g.id !== id)
         })

@@ -1,5 +1,4 @@
 import CalendarHeatMap from "./Calendar"
-import DragScroller from "./DragScroller";
 import GameJourney from "./GameJourney";
 import MoreOptions from "@/components/MoreOption";
 import ProfileHeader from "./ProfileHeader";
@@ -10,7 +9,9 @@ import ToolBox from "./Tool";
 import CommonCard from "@/components/CommonCard"
 import { CircleEllipsis, Clock, Trophy } from "lucide-react"
 import { useState } from "react";
+import { DragScroller } from "./DragScroller";
 import EditUserInfoDialog from "./EditUserInfoDialog";
+import { cn } from "@/lib/utils";
 
 const radarData = [
   {
@@ -42,7 +43,7 @@ export default function User() {
   }
 
   return (
-    <div className="h-full flex justify-center items-center bg-zinc-300">
+    <div className="h-full flex justify-center items-center bg-zinc-300 px-4">
       {/* ------------各种对话框组件------------- */}
       <EditUserInfoDialog isOpen={isEditingUser} onClose={() => setIsEditingUser(false)} />
 
@@ -52,15 +53,23 @@ export default function User() {
           <div className="w-full h-full flex flex-col justify-between">
             <div className="w-full flex flex-col gap-6">
               <Avatar className="w-full h-auto" />
-              <div>
+              <div className="@container inline-size! w-full">
                 <Trophy className="w-full h-auto" />
-                <div className="w-full text-[clamp(1rem,4cqw,3rem)] leading-none text-center">
+                <div className={cn(
+                  "w-full text-center mt-2",
+                  "text-[clamp(1rem,30cqw,5rem)]",
+                  "leading-none font-bold italic"
+                )}>
                   12
                 </div>
               </div>
-              <div>
+              <div className="@container inline-size! w-full">
                 <Clock className="w-full h-auto" />
-                <div className="w-full text-[clamp(1rem,4cqw,2.5rem)] leading-none text-center">
+                <div className={cn(
+                  "w-full text-center mt-2",
+                  "text-[clamp(1rem,30cqw,5rem)]",
+                  "leading-none font-bold italic"
+                )}>
                   1234h
                 </div>
               </div>

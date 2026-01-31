@@ -37,11 +37,13 @@ export enum ThemeMode {
 
 export enum ThemeColor {
   White = "White",
+  Green = "Green",
+  Orange = "Orange"
 }
 
 export enum SideBarMode {
   Trigger = "Trigger",
-  NormoalFixed = "NormoalFixed",
+  NormalFixed = "NormalFixed",
   ShortFixed = "ShortFixed",
 }
 

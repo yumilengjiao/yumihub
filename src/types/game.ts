@@ -5,10 +5,11 @@ export interface GameMeta {
   absPath: string
   cover: string
   background: string
+  description: string
   local_cover?: string
   local_background?: string
-  saveDataPath?: string,
-  backupDataPath?: string,
+  saveDataPath?: string
+  backupDataPath?: string
   playTime: number
   length?: number
   size?: number

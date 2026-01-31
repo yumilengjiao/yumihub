@@ -33,10 +33,8 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
   const [singleLoading, setSingleLoading] = useState<string | null>(null);
 
   const { addReadyGames, resetReadyGames } = usePendingGameStore();
-  const { addGameMeta } = useGameStore()
+  const { addGameMeta } = useGameStore();
   const isMatchingRef = useRef(false);
-
-  // --- 补回超时引用 ---
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const clearTimer = () => {
@@ -61,19 +59,23 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
     };
   };
 
+  // --- 核心修改：精准提取各源描述并确保不为空 ---
   const transformToGameMeta = (item: any): GameMeta => {
     const source = item.activeSource;
     const data = item.data as PendingGameInfo;
+
     let meta: GameMeta = {
       id: nanoid(),
       name: item.folderName,
       absPath: item.exePath,
       cover: '',
       background: '',
+      description: '', // 默认为空，后续填充
       playTime: 0,
       length: 0,
       lastPlayedAt: undefined,
     };
+
     if (!data) return meta;
 
     try {
@@ -83,6 +85,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
           meta.name = b.name_cn || b.name;
           meta.cover = b.images?.large || b.image || '';
           meta.background = b.images?.common || '';
+          meta.description = b.summary || ''; // 绑定 Bangumi 简介
         }
       } else if (source === 'vndb') {
         const v = data.vndb?.results ? data.vndb.results[0] : (data.vndb as any);
@@ -91,14 +94,27 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
           meta.cover = v.image?.url || '';
           meta.background = v.screenshots?.[0]?.url || v.image?.url || '';
           meta.length = v.length || 0;
+          meta.description = v.description || ''; // 绑定 VNDB 简介
         }
-      } else if (source === 'ymgal' && data.ymgal?.data?.result?.[0]) {
-        const y = data.ymgal.data.result[0];
-        meta.name = y.chineseName || y.name;
-        meta.cover = y.mainImg || '';
-        meta.background = y.mainImg || '';
+      } else if (source === 'ymgal') {
+        const y = data.ymgal?.data?.result?.[0];
+        if (y) {
+          meta.name = y.chineseName || y.name;
+          meta.cover = y.mainImg || '';
+          meta.background = y.mainImg || '';
+          // 月幕结果中如果存在简介字段（根据通用接口惯例尝试提取）
+          meta.description = (y as any).description || (y as any).chineseName || y.name || '';
+        }
       }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error("转换元数据出错:", e);
+    }
+
+    // 强制检查：如果描述为空，填充占位符，确保提交到后端不是空字符串
+    if (!meta.description || meta.description.trim() === "") {
+      meta.description = `${meta.name} - 暂无详细介绍。`;
+    }
+
     return meta;
   };
 
@@ -116,18 +132,15 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
       }
     };
     init();
-    // 组件卸载时清除定时器
     return () => clearTimer();
   }, [pathList]);
 
-  // --- 全局匹配带超时保护 ---
   const handleGlobalMatch = async () => {
     if (isGlobalMatching) return;
     setIsGlobalMatching(true);
     isMatchingRef.current = true;
     setMatchProgress(0);
 
-    // 设置全局匹配总超时 (60秒)
     timerRef.current = setTimeout(() => {
       if (isMatchingRef.current) {
         isMatchingRef.current = false;
@@ -153,14 +166,10 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
     }
   };
 
-  // --- 单条 ID 检索带超时保护 ---
   const handleSingleIdSearch = async (itemId: string) => {
     const item = items.find(it => it.id === itemId);
     if (!item || !item.idInput) return;
-
     setSingleLoading(itemId);
-
-    // 设置单次请求超时 (15秒)
     const singleTimer = setTimeout(() => {
       if (singleLoading === itemId) {
         setSingleLoading(null);
@@ -187,18 +196,26 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
   };
 
   const handleFinalConfirm = async () => {
+    // 提前转换，用于校验
+    const finalGames = items.map(item => transformToGameMeta(item));
+
     const loadingId = toast.loading("正在处理导入...");
     resetReadyGames();
     try {
-      const finalGames = items.map(item => transformToGameMeta(item));
-      finalGames.forEach(g => addReadyGames(g));
+      // 提交到后端 Rust
       await invoke("add_new_game_list", { games: finalGames });
+
+      // 更新前端 Store
+      finalGames.forEach(g => {
+        addReadyGames(g);
+        addGameMeta(g);
+      });
+
       toast.success("导入成功", { id: loadingId });
-      finalGames.forEach((game) => addGameMeta(game))
-      onCancel()
+      onCancel();
     } catch (err) {
       toast.error("导入失败", { id: loadingId });
-      console.error(err)
+      console.error(err);
     }
   };
 
@@ -230,11 +247,6 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
             <div className="grid grid-cols-1 gap-5 pb-10">
               {items.map((item) => {
                 const meta = transformToGameMeta(item);
-                const info = item.data as PendingGameInfo | null;
-                let displayDesc = "抓取成功后将在此同步简介信息...";
-                if (item.activeSource === 'bangumi') displayDesc = (info?.bangumi as any)?.summary || (info?.bangumi as any)?.data?.[0]?.summary || displayDesc;
-                if (item.activeSource === 'vndb') displayDesc = (info?.vndb as any)?.description || (info?.vndb as any)?.results?.[0]?.description || displayDesc;
-
                 return (
                   <div key={item.id} className="bg-zinc-50/80 rounded-[40px] border border-zinc-100 overflow-hidden hover:bg-white transition-all duration-300 group/card">
                     <div className="p-6 flex items-center gap-7 cursor-pointer" onClick={() => setItems(prev => prev.map(it => it.id === item.id ? { ...it, expanded: !it.expanded } : it))}>
@@ -293,7 +305,8 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                               </div>
 
                               <ScrollArea className="flex-1 bg-white rounded-[32px] p-6 border border-zinc-100 shadow-inner h-32">
-                                <p className="text-sm font-bold text-zinc-500 italic leading-relaxed">{displayDesc}</p>
+                                {/* 这里直接展示 meta.description，它会随源切换动态改变 */}
+                                <p className="text-sm font-bold text-zinc-500 italic leading-relaxed">{meta.description}</p>
                               </ScrollArea>
                             </div>
                           </div>
@@ -321,4 +334,4 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
   );
 };
 
-export default PendingCard
+export default PendingCard;

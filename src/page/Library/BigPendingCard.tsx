@@ -43,7 +43,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
 
     // Bangumi 映射
     if (activeSource === 'bangumi' && resultData.bangumi) {
-      // 兼容两种情况：1. 搜索返回的 data 数组；2. ID查询返回的单体对象
+
       const d = (resultData.bangumi as any).data ? (resultData.bangumi as any).data[0] : (resultData.bangumi as any);
       if (!d) return null;
       return {
@@ -140,6 +140,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
       absPath: absPath,
       name: useAutoData ? (displayInfo?.title || extractedName) : extractedName,
       cover: useAutoData ? (displayInfo?.cover || "") : "",
+      description: displayInfo?.desc,
       background: "",
       playTime: 0,
       length: 0,

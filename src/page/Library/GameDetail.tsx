@@ -1,7 +1,6 @@
 import useGameStore from '@/store/gameStore';
 import { GameMeta } from '@/types/game';
 import { useNavigate, useParams } from 'react-router';
-import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play, Save, FolderOpen, ArrowLeft,
@@ -16,7 +15,6 @@ export default function GameDetail() {
   const navigate = useNavigate();
 
   const game = getGameMetaById(id!)!;
-  const [description, setDescription] = useState("暂无游戏介绍。点击此处添加描述，记录你的冒险点滴...");
 
   const CARD_STYLE = "bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-10 flex flex-col w-full h-full";
   const INPUT_STYLE = "flex items-center justify-between bg-slate-50 border border-slate-100 p-6 rounded-2xl hover:bg-white hover:border-emerald-400 hover:shadow-lg transition-all cursor-pointer group";
@@ -31,7 +29,12 @@ export default function GameDetail() {
     if (selected && typeof selected === 'string') {
       setGameMeta({ ...game, [field]: selected });
     }
-  };
+  }
+
+  const updateGameInfo = (desc: string) => {
+    game.description = desc
+    setGameMeta(game)
+  }
 
   return (
     <div className="fixed inset-0 bg-[#fcfdfe] text-slate-800 overflow-y-auto z-50">
@@ -109,8 +112,8 @@ export default function GameDetail() {
                   </h3>
                   {/* flex-1 确保输入框撑满卡片剩余高度 */}
                   <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    value={game.description}
+                    onChange={(e) => updateGameInfo(e.target.value)}
                     className="w-full flex-1 bg-slate-50 border-none rounded-2xl p-8 text-2xl text-slate-600 leading-relaxed resize-none outline-none focus:ring-1 focus:ring-emerald-100 transition-all"
                   />
                 </div>

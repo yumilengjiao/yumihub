@@ -15,6 +15,7 @@ pub struct GameMeta {
     pub abs_path: String,
     pub cover: String,
     pub background: String,
+    pub description: String,
     pub local_cover: Option<String>,
     pub local_background: Option<String>,
     pub save_data_path: Option<String>,   // 游戏自己的存档原始路径

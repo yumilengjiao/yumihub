@@ -3,63 +3,50 @@ import SelectCard, { SettingOption } from "@/components/SelectCard";
 import { Cmds } from "@/lib/enum";
 import useConfigStore from "@/store/configStore";
 import { invoke } from "@tauri-apps/api/core";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 export default function InterfaceSetting() {
-  let opt = [{ label: "夜间模式", value: "1" }, { label: "浅色模式", value: "2" }]
-  const { config, updateConfig } = useConfigStore()
-  console.log(config)
-  // 字体
-  const [fontFamilyVec, setFontFamilyVec] = useState<SettingOption[]>([{ label: "sys", value: "sys" }])
+  const fontFamily = useConfigStore(s => s.config.interface.fontFamily || "sys");
+  const updateConfig = useConfigStore(s => s.updateConfig);
+  const [fontFamilyVec, setFontFamilyVec] = useState<SettingOption[]>([{ label: "系统默认", value: "sys" }]);
+  const { config } = useConfigStore()
+
   useEffect(() => {
-    async function getFonts() {
-      const fontVec = await invoke<string[]>(Cmds.GET_SYSTEM_FONTS)
-      const opt = fontVec.map((font) => {
-        return {
-          label: font,
-          value: font
-        }
-      })
-      opt.push({ label: "sys", value: "sys" })
-      setFontFamilyVec(opt)
-    }
-    getFonts()
-  }, [])
-  // 更新字体配置
-  const updateFontFamily = (fontFamily: string) => {
-    updateConfig((config) => {
-      config.interface.fontFamily = fontFamily
-    })
-  }
+    invoke<string[]>(Cmds.GET_SYSTEM_FONTS).then(fonts => {
+      const opts = fonts.map(f => ({ label: f, value: f }));
+      setFontFamilyVec([{ label: "sys", value: "sys" }, ...opts]);
+    });
+  }, []);
+
+  const themeOpts = [{ label: "日间模式", value: "Daytime" }, { label: "夜间模式", value: "Night" }];
+
   return (
-    <CommonCard title="界面" className="col-span-3 row-span-3">
-      <SelectCard
-        title="外观模式"
-        options={opt}
-        value="1"
-        onValueChange={(n) => alert(n)} />
-      <SelectCard
-        title="主题色"
-        options={opt} value="1"
-        onValueChange={(n) => alert(n)} />
-      <SelectCard
-        title="窗口拖拽特效"
-        options={opt}
-        value="1"
-        onValueChange={(n) => alert(n)} />
-      <SelectCard
-        title="侧边栏设置"
-        options={opt}
-        value="1"
-        onValueChange={(n) => alert(n)} />
-      <SelectCard
-        title="选择字体"
-        options={fontFamilyVec}
-        value={config.interface.fontFamily}
-        onValueChange={(font) => updateFontFamily(font)} />
-
-
+    <CommonCard title="个性化界面" icon="🎨">
+      <div className="space-y-1">
+        <SelectCard
+          title="外观主题"
+          options={themeOpts}
+          value={useConfigStore(s => s.config.interface.themeMode)}
+          onValueChange={(v) => updateConfig(d => { d.interface.themeMode = v as any })} />
+        <SelectCard
+          title="主题颜色"
+          options={themeOpts}
+          value={useConfigStore(s => s.config.interface.themeColor)}
+          onValueChange={(v) => updateConfig(d => { d.interface.themeColor = v as any })} />
+        <SelectCard
+          title="侧边栏显示"
+          options={[{ label: "自动触发", value: "Trigger" },
+          { label: "固定展示(正常)", value: "NormalFixed" },
+          { label: "固定展示(短)", value: "ShortFixed" }]}
+          value={useConfigStore(s => s.config.interface.sidebarMode)}
+          onValueChange={(v) => updateConfig(d => { d.interface.sidebarMode = v as any })} />
+        <SelectCard
+          title="选择应用字体"
+          options={fontFamilyVec} // 确保这个 state 渲染了
+          value={config?.interface?.fontFamily || "sys"} // 增加可选链保护
+          onValueChange={(font) => updateConfig(d => { d.interface.fontFamily = font })}
+        />
+      </div>
     </CommonCard>
-  )
+  );
 }
-

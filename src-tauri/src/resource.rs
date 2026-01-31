@@ -196,8 +196,23 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
     sqlx::query(
         r#"
     INSERT OR REPLACE INTO games 
-    (id, name, abs_path, cover, background, local_cover, local_background,save_data_path,backup_data_path, play_time, length, size, last_played_at) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (
+        id,
+        name,
+        abs_path,
+        cover,
+        background,
+        description,
+        local_cover,
+        local_background,
+        save_data_path,
+        backup_data_path,
+        play_time,
+        length,
+        size,
+        last_played_at
+    ) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     "#,
     )
     .bind(&updated_meta.id)
@@ -205,6 +220,7 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
     .bind(&updated_meta.abs_path)
     .bind(&updated_meta.cover)
     .bind(&updated_meta.background)
+    .bind(&updated_meta.description)
     .bind(&updated_meta.local_cover)
     .bind(&updated_meta.local_background)
     .bind(&updated_meta.save_data_path)
