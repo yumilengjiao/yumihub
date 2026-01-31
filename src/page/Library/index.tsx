@@ -4,23 +4,23 @@ import { cn } from "@/lib/utils"
 import { convertFileSrc } from "@tauri-apps/api/core"
 import TopBar from "./TopBar"
 import AddGameButton from "./AddGameButton"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { AnimatePresence } from "framer-motion"
 import { motion } from 'framer-motion'
-import { GameMeta, GameMetaList } from "@/types/game"
+import { GameMeta } from "@/types/game"
 import { X } from "lucide-react"
+import { useNavigate } from "react-router"
 
 export default function Library() {
-  const { discardGame, filterGameMetaListByName } = useGameStore()
+  const { gameMetaList, discardGame, filterGameMetaListByName } = useGameStore()
   const [discardMode, setDiscardMode] = useState<boolean>(false)
   const [isAsc, setIsAsc] = useState<boolean>(false); // 默认降序（从大到小/最新）
   const [sortMode, setSortMode] = useState<"duration" | "name" | "lastPlayed">("lastPlayed")
   const [keyword, setKeyword] = useState<string>("")
-  const [visibleGames, setVisibleGames] = useState<GameMetaList>([])
+  const navigate = useNavigate()
 
-  useEffect(() => {
-    console.log(visibleGames)
-    setVisibleGames(filterGameMetaListByName(keyword).sort((ga, gb) => {
+  const displayGames = useMemo(() => {
+    return [...filterGameMetaListByName(keyword)].sort((ga, gb) => {
       let result = 0
       switch (sortMode) {
         case "duration":
@@ -32,16 +32,16 @@ export default function Library() {
           result = ga.name.localeCompare(gb.name, 'zh-CN');
           break
         case "lastPlayed":
-          const valA = "lastPlayedAt" in ga ? ga.lastPlayedAt?.getTime() : 0
-          const valB = "lastPlayedAt" in gb ? gb.lastPlayedAt?.getTime() : 0
-          result = (valA as number) - (valB as number);
-          break
+          const valA = ga?.lastPlayedAt ? new Date(ga.lastPlayedAt).getTime() : 0;
+          const valB = gb?.lastPlayedAt ? new Date(gb.lastPlayedAt).getTime() : 0;
+          result = valB - valA; // 降序：最新的在上面
+          break;
         default:
           return 0;
       }
       return isAsc ? result : -result
-    }))
-  }, [sortMode, keyword, isAsc])
+    })
+  }, [sortMode, keyword, isAsc, gameMetaList])
 
   useEffect(() => {
     return () => {
@@ -66,10 +66,11 @@ export default function Library() {
           "grid gap-6 px-15 w-full",
           "grid-cols-[repeat(auto-fill,minmax(250px,1fr))]",
         )}>
-          {visibleGames.map((g: GameMeta) => (
+          {displayGames.map((g: GameMeta) => (
             <Card
               key={g.id}
               className="relative overflow-hidden cursor-pointer border-3 ring-1 ring-black/5 shadow-xl shadow-blue-500/10"
+              onClick={() => navigate(`/game/${g.id}`)}
             >
               {/* 1. 垃圾桶模式下的红色叉叉 */}
               <AnimatePresence>

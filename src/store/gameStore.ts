@@ -1,4 +1,5 @@
 import { GameMeta, GameMetaList } from '@/types/game'
+import { invoke } from '@tauri-apps/api/core'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
@@ -8,8 +9,9 @@ type GameStore = {
   updateSelectedGame: (game: GameMeta) => void,
   setGameMetaList: (gameMetaList: GameMetaList) => void,
   setGameMeta: (game: GameMeta) => void,
-  discardGame: (id: string) => void,
+  discardGame: (id: string) => Promise<void>,
   filterGameMetaListByName: (name: string) => GameMetaList
+  getGameMetaById: (id: string) => GameMeta
   addGameMeta: (game: GameMeta) => void
 }
 
@@ -72,12 +74,19 @@ const useGameStore = create<GameStore>()(
       });
     },
 
-    discardGame(id) {
-      set(state => {
-        let index = state.gameMetaList.findIndex((g) => g.id = id)
-        if (index != -1)
-          state.gameMetaList.splice(index, 1)
-      })
+    /**
+     * 通过id从库中删除一个游戏
+     * @param id - 要删除的游戏id
+     */
+    async discardGame(id) {
+      try {
+        await invoke("delete_game", { id: id })
+        set(state => {
+          state.gameMetaList = state.gameMetaList.filter(g => g.id !== id)
+        })
+      } catch (err) {
+        console.error(err)
+      }
     },
 
     /**
@@ -88,6 +97,15 @@ const useGameStore = create<GameStore>()(
       set((state) => {
         state.gameMetaList.push(game)
       })
+    },
+
+    /**
+     * 使用id查询单个游戏信息
+     * @param id - 游戏id
+     * @returns 查找的游戏对象
+     */
+    getGameMetaById(id) {
+      return get().gameMetaList.find(g => g.id === id)!
     },
   }))
 )

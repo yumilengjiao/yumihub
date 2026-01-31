@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use sqlx::Row;
 use sqlx::{Pool, Sqlite};
 use tauri::{async_runtime, State};
-use tauri_plugin_log::log::{error, info};
+use tauri_plugin_log::log::{debug, error, info};
 
 use crate::{
     config::{
@@ -166,6 +166,7 @@ pub async fn add_new_game(
     pool: State<'_, Pool<Sqlite>>,
     game: GameMeta, // 确保 GameMeta 的字段已经是 i64
 ) -> Result<(), AppError> {
+    debug!("接收到要添加的新数据: {:?}", game);
     sqlx::query(
         r#"
         INSERT OR REPLACE INTO games 
@@ -184,7 +185,7 @@ pub async fn add_new_game(
             size,
             last_played_at
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         "#,
     )
     .bind(&game.id)
@@ -197,7 +198,7 @@ pub async fn add_new_game(
     .bind(game.play_time) // i64
     .bind(game.length) // i64
     .bind(game.size) // Option<i64>
-    .bind(game.last_played_at) // DateTime<Local> (需开启 chrono feature)
+    .bind(game.last_played_at)
     .execute(&*pool)
     .await
     .map_err(|e| AppError::DB(e.to_string()))?;
@@ -224,19 +225,38 @@ pub async fn add_new_game_list(
 
     for game in games {
         sqlx::query(
-            "INSERT OR REPLACE INTO games (id, name, abs_path, cover, background, play_time, length) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            "INSERT OR REPLACE INTO games 
+                (
+                    id,
+                    name,
+                    abs_path,
+                    cover,
+                    background,
+                    local_cover,
+                    local_background,
+                    save_data_path,
+                    backup_data_path,
+                    play_time,
+                    length,
+                    size,
+                    last_played_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         )
         .bind(&game.id)
         .bind(&game.name)
         .bind(&game.abs_path)
         .bind(&game.cover)
         .bind(&game.background)
-        .bind(game.play_time)
-        .bind(game.length)
-        // ... 继续绑定其他字段
-        .execute(&mut *tx) // 注意这里是在事务中执行
+        .bind(&game.local_cover)
+        .bind(&game.local_background)
+        .bind(game.play_time) // i64
+        .bind(game.length) // i64
+        .bind(game.size) // Option<i64>
+        .bind(game.last_played_at)
+        .execute(&mut *tx) // 这里在事务中执行
         .await
-        .map_err(|e|AppError::DB(e.to_string()))?;
+        .map_err(|e| AppError::DB(e.to_string()))?;
         GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask { meta: game });
     }
 
@@ -251,6 +271,7 @@ pub async fn add_new_game_list(
 /// * `id`: 游戏信息id
 #[tauri::command]
 pub async fn delete_game(pool: State<'_, Pool<Sqlite>>, id: String) -> Result<(), AppError> {
+    debug!("要删除的游戏信息: {}", id);
     // 开启事务
     let mut tx = pool
         .begin()
@@ -259,7 +280,7 @@ pub async fn delete_game(pool: State<'_, Pool<Sqlite>>, id: String) -> Result<()
 
     sqlx::query(
         r#"
-        delete from games where id = {?}
+        delete from games where id = ?
     "#,
     )
     .bind(id)

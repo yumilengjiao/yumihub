@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
@@ -10,6 +10,9 @@ const GameList = () => {
   const [api, setApi] = useState<CarouselApi>()
   const [currentIndex, setCurrentIndex] = useState<number>(0)
   const { selectedGame, updateSelectedGame, gameMetaList } = useGameStore()
+  useEffect(() => {
+    updateSelectedGame(gameMetaList[0])
+  }, [gameMetaList])
 
   return (
     <div className="overflow-hidden">
