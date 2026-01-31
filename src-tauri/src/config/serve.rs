@@ -5,7 +5,10 @@ use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_log::log::{error, info, warn};
 
 use crate::{
-    config::{entity::ConfigEvent, GLOBAL_CONFIG},
+    config::{
+        entity::{ConfigEvent, SideBarMode, ThemeColor, ThemeMode},
+        GLOBAL_CONFIG,
+    },
     message::{traits::MessageHub, CONFIG_MESSAGE_HUB},
     util::copy_dir_recursive,
 };
@@ -16,8 +19,8 @@ use crate::{
 pub fn listening_loop(app_handler: AppHandle) {
     let mut rx = CONFIG_MESSAGE_HUB.subscribe();
     tauri::async_runtime::spawn(async move {
-        while let Ok(e) = rx.recv().await {
-            match e {
+        while let Ok(event) = rx.recv().await {
+            match event {
                 ConfigEvent::Basic { base } => {
                     enable_auto_start(app_handler.clone(), base.auto_start);
                     enable_slient_start(base.silent_start);
@@ -28,8 +31,16 @@ pub fn listening_loop(app_handler: AppHandle) {
                     set_game_meta_data_load_path(stroage.meta_save_path);
                     set_backup_path(stroage.backup_save_path);
                 }
-                ConfigEvent::System { sys } => {}
-                ConfigEvent::Interface { interface } => {}
+                ConfigEvent::System { sys } => {
+                    change_close_button_action(sys.close_button_behavior);
+                    change_log_level(sys.log_level);
+                    set_concurrent_number(sys.download_concurrency);
+                }
+                ConfigEvent::Interface { interface } => {
+                    change_interface_mode(interface.theme_mode);
+                    change_interface_color(interface.theme_color);
+                    change_sidebar_mode(interface.sidebar_mode);
+                }
             }
         }
     });
@@ -97,12 +108,90 @@ fn set_language(language: String) {
 }
 
 // ----------------------------------------------------------
-// ------------------------界面设置--------------------------
+// ------------------------系统设置--------------------------
 // ----------------------------------------------------------
+
+/// 改变关闭按钮的行为
+///
+/// * `action`: 关闭按钮的行为
+pub fn change_close_button_action(action: String) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.system.close_button_behavior = action,
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
+
+/// 改变日志记录级别
+///
+/// * `level`: 日志级别
+pub fn change_log_level(level: String) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.system.log_level = level,
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
+
+/// 改变日志记录级别
+///
+/// * `level`: 日志级别
+pub fn set_concurrent_number(num: i64) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.system.download_concurrency = num,
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
 
 // ----------------------------------------------------------
 // ------------------------界面设置--------------------------
 // ----------------------------------------------------------
+
+/// 改变界面的外观模式
+///
+/// * `mode`: 外观模式--夜间或白天模式
+pub fn change_interface_mode(mode: ThemeMode) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.interface.theme_mode = mode,
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
+
+/// 改变主题色
+///
+/// * `mode`: 外观模式--夜间或白天模式
+pub fn change_interface_color(color: ThemeColor) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.interface.theme_color = color,
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
+
+/// 改变侧边栏模式
+///
+/// * `mode`: 侧边栏模式
+pub fn change_sidebar_mode(mode: SideBarMode) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.interface.sidebar_mode = mode,
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
 
 // ----------------------------------------------------------
 // ------------------------备份设置--------------------------

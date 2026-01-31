@@ -31,7 +31,8 @@ pub fn run() {
             cmd::get_game_meta_list,
             cmd::add_new_game,
             cmd::add_new_game_list,
-            cmd::get_start_up_path
+            cmd::get_start_up_path,
+            cmd::backup_archive
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

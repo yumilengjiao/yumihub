@@ -322,6 +322,7 @@ pub fn get_start_up_path(parent_path: String) -> Result<String, AppError> {
 /// 将数据库的所有指定了游戏存档的游戏都进行备份
 ///
 /// * `pool`: 数据库连接池，由tauri自动注入
+#[tauri::command]
 pub async fn backup_archive(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppError> {
     let games = sqlx::query("SELECT id, save_data_path FROM games")
         .fetch_all(&*pool)

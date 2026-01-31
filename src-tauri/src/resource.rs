@@ -1,8 +1,11 @@
 //! 资源模块,用于缓存二进制文件到本地而不走网络io
 
+use std::sync::Arc;
+
 use sqlx::{Pool, Sqlite};
 use tauri::{AppHandle, Manager};
 use tauri_plugin_log::log::{debug, error, info};
+use tokio::sync::Semaphore;
 
 use crate::{
     config::GLOBAL_CONFIG,
@@ -20,103 +23,121 @@ pub fn init(app_handle: &AppHandle) {
 
 /// 启动一个监听器负责监听游戏数据是否更新是否需要下载新的静态资源到本地
 fn start_resource_manager(app_handle: &AppHandle) {
-    // 获取一个新的接收者
+    // 控制并发量
     let mut rx = GAME_MESSAGE_HUB.subscribe();
     let handle = app_handle.clone();
+    let num = GLOBAL_CONFIG
+        .read()
+        .map_err(|e| {
+            error!("读取全局变量出错: {}", e);
+        })
+        .unwrap()
+        .system
+        .download_concurrency;
 
-    // 启动一个下载图片的任务
+    let semaphore = Arc::new(Semaphore::new(num as usize));
+
     tauri::async_runtime::spawn(async move {
         println!("资源管理系统已启动，正在监听消息...");
 
         while let Ok(event) = rx.recv().await {
             match event {
                 GameEvent::GameResourceTask { meta } => {
-                    info!("收到新游戏通知: {}, 准备下载资源...", meta.name);
-                    let res = reqwest::get(&meta.cover).await;
-                    match res {
-                        Ok(res) => {
-                            if !res.status().is_success() {
-                                error!(
-                                    "获取网络资源失败,游戏id: {},状态码: {}",
-                                    meta.id,
-                                    res.status()
-                                );
-                            }
-                            // 准备更新容器
-                            let mut updated_meta = meta.clone();
+                    let cp_handle = handle.clone();
+                    // 克隆信号量的引用
+                    let permit_semaphore = Arc::clone(&semaphore);
+                    tauri::async_runtime::spawn(async move {
+                        //获取许可，如果超过并发数量无法获取到许可
+                        let _permit = permit_semaphore.acquire_owned().await.unwrap();
+                        debug!("收到新游戏通知: {}, 准备下载资源...", meta.name);
+                        let res = reqwest::get(&meta.cover).await;
+                        match res {
+                            Ok(res) => {
+                                if !res.status().is_success() {
+                                    error!(
+                                        "获取网络资源失败,游戏id: {},状态码: {}",
+                                        meta.id,
+                                        res.status()
+                                    );
+                                }
+                                // 准备更新容器
+                                let mut updated_meta = meta.clone();
 
-                            // 要处理的字段
-                            let targets = [
-                                ("cover", &meta.cover),
-                                ("background", &meta.background),
-                                // 以后要加字段，直接在这里
-                            ];
+                                // 要处理的字段
+                                let targets = [
+                                    ("cover", &meta.cover),
+                                    ("background", &meta.background),
+                                    // 以后要加字段，直接在这里
+                                ];
 
-                            // 开始遍历处理所有字段
-                            for (label, url) in targets {
-                                // 只有网络地址才处理
-                                if url.starts_with("http") {
-                                    let file_name = format!("{}_{}.jpg", meta.id, label);
-                                    let assets_dir = GLOBAL_CONFIG
-                                        .read()
-                                        .expect("路径未初始化")
-                                        .storage
-                                        .meta_save_path
-                                        .clone();
-                                    info!("资源路径是:{}", assets_dir.to_string_lossy());
-                                    let save_path = assets_dir.join(file_name);
+                                // 开始遍历处理所有字段
+                                for (label, url) in targets {
+                                    // 只有网络地址才处理
+                                    if url.starts_with("http") {
+                                        let file_name = format!("{}_{}.jpg", meta.id, label);
+                                        let assets_dir = GLOBAL_CONFIG
+                                            .read()
+                                            .expect("路径未初始化")
+                                            .storage
+                                            .meta_save_path
+                                            .clone();
+                                        debug!("资源路径是:{}", assets_dir.to_string_lossy());
+                                        let save_path = assets_dir.join(file_name);
 
-                                    // 执行请求
-                                    if let Ok(res) = reqwest::get(url).await {
-                                        if res.status().is_success() {
-                                            if let Ok(data) = res.bytes().await {
-                                                if tokio::fs::write(&save_path, data).await.is_ok()
-                                                {
-                                                    //因为上面改过名字了不用担心有非utf-8的字符
-                                                    let local_path =
-                                                        save_path.to_string_lossy().to_string();
+                                        // 执行请求
+                                        if let Ok(res) = reqwest::get(url).await {
+                                            if res.status().is_success() {
+                                                if let Ok(data) = res.bytes().await {
+                                                    if tokio::fs::write(&save_path, data)
+                                                        .await
+                                                        .is_ok()
+                                                    {
+                                                        //因为上面改过名字了不用担心有非utf-8的字符
+                                                        let local_path =
+                                                            save_path.to_string_lossy().to_string();
 
-                                                    match label {
-                                                        "cover" => {
-                                                            updated_meta.local_cover =
-                                                                Some(local_path)
+                                                        match label {
+                                                            "cover" => {
+                                                                updated_meta.local_cover =
+                                                                    Some(local_path)
+                                                            }
+                                                            "background" => {
+                                                                updated_meta.local_background =
+                                                                    Some(local_path)
+                                                            }
+                                                            // 以后增加字段，就这里补一个分支，编译器会提醒
+                                                            _ => {}
                                                         }
-                                                        "background" => {
-                                                            updated_meta.local_background =
-                                                                Some(local_path)
-                                                        }
-                                                        // 以后增加字段，就这里补一个分支，编译器会提醒
-                                                        _ => {}
+
+                                                        debug!(
+                                                            "{} 下载成功: {} , 下载至:{}",
+                                                            label,
+                                                            meta.id,
+                                                            save_path.to_string_lossy(),
+                                                        );
                                                     }
-
-                                                    info!(
-                                                        "{} 下载成功: {} , 下载至:{}",
-                                                        label,
-                                                        meta.id,
-                                                        save_path.to_string_lossy(),
-                                                    );
                                                 }
                                             }
                                         }
                                     }
                                 }
+                                // 处理完字段后对meta数据进行更新
+                                let pool = cp_handle.state::<Pool<Sqlite>>();
+                                let db_result = update_game_into_db(&pool, &updated_meta).await;
+                                match db_result {
+                                    Ok(_) => {
+                                        info!("游戏数据已成功同步至数据库: {}", updated_meta.id)
+                                    }
+                                    Err(e) => {
+                                        error!("游戏数据保存失败: {}, 错误: {}", updated_meta.id, e)
+                                    }
+                                }
                             }
-                            // 处理完字段后对meta数据进行更新
-                            let pool = handle.state::<Pool<Sqlite>>();
-                            let db_result = update_game_into_db(&pool, &updated_meta).await;
-                            match db_result {
-                                Ok(_) => {
-                                    info!("游戏数据已成功同步至数据库: {}", updated_meta.id)
-                                }
-                                Err(e) => {
-                                    error!("游戏数据保存失败: {}, 错误: {}", updated_meta.id, e)
-                                }
+                            Err(e) => {
+                                error!("获取网络资源失败,游戏id: {},错误信息: {}", meta.id, e);
                             }
                         }
-                        Err(e) => {
-                            error!("获取网络资源失败,游戏id: {},错误信息: {}", meta.id, e);
-                        }
-                    }
+                    });
                 }
                 GameEvent::UserResourceTask { meta } => {
                     info!("接受到用户资源下载任务,开始下载任务");
@@ -155,7 +176,9 @@ fn start_resource_manager(app_handle: &AppHandle) {
                         }
                     }
                 }
-                _ => (),
+                _ => {
+                    debug!("其他消息")
+                }
             }
         }
     });

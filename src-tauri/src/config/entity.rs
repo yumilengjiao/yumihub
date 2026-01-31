@@ -22,7 +22,6 @@ pub struct Config {
 pub struct Interface {
     pub theme_mode: ThemeMode,
     pub theme_color: ThemeColor,
-    pub window_drag_effect: bool,
     pub sidebar_mode: SideBarMode,
     pub font_family: String,
 }
@@ -32,7 +31,6 @@ pub enum ThemeMode {
     #[default]
     Daytime,
     Night,
-    Custom,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -54,7 +52,6 @@ impl Default for Interface {
         Self {
             theme_mode: ThemeMode::Daytime,
             theme_color: ThemeColor::White,
-            window_drag_effect: true,
             sidebar_mode: SideBarMode::Trigger,
             font_family: "sys".into(),
         }
@@ -102,12 +99,21 @@ pub struct Storage {
 // ------------------------系统配置---------------------
 // -----------------------------------------------------
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct System {
     pub close_button_behavior: String,
-    pub enable_gpu_acceleration: bool,
     pub log_level: String,
     pub download_concurrency: i64,
+}
+
+impl Default for System {
+    fn default() -> Self {
+        Self {
+            close_button_behavior: "Exit".into(),
+            log_level: "info".into(),
+            download_concurrency: 5,
+        }
+    }
 }
 
 // -----------------------------------------------------
