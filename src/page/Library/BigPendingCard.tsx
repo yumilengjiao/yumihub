@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from "@/components/ui/input";
 import { Loader2, Search, X, Check, FileText, WifiOff, RefreshCw } from 'lucide-react';
-import { cn } from "@/lib/utils";
+import { cn, getParentDir } from "@/lib/utils";
 import { toast } from "sonner";
 import { PendingGameInfo } from '@/store/pendingGamesStore';
-import { GameMeta, VNDBResult, YmResult } from '@/types/game';
+import { BangumiResponse, GameMeta, VNDBResult, YmResult } from '@/types/game';
 import { invoke } from '@tauri-apps/api/core';
 import useGameStore from '@/store/gameStore';
 import { nanoid } from 'nanoid';
+import { Cmds } from '@/lib/enum';
 
 interface BigPendingCardProps {
   absPath: string;
@@ -44,13 +45,14 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
     // Bangumi 映射
     if (activeSource === 'bangumi' && resultData.bangumi) {
 
-      const d = (resultData.bangumi as any).data ? (resultData.bangumi as any).data[0] : (resultData.bangumi as any);
+      const d = (resultData.bangumi as BangumiResponse).data[0];
       if (!d) return null;
       return {
         id: d.id?.toString(),
         title: d.name_cn || d.name,
         desc: d.summary || "暂无描述",
-        cover: d.images?.large || d.image || ""
+        cover: d.images?.large || d.image || "",
+        background: d.images?.large || d.image || ""
       };
     }
 
@@ -61,7 +63,8 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
         id: v.id,
         title: v.title || v.alttitle, // 修复 Property 'name' 不存在的问题
         desc: v.description || "暂无描述",
-        cover: v.image?.url || ""
+        cover: v.image?.url || "",
+        background: v.screenshots[0].url
       };
     }
 
@@ -72,7 +75,8 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
         id: y.id?.toString(),
         title: y.chineseName || y.name,
         desc: "月幕数据源暂无详细介绍",
-        cover: y.mainImg || ""
+        cover: y.mainImg || "",
+        background: y.mainImg || ""
       };
     }
 
@@ -134,16 +138,21 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
     }
   };
 
+  // 最后点击确认时执行的要存入数据库的数据
   const handleFinalConfirm = async (useAutoData: boolean) => {
+    //先获取父目录的路径
+    let dir = getParentDir(absPath)
+    let size = await invoke<number>(Cmds.GET_GAME_SIZE, { dir: dir })
     const finalGame: GameMeta = {
       id: nanoid(),
       absPath: absPath,
       name: useAutoData ? (displayInfo?.title || extractedName) : extractedName,
       cover: useAutoData ? (displayInfo?.cover || "") : "",
-      description: displayInfo?.desc,
-      background: "",
+      description: displayInfo?.desc || "",
+      background: useAutoData ? (displayInfo?.cover || "") : "",
       playTime: 0,
       length: 0,
+      size: size
     };
 
     try {

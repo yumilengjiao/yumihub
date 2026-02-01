@@ -6,12 +6,6 @@
 /**
  * 支持的调用后端的指令
  */
-/**
- * [TODO:description]
- */
-/**
- * [TODO:description]
- */
 export enum Cmds {
   /**
    * 获得用户信息
@@ -79,6 +73,11 @@ export enum Cmds {
   /**
    * 获取系统的所有字体
    */
-  GET_SYSTEM_FONTS = "get_system_fonts"
+  GET_SYSTEM_FONTS = "get_system_fonts",
+
+  /**
+   * 获取游戏的存储大小
+   */
+  GET_GAME_SIZE = "get_game_size"
 }
 

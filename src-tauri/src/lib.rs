@@ -43,7 +43,8 @@ pub fn run() {
             cmd::backup_archive,
             //其他
             cmd::get_start_up_path,
-            cmd::get_system_fonts
+            cmd::get_system_fonts,
+            cmd::get_game_size
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

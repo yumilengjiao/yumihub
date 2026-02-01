@@ -1,5 +1,5 @@
 //! 前端发送的所有调用请求命令在此定义，get方法只会调用state_system,
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use font_kit::source::SystemSource;
 use sqlx::Row;
@@ -7,6 +7,7 @@ use sqlx::{Pool, Sqlite};
 use tauri::{async_runtime, State};
 use tauri_plugin_log::log::{debug, error, info};
 
+use crate::util::get_dir_size;
 use crate::{
     config::{
         entity::{Config, ConfigEvent},
@@ -425,4 +426,11 @@ pub fn get_system_fonts() -> Vec<String> {
         .into_iter()
         .filter(|name| !name.starts_with('@')) // 过滤掉 Windows 里的垂直字体
         .collect()
+}
+
+/// 获取游戏的存储大小
+#[tauri::command]
+pub fn get_game_size(dir: String) -> u64 {
+    let parent_dir = Path::new(&dir);
+    get_dir_size(parent_dir)
 }

@@ -159,3 +159,16 @@ pub fn zip_directory_sync(src: &Path, dst: &Path) -> Result<(), Box<dyn std::err
     zip.finish()?;
     Ok(())
 }
+
+/// 计算一个目录的大小
+///
+/// * `path`: 目录地址
+pub fn get_dir_size<P: AsRef<Path>>(path: P) -> u64 {
+    WalkDir::new(path)
+        .into_iter()
+        .filter_map(|entry| entry.ok())
+        .filter(|entry| entry.file_type().is_file())
+        .filter_map(|entry| entry.metadata().ok())
+        .map(|meta| meta.len())
+        .sum()
+}

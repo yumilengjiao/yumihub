@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
+import { cn, getParentDir } from '@/lib/utils';
 import {
   FileCode, Check, HardDrive, Loader2, Search,
   X, ListChecks, ChevronDown, RefreshCw, Sparkles
@@ -19,6 +19,7 @@ import { recognizeGame } from '@/api/uniform';
 import { GameMeta } from "@/types/game";
 import usePendingGameStore, { PendingGameInfo } from "@/store/pendingGamesStore";
 import useGameStore from '@/store/gameStore';
+import { Cmds } from '@/lib/enum';
 
 interface PendingCardProps {
   pathList: string[];
@@ -195,9 +196,16 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
     }
   };
 
+  // 最终确认时要保存到数据库的数据
   const handleFinalConfirm = async () => {
     // 提前转换，用于校验
     const finalGames = items.map(item => transformToGameMeta(item));
+    // 获取所有游戏的大小
+    for (const game of finalGames) {
+      let dir = getParentDir(game.absPath)
+      let size = await invoke<number>(Cmds.GET_GAME_SIZE, { dir: dir })
+      game.size = size
+    }
 
     const loadingId = toast.loading("正在处理导入...");
     resetReadyGames();
