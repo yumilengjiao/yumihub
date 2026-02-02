@@ -2,12 +2,13 @@
 use std::path::{Path, PathBuf};
 
 use font_kit::source::SystemSource;
-use sqlx::Row;
 use sqlx::{Pool, Sqlite};
+use sqlx::{Row, Transaction};
 use sysinfo::Disks;
 use tauri::{async_runtime, State};
 use tauri_plugin_log::log::{debug, error, info};
 
+use crate::game::entity::ResourceTarget;
 use crate::util::get_dir_size;
 use crate::{
     config::{
@@ -228,7 +229,10 @@ pub async fn add_new_game(
     .map_err(|e| AppError::DB(e.to_string()))?;
 
     // 向消息模块发布信息说明有资源需要下载
-    GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask { meta: game });
+    GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask {
+        meta: game,
+        target: ResourceTarget::All,
+    });
     Ok(())
 }
 
@@ -291,11 +295,112 @@ pub async fn add_new_game_list(
         .execute(&mut *tx) // 这里在事务中执行
         .await
         .map_err(|e| AppError::DB(e.to_string()))?;
-        GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask { meta: game });
+        GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask {
+            meta: game,
+            target: ResourceTarget::All,
+        });
     }
 
     // 提交事务
     tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
+    Ok(())
+}
+
+/// 更新单个游戏信息
+///
+/// * `pool`: 数据库连接池，自动获取
+/// * `game`: 新的游戏数据
+#[tauri::command]
+pub async fn update_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Result<(), AppError> {
+    let mut tx: Transaction<'_, Sqlite> = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    // 先查询旧的数据,资源和新数据是否匹配
+    let row = sqlx::query("SELECT cover, background FROM games WHERE id = ?")
+        .bind(&game.id)
+        .fetch_optional(&mut *tx)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    let mut resource_target: Option<ResourceTarget> = None;
+
+    if let Some(old_row) = row {
+        let old_cover: String = old_row.get("cover");
+        let old_background: String = old_row.get("background");
+
+        let cover_changed = old_cover != game.cover;
+        let bg_changed = old_background != game.background;
+
+        // 根据变化情况决定 ResourceTarget
+        if cover_changed && bg_changed {
+            resource_target = Some(ResourceTarget::All);
+        } else if cover_changed {
+            resource_target = Some(ResourceTarget::CoverOnly);
+        } else if bg_changed {
+            resource_target = Some(ResourceTarget::BackgroundOnly);
+        }
+    } else {
+        // 如果数据库里压根没这游戏（新添加的情况），下载全部
+        resource_target = Some(ResourceTarget::All);
+    }
+
+    sqlx::query(
+        r#"
+        UPDATE games SET 
+            name = ?,
+            abs_path = ?,
+            is_passed = ?,
+            is_displayed = ?,
+            cover = ?,
+            background = ?,
+            description = ?,
+            developer = ?,
+            local_cover = ?,
+            local_background = ?,
+            save_data_path = ?, 
+            backup_data_path = ?,
+            play_time = ?,
+            length = ?,
+            size = ?, 
+            last_played_at = ?
+        WHERE id = ?
+        "#,
+    )
+    .bind(&game.name)
+    .bind(&game.abs_path)
+    .bind(game.is_passed)
+    .bind(game.is_displayed)
+    .bind(&game.cover)
+    .bind(&game.background)
+    .bind(&game.description)
+    .bind(&game.developer)
+    .bind(&game.local_cover)
+    .bind(&game.local_background)
+    .bind(&game.save_data_path)
+    .bind(&game.backup_data_path)
+    .bind(game.play_time)
+    .bind(game.length)
+    .bind(game.size)
+    .bind(game.last_played_at)
+    .bind(&game.id) // ID 放在最后匹配 WHERE
+    .execute(&mut *tx)
+    .await
+    .map_err(|e| AppError::DB(e.to_string()))?;
+
+    // 4. 提交事务
+    tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
+
+    // 5. 如果有资源变动，发布下载任务给 Resource Manager
+    if let Some(target) = resource_target {
+        // 只有当新路径是网络路径时才触发任务
+        if game.cover.starts_with("http") || game.background.starts_with("http") {
+            debug!("已向资源模块发送下载指令: {:?}", target);
+            GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask { meta: game, target });
+        }
+    }
+
     Ok(())
 }
 
@@ -314,8 +419,8 @@ pub async fn delete_game_by_id(pool: State<'_, Pool<Sqlite>>, id: String) -> Res
 
     sqlx::query(
         r#"
-        delete from games where id = ?
-    "#,
+            delete from games where id = ?
+        "#,
     )
     .bind(id)
     .execute(&mut *tx)

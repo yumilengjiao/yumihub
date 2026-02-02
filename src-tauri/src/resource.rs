@@ -10,7 +10,7 @@ use tokio::sync::Semaphore;
 use crate::{
     config::GLOBAL_CONFIG,
     error::AppError,
-    game::entity::{GameEvent, GameMeta},
+    game::entity::{GameEvent, GameMeta, ResourceTarget},
     message::{traits::MessageHub, GAME_MESSAGE_HUB},
     user::entity::User,
 };
@@ -23,165 +23,128 @@ pub fn init(app_handle: &AppHandle) {
 
 /// 启动一个监听器负责监听游戏数据是否更新是否需要下载新的静态资源到本地
 fn start_resource_manager(app_handle: &AppHandle) {
-    // 控制并发量
     let mut rx = GAME_MESSAGE_HUB.subscribe();
     let handle = app_handle.clone();
+
+    // 获取并发数配置
     let num = GLOBAL_CONFIG
         .read()
-        .map_err(|e| {
-            error!("读取全局变量出错: {}", e);
-        })
-        .unwrap()
+        .expect("读取全局变量出错")
         .system
         .download_concurrency;
 
     let semaphore = Arc::new(Semaphore::new(num as usize));
 
     tauri::async_runtime::spawn(async move {
-        println!("资源管理系统已启动，正在监听消息...");
+        info!("资源管理系统已启动，正在监听消息...");
 
         while let Ok(event) = rx.recv().await {
             match event {
-                GameEvent::GameResourceTask { meta } => {
+                // 假设 GameResourceTask 现在接收 (GameMeta, ResourceTarget)
+                GameEvent::GameResourceTask { meta, target } => {
                     let cp_handle = handle.clone();
-                    // 克隆信号量的引用
                     let permit_semaphore = Arc::clone(&semaphore);
+
                     tauri::async_runtime::spawn(async move {
-                        //获取许可，如果超过并发数量无法获取到许可
+                        // 1. 获取并发许可
                         let _permit = permit_semaphore.acquire_owned().await.unwrap();
-                        debug!("收到新游戏通知: {}, 准备下载资源...", meta.name);
-                        let res = reqwest::get(&meta.cover).await;
-                        match res {
-                            Ok(res) => {
-                                if !res.status().is_success() {
-                                    error!(
-                                        "获取网络资源失败,游戏id: {},状态码: {}",
-                                        meta.id,
-                                        res.status()
-                                    );
-                                }
-                                // 准备更新容器
-                                let mut updated_meta = meta.clone();
+                        debug!("处理游戏资源任务: {}, 目标: {:?}", meta.name, target);
 
-                                // 要处理的字段
-                                let targets = [
-                                    ("cover", &meta.cover),
-                                    ("background", &meta.background),
-                                    // 以后要加字段，直接在这里
-                                ];
+                        let mut updated_meta = meta.clone();
 
-                                // 开始遍历处理所有字段
-                                for (label, url) in targets {
-                                    // 只有网络地址才处理
-                                    if url.starts_with("http") {
-                                        let file_name = format!("{}_{}.jpg", meta.id, label);
-                                        let assets_dir = GLOBAL_CONFIG
-                                            .read()
-                                            .expect("路径未初始化")
-                                            .storage
-                                            .meta_save_path
-                                            .clone();
-                                        debug!("资源路径是:{}", assets_dir.to_string_lossy());
-                                        let save_path = assets_dir.join(file_name);
+                        // 2. 根据 target 筛选需要处理的字段
+                        let mut tasks = Vec::new();
+                        match target {
+                            ResourceTarget::All => {
+                                tasks.push(("cover", &meta.cover));
+                                tasks.push(("background", &meta.background));
+                            }
+                            ResourceTarget::CoverOnly => tasks.push(("cover", &meta.cover)),
+                            ResourceTarget::BackgroundOnly => {
+                                tasks.push(("background", &meta.background))
+                            }
+                        }
 
-                                        // 执行请求
-                                        if let Ok(res) = reqwest::get(url).await {
-                                            if res.status().is_success() {
-                                                if let Ok(data) = res.bytes().await {
-                                                    if tokio::fs::write(&save_path, data)
-                                                        .await
-                                                        .is_ok()
-                                                    {
-                                                        //因为上面改过名字了不用担心有非utf-8的字符
-                                                        let local_path =
-                                                            save_path.to_string_lossy().to_string();
+                        // 3. 遍历并下载
+                        for (label, url) in tasks {
+                            if !url.starts_with("http") {
+                                continue;
+                            }
 
-                                                        match label {
-                                                            "cover" => {
-                                                                updated_meta.local_cover =
-                                                                    Some(local_path)
-                                                            }
-                                                            "background" => {
-                                                                updated_meta.local_background =
-                                                                    Some(local_path)
-                                                            }
-                                                            // 以后增加字段，就这里补一个分支，编译器会提醒
-                                                            _ => {}
-                                                        }
+                            let file_name = format!("{}_{}.jpg", meta.id, label);
+                            let assets_dir =
+                                GLOBAL_CONFIG.read().unwrap().storage.meta_save_path.clone();
+                            let save_path = assets_dir.join(file_name);
 
-                                                        debug!(
-                                                            "{} 下载成功: {} , 下载至:{}",
-                                                            label,
-                                                            meta.id,
-                                                            save_path.to_string_lossy(),
-                                                        );
-                                                    }
-
-                                                    debug!(
-                                                        "{} 下载成功: {} , 下载至:{}",
-                                                        label,
-                                                        meta.id,
-                                                        save_path.to_string_lossy(),
-                                                    );
+                            match reqwest::get(url).await {
+                                Ok(res) if res.status().is_success() => {
+                                    if let Ok(data) = res.bytes().await {
+                                        if tokio::fs::write(&save_path, data).await.is_ok() {
+                                            let local_path =
+                                                save_path.to_string_lossy().to_string();
+                                            // 更新相应的 local 字段
+                                            match label {
+                                                "cover" => {
+                                                    updated_meta.local_cover = Some(local_path)
                                                 }
+                                                "background" => {
+                                                    updated_meta.local_background = Some(local_path)
+                                                }
+                                                _ => {}
                                             }
+                                            debug!("{} 下载成功并保存至本地", label);
                                         }
                                     }
                                 }
-                                // 处理完字段后对meta数据进行更新
-                                let pool = cp_handle.state::<Pool<Sqlite>>();
-                                let db_result = update_game_into_db(&pool, &updated_meta).await;
-                                match db_result {
-                                    Ok(_) => {
-                                        info!("游戏数据已成功同步至数据库: {}", updated_meta.id)
-                                    }
-                                    Err(e) => {
-                                        error!("游戏数据保存失败: {}, 错误: {}", updated_meta.id, e)
-                                    }
-                                }
+                                Ok(res) => error!("下载 {} 失败, 状态码: {}", label, res.status()),
+                                Err(e) => error!("下载 {} 网络错误: {}", label, e),
                             }
-                            Err(e) => {
-                                error!("获取网络资源失败,游戏id: {},错误信息: {}", meta.id, e);
-                            }
+                        }
+
+                        // 4. 同步到数据库
+                        let pool = cp_handle.state::<Pool<Sqlite>>();
+                        if let Err(e) = update_game_into_db(&pool, &updated_meta).await {
+                            error!("同步数据库失败: {}", e);
+                        } else {
+                            info!("游戏数据同步成功: {}", updated_meta.name);
                         }
                     });
                 }
+
                 GameEvent::UserResourceTask { meta } => {
-                    info!("接受到用户资源下载任务,开始下载任务");
-                    let asset_path = GLOBAL_CONFIG
-                        .read()
-                        .expect("路径未初始化")
-                        .storage
-                        .meta_save_path
-                        .join("user");
-                    let file_name = format!("{}-{}.jpg", meta.id, "avatar");
-                    let local_avatar = asset_path.join(&file_name).to_string_lossy().to_string();
-                    let mut updated_meta = meta.clone();
-                    let res = reqwest::get(meta.avatar).await;
-                    match res {
-                        Ok(response) => {
-                            if response.status().is_success() {
-                                if let Ok(data) = response.bytes().await {
-                                    if tokio::fs::write(&local_avatar, data).await.is_ok() {
-                                        updated_meta.avatar = local_avatar;
-                                        info!("用户头像下载完毕")
+                    // User 部分逻辑保持原样，仅做少量结构优化
+                    let cp_handle = handle.clone();
+                    tauri::async_runtime::spawn(async move {
+                        info!("开始下载用户头像...");
+                        let asset_path = GLOBAL_CONFIG
+                            .read()
+                            .unwrap()
+                            .storage
+                            .meta_save_path
+                            .join("user");
+
+                        // 确保文件夹存在
+                        let _ = tokio::fs::create_dir_all(&asset_path).await;
+
+                        let file_name = format!("{}-avatar.jpg", meta.id);
+                        let save_path = asset_path.join(file_name);
+                        let mut updated_user = meta.clone();
+
+                        if let Ok(res) = reqwest::get(&meta.avatar).await {
+                            if res.status().is_success() {
+                                if let Ok(data) = res.bytes().await {
+                                    if tokio::fs::write(&save_path, data).await.is_ok() {
+                                        updated_user.avatar =
+                                            save_path.to_string_lossy().to_string();
+
+                                        let pool = cp_handle.state::<Pool<Sqlite>>();
+                                        let _ = update_user_into_db(&pool, &updated_user).await;
+                                        info!("用户头像同步完成");
                                     }
                                 }
                             }
                         }
-                        Err(e) => error!("下载网络资源错误: {}", e),
-                    }
-                    // 处理完字段后对user数据进行更新
-                    let pool = handle.state::<Pool<Sqlite>>();
-                    let db_result = update_user_into_db(&pool, &updated_meta).await;
-                    match db_result {
-                        Ok(_) => {
-                            info!("用户数据已成功同步至数据库: {}", updated_meta.id)
-                        }
-                        Err(e) => {
-                            error!("用户数据保存失败: {}, 错误: {}", updated_meta.id, e)
-                        }
-                    }
+                    });
                 }
             }
         }
@@ -206,7 +169,6 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
         background,
         description,
         developer,
-        publisher,
         local_cover,
         local_background,
         save_data_path,
@@ -216,7 +178,7 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
         size,
         last_played_at
     ) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     "#,
     )
     .bind(&updated_meta.id)

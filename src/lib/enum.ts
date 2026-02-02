@@ -35,7 +35,7 @@ export enum Cmds {
   /**
    * 更新后端游戏信息
    */
-  UPDATE_GAME_BY_ID = "update_game_by_id",
+  UPDATE_GAME = "update_game",
 
   /**
    * 添加一个新的游戏到库
@@ -57,18 +57,15 @@ export enum Cmds {
    */
   UPDATE_CONFIG = "update_config",
 
-
   /**
    * 备份游戏存档
    */
   BACKUP_ARCHIVE = "backup_archive",
 
-
   /**
    * 获取游戏启动路径
    */
   GET_START_UP_PATH = "get_start_up_path",
-
 
   /**
    * 获取系统的所有字体

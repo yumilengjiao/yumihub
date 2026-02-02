@@ -35,9 +35,22 @@ pub type GameMetaList = Vec<GameMeta>;
 #[derive(Clone, Debug)]
 pub enum GameEvent {
     // 用户资源任务
-    UserResourceTask { meta: User },
+    UserResourceTask {
+        meta: User,
+    },
     // 游戏资源任务消息
-    GameResourceTask { meta: GameMeta },
+    GameResourceTask {
+        meta: GameMeta,
+        target: ResourceTarget,
+    },
+}
+
+// 资源任务的标志位，判断要下载哪些资源
+#[derive(Clone, Debug)]
+pub enum ResourceTarget {
+    All,
+    CoverOnly,
+    BackgroundOnly,
 }
 
 impl MessageEvent for GameEvent {}

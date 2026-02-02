@@ -9,7 +9,7 @@ type GameStore = {
   gameMetaList: GameMetaList,
   updateSelectedGame: (game: GameMeta) => void,
   setGameMetaList: (gameMetaList: GameMetaList) => void,
-  setGameMeta: (game: GameMeta) => void,
+  setGameMeta: (game: GameMeta) => Promise<void>,
   discardGame: (id: string) => Promise<void>,
   filterGameMetaListByName: (name: string) => GameMetaList
   getGameMetaById: (id: string) => GameMeta
@@ -46,12 +46,19 @@ const useGameStore = create<GameStore>()(
      * 用于修改一个已经存在的单个游戏的数据
      * @param game - 要用于修改的游戏数据
      */
-    setGameMeta: (updatedGame: GameMeta) => {
+    setGameMeta: async (updatedGame: GameMeta) => {
       set((state) => ({
         gameMetaList: state.gameMetaList.map((g) =>
           g.id === updatedGame.id ? updatedGame : g
         ),
       }));
+      try {
+        // 这里的 invoke 对应你之前写的 pub async fn update_game
+        await invoke(Cmds.UPDATE_GAME, { game: updatedGame });
+        console.log(`${updatedGame.name} 同步成功`);
+      } catch (error) {
+        console.error("同步失败:", error);
+      }
     },
 
     /**
@@ -107,5 +114,11 @@ const useGameStore = create<GameStore>()(
     },
   }))
 )
+
+
+useGameStore.subscribe((state) => {
+  // TODO:保存游戏数据
+  invoke(Cmds.GET_START_UP_PATH)
+})
 
 export default useGameStore
