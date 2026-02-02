@@ -115,6 +115,7 @@ pub async fn get_game_meta_list(pool: State<'_, Pool<Sqlite>>) -> Result<GameMet
                 cover,
                 background, 
                 description,
+                developer,
                 local_cover,
                 local_background,
                 save_data_path,
@@ -148,6 +149,7 @@ pub async fn get_game_meta_by_id(
                 cover,
                 background,
                 description,
+                developer,
                 local_cover,
                 local_background,
                 save_data_path,
@@ -185,6 +187,7 @@ pub async fn add_new_game(
             cover,
             background,
             description,
+            developer,
             local_cover,
             local_background,
             save_data_path,
@@ -194,7 +197,7 @@ pub async fn add_new_game(
             size,
             last_played_at
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         "#,
     )
     .bind(&game.id)
@@ -203,6 +206,7 @@ pub async fn add_new_game(
     .bind(&game.cover)
     .bind(&game.background)
     .bind(&game.description)
+    .bind(&game.developer)
     .bind(&game.local_cover)
     .bind(&game.local_background)
     .bind(&game.save_data_path)
@@ -244,9 +248,10 @@ pub async fn add_new_game_list(
                     abs_path,
                     cover,
                     background,
+                    description,
+                    developer,
                     local_cover,
                     local_background,
-                    description,
                     save_data_path,
                     backup_data_path,
                     play_time,
@@ -261,9 +266,10 @@ pub async fn add_new_game_list(
         .bind(&game.abs_path)
         .bind(&game.cover)
         .bind(&game.background)
+        .bind(&game.description)
+        .bind(&game.developer)
         .bind(&game.local_cover)
         .bind(&game.local_background)
-        .bind(&game.description)
         .bind(&game.save_data_path)
         .bind(&game.backup_data_path)
         .bind(game.play_time) // i64

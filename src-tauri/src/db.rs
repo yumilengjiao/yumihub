@@ -44,6 +44,7 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
             cover TEXT,
             background TEXT,
             description TEXT,
+            developer TEXT,
             local_cover TEXT,
             local_background TEXT,
             save_data_path TEXT,
@@ -70,7 +71,7 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
 
         -- 初始化默认用户 (如果不存在)
         INSERT OR IGNORE INTO account (id, user_name, created_at) 
-        VALUES ('default', '本地用户', datetime('now'));
+        VALUES ('default', 'user', datetime('now'));
     "#;
     // 执行建表语句
     sqlx::query(create_tables_sql)

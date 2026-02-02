@@ -16,7 +16,7 @@ import { requestBangumiById } from '@/api/bangumiApi';
 import { requestVNDBById } from '@/api/vndbApi';
 import { recognizeGame } from '@/api/uniform';
 
-import { GameMeta } from "@/types/game";
+import { BangumiResponse, Datum, Developer, GameMeta } from "@/types/game";
 import usePendingGameStore, { PendingGameInfo } from "@/store/pendingGamesStore";
 import useGameStore from '@/store/gameStore';
 import { Cmds } from '@/lib/enum';
@@ -72,6 +72,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
       cover: '',
       background: '',
       description: '', // 默认为空，后续填充
+      developer: '',
       playTime: 0,
       length: 0,
       lastPlayedAt: undefined,
@@ -81,30 +82,33 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
 
     try {
       if (source === 'bangumi') {
-        const b = (data.bangumi as any)?.data ? (data.bangumi as any).data[0] : (data.bangumi as any);
+        const b = (data.bangumi as BangumiResponse)?.data && (data.bangumi as BangumiResponse).data[0]
         if (b) {
           meta.name = b.name_cn || b.name;
           meta.cover = b.images?.large || b.image || '';
           meta.background = b.images?.common || '';
           meta.description = b.summary || ''; // 绑定 Bangumi 简介
+          meta.developer = (b.infobox.find(info => info.key === "开发") as { key: string, value: string }).value || ""
         }
       } else if (source === 'vndb') {
         const v = data.vndb?.results ? data.vndb.results[0] : (data.vndb as any);
         if (v) {
-          meta.name = v.title || v.name;
-          meta.cover = v.image?.url || '';
-          meta.background = v.screenshots?.[0]?.url || v.image?.url || '';
-          meta.length = v.length || 0;
-          meta.description = v.description || ''; // 绑定 VNDB 简介
+          meta.name = v.title || v.name
+          meta.cover = v.image?.url || ''
+          meta.background = v.screenshots?.[0]?.url || v.image?.url || ''
+          meta.length = v.length || 0
+          meta.developer = v.developers[0].name
+          meta.description = v.description || ''
         }
       } else if (source === 'ymgal') {
-        const y = data.ymgal?.data?.result?.[0];
+        const y = data.ymgal?.data?.result?.[0]
         if (y) {
-          meta.name = y.chineseName || y.name;
-          meta.cover = y.mainImg || '';
-          meta.background = y.mainImg || '';
+          meta.name = y.chineseName || y.name
+          meta.cover = y.mainImg || ''
+          meta.background = y.mainImg || ''
+          meta.developer = ""
           // 月幕结果中如果存在简介字段（根据通用接口惯例尝试提取）
-          meta.description = (y as any).description || (y as any).chineseName || y.name || '';
+          meta.description = (y as any).description || (y as any).chineseName || y.name || ''
         }
       }
     } catch (e) {
@@ -136,6 +140,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
     return () => clearTimer();
   }, [pathList]);
 
+  // 处理匹配元数据任务
   const handleGlobalMatch = async () => {
     if (isGlobalMatching) return;
     setIsGlobalMatching(true);

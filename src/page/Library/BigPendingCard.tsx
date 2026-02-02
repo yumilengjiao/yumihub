@@ -51,6 +51,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
         id: d.id?.toString(),
         title: d.name_cn || d.name,
         desc: d.summary || "暂无描述",
+        developer: d.infobox.find(info => info.key === "开发")?.value,
         cover: d.images?.large || d.image || "",
         background: d.images?.large || d.image || ""
       };
@@ -59,10 +60,12 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
     // VNDB 映射
     if (activeSource === 'vndb' && resultData.vndb?.results?.[0]) {
       const v = resultData.vndb.results[0] as VNDBResult;
+      console.log(v)
       return {
         id: v.id,
         title: v.title || v.alttitle, // 修复 Property 'name' 不存在的问题
         desc: v.description || "暂无描述",
+        developer: v.developers[0].name,
         cover: v.image?.url || "",
         background: v.screenshots[0].url
       };
@@ -75,6 +78,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
         id: y.id?.toString(),
         title: y.chineseName || y.name,
         desc: "月幕数据源暂无详细介绍",
+        developer: y.publisher,
         cover: y.mainImg || "",
         background: y.mainImg || ""
       };
@@ -149,6 +153,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
       name: useAutoData ? (displayInfo?.title || extractedName) : extractedName,
       cover: useAutoData ? (displayInfo?.cover || "") : "",
       description: displayInfo?.desc || "",
+      developer: displayInfo?.developer as string || "",
       background: useAutoData ? (displayInfo?.background || "") : "",
       playTime: 0,
       length: 0,

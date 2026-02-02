@@ -42,7 +42,7 @@ export const requestVNDBById = async (id: string): Promise<VNDBResponse | null> 
     "filters": [
       "id", "=", id
     ],
-    "fields": "title, image.url, alttitle, titles.lang, titles.title, titles.official, olang, length, average, description, screenshots.url"
+    "fields": "title, image.url, alttitle, titles.lang, titles.title, titles.official, olang, length, average, description, screenshots.url, developers.name"
   }
   try {
     const response = await fetch(import.meta.env.VITE_API_VNDB_VN_URL, {

@@ -14,6 +14,7 @@ mod entity;
 /// * `app_handle`: app句柄
 pub fn init(app_handle: &AppHandle) {
     let handle = app_handle.clone();
+    // 启动内存，cpu监视
     std::thread::spawn(move || {
         let mut sys = System::new_all();
         loop {

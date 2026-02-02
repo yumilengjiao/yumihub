@@ -5,9 +5,10 @@ export interface GameMeta {
   absPath: string
   cover: string
   background: string
-  description: string
   local_cover?: string
   local_background?: string
+  description: string
+  developer: string
   saveDataPath?: string
   backupDataPath?: string
   playTime: number
@@ -43,6 +44,7 @@ export interface VNDBResult {
   alttitle: string;
   average: number;
   description: string;
+  developers: Developer[]
   id: string;
   image: Image;
   length: number;
@@ -50,6 +52,12 @@ export interface VNDBResult {
   screenshots: Image[];
   title: string;
   titles: Title[];
+}
+
+// 开发商
+export interface Developer {
+  id: string
+  name: string
 }
 
 //图片地址

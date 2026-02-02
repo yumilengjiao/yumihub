@@ -203,6 +203,8 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
         cover,
         background,
         description,
+        developer,
+        publisher,
         local_cover,
         local_background,
         save_data_path,
@@ -212,7 +214,7 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
         size,
         last_played_at
     ) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     "#,
     )
     .bind(&updated_meta.id)
@@ -221,6 +223,7 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
     .bind(&updated_meta.cover)
     .bind(&updated_meta.background)
     .bind(&updated_meta.description)
+    .bind(&updated_meta.developer)
     .bind(&updated_meta.local_cover)
     .bind(&updated_meta.local_background)
     .bind(&updated_meta.save_data_path)
