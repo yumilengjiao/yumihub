@@ -41,6 +41,8 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             abs_path TEXT NOT NULL,
+            is_passed INTEGER,
+            is_displayed INTEGER,
             cover TEXT,
             background TEXT,
             description TEXT,

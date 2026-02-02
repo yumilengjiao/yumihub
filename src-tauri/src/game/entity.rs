@@ -13,6 +13,8 @@ pub struct GameMeta {
     pub id: String,
     pub name: String,
     pub abs_path: String,
+    pub is_passed: bool,
+    pub is_displayed: bool,
     pub cover: String,
     pub background: String,
     pub description: String,

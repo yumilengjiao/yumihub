@@ -16,7 +16,7 @@ import { requestBangumiById } from '@/api/bangumiApi';
 import { requestVNDBById } from '@/api/vndbApi';
 import { recognizeGame } from '@/api/uniform';
 
-import { BangumiResponse, Datum, Developer, GameMeta } from "@/types/game";
+import { BangumiResponse, GameMeta } from "@/types/game";
 import usePendingGameStore, { PendingGameInfo } from "@/store/pendingGamesStore";
 import useGameStore from '@/store/gameStore';
 import { Cmds } from '@/lib/enum';
@@ -69,6 +69,8 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
       id: nanoid(),
       name: item.folderName,
       absPath: item.exePath,
+      isPassed: false,
+      isDisplayed: false,
       cover: '',
       background: '',
       description: '', // 默认为空，后续填充
@@ -205,9 +207,10 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
   const handleFinalConfirm = async () => {
     // 提前转换，用于校验
     const finalGames = items.map(item => transformToGameMeta(item));
-    // 获取所有游戏的大小
+    // 游戏的其他属性的初始化设置
     for (const game of finalGames) {
       let dir = getParentDir(game.absPath)
+      // 设置游戏大小
       let size = await invoke<number>(Cmds.GET_GAME_SIZE, { dir: dir })
       game.size = size
     }

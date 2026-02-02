@@ -1,19 +1,38 @@
 // 用于加载本地游戏配置的接口
 export interface GameMeta {
+  // 游戏唯一
   id: string
+  // 游戏名
   name: string
+  // 游戏启动路径
   absPath: string
+  // 游戏是否已通关
+  isPassed: boolean
+  // 游戏是否在首页展示
+  isDisplayed: boolean
+  // 游戏封面
   cover: string
+  // 游戏背景图
   background: string
+  // 本地封面路径
   local_cover?: string
+  // 本地背景路径
   local_background?: string
+  // 游戏描述
   description: string
+  // 游戏开发商
   developer: string
+  // 游戏存档路径
   saveDataPath?: string
+  // 游戏备份路径
   backupDataPath?: string
+  // 游戏已游玩时长
   playTime: number
+  // 游戏总时长
   length?: number
+  // 游戏大小
   size?: number
+  // 上一次打开游戏的时间
   lastPlayedAt?: string
 }
 

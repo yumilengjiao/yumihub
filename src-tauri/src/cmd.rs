@@ -112,6 +112,8 @@ pub async fn get_game_meta_list(pool: State<'_, Pool<Sqlite>>) -> Result<GameMet
         "SELECT id,
                 name,
                 abs_path,
+                is_passed,
+                is_displayed,
                 cover,
                 background, 
                 description,
@@ -146,6 +148,8 @@ pub async fn get_game_meta_by_id(
         "SELECT id,
                 name,
                 abs_path,
+                is_passed,
+                is_displayed,
                 cover,
                 background,
                 description,
@@ -184,6 +188,8 @@ pub async fn add_new_game(
             id,
             name,
             abs_path,
+            is_passed,
+            is_displayed,
             cover,
             background,
             description,
@@ -197,12 +203,14 @@ pub async fn add_new_game(
             size,
             last_played_at
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         "#,
     )
     .bind(&game.id)
     .bind(&game.name)
     .bind(&game.abs_path)
+    .bind(game.is_passed)
+    .bind(game.is_displayed)
     .bind(&game.cover)
     .bind(&game.background)
     .bind(&game.description)
@@ -246,6 +254,8 @@ pub async fn add_new_game_list(
                     id,
                     name,
                     abs_path,
+                    is_passed,
+                    is_displayed,
                     cover,
                     background,
                     description,
@@ -259,11 +269,13 @@ pub async fn add_new_game_list(
                     size,
                     last_played_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         )
         .bind(&game.id)
         .bind(&game.name)
         .bind(&game.abs_path)
+        .bind(game.is_passed)
+        .bind(game.is_displayed)
         .bind(&game.cover)
         .bind(&game.background)
         .bind(&game.description)

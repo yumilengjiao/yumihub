@@ -150,6 +150,8 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
     const finalGame: GameMeta = {
       id: nanoid(),
       absPath: absPath,
+      isPassed: false,
+      isDisplayed: false,
       name: useAutoData ? (displayInfo?.title || extractedName) : extractedName,
       cover: useAutoData ? (displayInfo?.cover || "") : "",
       description: displayInfo?.desc || "",

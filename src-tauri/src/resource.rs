@@ -200,6 +200,8 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
         id,
         name,
         abs_path,
+        is_passed,
+        is_displayed,
         cover,
         background,
         description,
@@ -220,6 +222,7 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
     .bind(&updated_meta.id)
     .bind(&updated_meta.name)
     .bind(&updated_meta.abs_path)
+    .bind(updated_meta.is_passed)
     .bind(&updated_meta.cover)
     .bind(&updated_meta.background)
     .bind(&updated_meta.description)

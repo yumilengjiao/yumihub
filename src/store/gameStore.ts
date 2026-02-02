@@ -46,15 +46,12 @@ const useGameStore = create<GameStore>()(
      * 用于修改一个已经存在的单个游戏的数据
      * @param game - 要用于修改的游戏数据
      */
-    setGameMeta(game) {
-      set((state) => {
-        let index = state.gameMetaList.findIndex((g) => g.id = game.id)
-        if (index != -1) {
-          state.gameMetaList[index] = game
-        } else {
-          state.gameMetaList.push(game)
-        }
-      })
+    setGameMeta: (updatedGame: GameMeta) => {
+      set((state) => ({
+        gameMetaList: state.gameMetaList.map((g) =>
+          g.id === updatedGame.id ? updatedGame : g
+        ),
+      }));
     },
 
     /**

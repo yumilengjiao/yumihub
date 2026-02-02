@@ -26,7 +26,7 @@ export default function Home() {
         <div className="col-span-12 flex items-end row-span-7">
         </div>
         <div className="col-span-12 flex items-end relative row-span-5">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-md vague" />
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm vague" />
           <GameList />
         </div>
       </div>
