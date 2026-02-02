@@ -15,6 +15,7 @@ mod util;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_autostart::Builder::new().build())
         .plugin(
             tauri_plugin_log::Builder::new()
@@ -48,7 +49,8 @@ pub fn run() {
             cmd::get_system_fonts,
             cmd::get_game_size,
             cmd::get_disks,
-            cmd::get_disk_usage
+            cmd::get_disk_usage,
+            cmd::authorize_path_access
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

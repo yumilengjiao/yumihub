@@ -7,7 +7,7 @@ import { immer } from 'zustand/middleware/immer'
 type GameStore = {
   selectedGame: GameMeta | null,
   gameMetaList: GameMetaList,
-  updateSelectedGame: (game: GameMeta) => void,
+  updateSelectedGame: (game: GameMeta | null) => void,
   setGameMetaList: (gameMetaList: GameMetaList) => void,
   setGameMeta: (game: GameMeta) => Promise<void>,
   discardGame: (id: string) => Promise<void>,

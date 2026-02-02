@@ -85,6 +85,11 @@ export enum Cmds {
   /**
    * 获取指定磁盘的使用率
    */
-  GET_DISK_USAGE = "get_disk_usage"
+  GET_DISK_USAGE = "get_disk_usage",
+
+  /**
+   * 将指定路径添加到可访问权限
+   */
+  AUTHORIZE_PATH_ACCESS = "authorize_path_access"
 }
 

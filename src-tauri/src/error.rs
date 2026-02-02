@@ -30,4 +30,7 @@ pub enum AppError {
 
     #[error("获取锁失败: {0}")]
     Mutex(String),
+
+    #[error("授权失败: {0}")]
+    Auth(String),
 }

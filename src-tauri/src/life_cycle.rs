@@ -21,10 +21,10 @@ pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
     apply_acrylic(&window, None).expect("不支持当前平台");
 
     db::init(app.handle());
+    sys::init(app.handle());
     config::init(app.handle())?;
     user::init()?;
     resource::init(app.handle());
-    sys::init(app.handle());
     Ok(())
 }
 

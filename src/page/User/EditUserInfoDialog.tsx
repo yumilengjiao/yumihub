@@ -9,13 +9,14 @@ import { toast } from "sonner";
 
 // Tauri API
 import { open } from '@tauri-apps/plugin-dialog';
-import { convertFileSrc } from '@tauri-apps/api/core';
+import { convertFileSrc, invoke } from '@tauri-apps/api/core';
 
-// 导入默认头像（确保打包后路径正确）
+// 导入默认头像
 import defaultAvatar from "@/assets/runasama😍😍😍😍.jpg";
 
 import useUserStore from "@/store/userStore";
 import { User } from "@/types/user";
+import { Cmds } from '@/lib/enum';
 
 interface EditUserInfoDialogProps {
   isOpen: boolean;
@@ -42,14 +43,16 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
       });
 
       if (selected && typeof selected === 'string') {
+        await invoke(Cmds.AUTHORIZE_PATH_ACCESS, { path: selected })
         setFormData(prev => prev ? ({
           ...prev,
           avatar: selected,      // 存入 avatar 字段用于预览和持久化
         }) : null);
-        toast.info("已载入本地图片预览");
+        toast.info("已载入本地图片预览")
       }
     } catch (err) {
-      toast.error("无法打开文件对话框");
+      toast.error("无法打开文件对话框")
+      console.error(err)
     }
   };
 

@@ -1,0 +1,14 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "fs",
+  "description": "控制对文件访问的权限",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "fs:default",
+    "fs:allow-read",
+    "fs:allow-write",
+    "fs:allow-exists"
+  ]
+}

@@ -57,6 +57,13 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
             last_played_at TEXT 
         );
 
+        -- 文件路径权限
+        CREATE TABLE IF NOT EXISTS authorized_scopes (
+            id TEXT PRIMARY KEY,
+            path TEXT NOT NULL UNIQUE,
+            authorized_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+
         -- 用户信息表
         CREATE TABLE IF NOT EXISTS account (
             id TEXT PRIMARY KEY,

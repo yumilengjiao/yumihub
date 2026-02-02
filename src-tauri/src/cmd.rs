@@ -2,11 +2,13 @@
 use std::path::{Path, PathBuf};
 
 use font_kit::source::SystemSource;
-use sqlx::{Pool, Sqlite};
+use sqlx::{Pool, Sqlite, SqlitePool};
 use sqlx::{Row, Transaction};
 use sysinfo::Disks;
-use tauri::{async_runtime, State};
+use tauri::{async_runtime, AppHandle, Manager, Runtime, State};
+use tauri_plugin_fs::FsExt;
 use tauri_plugin_log::log::{debug, error, info};
+use uuid::Uuid;
 
 use crate::game::entity::ResourceTarget;
 use crate::util::get_dir_size;
@@ -580,10 +582,10 @@ pub fn get_disks() -> Vec<String> {
         .collect()
 }
 
-#[tauri::command]
 /// 获取指定磁盘的使用率
 ///
 /// * `path`: 磁盘盘符
+#[tauri::command]
 pub fn get_disk_usage(path: String) -> Result<f64, String> {
     let disks = Disks::new_with_refreshed_list();
 
@@ -601,4 +603,38 @@ pub fn get_disk_usage(path: String) -> Result<f64, String> {
     } else {
         Err("找不到指定的磁盘挂载点".to_string())
     }
+}
+
+#[tauri::command]
+/// 添加指定的文件路径，使其可以被赋予访问权限
+///
+/// * `app_handle`: app句柄自动注入
+/// * `pool`: 数据库连接池自动注入
+/// * `path`: 要赋予权限的路径
+pub async fn authorize_path_access<R: Runtime>(
+    app_handle: AppHandle<R>,
+    pool: State<'_, SqlitePool>,
+    path: String,
+) -> Result<(), AppError> {
+    // 调用 Tauri FS Scope 实时授权
+    // 允许递归访问该目录下所有资源（图片、子文件夹等）
+    let scope = app_handle.fs_scope();
+    scope
+        .allow_directory(&path, true)
+        .map_err(|e| AppError::Auth(format!("Tauri 权限注入失败: {}", e)))?;
+    let asset_scope = app_handle.asset_protocol_scope();
+    asset_scope
+        .allow_file(&path)
+        .map_err(|e| AppError::Auth(format!("Tauri 权限注入失败: {}", e)))?;
+
+    // 持久化到权限表
+    // 使用 INSERT OR IGNORE 确保路径重复添加时不会报错
+    let id = Uuid::new_v4().to_string();
+    sqlx::query("INSERT OR IGNORE INTO authorized_scopes (id, path) VALUES (?, ?)")
+        .bind(&id)
+        .bind(&path)
+        .execute(pool.inner())
+        .await
+        .map_err(|e| AppError::DB(format!("数据库记录权限失败: {}", e)))?;
+    Ok(())
 }

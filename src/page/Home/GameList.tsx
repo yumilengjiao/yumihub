@@ -1,33 +1,66 @@
-import { useEffect, useState } from "react"
-import { Card } from "@/components/ui/card"
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel"
-import { cn } from "@/lib/utils"
+import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { cn } from "@/lib/utils";
 import { convertFileSrc } from '@tauri-apps/api/core';
 import useGameStore from "@/store/gameStore";
-import { Play } from "lucide-react"; // 确保导入了图标
+import { Play, Ghost } from "lucide-react";
 
 const GameList = () => {
-  const [api, setApi] = useState<CarouselApi>()
-  const [currentIndex, setCurrentIndex] = useState<number>(0)
-  const { selectedGame, updateSelectedGame, gameMetaList } = useGameStore()
+  const [api, setApi] = useState<CarouselApi>();
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [displayGames, setDisplayGames] = useState<any[]>([]);
 
+  const { selectedGame, updateSelectedGame, gameMetaList } = useGameStore();
+
+  // 1. 监听数据变化，同步显示列表
   useEffect(() => {
-    if (gameMetaList.length > 0) {
-      updateSelectedGame(gameMetaList[0])
+    const filtered = gameMetaList.filter(game => game.isDisplayed);
+    setDisplayGames(filtered);
+
+    // 初始选中逻辑
+    if (filtered.length > 0) {
+      if (!selectedGame || !filtered.find(g => g.id === selectedGame.id)) {
+        updateSelectedGame(filtered[0]);
+        setCurrentIndex(0);
+      }
+    } else {
+      updateSelectedGame(null);
     }
-  }, [gameMetaList])
+  }, [gameMetaList]);
 
   // 启动回调
   const handleStartGame = (gameName: string, e: React.MouseEvent) => {
     e.stopPropagation();
     alert(`正在启动游戏: ${gameName}`);
+  };
+
+  // --- 情况 A: 空状态 (绝对居中) ---
+  if (displayGames.length === 0) {
+    return (
+      <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
+        <div className="flex flex-col items-center animate-in fade-in zoom-in duration-1000">
+          <Ghost size={120} className="text-white/5 mb-8" />
+          <h2 className="text-5xl font-black text-white/10 tracking-[0.4em] uppercase"
+            style={{ WebkitTextStroke: '1px rgba(255,255,255,0.02)' }}>
+            Empty Library
+          </h2>
+          <p className="text-white/5 text-sm tracking-[0.6em] mt-6 font-light">
+            请在库设置中添加首页展示项目
+          </p>
+        </div>
+      </div>
+    );
   }
 
+  // --- 情况 B: 恢复你最初的 GameList 样式结构 ---
   return (
     <div className="overflow-hidden">
+      {/* 游戏标题 */}
       <div className="pl-8 pb-2 text-6xl text-white font-bold" style={{ WebkitTextStroke: '2px black' }}>
         {selectedGame?.name}
       </div>
+
       <Carousel
         opts={{
           dragFree: true,
@@ -39,42 +72,41 @@ const GameList = () => {
         setApi={setApi}
       >
         <CarouselContent className="items-end w-screen">
-          {gameMetaList.map((g, index) => (
+          {displayGames.map((g, index) => (
             <CarouselItem
               key={g.id}
               className={cn(
                 "duration-300 aspect-165/230",
-                "rounded-b-2xl sm:basis-1/6 pl-4",
+                "rounded-b-2xl sm:basis-1/6 pl-4", // 恢复你最初的 basis
               )}
               onClick={() => {
-                setCurrentIndex(index)
-                updateSelectedGame(g)
-                api?.scrollTo(index, false)
+                setCurrentIndex(index);
+                updateSelectedGame(g);
+                api?.scrollTo(index, false); // false 代表立即跳转，配合 CSS 动画实现顺滑感
               }}
             >
               <Card className={cn(
-                "relative group overflow-hidden border-none", // 必须加 group
-                "aspect-165/225 min-w-41.25 min-h-56.25 origin-bottom transition-all duration-300",
-                currentIndex != index && "scale-80",
+                "relative group overflow-hidden border-none",
+                "aspect-165/225 min-w-41.25 min-h-56.25 origin-bottom transition-all duration-300", // 恢复关键：origin-bottom
+                currentIndex !== index && "scale-80", // 恢复非选中状态的缩放
               )}>
-                {/* 恢复你原本的逻辑：非选中状态的黑色蒙罩 */}
-                {currentIndex != index && <div className="absolute bg-foreground opacity-45 w-full h-full z-10" />}
+                {/* 恢复：非选中状态的黑色蒙罩 */}
+                {currentIndex !== index && <div className="absolute bg-foreground opacity-45 w-full h-full z-10" />}
 
-                {/* 新增：仅在选中卡片上显示的悬浮启动按钮 */}
+                {/* 恢复：仅在选中卡片上显示的悬浮启动按钮 */}
                 {currentIndex === index && (
                   <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button
                       onClick={(e) => handleStartGame(g.name, e)}
                       className="w-26 h-26 flex items-center justify-center bg-emerald-500 hover:bg-emerald-400/90 text-white rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all active:scale-90"
                     >
-                      {/* 图标微调：ml-1 解决三角形视觉中心偏移 */}
                       <Play size={32} fill="white" className="ml-1" />
                     </button>
                   </div>
                 )}
 
                 <img
-                  src={g.local_cover ? convertFileSrc(g.local_cover) : g.cover}
+                  src={g.localCover ? convertFileSrc(g.localCover) : g.cover}
                   className="h-full w-full object-cover"
                 />
               </Card>
@@ -83,7 +115,7 @@ const GameList = () => {
         </CarouselContent>
       </Carousel>
     </div>
-  )
-}
+  );
+};
 
 export default GameList

@@ -73,7 +73,7 @@ const Radar = () => {
   // 防止数据为空时雷达图崩溃
   if (radarData.length === 0) {
     return (
-      <div className="w-full h-full flex items-center justify-center text-white/20 font-black border-2 border-dashed border-white/5 rounded-[2rem]">
+      <div className="w-full h-full flex items-center justify-center text-white/20 font-black">
         暂无通关厂商数据
       </div>
     );
