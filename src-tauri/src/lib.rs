@@ -8,6 +8,7 @@ mod game;
 mod life_cycle;
 mod message;
 mod resource;
+mod sys;
 mod user;
 mod util;
 
@@ -44,7 +45,9 @@ pub fn run() {
             //其他
             cmd::get_start_up_path,
             cmd::get_system_fonts,
-            cmd::get_game_size
+            cmd::get_game_size,
+            cmd::get_disks,
+            cmd::get_disk_usage
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

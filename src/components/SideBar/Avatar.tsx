@@ -12,7 +12,7 @@ export const Avatar = ({ className }: AvatarProps) => {
   const { user } = useUserStore()
   const [userAvatar, setUserAvatar] = useState<string>("")
   useEffect(() => {
-    if (user?.avatar.startsWith("http://") || user?.avatar.startsWith("https://")) {
+    if (user?.avatar?.startsWith("http://") || user?.avatar?.startsWith("https://")) {
       setUserAvatar(user.avatar)
     } else {
       if (user?.avatar) {

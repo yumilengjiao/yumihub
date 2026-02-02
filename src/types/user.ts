@@ -3,10 +3,10 @@ export interface User {
   userName: string
   avatar: string
   gamesCount: number
-  //这里是游戏名
   favoriteGame: string
   totalPlayTime: number
   gamesCompletedNumber: number
+  selectedDisk: string | null
   lastPlayAt: string | null
   createdAt: string | null
 }

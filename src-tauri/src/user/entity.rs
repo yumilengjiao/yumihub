@@ -11,6 +11,7 @@ pub struct User {
     pub favorite_game: String,
     pub total_play_time: i64,
     pub games_completed_number: i64,
+    pub selected_disk: Option<String>,
     pub last_play_at: Option<DateTime<Local>>,
     pub created_at: Option<DateTime<Local>>,
 }

@@ -69,7 +69,8 @@ export default function Library() {
           {displayGames.map((g: GameMeta) => (
             <Card
               key={g.id}
-              className="aspect-165/225 relative overflow-hidden cursor-pointer border-3 ring-1 ring-black/5 shadow-xl shadow-blue-500/10"
+              className="aspect-165/230 relative overflow-hidden cursor-pointer
+              border-3 ring-1 ring-black/5 shadow-xl shadow-blue-500/10"
               onClick={() => navigate(`/game/${g.id}`)}
             >
               {/* 1. 垃圾桶模式下的红色叉叉 */}

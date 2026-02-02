@@ -4,6 +4,7 @@ use std::path::{Path, PathBuf};
 use font_kit::source::SystemSource;
 use sqlx::Row;
 use sqlx::{Pool, Sqlite};
+use sysinfo::Disks;
 use tauri::{async_runtime, State};
 use tauri_plugin_log::log::{debug, error, info};
 
@@ -37,7 +38,7 @@ pub async fn get_user_info(pool: State<'_, Pool<Sqlite>>) -> Result<User, AppErr
             AppError::DB(e.to_string())
         })?;
 
-    // 如果数据库没数据，返回一个默认值，或者报错
+    // 如果数据库没数据，返回一个默认值
     Ok(user.unwrap_or_default())
 }
 
@@ -53,6 +54,7 @@ pub async fn update_user_info(
     // 先查询头像是否是网络资源是就下载资源
     let is_network_resource =
         account.avatar.starts_with("http://") || account.avatar.starts_with("https://");
+    debug!("更新的用户数据: {:?}", account);
 
     sqlx::query(
         r#"
@@ -61,14 +63,15 @@ pub async fn update_user_info(
             id,
             user_name,
             avatar,
-            games_count,
             favorite_game,
+            games_count,
             total_play_time,
             games_completed_number,
+            selected_disk,
             last_play_at,
             created_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
     )
     .bind(&account.id)
     .bind(&account.user_name)
@@ -77,6 +80,7 @@ pub async fn update_user_info(
     .bind(account.games_count)
     .bind(account.total_play_time)
     .bind(account.games_completed_number)
+    .bind(&account.selected_disk)
     .bind(account.last_play_at)
     .bind(account.created_at)
     .execute(&*pool)
@@ -198,8 +202,11 @@ pub async fn add_new_game(
     .bind(&game.abs_path)
     .bind(&game.cover)
     .bind(&game.background)
+    .bind(&game.description)
     .bind(&game.local_cover)
     .bind(&game.local_background)
+    .bind(&game.save_data_path)
+    .bind(&game.backup_data_path)
     .bind(game.play_time) // i64
     .bind(game.length) // i64
     .bind(game.size) // Option<i64>
@@ -237,9 +244,9 @@ pub async fn add_new_game_list(
                     abs_path,
                     cover,
                     background,
-                    description,
                     local_cover,
                     local_background,
+                    description,
                     save_data_path,
                     backup_data_path,
                     play_time,
@@ -256,6 +263,9 @@ pub async fn add_new_game_list(
         .bind(&game.background)
         .bind(&game.local_cover)
         .bind(&game.local_background)
+        .bind(&game.description)
+        .bind(&game.save_data_path)
+        .bind(&game.backup_data_path)
         .bind(game.play_time) // i64
         .bind(game.length) // i64
         .bind(game.size) // Option<i64>
@@ -429,8 +439,43 @@ pub fn get_system_fonts() -> Vec<String> {
 }
 
 /// 获取游戏的存储大小
+///
+/// * `dir`: 游戏目录
 #[tauri::command]
 pub fn get_game_size(dir: String) -> u64 {
     let parent_dir = Path::new(&dir);
     get_dir_size(parent_dir)
+}
+
+/// 获取系统有哪些挂载卷
+#[tauri::command]
+pub fn get_disks() -> Vec<String> {
+    let disks = Disks::new_with_refreshed_list();
+    disks
+        .iter()
+        .map(|disk| disk.mount_point().to_string_lossy().to_string())
+        .collect()
+}
+
+#[tauri::command]
+/// 获取指定磁盘的使用率
+///
+/// * `path`: 磁盘盘符
+pub fn get_disk_usage(path: String) -> Result<f64, String> {
+    let disks = Disks::new_with_refreshed_list();
+
+    // 注意：Windows 路径处理通常比较敏感，建议用 contains 或标准化处理
+    let target_disk = disks
+        .iter()
+        .find(|disk| disk.mount_point().to_string_lossy() == path);
+
+    if let Some(disk) = target_disk {
+        let total = disk.total_space();
+        let available = disk.available_space();
+        let used = total - available;
+        let usage_percentage = (used as f64 / total as f64) * 100.0;
+        Ok(usage_percentage)
+    } else {
+        Err("找不到指定的磁盘挂载点".to_string())
+    }
 }

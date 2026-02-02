@@ -43,7 +43,7 @@ const GameList = () => {
             <CarouselItem
               key={g.id}
               className={cn(
-                "duration-300 aspect-165/225",
+                "duration-300 aspect-165/230",
                 "rounded-b-2xl sm:basis-1/6 pl-4",
               )}
               onClick={() => {

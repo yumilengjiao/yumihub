@@ -1,7 +1,7 @@
 //! #该模块用于控制整个程序的生命周期
 use crate::{
     config::{self, fs},
-    db, resource,
+    db, resource, sys,
     user::{self},
 };
 use std::error::Error;
@@ -24,6 +24,7 @@ pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
     config::init(app.handle())?;
     user::init()?;
     resource::init(app.handle());
+    sys::init(app.handle());
     Ok(())
 }
 

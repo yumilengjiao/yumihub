@@ -56,13 +56,9 @@ const MoreOptions: React.FC<{ entries?: Entry[] }> = ({ entries }) => {
                     text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
                     {entry.entryName}
                   </button>
-                  <div className="h-px bg-gray-100 my-1" />
                 </>
               )
             })}
-            <button className="flex w-full items-center px-4 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors">
-              隐藏
-            </button>
           </div>
         </div>
       )}

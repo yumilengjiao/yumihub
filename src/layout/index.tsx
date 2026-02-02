@@ -16,7 +16,7 @@ import { Config } from "@/types/config";
 import { cn } from "@/lib/utils";
 
 export default function Layout() {
-  const { updateUser } = useUserStore()
+  const { setUser } = useUserStore()
   const { updateSelectedGame, setGameMetaList } = useGameStore()
   const { config, updateConfig } = useConfigStore()
   const fontFamily = useConfigStore(c => c.config.interface.fontFamily)
@@ -36,9 +36,9 @@ export default function Layout() {
 
   async function getUserInfo() {
     try {
-      const user: User = await invoke("get_user_info")
-      updateUser(user)
-    } catch (err) { console.error("获取用户信息失败") }
+      const user: User = await invoke(Cmds.GET_USER_INFO)
+      setUser(user)
+    } catch (err) { console.error("获取用户信息失败",err) }
   }
 
   async function getConfig() {

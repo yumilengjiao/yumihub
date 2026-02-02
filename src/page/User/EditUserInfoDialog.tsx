@@ -23,10 +23,11 @@ interface EditUserInfoDialogProps {
 }
 
 const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose }) => {
-  const { user, updateUser } = useUserStore();
+  const { user, setUser } = useUserStore();
   const [formData, setFormData] = useState<User | null>(null);
 
   useEffect(() => {
+    console.log("用户信息：", user)
     if (isOpen && user) {
       setFormData({ ...user });
     }
@@ -53,7 +54,7 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
   };
 
   // 辅助函数：判断是否为网络链接
-  const isNetworkUrl = (url: string) => url.startsWith('http');
+  const isNetworkUrl = (url: string) => url?.startsWith('http');
 
   // 获取真实的图片渲染地址
   const getDisplaySrc = (path: string) => {
@@ -65,7 +66,7 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData) {
-      updateUser(formData);
+      setUser(formData);
       toast.success("用户信息同步成功");
       onClose();
     }

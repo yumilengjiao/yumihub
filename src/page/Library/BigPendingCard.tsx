@@ -149,7 +149,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
       name: useAutoData ? (displayInfo?.title || extractedName) : extractedName,
       cover: useAutoData ? (displayInfo?.cover || "") : "",
       description: displayInfo?.desc || "",
-      background: useAutoData ? (displayInfo?.cover || "") : "",
+      background: useAutoData ? (displayInfo?.background || "") : "",
       playTime: 0,
       length: 0,
       size: size
@@ -259,7 +259,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
                       {displayInfo?.title || "未找到匹配数据"}
                     </h3>
                     <div className="flex bg-zinc-100 p-1.5 rounded-xl shrink-0">
-                      {['vndb', 'bangumi', 'ymgal'].map(src => (
+                      {['bangumi', 'vndb', 'ymgal'].map(src => (
                         <button key={src} onClick={() => { setActiveSource(src as any); setSearchId(''); }} className={cn("px-4 py-2 text-[10px] font-black rounded-lg uppercase transition-all", activeSource === src ? "bg-white shadow-sm text-zinc-900" : "text-zinc-400")}>{src}</button>
                       ))}
                     </div>

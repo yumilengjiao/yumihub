@@ -78,6 +78,16 @@ export enum Cmds {
   /**
    * 获取游戏的存储大小
    */
-  GET_GAME_SIZE = "get_game_size"
+  GET_GAME_SIZE = "get_game_size",
+
+  /**
+   * 获取操作系统上的挂载卷
+   */
+  GET_DISKS = "get_disks",
+
+  /**
+   * 获取指定磁盘的使用率
+   */
+  GET_DISK_USAGE = "get_disk_usage"
 }
 

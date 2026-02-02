@@ -63,6 +63,7 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
             favorite_game TEXT,
             total_play_time INTEGER DEFAULT 0,
             games_completed_number INTEGER DEFAULT 0,
+            selected_disk TEXT,
             last_play_at TEXT,
             created_at TEXT
         );
