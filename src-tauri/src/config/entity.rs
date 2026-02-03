@@ -79,7 +79,7 @@ impl Default for Basic {
             auto_start: false,
             silent_start: false,
             auto_check_update: false,
-            language: "zh-cn".into(),
+            language: "zh".into(),
         }
     }
 }

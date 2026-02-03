@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { open } from "@tauri-apps/plugin-dialog";
+import { Trans } from "@lingui/react/macro";
+import {t} from "@lingui/core/macro"
 
 interface PathCardProps {
   title: string;
@@ -37,7 +39,7 @@ export function PathCard({ title, path, onSelect, className }: PathCardProps) {
         <Label className="text-2xl font-bold tracking-tight text-zinc-900">{title}</Label>
         {/* 路径通常很长，增加提示和截断 */}
         <p className="text-sm text-zinc-400 font-mono truncate" title={path}>
-          {path || "尚未选择路径..."}
+          {path || t`尚未选择路径...`}
         </p>
       </div>
 
@@ -45,7 +47,7 @@ export function PathCard({ title, path, onSelect, className }: PathCardProps) {
         onClick={handleBrowse}
         className="h-14 px-8 rounded-2xl bg-emerald-100 hover:bg-emerald-500 text-emerald-600 hover:text-white transition-all gap-3 border-none shadow-none group"
       >
-        <span className="text-lg font-bold">浏览</span>
+        <span className="text-lg font-bold"><Trans>浏览</Trans></span>
         <FolderOpen size={20} className="group-hover:scale-110 transition-transform" />
       </Button>
     </div>

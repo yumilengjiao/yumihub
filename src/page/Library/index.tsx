@@ -7,8 +7,9 @@ import AddGameButton from "./AddGameButton"
 import { useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { GameMeta } from "@/types/game"
-import { X, Ghost, SearchX, LibraryBig } from "lucide-react"
+import { X, SearchX, LibraryBig } from "lucide-react"
 import { useNavigate } from "react-router"
+import { Trans } from "@lingui/react/macro"
 
 export default function Library() {
   const { gameMetaList, discardGame, filterGameMetaListByName } = useGameStore()
@@ -47,9 +48,6 @@ export default function Library() {
   }, []);
 
   return (
-    /** * 关键修改：父容器设为 relative，
-     * 确保内部的空状态 absolute 定位能参考整个页面高度 
-     */
     <div className="w-full h-full flex flex-col pt-[5vh] bg-primary-foreground relative min-h-screen">
       {/* 保持原样：添加游戏按钮 */}
       <AddGameButton />
@@ -112,7 +110,7 @@ export default function Library() {
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <div className="flex flex-col items-center animate-in fade-in zoom-in duration-700">
-              <div className="p-10 rounded-full bg-black/[0.03] mb-6">
+              <div className="p-10 rounded-full bg-black/3 mb-6">
                 {keyword ? (
                   <SearchX size={100} className="text-black/10" />
                 ) : (
@@ -120,10 +118,14 @@ export default function Library() {
                 )}
               </div>
               <h3 className="text-3xl font-bold text-black/20 tracking-[0.2em] uppercase">
-                {keyword ? "无匹配项" : "库中无数据"}
+                <Trans>
+                  {keyword ? "无匹配项" : "库中无数据"}
+                </Trans>
               </h3>
               <p className="text-black/10 text-base mt-4 tracking-widest font-light">
-                {keyword ? "尝试调整搜索关键词" : "点击上方按钮开始收藏游戏"}
+                <Trans>
+                  {keyword ? "尝试调整搜索关键词" : "点击上方按钮开始收藏游戏"}
+                </Trans>
               </p>
             </div>
           </div>

@@ -5,6 +5,8 @@ import { DatabaseBackup, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { invoke } from "@tauri-apps/api/core";
+import { Trans } from "@lingui/react/macro"
+import { t } from "@lingui/core/macro"
 
 export default function ResourceSetting() {
   const [isBackingUp, setIsBackingUp] = useState(false);
@@ -23,11 +25,11 @@ export default function ResourceSetting() {
   };
 
   return (
-    <CommonCard title="资源管理" icon="📂">
+    <CommonCard title={t`资源管理`} icon="📂">
       <div className="space-y-4">
         <div className="space-y-1">
-          <PathCard title="游戏存档备份目录" onSelect={() => console.log('')} />
-          <PathCard title="游戏元数据存储目录" onSelect={() => console.log('')} />
+          <PathCard title={t`游戏存档备份目录`} onSelect={() => console.log('')} />
+          <PathCard title={t`游戏元数据存储目录`} onSelect={() => console.log('')} />
         </div>
 
         <div className="pt-4 border-t border-zinc-100">
@@ -37,10 +39,12 @@ export default function ResourceSetting() {
             className="w-full h-12 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold gap-2 transition-all active:scale-[0.98]"
           >
             {isBackingUp ? <Loader2 className="animate-spin" /> : <DatabaseBackup size={18} />}
-            立即执行一键备份
+            <Trans>立即执行一键备份</Trans>
           </Button>
           <p className="text-[10px] text-zinc-400 mt-2 text-center font-medium">
-            将所有游戏的本地存档与配置打包至备份目录
+            <Trans>
+              将所有游戏的本地存档与配置打包至备份目录
+            </Trans>
           </p>
         </div>
         <div className="pt-4 border-t border-zinc-100">
@@ -50,13 +54,16 @@ export default function ResourceSetting() {
             className="w-full h-12 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold gap-2 transition-all active:scale-[0.98]"
           >
             {isBackingUp ? <Loader2 className="animate-spin" /> : <DatabaseBackup size={18} />}
-            一键还原存档
+            <Trans>
+              一键还原存档
+            </Trans>
           </Button>
           <p className="text-[10px] text-zinc-400 mt-2 text-center font-medium">
-            将所有游戏的本地存档还原到游戏
+            <Trans>
+              将所有游戏的本地存档还原到游戏
+            </Trans>
           </p>
         </div>
-
       </div>
     </CommonCard>
   );

@@ -101,7 +101,6 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
           )}
         </AnimatePresence>
 
-        {/* 右侧锚点按钮容器：固定 60x60，确保永远在最右侧且内部居中 */}
         <div className="w-[60px] h-[60px] shrink-0 flex items-center justify-center">
           <button
             onClick={() => setIsExpanded(!isExpanded)}

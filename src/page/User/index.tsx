@@ -16,29 +16,10 @@ import { invoke } from "@tauri-apps/api/core";
 import { Cmds } from "@/lib/enum";
 import useUserStore from "@/store/userStore";
 import { User as Account } from "@/types/user";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro"
 
-const radarData = [
-  {
-    "tag": "fruity",
-    "chardonay": 102,
-  },
-  {
-    "tag": "bitter",
-    "chardonay": 96,
-  },
-  {
-    "tag": "heavy",
-    "chardonay": 66,
-  },
-  {
-    "tag": "strong",
-    "chardonay": 67,
-  },
-  {
-    "tag": "sunny",
-    "chardonay": 29,
-  }
-]
+
 
 export default function User() {
   const [isEditingUser, setIsEditingUser] = useState(false)
@@ -118,24 +99,24 @@ export default function User() {
 
           {/* 顶部个人信息 (占 2 列) */}
           <CommonCard title="Profile" className="col-span-6 row-span-2" headerAction={
-            <MoreOptions entries={[{ entryName: "修改信息", entryFunc: () => handleUserInfo() }]} />
+            <MoreOptions entries={[{ entryName: t`修改信息`, entryFunc: () => handleUserInfo() }]} />
           }>
             <ProfileHeader username={user?.userName || "user"} />
           </CommonCard>
 
           {/* 右上角黑色卡片 */}
-          <CommonCard title="信息和工具" className="bg-zinc-800 text-white col-span-3 row-span-1">
+          <CommonCard title={t`信息和工具`} className="bg-zinc-800 text-white col-span-3 row-span-1">
             <ToolBox companionPath="/" isCompanionEnabled={false} onCompanionToggle={() => { alert("nihao") }} />
           </CommonCard>
           {/* 右二黑色卡片 */}
           <CommonCard className="bg-zinc-800 col-span-3 row-span-3" >
-            <Radar data={radarData} />
+            <Radar />
           </CommonCard>
 
           {/* 中间大块 (可以放热力图) */}
           <CommonCard
             title="Activity"
-            headerAction={<MoreOptions entries={[{ entryName: "选择年份", entryFunc: () => alert("你好") }]} />}
+            headerAction={<MoreOptions entries={[{ entryName: t`选择年份`, entryFunc: () => alert("你好") }]} />}
             className="col-span-4 row-span-5">
             < DragScroller >
               <CalendarHeatMap />
@@ -146,7 +127,7 @@ export default function User() {
           <CommonCard
             title="usage"
             className="bg-zinc-800 col-span-2 row-span-2"
-            headerAction={<MoreOptions entries={[{ entryName: "选择磁盘", entryFunc: () => selectDisk() }]} />}>
+            headerAction={<MoreOptions entries={[{ entryName: t`选择磁盘`, entryFunc: () => selectDisk() }]} />}>
             <SysMonitor diskUsage={diskUsage} />
           </CommonCard>
 
@@ -171,7 +152,7 @@ export function DiskPicker({ onSelect, onClose }: { onSelect: (path: string) => 
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="w-64 overflow-hidden rounded-xl border border-zinc-700 bg-zinc-900 shadow-2xl">
         <div className="border-b border-zinc-800 p-3">
-          <h3 className="text-sm font-medium text-zinc-400">选择监控磁盘</h3>
+          <h3 className="text-sm font-medium text-zinc-400"><Trans>选择监控磁盘</Trans></h3>
         </div>
         <div className="max-h-60 overflow-y-auto p-1">
           {disks.map((path) => (
@@ -189,7 +170,9 @@ export function DiskPicker({ onSelect, onClose }: { onSelect: (path: string) => 
           onClick={onClose}
           className="w-full border-t border-zinc-800 p-2 text-xs text-zinc-500 hover:bg-zinc-800"
         >
-          取消
+          <Trans>
+            取消
+          </Trans>
         </button>
       </div>
     </div>

@@ -20,6 +20,8 @@ import { BangumiResponse, GameMeta } from "@/types/game";
 import usePendingGameStore, { PendingGameInfo } from "@/store/pendingGamesStore";
 import useGameStore from '@/store/gameStore';
 import { Cmds } from '@/lib/enum';
+import { Trans } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro'
 
 interface PendingCardProps {
   pathList: string[];
@@ -119,7 +121,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
 
     // 强制检查：如果描述为空，填充占位符，确保提交到后端不是空字符串
     if (!meta.description || meta.description.trim() === "") {
-      meta.description = `${meta.name} - 暂无详细介绍。`;
+      meta.description = t`${meta.name} - 暂无详细介绍。`;
     }
 
     return meta;
@@ -131,7 +133,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
       setItems(initialItems);
       for (let i = 0; i < initialItems.length; i++) {
         try {
-          const realExe: string = await invoke('get_start_up_path', { parentPath: initialItems[i].originalPath });
+          const realExe: string = await invoke(Cmds.GET_START_UP_PATH, { parentPath: initialItems[i].originalPath });
           if (realExe) {
             setItems(prev => prev.map((it, idx) => idx === i ? { ...it, exePath: realExe.replace(/[\\/]+/g, '/') } : it));
           }
@@ -153,7 +155,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
       if (isMatchingRef.current) {
         isMatchingRef.current = false;
         setIsGlobalMatching(false);
-        toast.error("匹配任务超时，请检查网络");
+        toast.error(t`匹配任务超时，请检查网络`);
       }
     }, 60000);
 
@@ -164,9 +166,9 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
         setItems(prev => prev.map((it, idx) => i === idx ? { ...it, data: res } : it));
         setMatchProgress(Math.round(((i + 1) / items.length) * 100));
       }
-      if (isMatchingRef.current) toast.success("全局匹配完成");
+      if (isMatchingRef.current) toast.success(t`全局匹配完成`);
     } catch (err) {
-      toast.error("匹配中断");
+      toast.error(t`匹配中断`);
     } finally {
       clearTimer();
       setIsGlobalMatching(false);
@@ -181,7 +183,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
     const singleTimer = setTimeout(() => {
       if (singleLoading === itemId) {
         setSingleLoading(null);
-        toast.error("请求超时");
+        toast.error(t`请求超时`);
       }
     }, 15000);
 
@@ -194,10 +196,10 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
         if (res) setItems(prev => prev.map(it => it.id === itemId ? { ...it, data: { ...it.data, vndb: res } } : it));
       }
       clearTimeout(singleTimer);
-      toast.success("ID 检索成功");
+      toast.success(t`ID 检索成功`);
     } catch (err) {
       clearTimeout(singleTimer);
-      toast.error("检索失败");
+      toast.error(t`检索失败`);
     } finally {
       setSingleLoading(null);
     }
@@ -215,11 +217,11 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
       game.size = size
     }
 
-    const loadingId = toast.loading("正在处理导入...");
+    const loadingId = toast.loading(t`正在处理导入...`);
     resetReadyGames();
     try {
       // 提交到后端 Rust
-      await invoke("add_new_game_list", { games: finalGames });
+      await invoke(Cmds.ADD_NEW_GAME_LIST, { games: finalGames });
 
       // 更新前端 Store
       finalGames.forEach(g => {
@@ -227,10 +229,10 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
         addGameMeta(g);
       });
 
-      toast.success("导入成功", { id: loadingId });
+      toast.success(t`导入成功`, { id: loadingId });
       onCancel();
     } catch (err) {
-      toast.error("导入失败", { id: loadingId });
+      toast.error(t`导入失败`, { id: loadingId });
       console.error(err);
     }
   };
@@ -244,8 +246,8 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
           <div className="flex items-center gap-6">
             <div className="w-16 h-16 bg-zinc-900 rounded-[22px] flex items-center justify-center text-white"><ListChecks size={32} /></div>
             <div>
-              <h2 className="text-4xl font-black italic tracking-tighter uppercase leading-none">批量导入确认</h2>
-              <p className="text-zinc-400 font-bold text-[10px] mt-2 uppercase opacity-60 italic">{items.length} 个项目就绪</p>
+              <h2 className="text-4xl font-black italic tracking-tighter uppercase leading-none"><Trans>批量导入确认</Trans></h2>
+              <p className="text-zinc-400 font-bold text-[10px] mt-2 uppercase opacity-60 italic"><Trans>{items.length} 个项目就绪</Trans></p>
             </div>
           </div>
           <Button variant="ghost" onClick={onCancel} className="h-16 px-6 rounded-2xl group flex items-center gap-4 hover:bg-red-50">
@@ -339,10 +341,10 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
         {/* Footer */}
         <div className="px-12 py-10 bg-white border-t-2 border-zinc-50 flex items-center gap-8 shrink-0 relative z-100 shadow-[0_-20px_50px_rgba(255,255,255,1)]">
           <Button onClick={handleGlobalMatch} disabled={isGlobalMatching} className={cn("h-24 flex-1 rounded-[36px] font-black text-3xl gap-4 border-none shadow-none", isGlobalMatching ? "bg-violet-100 text-violet-400 opacity-100" : "bg-violet-600 text-white hover:bg-violet-700")}>
-            {isGlobalMatching ? <div className="flex items-center gap-4"><Loader2 className="animate-spin" size={36} /><span className="text-4xl font-black">{matchProgress}%</span></div> : <><Search size={36} strokeWidth={4} />匹配元数据</>}
+            {isGlobalMatching ? <div className="flex items-center gap-4"><Loader2 className="animate-spin" size={36} /><span className="text-4xl font-black">{matchProgress}%</span></div> : <><Search size={36} strokeWidth={4} /><Trans>匹配元数据</Trans></>}
           </Button>
           <Button onClick={handleFinalConfirm} disabled={isGlobalMatching || items.length === 0} className={cn("h-24 flex-1 rounded-[36px] font-black text-3xl gap-4 border-none shadow-none", isGlobalMatching ? "bg-zinc-100 text-zinc-300 opacity-100" : "bg-zinc-900 text-white hover:bg-black")}>
-            <Check size={40} strokeWidth={5} /> 确认添加项目
+            <Check size={40} strokeWidth={5} /><Trans> 确认添加项目</Trans>
           </Button>
         </div>
       </motion.div>

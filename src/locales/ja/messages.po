@@ -1,0 +1,508 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-02-03 15:04+0800\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: ja\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: src/page/User/EditUserInfoDialog.tsx:155
+msgid " 最喜欢的游戏"
+msgstr " お気に入りのゲーム"
+
+#: src/page/Setting/SysSetting/index.tsx:31
+msgid " 最大下载并发数"
+msgstr " 最大同時ダウンロード数"
+
+#: src/page/Library/BigPendingCard.tsx:216
+msgid " 匹配元数据"
+msgstr " メタデータを照合"
+
+#: src/page/Library/GameDetail.tsx:192
+msgid " 存档目录"
+msgstr " セーブデータディレクトリ"
+
+#: src/page/User/EditUserInfoDialog.tsx:126
+msgid " 本地上传"
+msgstr " ローカルアップロード"
+
+#: src/page/Library/GameDetail.tsx:141
+msgid " 游戏简介"
+msgstr " ゲーム紹介"
+
+#: src/page/User/EditUserInfoDialog.tsx:144
+msgid " 用户昵称"
+msgstr " ユーザーニックネーム"
+
+#: src/page/Library/BigPendingCard.tsx:219
+msgid " 直接确认"
+msgstr " 直接確定"
+
+#: src/page/Library/BigPendingCard.tsx:286
+msgid " 确认添加"
+msgstr " 追加を確定"
+
+#: src/page/Library/PendingCard.tsx:347
+msgid " 确认添加项目"
+msgstr " 項目の追加を確定"
+
+#: src/page/Library/GameDetail.tsx:179
+msgid "\"从未启动\""
+msgstr "\"未起動\""
+
+#: src/page/User/ProfileHeader.tsx:20
+msgid "\"存档是 Gal 玩家的生命线，记得备份。\""
+msgstr "\"セーブデータは Gal ゲーマーの生命線です。バックアップを忘れずに。\""
+
+#. placeholder {0}: keyword ? "尝试调整搜索关键词" : "点击上方按钮开始收藏游戏"
+#. placeholder {0}: keyword ? "无匹配项" : "库中无数据"
+#: src/page/Library/index.tsx:121
+#: src/page/Library/index.tsx:126
+msgid "{0}"
+msgstr "{0}"
+
+#. placeholder {0}: meta.name
+#: src/page/Library/PendingCard.tsx:124
+msgid "{0} - 暂无详细介绍。"
+msgstr "{0} - 詳細な紹介はありません。"
+
+#. placeholder {0}: items.length
+#: src/page/Library/PendingCard.tsx:250
+msgid "{0} 个项目就绪"
+msgstr "{0} 個の項目が準備完了"
+
+#: src/page/Library/BigPendingCard.tsx:102
+#~ msgid "Bangumi 数据已同步"
+#~ msgstr "Bangumi データを同期しました"
+
+#: src/page/Library/PendingCard.tsx:199
+msgid "ID 检索成功"
+msgstr "ID 検索に成功しました"
+
+#: src/page/Library/BigPendingCard.tsx:108
+#~ msgid "VNDB 数据已同步"
+#~ msgstr "VNDB データを同期しました"
+
+#: src/page/Setting/ResourceSetting/index.tsx:57
+msgid "一键还原存档"
+msgstr "セーブデータを一括復元"
+
+#: src/page/User/ProfileHeader.tsx:10
+msgid "下午好"
+msgstr "こんにちは"
+
+#: src/components/SideBar/index.tsx:75
+msgid "个人"
+msgstr "プロフィール"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:24
+msgid "个性化界面"
+msgstr "インターフェースのカスタマイズ"
+
+#: src/page/User/ProfileHeader.tsx:9
+msgid "中午好"
+msgstr "こんにちは"
+
+#: src/components/SideBar/index.tsx:69
+msgid "主页"
+msgstr "ホーム"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:32
+msgid "主题颜色"
+msgstr "テーマカラー"
+
+#: src/page/User/ProfileHeader.tsx:22
+msgid "今天的心情适合推一部催泪神作吗？"
+msgstr "今日は泣きゲーをプレイしたい気分ですか？"
+
+#: src/page/Library/GameDetail.tsx:121
+msgid "从备份存档恢复"
+msgstr "バックアップから復元"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:37
+msgid "侧边栏显示"
+msgstr "サイドバーの表示"
+
+#: src/page/User/EditUserInfoDialog.tsx:179
+msgid "保存信息"
+msgstr "情報を保存"
+
+#: src/page/User/index.tsx:108
+msgid "信息和工具"
+msgstr "情報とツール"
+
+#: src/page/User/index.tsx:102
+msgid "修改信息"
+msgstr "情報の変更"
+
+#: src/page/User/EditUserInfoDialog.tsx:97
+msgid "修改用户信息"
+msgstr "ユーザー情報の変更"
+
+#: src/page/Library/PendingCard.tsx:169
+msgid "全局匹配完成"
+msgstr "一括照合が完了しました"
+
+#: src/page/User/ProfileHeader.tsx:21
+msgid "全线通关后的后劲，是青春的证明。"
+msgstr "全ルートクリア後の余韻は、青春の証です。"
+
+#: src/page/Setting/SysSetting/index.tsx:12
+msgid "关闭日志"
+msgstr "ログを無効化"
+
+#: src/page/Library/GameDetail.tsx:179
+msgid "最后运行"
+msgstr "最終プレイ"
+
+#: src/page/Setting/SysSetting/index.tsx:11
+msgid "最小化至托盘"
+msgstr "タスクトレイに最小化"
+
+#: src/page/User/ProfileHeader.tsx:23
+msgid "劳逸结合，眼睛也需要休息呢。"
+msgstr "適度に休憩しましょう。目も休ませてあげてくださいね。"
+
+#: src/page/Library/PendingCard.tsx:171
+msgid "匹配中断"
+msgstr "照合が中断されました"
+
+#: src/page/Library/PendingCard.tsx:158
+msgid "匹配任务超时，请检查网络"
+msgstr "照合タスクがタイムアウトしました。ネットワークを確認してください"
+
+#: src/page/Library/PendingCard.tsx:344
+msgid "匹配元数据"
+msgstr "メタデータを照合"
+
+#: src/page/Library/BigPendingCard.tsx:121
+msgid "匹配超时"
+msgstr "照合タイムアウト"
+
+#: src/page/User/ProfileHeader.tsx:9
+msgid "午饭吃了吗？记得休息一下。"
+msgstr "お昼ごはんは食べましたか？ゆっくり休んでくださいね。"
+
+#: src/page/Library/GameDetail.tsx:132
+msgid "占用空间"
+msgstr "使用容量"
+
+#: src/page/Library/BigPendingCard.tsx:214
+#: src/page/User/EditUserInfoDialog.tsx:173
+#: src/page/User/index.tsx:173
+msgid "取消"
+msgstr "キャンセル"
+
+#: src/page/Library/GameDetail.tsx:127
+msgid "启动游戏"
+msgstr "ゲームを起動"
+
+#: src/page/Library/GameDetail.tsx:181
+msgid "启动路径"
+msgstr "起動パス"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:40
+msgid "固定展示(正常)"
+msgstr "固定表示(標準)"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:41
+msgid "固定展示(短)"
+msgstr "固定表示(小)"
+
+#: src/page/User/GameJourney.tsx:17
+msgid "在游戏仓库添加你的第一款 Galgame，<0/>"
+msgstr "最初の Galgame をライブラリに追加しましょう、<0/>"
+
+#: src/page/Setting/BaseSetting/index.tsx:32
+msgid "基础设置"
+msgstr "基本設定"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:27
+msgid "外观主题"
+msgstr "外観テーマ"
+
+#: src/page/User/ProfileHeader.tsx:12
+msgid "夜深了，推完这节就快去睡觉吧。"
+msgstr "夜も更けてきました。このセクションが終わったら早く寝てくださいね。"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:21
+msgid "夜间模式"
+msgstr "ダークモード"
+
+#: src/page/Library/BigPendingCard.tsx:163
+#: src/page/Library/PendingCard.tsx:235
+msgid "导入失败"
+msgstr "インポート失敗"
+
+#: src/page/Library/BigPendingCard.tsx:161
+#: src/page/Library/PendingCard.tsx:232
+msgid "导入成功"
+msgstr "インポート成功"
+
+#: src/page/Setting/ResourceSetting/index.tsx:45
+msgid "将所有游戏的本地存档与配置打包至备份目录"
+msgstr "すべてのゲームのローカルセーブデータと設定をバックアップディレクトリにまとめます"
+
+#: src/page/Setting/ResourceSetting/index.tsx:62
+msgid "将所有游戏的本地存档还原到游戏"
+msgstr "すべてのゲームのローカルセーブデータをゲームフォルダに復元します"
+
+#: src/page/User/GameJourney.tsx:105
+msgid "尚未开始"
+msgstr "未開始"
+
+#: src/components/PathCard.tsx:42
+msgid "尚未选择路径..."
+msgstr "パスが選択されていません..."
+
+#: src/page/Library/GameDetail.tsx:130
+msgid "已游玩"
+msgstr "プレイ済み"
+
+#: src/page/User/EditUserInfoDialog.tsx:53
+msgid "已载入本地图片预览"
+msgstr "ローカル画像のプレビューを読み込みました"
+
+#: src/page/Setting/BaseSetting/index.tsx:35
+msgid "开机自启动"
+msgstr "システム起動時に実行"
+
+#: src/page/Library/PendingCard.tsx:249
+msgid "批量导入确认"
+msgstr "一括インポートの確認"
+
+#: src/page/Library/BigPendingCard.tsx:102
+msgid "数据已同步"
+msgstr "データを同期しました"
+
+#: src/page/User/ProfileHeader.tsx:8
+msgid "新的一天，也要充满元气哦！"
+msgstr "新しい一日です。元気にいきましょう！"
+
+#: src/page/User/EditUserInfoDialog.tsx:56
+msgid "无法打开文件对话框"
+msgstr "ファイルダイアログを開けませんでした"
+
+#: src/page/Setting/SysSetting/index.tsx:24
+msgid "日志追踪等级"
+msgstr "ログレベル"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:21
+msgid "日间模式"
+msgstr "ライトモード"
+
+#: src/page/User/ProfileHeader.tsx:8
+msgid "早上好"
+msgstr "おはようございます"
+
+#: src/page/User/ProfileHeader.tsx:11
+msgid "晚上好"
+msgstr "こんばんは"
+
+#: src/page/Library/BigPendingCard.tsx:59
+#: src/page/Library/BigPendingCard.tsx:70
+msgid "暂无描述"
+msgstr "説明なし"
+
+#: src/page/Library/BigPendingCard.tsx:278
+msgid "暂无详细介绍"
+msgstr "詳細な紹介はありません"
+
+#: src/page/User/Radar.tsx:79
+msgid "暂无通关制作商数据"
+msgstr "現在、クリア済みの制作会社データはありません"
+
+#: src/page/Library/BigPendingCard.tsx:261
+msgid "未找到匹配数据"
+msgstr "一致するデータが見つかりません"
+
+#: src/page/User/Radar.tsx:55
+msgid "未知制作商"
+msgstr "不明な制作会社"
+
+#: src/page/User/ProfileHeader.tsx:10
+msgid "来杯咖啡吧，又是努力的一天。"
+msgstr "コーヒーでも飲んで、今日も一日頑張りましょう。"
+
+#: src/page/Library/BigPendingCard.tsx:104
+msgid "查询失败"
+msgstr "クエリ失敗"
+
+#: src/page/Library/BigPendingCard.tsx:112
+#~ msgid "查询失败，请检查 ID 是否正确"
+#~ msgstr "検索に失敗しました。IDが正しいか確認してください"
+
+#: src/page/Setting/SysSetting/index.tsx:12
+msgid "标准 (Info)"
+msgstr "標準 (Info)"
+
+#: src/page/Library/GameDetail.tsx:172
+msgid "标记通关"
+msgstr "クリア済みとしてマーク"
+
+#: src/page/Library/PendingCard.tsx:202
+msgid "检索失败"
+msgstr "検索失敗"
+
+#: src/page/Library/PendingCard.tsx:220
+msgid "正在处理导入..."
+msgstr "インポートを処理中..."
+
+#: src/components/PathCard.tsx:50
+msgid "浏览"
+msgstr "参照"
+
+#: src/components/SideBar/index.tsx:72
+msgid "游戏"
+msgstr "ゲーム"
+
+#: src/page/Setting/ResourceSetting/index.tsx:32
+msgid "游戏元数据存储目录"
+msgstr "ゲームメタデータ保存先"
+
+#: src/page/Setting/ResourceSetting/index.tsx:31
+msgid "游戏存档备份目录"
+msgstr "ゲームセーブバックアップ先"
+
+#: src/page/Library/GameDetail.tsx:152
+msgid "游玩时长 (分钟)"
+msgstr "プレイ時間 (分)"
+
+#: src/page/User/GameJourney.tsx:64
+#~ msgid "游玩时长: "
+#~ msgstr "プレイ時間: "
+
+#: src/page/Setting/SysSetting/index.tsx:18
+msgid "点击关闭按钮时"
+msgstr "閉じるボタンを押したとき"
+
+#: src/page/Library/GameDetail.tsx:194
+msgid "点击配置路径..."
+msgstr "クリックしてパスを設定..."
+
+#: src/page/User/EditUserInfoDialog.tsx:75
+msgid "用户信息同步成功"
+msgstr "ユーザー情報の同期に成功しました"
+
+#: src/page/Setting/SysSetting/index.tsx:11
+msgid "直接退出程序"
+msgstr "プログラムを終了"
+
+#: src/page/Library/GameDetail.tsx:118
+msgid "立即备份"
+msgstr "今すぐバックアップ"
+
+#: src/page/Setting/ResourceSetting/index.tsx:42
+msgid "立即执行一键备份"
+msgstr "今すぐ一括バックアップを実行"
+
+#: src/page/Library/GameDetail.tsx:148
+msgid "管理与状态"
+msgstr "管理とステータス"
+
+#: src/page/Setting/SysSetting/index.tsx:15
+msgid "系统策略"
+msgstr "システムポリシー"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:11
+msgid "系统默认"
+msgstr "システムデフォルト"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:39
+msgid "自动触发"
+msgstr "自動トリガー"
+
+#: src/page/Library/GameDetail.tsx:199
+msgid "自定义背景"
+msgstr "背景をカスタマイズ"
+
+#: src/page/User/GameJourney.tsx:21
+msgid "让时间在这里留下足迹。"
+msgstr "ここに時間の足跡を残しましょう。"
+
+#: src/page/User/ProfileHeader.tsx:19
+msgid "记得多看几遍喜欢的剧情，会有新发现哦。"
+msgstr "お気に入りのシーンは何度も見返してみてください。新しい発見があるかもしれませんよ。"
+
+#: src/components/SideBar/index.tsx:78
+msgid "设置"
+msgstr "設定"
+
+#: src/page/Library/BigPendingCard.tsx:81
+msgid "该数据源暂无详细介绍"
+msgstr "このデータソースには詳細な紹介がありません"
+
+#: src/page/Setting/SysSetting/index.tsx:12
+msgid "详细 (Debug)"
+msgstr "詳細 (Debug)"
+
+#: src/page/Setting/BaseSetting/index.tsx:45
+msgid "语言设置 / Language"
+msgstr "言語設定 / Language"
+
+#: src/page/Home/GameList.tsx:52
+msgid "请在库设置中添加首页展示项目"
+msgstr "ライブラリ設定でホームに表示する項目を追加してください"
+
+#: src/page/Library/BigPendingCard.tsx:136
+msgid "请求发生错误"
+msgstr "リクエストエラーが発生しました"
+
+#: src/page/Library/PendingCard.tsx:186
+msgid "请求超时"
+msgstr "リクエストタイムアウト"
+
+#: src/page/Setting/ResourceSetting/index.tsx:28
+msgid "资源管理"
+msgstr "リソース管理"
+
+#: src/page/Library/GameDetail.tsx:143
+msgid "输入游戏描述..."
+msgstr "ゲームの説明を入力..."
+
+#: src/page/User/ProfileHeader.tsx:11
+msgid "辛苦了，开启一段精彩的故事吧。"
+msgstr "お疲れ様でした。素晴らしい物語を始めましょう。"
+
+#: src/page/Library/GameDetail.tsx:82
+msgid "返回库"
+msgstr "ライブラリに戻る"
+
+#: src/page/User/GameJourney.tsx:14
+msgid "还没有开启任何物语"
+msgstr "まだ物語は始まっていないようです"
+
+#: src/page/User/index.tsx:119
+msgid "选择年份"
+msgstr "年を選択"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:45
+msgid "选择应用字体"
+msgstr "フォントを選択"
+
+#: src/page/User/index.tsx:155
+msgid "选择监控磁盘"
+msgstr "監視ディスクを選択"
+
+#: src/page/User/index.tsx:130
+msgid "选择磁盘"
+msgstr "ディスクを選択"
+
+#: src/page/Setting/BaseSetting/index.tsx:40
+msgid "静默启动"
+msgstr "サイレント起動"
+
+#: src/page/Library/GameDetail.tsx:166
+msgid "首页展示"
+msgstr "ホームに表示"
+
+#: src/page/Library/GameDetail.tsx:201
+msgid "默认图片..."
+msgstr "デフォルト画像..."

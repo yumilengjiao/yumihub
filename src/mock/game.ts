@@ -76,5 +76,28 @@ const gameData = {
   ymgal: null
 }
 
+// 雷达图数据
+const radarData = [{
+  "tag": "fruity",
+  "chardonay": 102,
+},
+{
+  "tag": "bitter",
+  "chardonay": 96,
+},
+{
+  "tag": "heavy",
+  "chardonay": 66,
+},
+{
+  "tag": "strong",
+  "chardonay": 67,
+},
+{
+  "tag": "sunny",
+  "chardonay": 29,
+}
+]
 
-export default gameData
+
+export { gameData, radarData }

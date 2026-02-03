@@ -1,6 +1,8 @@
 import useGameStore from '@/store/gameStore'
+import { Trans } from '@lingui/react/macro'
 import { ResponsiveRadar } from '@nivo/radar'
 import { useMemo } from 'react'
+import { t } from '@lingui/core/macro'
 
 const Radar = () => {
   const { gameMetaList } = useGameStore()
@@ -50,7 +52,7 @@ const Radar = () => {
       const separators = /[/／、,，&|+]/;
       const parts = cleanName.split(separators).map(s => s.trim());
 
-      return parts[0] || "未知制作商";
+      return parts[0] || t`未知制作商`;
     };
 
     // 3. 统计
@@ -74,7 +76,7 @@ const Radar = () => {
   if (radarData.length === 0) {
     return (
       <div className="w-full h-full flex items-center justify-center text-white/20 font-black">
-        暂无通关厂商数据
+        <Trans>暂无通关制作商数据</Trans>
       </div>
     );
   }

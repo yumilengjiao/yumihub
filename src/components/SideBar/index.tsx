@@ -6,6 +6,7 @@ import { House, UserRound, Settings2, Gamepad2 } from "lucide-react";
 import { Avatar } from "./Avatar";
 import { useNavigate, useLocation } from "react-router";
 import useConfigStore from "@/store/configStore";
+import { t } from "@lingui/core/macro"
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -13,14 +14,14 @@ export default function Sidebar() {
   const sidebarMode = useConfigStore(s => s.config.interface.sidebarMode) || "Trigger";
   const [isHovered, setIsHovered] = useState(false);
 
-  // 1. 展开逻辑：Fixed 模式锁死状态，Trigger 模式响应 Hover
+  // 展开逻辑：Fixed 模式锁死状态，Trigger 模式响应 Hover
   const isExpanded = useMemo(() => {
     if (sidebarMode === "NormalFixed") return true;
     if (sidebarMode === "ShortFixed") return false;
     return isHovered;
   }, [sidebarMode, isHovered]);
 
-  // 2. 容器样式逻辑
+  // 容器样式逻辑
   const containerClass = useMemo(() => {
     const base = "h-full flex flex-col transition-all duration-300 ease-in-out border-r border-white/10 shadow-xl"
     switch (sidebarMode) {
@@ -65,16 +66,16 @@ export default function Sidebar() {
           </div>
 
           <nav className="flex-1 px-3 space-y-4">
-            <Entry isActive={location.pathname === "/"} isExpanded={isExpanded} title="主页" onClick={() => navigate("/")}>
+            <Entry isActive={location.pathname === "/"} isExpanded={isExpanded} title={t`主页`} onClick={() => navigate("/")}>
               <House size={28} strokeWidth={2.5} />
             </Entry>
-            <Entry isActive={location.pathname === "/library"} isExpanded={isExpanded} title="游戏" onClick={() => navigate("/library")}>
+            <Entry isActive={location.pathname === "/library"} isExpanded={isExpanded} title={t`游戏`} onClick={() => navigate("/library")}>
               <Gamepad2 size={28} strokeWidth={2.5} />
             </Entry>
-            <Entry isActive={location.pathname === "/user"} isExpanded={isExpanded} title="个人" onClick={() => navigate("/user")}>
+            <Entry isActive={location.pathname === "/user"} isExpanded={isExpanded} title={t`个人`} onClick={() => navigate("/user")}>
               <UserRound size={28} strokeWidth={2.5} />
             </Entry>
-            <Entry isActive={location.pathname === "/setting"} isExpanded={isExpanded} title="设置" onClick={() => navigate("/setting")}>
+            <Entry isActive={location.pathname === "/setting"} isExpanded={isExpanded} title={t`设置`} onClick={() => navigate("/setting")}>
               <Settings2 size={28} strokeWidth={2.5} />
             </Entry>
           </nav>
@@ -86,7 +87,7 @@ export default function Sidebar() {
             </div>
           }
         </div>
-      </aside>
+      </aside >
     </>
   );
 }

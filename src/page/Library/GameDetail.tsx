@@ -5,19 +5,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play, Save, FolderOpen, ArrowLeft,
   HardDrive, Clock, Info, Image as ImageIcon,
-  CheckCircle2, Monitor, Building2
+  CheckCircle2, Monitor, Building2,
+  DatabaseBackup,
+  ArchiveRestore
 } from 'lucide-react';
 import { invoke, convertFileSrc } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
 import { useEffect, useState } from 'react';
 import { Cmds } from '@/lib/enum';
+import { Trans } from '@lingui/react/macro';
+import { t } from "@lingui/core/macro"
 
 export default function GameDetail() {
   const { id } = useParams<{ id: string }>();
   const { getGameMetaById, setGameMeta } = useGameStore();
   const navigate = useNavigate();
   const [game, setGame] = useState<GameMeta>(getGameMetaById(id!)!)
-
   // 获取数据
   useEffect(() => {
     async function getGame() {
@@ -66,7 +69,6 @@ export default function GameDetail() {
           -moz-appearance: textfield;
         }
       `}</style>
-
       <div className="relative min-h-full pb-60">
         <div className="relative h-125 w-full shrink-0">
           <div
@@ -77,7 +79,7 @@ export default function GameDetail() {
           <div className="relative z-30 pt-24 px-16 max-w-7xl mx-auto">
             <button onClick={() => navigate(-1)} className="group flex items-center gap-6 px-10 py-5 bg-white shadow-xl border border-slate-100 rounded-[2rem] text-slate-800 hover:text-emerald-600 transition-all active:scale-95">
               <ArrowLeft size={32} strokeWidth={3} className="group-hover:-translate-x-3 transition-transform" />
-              <span className="text-3xl font-[1000] tracking-tighter">返回库</span>
+              <span className="text-3xl font-[1000] tracking-tighter"><Trans>返回库</Trans></span>
             </button>
           </div>
         </div>
@@ -102,8 +104,6 @@ export default function GameDetail() {
                   onChange={(e) => updateField('name', e.target.value)}
                   className="bg-transparent text-7xl! font-[1000] mb-4 w-full border-none focus:ring-0 p-0 text-slate-900 tracking-tighter"
                 />
-
-                {/* ✅ 制作商修改区：去掉发行商，强化制作商展示 */}
                 <div className="flex items-center gap-4 mb-10">
                   <div className="flex items-center gap-4 bg-white/80 backdrop-blur-md border border-slate-100 px-6 py-3 rounded-[1.5rem] shadow-sm focus-within:border-emerald-400 focus-within:shadow-xl focus-within:bg-white transition-all group">
                     <Building2 size={24} className="text-emerald-500 group-focus-within:scale-110 transition-transform" />
@@ -114,38 +114,42 @@ export default function GameDetail() {
                       className="bg-transparent border-none focus:ring-0 p-0 text-4xl! font-black text-slate-600 w-64 placeholder:text-slate-300"
                     />
                   </div>
+                  <button onClick={() => invoke('backup_game_data', { game: game })} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-100 text-slate-600 rounded-2xl font-bold text-xl shadow-sm hover:border-emerald-400 hover:text-emerald-600 hover:shadow-lg transition-all active:scale-95 group">
+                    <DatabaseBackup size={20} className="group-hover:rotate-12 transition-transform" /><Trans>立即备份</Trans>
+                  </button>
+                  <button onClick={() => invoke('backup_game_data', { game: game })} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-100 text-slate-600 rounded-2xl font-bold text-xl shadow-sm hover:border-emerald-400 hover:text-emerald-600 hover:shadow-lg transition-all active:scale-95 group">
+                    <ArchiveRestore size={20} className="group-hover:rotate-12 transition-transform" /> <Trans>从备份存档恢复</Trans>
+                  </button>
                 </div>
 
                 <div className="flex flex-wrap gap-8 items-center">
-                  <button onClick={() => invoke('launch_game', { path: game.absPath })} className="flex items-center gap-6 px-16 py-8 bg-emerald-500 hover:bg-emerald-600 text-white rounded-[2rem] font-[1000] text-3xl shadow-[0_20px_40px_-10px_rgba(16,185,129,0.4)] transition-all active:scale-95">
-                    <Play fill="currentColor" size={32} /> 启动游戏
+                  <button onClick={() => invoke(Cmds.START_GAME, { game: game })} className="flex items-center gap-6 px-16 py-8 bg-emerald-500 hover:bg-emerald-600 text-white rounded-[2rem] font-[1000] text-3xl shadow-[0_20px_40px_-10px_rgba(16,185,129,0.4)] transition-all active:scale-95" >
+                    <Play fill="currentColor" size={32} /><Trans>启动游戏</Trans>
                   </button>
                   <div className="flex gap-12 bg-white border border-slate-100 px-12 py-5 rounded-[2rem] shadow-sm">
-                    <StatItem label="已游玩" value={`${(game.playTime / 60).toFixed(2)}H`} color="text-emerald-500" />
+                    <StatItem label={t`已游玩`} value={`${(game.playTime / 60).toFixed(2)}H`} color="text-emerald-500" />
                     <div className="w-px bg-slate-100 h-16" />
-                    <StatItem label="占用空间" value={`${(game.size ? (game.size / 1024 / 1024).toFixed(1) : "0")}MB`} />
+                    <StatItem label={t`占用空间`} value={`${(game.size ? (game.size / 1024 / 1024).toFixed(1) : "0")}MB`} />
                   </div>
                 </div>
               </div>
             </div>
-
             <div className="mt-20 grid grid-cols-1 lg:grid-cols-3 gap-10 items-stretch">
               <div className="lg:col-span-2">
                 <div className={CARD_STYLE}>
                   <h3 className="text-lg font-black text-slate-400 mb-8 uppercase tracking-[0.2em] flex items-center gap-3">
-                    <Info size={24} className="text-emerald-500" /> 游戏简介
+                    <Info size={24} className="text-emerald-500" /><Trans> 游戏简介</Trans>
                   </h3>
-                  <textarea value={game.description} onChange={(e) => updateField('description', e.target.value)} placeholder="输入游戏描述..." className="w-full flex-1 bg-slate-50 border-none rounded-2xl p-8 text-2xl text-slate-600 leading-relaxed resize-none outline-none focus:ring-1 focus:ring-emerald-100 transition-all min-h-80" />
+                  <textarea value={game.description} onChange={(e) => updateField('description', e.target.value)} placeholder={t`输入游戏描述...`} className="w-full flex-1 bg-slate-50 border-none rounded-2xl p-8 text-2xl text-slate-600 leading-relaxed resize-none outline-none focus:ring-1 focus:ring-emerald-100 transition-all min-h-80" />
                 </div>
               </div>
-
               <div className="lg:col-span-1 flex flex-col gap-10">
                 <div className={CARD_STYLE}>
-                  <h4 className="text-lg font-black text-slate-400 uppercase mb-8 tracking-[0.2em]">管理与状态</h4>
+                  <h4 className="text-lg font-black text-slate-400 uppercase mb-8 tracking-[0.2em]"><Trans>管理与状态</Trans></h4>
                   <div className="space-y-10">
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-3 text-slate-400">
-                        <Clock size={20} /> <span className="text-lg font-black uppercase tracking-widest">游玩时长 (分钟)</span>
+                        <Clock size={20} /> <span className="text-lg font-black uppercase tracking-widest"><Trans>游玩时长 (分钟)</Trans></span>
                       </div>
                       <input
                         type="number"
@@ -155,28 +159,26 @@ export default function GameDetail() {
                       />
                     </div>
 
-                    <div className="h-px bg-slate-100 w-full" />
 
                     <div className="space-y-8">
                       <ToggleItem
                         icon={<Monitor size={20} />}
-                        label="首页展示"
+                        label={t`首页展示`}
                         isEnabled={game.isDisplayed}
                         onToggle={() => updateField('isDisplayed', !game.isDisplayed)}
                       />
                       <ToggleItem
                         icon={<CheckCircle2 size={20} />}
-                        label="标记通关"
+                        label={t`标记通关`}
                         isEnabled={game.isPassed}
                         onToggle={() => updateField('isPassed', !game.isPassed)}
                         activeColor="bg-amber-400"
                       />
                     </div>
-
                     <div className="h-px bg-slate-100 w-full" />
-                    <InfoItem label="最后运行" value={game.lastPlayedAt ? new Date(game.lastPlayedAt).toLocaleString() : "从未启动"} icon={<Clock size={20} />} />
+                    <InfoItem label={t`最后运行`} value={game.lastPlayedAt ? new Date(game.lastPlayedAt).toLocaleString() : t`"从未启动"`} icon={<Clock size={20} />} />
                     <div className="space-y-4">
-                      <p className="text-xs font-black text-slate-400 uppercase flex items-center gap-2"><HardDrive size={20} /> 启动路径</p>
+                      <p className="text-xs font-black text-slate-400 uppercase flex items-center gap-2"><HardDrive size={20} /><Trans>启动路径</Trans></p>
                       <p onClick={() => pickPath('absPath')} className="text-sm font-mono bg-slate-50 p-5 rounded-xl border border-slate-100 break-all cursor-pointer hover:bg-white transition-all text-slate-500">
                         {game.absPath}
                       </p>
@@ -187,16 +189,16 @@ export default function GameDetail() {
 
               <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div className={CARD_STYLE}>
-                  <p className="text-sm font-black text-slate-400 uppercase mb-6 flex items-center gap-3"><Save size={24} /> 存档目录</p>
+                  <p className="text-sm font-black text-slate-400 uppercase mb-6 flex items-center gap-3"><Save size={24} /><Trans> 存档目录</Trans></p>
                   <div onClick={() => pickPath('saveDataPath')} className={INPUT_STYLE}>
-                    <span className="text-xl font-mono text-slate-500 truncate pr-6">{game.saveDataPath || "点击配置路径..."}</span>
+                    <span className="text-xl font-mono text-slate-500 truncate pr-6">{game.saveDataPath || t`点击配置路径...`}</span>
                     <FolderOpen size={28} className="text-emerald-500" />
                   </div>
                 </div>
                 <div className={CARD_STYLE}>
-                  <p className="text-sm font-black text-slate-400 uppercase mb-6 flex items-center gap-3"><ImageIcon size={24} /> 自定义背景</p>
+                  <p className="text-sm font-black text-slate-400 uppercase mb-6 flex items-center gap-3"><ImageIcon size={24} /> <Trans>自定义背景</Trans></p>
                   <div onClick={() => pickPath('background')} className={INPUT_STYLE}>
-                    <span className="text-xl font-mono text-slate-500 truncate pr-6">{game.background || "默认图片..."}</span>
+                    <span className="text-xl font-mono text-slate-500 truncate pr-6">{game.background || t`默认图片...`}</span>
                     <ImageIcon size={28} className="text-emerald-500" />
                   </div>
                 </div>
@@ -205,12 +207,12 @@ export default function GameDetail() {
           </motion.div>
         </AnimatePresence>
       </div>
-    </div>
+    </div >
   );
 }
 
-// --- 辅助组件 ---
 
+// --- 辅助组件 ---
 function ToggleItem({ label, isEnabled, onToggle, icon, activeColor = "bg-emerald-500" }: { label: string, isEnabled: boolean, onToggle: () => void, icon: any, activeColor?: string }) {
   return (
     <div className="flex items-center justify-between cursor-pointer group select-none" onClick={onToggle}>

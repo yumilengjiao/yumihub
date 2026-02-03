@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { t } from "@lingui/core/macro"
+import { Trans } from '@lingui/react/macro';
 
 // Tauri API
 import { open } from '@tauri-apps/plugin-dialog';
@@ -48,10 +50,10 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
           ...prev,
           avatar: selected,      // 存入 avatar 字段用于预览和持久化
         }) : null);
-        toast.info("已载入本地图片预览")
+        toast.info(t`已载入本地图片预览`)
       }
     } catch (err) {
-      toast.error("无法打开文件对话框")
+      toast.error(t`无法打开文件对话框`)
       console.error(err)
     }
   };
@@ -70,7 +72,7 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
     e.preventDefault();
     if (formData) {
       setUser(formData);
-      toast.success("用户信息同步成功");
+      toast.success(t`用户信息同步成功`);
       onClose();
     }
   };
@@ -92,7 +94,7 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
         <div className="h-24 bg-zinc-900 flex items-center justify-between px-10 text-white">
           <div className="flex flex-col">
             <span className="text-xs font-black italic text-zinc-500 uppercase tracking-widest">Identity Settings</span>
-            <span className="text-xl font-black italic uppercase tracking-tighter">修改用户信息</span>
+            <span className="text-xl font-black italic uppercase tracking-tighter"><Trans>修改用户信息</Trans></span>
           </div>
           <X className="cursor-pointer opacity-40 hover:opacity-100 transition-opacity" onClick={onClose} />
         </div>
@@ -121,7 +123,7 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
                 onClick={handleSelectLocalFile}
                 className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white shadow-sm border border-zinc-200 text-xs font-black uppercase hover:bg-zinc-100 transition-all"
               >
-                <ImageIcon size={14} /> 本地上传
+                <ImageIcon size={14} /><Trans> 本地上传</Trans>
               </button>
               <div className="relative flex items-center">
                 <LinkIcon size={14} className="absolute left-3 text-zinc-400" />
@@ -139,7 +141,7 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
           <div className="space-y-6">
             <div className="space-y-2.5">
               <Label className="text-[10px] font-black text-zinc-400 uppercase ml-1 tracking-widest flex items-center gap-2">
-                <UserIcon size={12} className="text-zinc-300" /> 用户昵称
+                <UserIcon size={12} className="text-zinc-300" /><Trans> 用户昵称</Trans>
               </Label>
               <Input
                 value={formData.userName}
@@ -150,7 +152,7 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
 
             <div className="space-y-2.5">
               <Label className="text-[10px] font-black text-zinc-400 uppercase ml-1 tracking-widest flex items-center gap-2">
-                <Sparkles size={12} className="text-zinc-300" /> 最喜欢的游戏
+                <Sparkles size={12} className="text-zinc-300" /><Trans> 最喜欢的游戏</Trans>
               </Label>
               <Input
                 value={formData.favoriteGame}
@@ -168,13 +170,13 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
               onClick={onClose}
               className="flex-1 h-16 rounded-[24px] font-black uppercase text-zinc-400 hover:bg-zinc-100"
             >
-              Discard
+              <Trans>取消</Trans>
             </Button>
             <Button
               type="submit"
               className="flex-1 h-16 rounded-[24px] bg-zinc-900 hover:bg-black text-white font-black uppercase shadow-xl shadow-zinc-200 transition-all active:scale-95"
             >
-              Save Profile
+              <Trans>保存信息</Trans>
             </Button>
           </div>
         </form>

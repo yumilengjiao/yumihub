@@ -1,12 +1,19 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vite"
 import tailwindcss from "@tailwindcss/vite"
-import react from "@vitejs/plugin-react";
-import { resolve } from "path";
+import react from "@vitejs/plugin-react-swc"
+import { lingui } from "@lingui/vite-plugin"
+import { resolve } from "path"
 
 const host = process.env.TAURI_DEV_HOST;
 
 export default defineConfig(async () => ({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react({
+      plugins: [["@lingui/swc-plugin", {}]],
+    }),
+    lingui(),
+    tailwindcss()
+  ],
 
   clearScreen: false,
   resolve: {

@@ -14,7 +14,7 @@ import { debug } from "@tauri-apps/plugin-log";
 import useConfigStore from "@/store/configStore";
 import { Config } from "@/types/config";
 import { cn } from "@/lib/utils";
-import { listen } from "@tauri-apps/api/event";
+import { i18n } from "@lingui/core"
 
 export default function Layout() {
   const { setUser } = useUserStore()
@@ -54,6 +54,8 @@ export default function Layout() {
     try {
       debug("程序启动,开始向后端获取配置信息")
       const config = await invoke<Config>(Cmds.GET_CONFIG)
+      // 设置语言
+      i18n.activate(config.basic.language)
       updateConfig((oldConfig) => Object.assign(oldConfig, config))
     } catch (err) { console.error("无法获取config", err) }
   }

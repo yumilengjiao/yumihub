@@ -7,6 +7,8 @@ import useGameStore from "@/store/gameStore";
 import { Play, Ghost } from "lucide-react";
 import { Cmds } from "@/lib/enum";
 import { GameMeta } from "@/types/game";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro"
 
 const GameList = () => {
   const [api, setApi] = useState<CarouselApi>();
@@ -47,7 +49,7 @@ const GameList = () => {
             Empty Library
           </h2>
           <p className="text-white/5 text-sm tracking-[0.6em] mt-6 font-light">
-            请在库设置中添加首页展示项目
+            <Trans>请在库设置中添加首页展示项目</Trans>
           </p>
         </div>
       </div>
