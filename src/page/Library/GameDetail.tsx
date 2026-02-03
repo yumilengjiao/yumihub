@@ -9,14 +9,27 @@ import {
 } from 'lucide-react';
 import { invoke, convertFileSrc } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
+import { useEffect, useState } from 'react';
+import { Cmds } from '@/lib/enum';
 
 export default function GameDetail() {
   const { id } = useParams<{ id: string }>();
   const { getGameMetaById, setGameMeta } = useGameStore();
   const navigate = useNavigate();
+  const [game, setGame] = useState<GameMeta>(getGameMetaById(id!)!)
 
   // 获取数据
-  const game = getGameMetaById(id!)!;
+  useEffect(() => {
+    async function getGame() {
+      try {
+        const gameInfo = await invoke<GameMeta>(Cmds.GET_GAME_META, { id: id })
+        setGame(gameInfo)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    getGame()
+  }, [])
 
   const CARD_STYLE = "bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-10 flex flex-col w-full h-full";
   const INPUT_STYLE = "flex items-center justify-between bg-slate-50 border border-slate-100 p-6 rounded-2xl hover:bg-white hover:border-emerald-400 hover:shadow-lg transition-all cursor-pointer group";
@@ -36,6 +49,7 @@ export default function GameDetail() {
 
   // 更新数值或开关状态
   const updateField = <K extends keyof GameMeta>(field: K, value: GameMeta[K]) => {
+    setGame({ ...game, [field]: value })
     setGameMeta({ ...game, [field]: value });
   };
 
@@ -107,7 +121,7 @@ export default function GameDetail() {
                     <Play fill="currentColor" size={32} /> 启动游戏
                   </button>
                   <div className="flex gap-12 bg-white border border-slate-100 px-12 py-5 rounded-[2rem] shadow-sm">
-                    <StatItem label="已游玩" value={`${game.playTime}H`} color="text-emerald-500" />
+                    <StatItem label="已游玩" value={`${(game.playTime / 60).toFixed(2)}H`} color="text-emerald-500" />
                     <div className="w-px bg-slate-100 h-16" />
                     <StatItem label="占用空间" value={`${(game.size ? (game.size / 1024 / 1024).toFixed(1) : "0")}MB`} />
                   </div>
@@ -131,7 +145,7 @@ export default function GameDetail() {
                   <div className="space-y-10">
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-3 text-slate-400">
-                        <Clock size={20} /> <span className="text-lg font-black uppercase tracking-widest">游玩时长 (小时)</span>
+                        <Clock size={20} /> <span className="text-lg font-black uppercase tracking-widest">游玩时长 (分钟)</span>
                       </div>
                       <input
                         type="number"

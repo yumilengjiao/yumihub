@@ -39,6 +39,7 @@ pub fn run() {
             cmd::update_game,
             cmd::add_new_game,
             cmd::add_new_game_list,
+            cmd::start_game,
             //配置
             cmd::get_config,
             cmd::update_config,

@@ -1,4 +1,4 @@
 interface SystemStats {
-  cpu_usage: number;
-  memory_usage: number;
+  cpuUsage: number;
+  memoryUsage: number;
 }

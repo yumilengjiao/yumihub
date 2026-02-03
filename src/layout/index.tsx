@@ -8,21 +8,24 @@ import { invoke } from "@tauri-apps/api/core";
 import { useEffect } from "react";
 import { User } from "@/types/user";
 import useGameStore from "@/store/gameStore";
-import { GameMetaList } from "@/types/game";
+import { GameMeta, GameMetaList } from "@/types/game";
 import { Cmds } from "@/lib/enum";
 import { debug } from "@tauri-apps/plugin-log";
 import useConfigStore from "@/store/configStore";
 import { Config } from "@/types/config";
 import { cn } from "@/lib/utils";
+import { listen } from "@tauri-apps/api/event";
 
 export default function Layout() {
   const { setUser } = useUserStore()
-  const { updateSelectedGame, setGameMetaList } = useGameStore()
-  const { config, updateConfig } = useConfigStore()
+  const { updateSelectedGame, setGameMetaList, setGameMeta } = useGameStore()
+  const { updateConfig } = useConfigStore()
   const fontFamily = useConfigStore(c => c.config.interface.fontFamily)
   const sidebarMode = useConfigStore(c => c.config.interface.sidebarMode) || "Trigger"
 
-  // --- 原有逻辑保留：向后端拿数据 ---
+  /**
+   * 获取所有的游戏信息
+   */
   async function getGamelist() {
     try {
       debug("程序启动,开始向后端获取游戏数据列表")
@@ -34,13 +37,19 @@ export default function Layout() {
     } catch (err) { console.error(err) }
   }
 
+  /**
+   * 获取用户信息
+   */
   async function getUserInfo() {
     try {
       const user: User = await invoke(Cmds.GET_USER_INFO)
       setUser(user)
-    } catch (err) { console.error("获取用户信息失败",err) }
+    } catch (err) { console.error("获取用户信息失败", err) }
   }
 
+  /**
+   * 获取配置信息
+   */
   async function getConfig() {
     try {
       debug("程序启动,开始向后端获取配置信息")
@@ -54,19 +63,6 @@ export default function Layout() {
     getConfig()
     getUserInfo()
   }, [])
-
-  useEffect(() => {
-    const fontValue = fontFamily === "sys"
-      ? '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-      : `"${fontFamily}"`;
-    let styleTag = document.getElementById('dynamic-font-style');
-    if (!styleTag) {
-      styleTag = document.createElement('style');
-      styleTag.id = 'dynamic-font-style';
-      document.head.appendChild(styleTag);
-    }
-    styleTag.textContent = `:root { --main-font: ${fontValue}; } body { font-family: var(--main-font); }`;
-  }, [fontFamily]);
 
   // 动态字体注入
   useEffect(() => {

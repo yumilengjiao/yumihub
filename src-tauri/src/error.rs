@@ -33,4 +33,7 @@ pub enum AppError {
 
     #[error("授权失败: {0}")]
     Auth(String),
+
+    #[error("进程错误: {0}")]
+    Process(String),
 }

@@ -48,6 +48,11 @@ export enum Cmds {
   ADD_NEW_GAME_LIST = "add_new_game_list",
 
   /**
+   * 启动游戏
+   */
+  START_GAME = "start_game",
+
+  /**
    * 获取配置信息
    */
   GET_CONFIG = "get_config",
@@ -92,4 +97,3 @@ export enum Cmds {
    */
   AUTHORIZE_PATH_ACCESS = "authorize_path_access"
 }
-

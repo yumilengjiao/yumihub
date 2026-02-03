@@ -1,6 +1,9 @@
 //! 前端发送的所有调用请求命令在此定义，get方法只会调用state_system,
 use std::path::{Path, PathBuf};
+use std::process::Command;
+use std::time::Instant;
 
+use chrono::Local;
 use font_kit::source::SystemSource;
 use sqlx::{Pool, Sqlite, SqlitePool};
 use sqlx::{Row, Transaction};
@@ -197,8 +200,6 @@ pub async fn add_new_game(
             background,
             description,
             developer,
-            local_cover,
-            local_background,
             save_data_path,
             backup_data_path,
             play_time,
@@ -206,7 +207,7 @@ pub async fn add_new_game(
             size,
             last_played_at
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         "#,
     )
     .bind(&game.id)
@@ -218,8 +219,6 @@ pub async fn add_new_game(
     .bind(&game.background)
     .bind(&game.description)
     .bind(&game.developer)
-    .bind(&game.local_cover)
-    .bind(&game.local_background)
     .bind(&game.save_data_path)
     .bind(&game.backup_data_path)
     .bind(game.play_time) // i64
@@ -266,8 +265,6 @@ pub async fn add_new_game_list(
                     background,
                     description,
                     developer,
-                    local_cover,
-                    local_background,
                     save_data_path,
                     backup_data_path,
                     play_time,
@@ -275,7 +272,7 @@ pub async fn add_new_game_list(
                     size,
                     last_played_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         )
         .bind(&game.id)
         .bind(&game.name)
@@ -286,8 +283,6 @@ pub async fn add_new_game_list(
         .bind(&game.background)
         .bind(&game.description)
         .bind(&game.developer)
-        .bind(&game.local_cover)
-        .bind(&game.local_background)
         .bind(&game.save_data_path)
         .bind(&game.backup_data_path)
         .bind(game.play_time) // i64
@@ -314,6 +309,7 @@ pub async fn add_new_game_list(
 /// * `game`: 新的游戏数据
 #[tauri::command]
 pub async fn update_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Result<(), AppError> {
+    debug!("后端收到要更新的游戏: {}", game.id);
     let mut tx: Transaction<'_, Sqlite> = pool
         .begin()
         .await
@@ -359,8 +355,8 @@ pub async fn update_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Resul
             background = ?,
             description = ?,
             developer = ?,
-            local_cover = ?,
-            local_background = ?,
+            local_cover = COALESCE(?, local_cover), -- 前端数据传过来为空的时候保留原来的数据
+            local_background = COALESCE(?, local_background), -- 前端数据传过来为空的时候保留原来的数据
             save_data_path = ?, 
             backup_data_path = ?,
             play_time = ?,
@@ -391,10 +387,10 @@ pub async fn update_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Resul
     .await
     .map_err(|e| AppError::DB(e.to_string()))?;
 
-    // 4. 提交事务
+    // 提交事务
     tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
 
-    // 5. 如果有资源变动，发布下载任务给 Resource Manager
+    // 如果有资源变动，发布下载任务给 Resource Manager
     if let Some(target) = resource_target {
         // 只有当新路径是网络路径时才触发任务
         if game.cover.starts_with("http") || game.background.starts_with("http") {
@@ -441,6 +437,78 @@ pub async fn delete_game_by_id(pool: State<'_, Pool<Sqlite>>, id: String) -> Res
 #[tauri::command]
 pub async fn delete_game_list(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppError> {
     sqlx::query("DELETE FROM games").execute(&*pool).await.ok();
+    Ok(())
+}
+
+/// 启动游戏进程
+///
+/// * `game`: 游戏信息
+#[tauri::command]
+pub async fn start_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Result<(), AppError> {
+    let pool_cl = pool.inner().clone();
+    let start_time = Local::now();
+    let start_instant = Instant::now();
+    let mut child = Command::new(&game.abs_path)
+        .spawn() // 异步启动，不阻塞主进程
+        .map_err(|e| AppError::Resolve(game.abs_path, e.to_string()))?;
+    // 启动异步监听在游戏结束时持久化数据
+    tauri::async_runtime::spawn(async move {
+        let res: Result<(), AppError> = async move {
+            let _ = child.wait().map_err(|e| AppError::Process(e.to_string()))?;
+            let duration = start_instant.elapsed();
+            let mut tx = pool_cl
+                .begin()
+                .await
+                .map_err(|e| AppError::DB(e.to_string()))?;
+
+            let _ = sqlx::query(
+                r#"
+                    insert into game_play_sessions
+                        (
+                            id,
+                            game_id,
+                            play_date,
+                            duration_minutes,
+                            last_played_at
+                        )
+                        VALUES (?,?,?,?,?);
+                    "#,
+            )
+            .bind(Uuid::new_v4().to_string())
+            .bind(&game.id)
+            .bind(start_time)
+            .bind((duration.as_secs() / 60) as i64)
+            .bind(Local::now())
+            .execute(&mut *tx)
+            .await
+            .map_err(|e| error!("数据库错误: {}", e));
+
+            let _ = sqlx::query(
+                r#"
+                UPDATE games 
+                SET 
+                    play_time = play_time + ?,
+                    last_played_at = ? 
+                WHERE id = ?
+                "#,
+            )
+            .bind((duration.as_secs() / 60) as i64) // 本次游玩的分钟数
+            .bind(Local::now())
+            .bind(&game.id)
+            .execute(&mut *tx)
+            .await
+            .map_err(|e| error!("更新游戏总时长失败: {}", e));
+            tx.commit()
+                .await
+                .unwrap_or_else(|e| error!("事务错误: {}", e));
+
+            Ok(())
+        }
+        .await;
+        if let Err(e) = res {
+            error!("监听时出现错误: {}", e);
+        }
+    });
     Ok(())
 }
 

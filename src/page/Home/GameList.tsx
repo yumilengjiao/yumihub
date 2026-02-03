@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import { convertFileSrc } from '@tauri-apps/api/core';
+import { convertFileSrc, invoke } from '@tauri-apps/api/core';
 import useGameStore from "@/store/gameStore";
 import { Play, Ghost } from "lucide-react";
+import { Cmds } from "@/lib/enum";
+import { GameMeta } from "@/types/game";
 
 const GameList = () => {
   const [api, setApi] = useState<CarouselApi>();
@@ -13,7 +15,7 @@ const GameList = () => {
 
   const { selectedGame, updateSelectedGame, gameMetaList } = useGameStore();
 
-  // 1. 监听数据变化，同步显示列表
+  // 监听数据变化，同步显示列表
   useEffect(() => {
     const filtered = gameMetaList.filter(game => game.isDisplayed);
     setDisplayGames(filtered);
@@ -30,12 +32,11 @@ const GameList = () => {
   }, [gameMetaList]);
 
   // 启动回调
-  const handleStartGame = (gameName: string, e: React.MouseEvent) => {
+  const handleStartGame = (game: GameMeta, e: React.MouseEvent) => {
     e.stopPropagation();
-    alert(`正在启动游戏: ${gameName}`);
+    invoke(Cmds.START_GAME, { game: game })
   };
 
-  // --- 情况 A: 空状态 (绝对居中) ---
   if (displayGames.length === 0) {
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
@@ -53,7 +54,6 @@ const GameList = () => {
     );
   }
 
-  // --- 情况 B: 恢复你最初的 GameList 样式结构 ---
   return (
     <div className="overflow-hidden">
       {/* 游戏标题 */}
@@ -77,19 +77,19 @@ const GameList = () => {
               key={g.id}
               className={cn(
                 "duration-300 aspect-165/230",
-                "rounded-b-2xl sm:basis-1/6 pl-4", // 恢复你最初的 basis
+                "rounded-b-2xl sm:basis-1/6 pl-4",
               )}
               onClick={() => {
                 setCurrentIndex(index);
                 updateSelectedGame(g);
-                api?.scrollTo(index, false); // false 代表立即跳转，配合 CSS 动画实现顺滑感
+                api?.scrollTo(index, false)
               }}
             >
               <Card className={cn(
                 "relative group overflow-hidden border-none",
-                "aspect-165/225 min-w-41.25 min-h-56.25 origin-bottom transition-all duration-300", // 恢复关键：origin-bottom
-                currentIndex !== index && "scale-80", // 恢复非选中状态的缩放
-              )}>
+                "aspect-165/225 min-w-41.25 min-h-56.25 origin-bottom transition-all duration-300",
+                currentIndex !== index && "scale-80",)
+              }>
                 {/* 恢复：非选中状态的黑色蒙罩 */}
                 {currentIndex !== index && <div className="absolute bg-foreground opacity-45 w-full h-full z-10" />}
 
@@ -97,7 +97,7 @@ const GameList = () => {
                 {currentIndex === index && (
                   <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button
-                      onClick={(e) => handleStartGame(g.name, e)}
+                      onClick={(e) => handleStartGame(g, e)}
                       className="w-26 h-26 flex items-center justify-center bg-emerald-500 hover:bg-emerald-400/90 text-white rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all active:scale-90"
                     >
                       <Play size={32} fill="white" className="ml-1" />
@@ -115,7 +115,7 @@ const GameList = () => {
         </CarouselContent>
       </Carousel>
     </div>
-  );
-};
+  )
+}
 
 export default GameList

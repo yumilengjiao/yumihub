@@ -3,7 +3,7 @@
 use std::sync::Arc;
 
 use sqlx::{Pool, Sqlite};
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_log::log::{debug, error, info};
 use tokio::sync::Semaphore;
 
@@ -46,13 +46,13 @@ fn start_resource_manager(app_handle: &AppHandle) {
                     let permit_semaphore = Arc::clone(&semaphore);
 
                     tauri::async_runtime::spawn(async move {
-                        // 1. 获取并发许可
+                        // 获取并发许可
                         let _permit = permit_semaphore.acquire_owned().await.unwrap();
                         debug!("处理游戏资源任务: {}, 目标: {:?}", meta.name, target);
 
                         let mut updated_meta = meta.clone();
 
-                        // 2. 根据 target 筛选需要处理的字段
+                        // 根据 target 筛选需要处理的字段
                         let mut tasks = Vec::new();
                         match target {
                             ResourceTarget::All => {
@@ -65,7 +65,7 @@ fn start_resource_manager(app_handle: &AppHandle) {
                             }
                         }
 
-                        // 3. 遍历并下载
+                        // 遍历并下载
                         for (label, url) in tasks {
                             if !url.starts_with("http") {
                                 continue;
@@ -101,12 +101,12 @@ fn start_resource_manager(app_handle: &AppHandle) {
                             }
                         }
 
-                        // 4. 同步到数据库
+                        // 同步到数据库
                         let pool = cp_handle.state::<Pool<Sqlite>>();
                         if let Err(e) = update_game_into_db(&pool, &updated_meta).await {
                             error!("同步数据库失败: {}", e);
                         } else {
-                            info!("游戏数据同步成功: {}", updated_meta.name);
+                            debug!("游戏数据同步成功: {}", updated_meta.name);
                         }
                     });
                 }
@@ -158,45 +158,15 @@ fn start_resource_manager(app_handle: &AppHandle) {
 async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Result<(), AppError> {
     sqlx::query(
         r#"
-    INSERT OR REPLACE INTO games 
-    (
-        id,
-        name,
-        abs_path,
-        is_passed,
-        is_displayed,
-        cover,
-        background,
-        description,
-        developer,
-        local_cover,
-        local_background,
-        save_data_path,
-        backup_data_path,
-        play_time,
-        length,
-        size,
-        last_played_at
-    ) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    update games set
+        local_cover = ?,
+        local_background = ?
+        where id = ?
     "#,
     )
-    .bind(&updated_meta.id)
-    .bind(&updated_meta.name)
-    .bind(&updated_meta.abs_path)
-    .bind(updated_meta.is_passed)
-    .bind(&updated_meta.cover)
-    .bind(&updated_meta.background)
-    .bind(&updated_meta.description)
-    .bind(&updated_meta.developer)
     .bind(&updated_meta.local_cover)
     .bind(&updated_meta.local_background)
-    .bind(&updated_meta.save_data_path)
-    .bind(&updated_meta.backup_data_path)
-    .bind(updated_meta.play_time)
-    .bind(updated_meta.length)
-    .bind(updated_meta.size)
-    .bind(updated_meta.last_played_at)
+    .bind(&updated_meta.id)
     .execute(pool)
     .await
     .map_err(|e| AppError::DB(e.to_string()))?;

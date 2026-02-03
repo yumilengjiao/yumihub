@@ -4,6 +4,7 @@ use crate::{
 };
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
+use sqlx::prelude::FromRow;
 use tokio::sync::broadcast;
 
 // 游戏元数据结构体
@@ -31,6 +32,27 @@ pub struct GameMeta {
 
 /// 游戏元数据集合
 pub type GameMetaList = Vec<GameMeta>;
+
+// 游戏时长模型
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[serde(rename_all = "camelCase")]
+pub struct PlaySession {
+    pub id: String,
+    pub game_id: String,
+    pub play_date: DateTime<Local>,
+    pub duration_minutes: i64,
+    pub last_played_at: DateTime<Local>,
+}
+
+// 截图模型
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[serde(rename_all = "camelCase")]
+pub struct GameScreenshot {
+    pub id: String,
+    pub game_id: String,
+    pub file_path: String,
+    pub created_at: Option<DateTime<Local>>,
+}
 
 #[derive(Clone, Debug)]
 pub enum GameEvent {

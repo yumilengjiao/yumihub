@@ -55,7 +55,7 @@ export default function Library() {
       <AddGameButton />
 
       {/* 保持原样：顶部工具栏 */}
-      <div className="w-full flex-shrink-0 p-2 z-10">
+      <div className="w-full shrink-0 p-2 z-10">
         <TopBar
           isAsc={isAsc}
           onOrderToggle={() => setIsAsc(!isAsc)}

@@ -64,6 +64,26 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
             authorized_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
 
+        -- 游戏游玩时长日期表
+        CREATE TABLE IF NOT EXISTS game_play_sessions (
+            id TEXT PRIMARY KEY,
+            game_id TEXT NOT NULL,          -- 关联 games 表的 id
+            play_date DATE NOT NULL,        -- 日期（例如 2025-05-20）
+            duration_minutes INTEGER DEFAULT 0, -- 当日时长（分钟）
+            last_played_at DATETIME        -- 该日最后一次运行的时间
+        );
+
+        -- 创建索引加速按日期查询
+        CREATE INDEX IF NOT EXISTS idx_play_date ON game_play_sessions (play_date);
+
+
+        CREATE TABLE IF NOT EXISTS game_screenshots (
+            id TEXT PRIMARY KEY,
+            game_id TEXT NOT NULL,          -- 关联 games 表的 id
+            file_path TEXT NOT NULL,        -- 截图在硬盘的绝对路径
+            created_at DATETIME DEFAULT (datetime('now', 'localtime')) -- 截图时间
+        );
+
         -- 用户信息表
         CREATE TABLE IF NOT EXISTS account (
             id TEXT PRIMARY KEY,
