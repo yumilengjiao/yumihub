@@ -7,25 +7,41 @@ import { toast } from "sonner";
 import { invoke } from "@tauri-apps/api/core";
 import { Trans } from "@lingui/react/macro"
 import { t } from "@lingui/core/macro"
+import { useLingui } from "@lingui/react";
+import { Cmds } from "@/lib/enum";
 
 export default function ResourceSetting() {
   const [isBackingUp, setIsBackingUp] = useState(false);
+  const { i18n } = useLingui()
 
   const handleQuickBackup = async () => {
     setIsBackingUp(true);
     const tid = toast.loading("正在执行全量备份...");
     try {
-      await invoke("run_quick_backup"); // 假设后端有此指令
-      toast.success("备份成功", { id: tid });
+      await invoke(Cmds.BACKUP_ARCHIVE)
+      toast.success("备份成功", { id: tid })
     } catch (e) {
-      toast.error("备份失败: " + e, { id: tid });
+      toast.error("备份失败: " + e, { id: tid })
     } finally {
       setIsBackingUp(false);
     }
   };
 
+  const handleQuickRestore = async () => {
+    const tid = toast.loading("正在执行全量恢复...");
+    try {
+      await invoke(Cmds.RESTORE_ALL_ARCHIVES)
+      toast.success("恢复成功", { id: tid })
+    } catch (e) {
+      toast.error("恢复失败: " + e, { id: tid })
+    } finally {
+      setIsBackingUp(false);
+    }
+
+  }
+
   return (
-    <CommonCard title={t`资源管理`} icon="📂">
+    <CommonCard key={i18n.locale} title={t`资源管理`} icon="📂">
       <div className="space-y-4">
         <div className="space-y-1">
           <PathCard title={t`游戏存档备份目录`} onSelect={() => console.log('')} />
@@ -49,7 +65,7 @@ export default function ResourceSetting() {
         </div>
         <div className="pt-4 border-t border-zinc-100">
           <Button
-            onClick={handleQuickBackup}
+            onClick={handleQuickRestore}
             disabled={isBackingUp}
             className="w-full h-12 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold gap-2 transition-all active:scale-[0.98]"
           >

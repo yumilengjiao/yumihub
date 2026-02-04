@@ -63,9 +63,24 @@ export enum Cmds {
   UPDATE_CONFIG = "update_config",
 
   /**
-   * 备份游戏存档
+   * 备份所有设置了存档路径游戏存档
    */
   BACKUP_ARCHIVE = "backup_archive",
+
+  /**
+   * 通过id备份单个游戏
+   */
+  BACKUP_ARCHIVE_BY_ID = "backup_archive_by_id",
+
+  /**
+   * 恢复所有备份数据
+   */
+  RESTORE_ALL_ARCHIVES = "restore_all_archives",
+
+  /**
+   * 恢复指定id的备份游戏存档
+   */
+  RESTORE_ARCHIVE_BY_ID = "restore_archive_by_id",
 
   /**
    * 获取游戏启动路径

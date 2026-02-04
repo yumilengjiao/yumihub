@@ -8,7 +8,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { useEffect } from "react";
 import { User } from "@/types/user";
 import useGameStore from "@/store/gameStore";
-import { GameMeta, GameMetaList } from "@/types/game";
+import { GameMetaList } from "@/types/game";
 import { Cmds } from "@/lib/enum";
 import { debug } from "@tauri-apps/plugin-log";
 import useConfigStore from "@/store/configStore";

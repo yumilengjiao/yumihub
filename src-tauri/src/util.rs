@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 
 use walkdir::WalkDir;
 use zip::write::FileOptions;
-use zip::ZipWriter;
+use zip::{ZipArchive, ZipWriter};
 
 use crate::error::AppError;
 
@@ -133,10 +133,29 @@ pub async fn copy_dir_recursive(
 }
 
 /// 将一个目录打包成压缩包移动到另一个目录
+/// 增加安全检查：如果目录总内容不大于 1KB，则拒绝备份
 ///
 /// * `src`: 原目录地址
 /// * `dst`: 目的目录地址
 pub fn zip_directory_sync(src: &Path, dst: &Path) -> Result<(), Box<dyn std::error::Error>> {
+    // 计算总大小检查
+    let mut total_size = 0u64;
+    for entry in WalkDir::new(src).into_iter().filter_map(|e| e.ok()) {
+        if entry.path().is_file() {
+            total_size += entry.metadata()?.len();
+        }
+    }
+
+    if total_size <= 1024 {
+        // 如果你觉得需要更详细的错误信息，可以自定义，这里先用字符串错误代替
+        return Err(format!(
+            "存档内容过小 ({:.2} KB)，可能是空文件夹或损坏，已拦截备份以保护旧数据。",
+            total_size as f64 / 1024.0
+        )
+        .into());
+    }
+
+    // 打包逻辑
     let file = File::create(dst)?;
     let mut zip = ZipWriter::new(file);
     let options: FileOptions<()> =
@@ -156,7 +175,47 @@ pub fn zip_directory_sync(src: &Path, dst: &Path) -> Result<(), Box<dyn std::err
             zip.add_directory(name.to_string_lossy(), options)?;
         }
     }
+
     zip.finish()?;
+    Ok(())
+}
+
+/// 辅助函数-解压一个压缩包并把里面的所有文件解压到另一个目录
+///
+/// * `zip_path`: 压缩包路径
+/// * `extract_to`: 解压目的地
+pub fn extract_zip_sync(
+    zip_path: &Path,
+    extract_to: &Path,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let file = File::open(zip_path)?;
+    let mut archive = ZipArchive::new(file)?;
+
+    // 如果目标目录不存在则创建，如果存在则可选清空（这里采取先删除后创建确保覆盖纯净）
+    if extract_to.exists() {
+        fs::remove_dir_all(extract_to)?;
+    }
+    fs::create_dir_all(extract_to)?;
+
+    for i in 0..archive.len() {
+        let mut file = archive.by_index(i)?;
+        let outpath = match file.enclosed_name() {
+            Some(path) => extract_to.join(path),
+            None => continue,
+        };
+
+        if (*file.name()).ends_with('/') {
+            fs::create_dir_all(&outpath)?;
+        } else {
+            if let Some(p) = outpath.parent() {
+                if !p.exists() {
+                    fs::create_dir_all(p)?;
+                }
+            }
+            let mut outfile = File::create(&outpath)?;
+            std::io::copy(&mut file, &mut outfile)?;
+        }
+    }
     Ok(())
 }
 

@@ -45,6 +45,9 @@ pub fn run() {
             cmd::update_config,
             //存档
             cmd::backup_archive,
+            cmd::backup_archive_by_id,
+            cmd::restore_all_archives,
+            cmd::restore_archive_by_id,
             //其他
             cmd::get_start_up_path,
             cmd::get_system_fonts,

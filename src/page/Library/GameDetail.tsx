@@ -15,12 +15,37 @@ import { useEffect, useState } from 'react';
 import { Cmds } from '@/lib/enum';
 import { Trans } from '@lingui/react/macro';
 import { t } from "@lingui/core/macro"
+import { toast } from 'sonner';
 
 export default function GameDetail() {
   const { id } = useParams<{ id: string }>();
   const { getGameMetaById, setGameMeta } = useGameStore();
   const navigate = useNavigate();
   const [game, setGame] = useState<GameMeta>(getGameMetaById(id!)!)
+
+  const backupArchive = async () => {
+    const promise = invoke(Cmds.BACKUP_ARCHIVE_BY_ID, { id: game.id })
+    toast.promise(promise, {
+      loading: '正在备份存档...',  // 这里的提示会在点击时立即出现
+      success: '存档备份完毕',      // 这里的提示会在 invoke 成功后替换上面的内容
+      error: (err: any) => ({
+        message: '备份存档失败',
+        description: err.details || '未知错误'
+      })
+    });
+  }
+
+  const restoreGameArchive = () => {
+    const promise = invoke(Cmds.RESTORE_ARCHIVE_BY_ID,{id: game.id})
+    toast.promise(promise, {
+      loading: '正在恢复存档...',  // 这里的提示会在点击时立即出现
+      success: '存档恢复完毕',      // 这里的提示会在 invoke 成功后替换上面的内容
+      error: (err: any) => ({
+        message: '恢复存档失败',
+        description: err.details || '未知错误'
+      })
+    });
+  }
   // 获取数据
   useEffect(() => {
     async function getGame() {
@@ -34,19 +59,20 @@ export default function GameDetail() {
     getGame()
   }, [])
 
+
   const CARD_STYLE = "bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-10 flex flex-col w-full h-full";
   const INPUT_STYLE = "flex items-center justify-between bg-slate-50 border border-slate-100 p-6 rounded-2xl hover:bg-white hover:border-emerald-400 hover:shadow-lg transition-all cursor-pointer group";
 
   // 通用路径选择逻辑
   const pickPath = async (field: keyof GameMeta) => {
-    const isImage = field === 'background' || field === 'cover';
+    const isFile = field === 'background' || field === 'cover' || field === 'absPath';
     const selected = await open({
-      directory: !isImage,
+      directory: !isFile,
       multiple: false,
-      filters: isImage ? [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] }] : undefined,
     });
     if (selected && typeof selected === 'string') {
       setGameMeta({ ...game, [field]: selected });
+      setGame({ ...game, [field]: selected })
     }
   }
 
@@ -114,10 +140,10 @@ export default function GameDetail() {
                       className="bg-transparent border-none focus:ring-0 p-0 text-4xl! font-black text-slate-600 w-64 placeholder:text-slate-300"
                     />
                   </div>
-                  <button onClick={() => invoke('backup_game_data', { game: game })} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-100 text-slate-600 rounded-2xl font-bold text-xl shadow-sm hover:border-emerald-400 hover:text-emerald-600 hover:shadow-lg transition-all active:scale-95 group">
+                  <button onClick={() => backupArchive()} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-100 text-slate-600 rounded-2xl font-bold text-xl shadow-sm hover:border-emerald-400 hover:text-emerald-600 hover:shadow-lg transition-all active:scale-95 group">
                     <DatabaseBackup size={20} className="group-hover:rotate-12 transition-transform" /><Trans>立即备份</Trans>
                   </button>
-                  <button onClick={() => invoke('backup_game_data', { game: game })} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-100 text-slate-600 rounded-2xl font-bold text-xl shadow-sm hover:border-emerald-400 hover:text-emerald-600 hover:shadow-lg transition-all active:scale-95 group">
+                  <button onClick={() => restoreGameArchive()} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-100 text-slate-600 rounded-2xl font-bold text-xl shadow-sm hover:border-emerald-400 hover:text-emerald-600 hover:shadow-lg transition-all active:scale-95 group">
                     <ArchiveRestore size={20} className="group-hover:rotate-12 transition-transform" /> <Trans>从备份存档恢复</Trans>
                   </button>
                 </div>

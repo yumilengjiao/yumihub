@@ -14,7 +14,7 @@ use tauri_plugin_log::log::{debug, error, info};
 use uuid::Uuid;
 
 use crate::game::entity::ResourceTarget;
-use crate::util::get_dir_size;
+use crate::util::{extract_zip_sync, get_dir_size};
 use crate::{
     config::{
         entity::{Config, ConfigEvent},
@@ -609,6 +609,140 @@ pub async fn backup_archive(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppErro
         })
         .await
         .map_err(|e| AppError::File(e.to_string()))?;
+    }
+
+    Ok(())
+}
+
+/// 通过指定游戏id进行单个游戏的存档备份
+///
+/// * `pool`: 数据库连接池，由tauri自动注入
+/// * `id`: 游戏id
+#[tauri::command]
+pub async fn backup_archive_by_id(
+    pool: State<'_, Pool<Sqlite>>,
+    id: String,
+) -> Result<(), AppError> {
+    let game = sqlx::query("SELECT save_data_path FROM games where id = ?")
+        .bind(&id)
+        .fetch_one(&*pool)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    // 获取备份根目录
+    let backup_root = {
+        let config = GLOBAL_CONFIG.read().unwrap();
+        config.storage.backup_save_path.clone()
+    };
+
+    let save_path: Option<String> = game.get("save_data_path");
+
+    if save_path.is_none() {
+        return Err(AppError::Resolve("none".into(), "没有设置存档路径".into()));
+    }
+    let save_path: PathBuf = save_path.unwrap().into();
+
+    // 使用 spawn_blocking 将同步的压缩逻辑丢到后台线程池，不阻塞主异步流
+    async_runtime::spawn_blocking(move || {
+        let zip_file_path = backup_root.join(format!("game_{}.zip", id));
+        if let Err(e) = zip_directory_sync(&save_path, &zip_file_path) {
+            error!("备份游戏 {} 失败: {}", id, e);
+        }
+    })
+    .await
+    .map_err(|e| AppError::File(e.to_string()))?;
+
+    Ok(())
+}
+
+/// 从备份存档恢复游戏存档
+///
+/// * `pool`: 连接池-自动注入
+/// * `id`: 游戏id
+#[tauri::command]
+pub async fn restore_archive_by_id(
+    pool: State<'_, Pool<Sqlite>>,
+    id: String,
+) -> Result<(), AppError> {
+    // 查询原存档路径
+    let game = sqlx::query("SELECT save_data_path FROM games WHERE id = ?")
+        .bind(&id)
+        .fetch_one(&*pool)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    let save_path_str: Option<String> = game.get("save_data_path");
+    if save_path_str.is_none() {
+        return Err(AppError::Resolve(
+            "none".into(),
+            "该游戏未设置存档路径".into(),
+        ));
+    }
+    let save_path = PathBuf::from(save_path_str.unwrap());
+
+    // 获取备份文件路径
+    let backup_root = {
+        let config = GLOBAL_CONFIG.read().unwrap();
+        config.storage.backup_save_path.clone()
+    };
+    let zip_file_path = backup_root.join(format!("game_{}.zip", id));
+
+    if !zip_file_path.exists() {
+        return Err(AppError::File(format!("未找到 ID 为 {} 的备份文件", id)));
+    }
+
+    // 执行解压覆盖
+    async_runtime::spawn_blocking(move || {
+        if let Err(e) = extract_zip_sync(&zip_file_path, &save_path) {
+            error!("恢复游戏 {} 失败: {}", id, e);
+            return Err(AppError::File(e.to_string()));
+        }
+        Ok(())
+    })
+    .await
+    .map_err(|e| AppError::File(e.to_string()))??;
+
+    Ok(())
+}
+
+/// 一键把所有有备份的游戏存档全部覆盖恢复到游戏存档目录
+///
+/// * `pool`: 连接池-自动注入
+#[tauri::command]
+pub async fn restore_all_archives(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppError> {
+    println!("开始恢复所有游戏数据");
+    let games = sqlx::query("SELECT id, save_data_path FROM games")
+        .fetch_all(&*pool)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    let backup_root = {
+        let config = GLOBAL_CONFIG.read().unwrap();
+        config.storage.backup_save_path.clone()
+    };
+
+    for row in games {
+        let id: String = row.get("id");
+        let save_path_str: Option<String> = row.get("save_data_path");
+
+        if let Some(s_path) = save_path_str {
+            let save_path = PathBuf::from(s_path);
+            let zip_file_path = backup_root.join(format!("game_{}.zip", id));
+
+            // 如果备份文件不存在则跳过当前游戏
+            if !zip_file_path.exists() {
+                continue;
+            }
+
+            // 同样使用 spawn_blocking 避免阻塞
+            async_runtime::spawn_blocking(move || {
+                if let Err(e) = extract_zip_sync(&zip_file_path, &save_path) {
+                    eprintln!("全量恢复：备份游戏 {} 失败: {}", id, e);
+                }
+            })
+            .await
+            .map_err(|e| AppError::File(e.to_string()))?;
+        }
     }
 
     Ok(())
