@@ -7,7 +7,7 @@ import { Avatar } from "@/components/SideBar/Avatar"
 import ToolBox from "./Tool";
 import CommonCard from "@/components/CommonCard"
 import { CircleEllipsis, Clock, Trophy } from "lucide-react"
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DragScroller } from "./DragScroller";
 import EditUserInfoDialog from "./EditUserInfoDialog";
 import { cn } from "@/lib/utils";
@@ -24,7 +24,9 @@ import { t } from "@lingui/core/macro"
 export default function User() {
   const [isEditingUser, setIsEditingUser] = useState(false)
   const [isDiskPickerOpen, setIsDiskPickerOpen] = useState(false)
+  const [isYearPickerOpen, setIsYearPickerOpen] = useState(false);
   const [diskUsage, setDiskUsage] = useState<number>(0.0)
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString())
   const { user, setUser } = useUserStore()
   console.log("用户信息: ", user)
 
@@ -57,6 +59,14 @@ export default function User() {
         <DiskPicker
           onSelect={(path) => handleDiskChange(path)}
           onClose={() => setIsDiskPickerOpen(false)}
+        />
+      )}
+
+      {isYearPickerOpen && (
+        <YearPicker
+          currentYear={selectedYear}
+          onSelect={(year) => setSelectedYear(year)}
+          onClose={() => setIsYearPickerOpen(false)}
         />
       )}
 
@@ -115,14 +125,22 @@ export default function User() {
 
           {/* 中间大块 (可以放热力图) */}
           <CommonCard
-            title="Activity"
-            headerAction={<MoreOptions entries={[{ entryName: t`选择年份`, entryFunc: () => alert("你好") }]} />}
-            className="col-span-4 row-span-5">
-            < DragScroller >
-              <CalendarHeatMap />
+            title={`Activity (${selectedYear})`}
+            headerAction={
+              <MoreOptions
+                entries={[{
+                  entryName: t`选择年份`,
+                  entryFunc: () => setIsYearPickerOpen(true)
+                }]}
+              />
+            }
+            className="col-span-4 row-span-5"
+          >
+            <DragScroller>
+              {/* 传入 selectedYear 给热力图 */}
+              <CalendarHeatMap year={selectedYear} />
             </DragScroller>
           </CommonCard>
-
           {/* 其他小方块 */}
           <CommonCard
             title="usage"
@@ -176,5 +194,64 @@ export function DiskPicker({ onSelect, onClose }: { onSelect: (path: string) => 
         </button>
       </div>
     </div>
-  );
+  )
+}
+
+export function YearPicker({
+  currentYear,
+  onSelect,
+  onClose
+}: {
+  currentYear: string,
+  onSelect: (year: string) => void,
+  onClose: () => void
+}) {
+  // 动态生成从 2026 到当前年份的列表
+  const years = useMemo(() => {
+    const startYear = 2026
+    const endYear = new Date().getFullYear() // 获取当前系统时间的年份
+    const list = []
+
+    // 如果当前年份小于 2026 ，至少保证有 2026
+    const effectiveEndYear = Math.max(startYear, endYear);
+
+    for (let i = effectiveEndYear; i >= startYear; i--) {
+      list.push(i.toString())
+    }
+    return list
+  }, [])
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="w-48 overflow-hidden rounded-xl border border-zinc-700 bg-zinc-900 shadow-2xl text-white">
+        <div className="border-b border-zinc-800 p-3 text-center">
+          <h3 className="text-sm font-medium text-zinc-400">
+            <Trans>选择统计年份</Trans>
+          </h3>
+        </div>
+        <div className="max-h-60 overflow-y-auto p-1">
+          {years.map((year) => (
+            <button
+              key={year}
+              onClick={() => { onSelect(year); onClose(); }}
+              className={cn(
+                "flex w-full items-center justify-center px-3 py-2 text-sm transition-colors rounded-lg",
+                currentYear === year
+                  ? "bg-zinc-700 text-white font-bold"
+                  : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
+              )}
+            >
+              {year} <Trans>年</Trans>
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={onClose}
+          className="w-full border-t border-zinc-800 p-2 text-xs text-zinc-500 hover:bg-zinc-800 transition-colors"
+        >
+          <Trans>取消</Trans>
+        </button>
+      </div>
+    </div>
+  )
 }

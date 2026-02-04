@@ -40,6 +40,8 @@ pub fn run() {
             cmd::add_new_game,
             cmd::add_new_game_list,
             cmd::start_game,
+            cmd::get_sessions,
+            cmd::get_sessions_by_year,
             //配置
             cmd::get_config,
             cmd::update_config,

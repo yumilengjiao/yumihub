@@ -53,6 +53,16 @@ export enum Cmds {
   START_GAME = "start_game",
 
   /**
+   * 获取所有游戏会话记录
+   */
+  GET_SESSIONS = "get_sessions",
+
+  /**
+   * 获取指定年份的会话记录
+   */
+  GET_SESSIONS_BY_YEAR = "get_sessions_by_year",
+
+  /**
    * 获取配置信息
    */
   GET_CONFIG = "get_config",

@@ -52,8 +52,7 @@ export default function Sidebar() {
         <div className="flex flex-col h-full py-10">
           <div className="flex flex-col items-center mb-12">
             <Avatar className={cn(
-              "transition-all duration-400 ring-3 ring-white shadow-xl h-24 w-24 ",
-              isExpanded ? "rounded-[32px]" : "rounded-xl"
+              "transition-all duration-400 ring-3 ring-white shadow-xl h-24 w-24 rounded-[32px]",
             )} />
             <div className="h-6 flex items-center justify-center mt-4">
               <span className={cn(

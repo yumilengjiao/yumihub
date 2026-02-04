@@ -13,7 +13,7 @@ use tauri_plugin_fs::FsExt;
 use tauri_plugin_log::log::{debug, error, info};
 use uuid::Uuid;
 
-use crate::game::entity::ResourceTarget;
+use crate::game::entity::{PlaySession, ResourceTarget};
 use crate::util::{extract_zip_sync, get_dir_size};
 use crate::{
     config::{
@@ -510,6 +510,56 @@ pub async fn start_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Result
         }
     });
     Ok(())
+}
+
+/// 获取所有游戏启动的会话记录
+///
+/// * `pool`: 数据库连接池-自动注入
+#[tauri::command]
+pub async fn get_sessions(pool: State<'_, Pool<Sqlite>>) -> Result<Vec<PlaySession>, AppError> {
+    let rows = sqlx::query_as::<_, PlaySession>(
+        r#"
+            select
+                id,
+                game_id,
+                play_date,
+                duration_minutes,
+                last_played_at
+            from game_play_sessions
+        "#,
+    )
+    .fetch_all(&*pool)
+    .await
+    .map_err(|e| AppError::DB(e.to_string()))?;
+    Ok(rows)
+}
+
+/// 获取指定年份内所有游戏启动的会话记录
+///
+/// * `pool`: 数据库连接池-自动注入
+#[tauri::command]
+pub async fn get_sessions_by_year(
+    year: String, // 接收前端传来的年份字符串
+    pool: State<'_, Pool<Sqlite>>,
+) -> Result<Vec<PlaySession>, AppError> {
+    let rows = sqlx::query_as::<_, PlaySession>(
+        r#"
+            SELECT
+                id,
+                game_id,
+                play_date,
+                duration_minutes,
+                last_played_at
+            FROM game_play_sessions
+            WHERE strftime('%Y', play_date) = ?
+        "#,
+    )
+    .bind(year) // 绑定参数，防止 SQL 注入
+    .fetch_all(&*pool)
+    .await
+    .map_err(|e| AppError::DB(e.to_string()))?;
+
+    Ok(rows)
 }
 
 // --------------------------------------------------------
