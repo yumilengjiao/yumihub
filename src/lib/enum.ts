@@ -120,5 +120,16 @@ export enum Cmds {
   /**
    * 将指定路径添加到可访问权限
    */
-  AUTHORIZE_PATH_ACCESS = "authorize_path_access"
+  AUTHORIZE_PATH_ACCESS = "authorize_path_access",
+
+  /**
+   * 获取所有的连携程序
+   */
+  GET_COMPAIONS = "get_companions",
+
+
+  /**
+   * 更新所有的连携程序
+   */
+  UPDATE_COMPAIONS = "update_companions"
 }

@@ -1,14 +1,20 @@
 import CommonCard from "@/components/CommonCard"
 import SelectCard from "@/components/SelectCard"
 import SwitchCard from "@/components/SwitchCard"
+import { cn } from "@/lib/utils"
 import useConfigStore from "@/store/configStore"
 import { i18n } from "@lingui/core"
 import { t } from "@lingui/core/macro"
+import { Plus, Settings2 } from "lucide-react"
+import { useState } from "react"
+import { CompanionManager } from "./CompanionManager"
 
 export default function BaseSetting() {
   // 性能优化：仅订阅需要的字段
-  const basic = useConfigStore(s => s.config.basic);
+  const basic = useConfigStore(s => s.config.basic)
   const { config, updateConfig } = useConfigStore()
+  // 控制全屏对话框状态
+  const [isCompanionManagerOpen, setIsCompanionManagerOpen] = useState(false)
 
   const updateBasic = (key: keyof typeof basic, val: any) => {
     updateConfig((draft) => {
@@ -47,7 +53,27 @@ export default function BaseSetting() {
           options={langOpt}
           onValueChange={(v) => updateLanguage(v)}
         />
-      </div>
+        <button
+          onClick={() => setIsCompanionManagerOpen(true)}
+          className={cn(
+            "w-full h-16 mt-4 flex items-center justify-between px-6 rounded-xl transition-all",
+            "bg-white border-2 hover:border-emerald-500 text-black hover:bg-emerald-50 ",
+            "active:scale-[0.98]"
+          )}
+        >
+          <div className="flex items-center gap-3">
+            <Settings2 className="w-6 h-6 text-emerald-600" />
+            <span className="text-2xl font-bold tracking-tight">{t`管理连携启动程序`}</span>
+          </div>
+          <Plus className="w-6 h-6 text-emerald-600" />
+        </button>      </div>
+
+      {/* 连携程序管理对话框 */}
+      {isCompanionManagerOpen && (
+        <CompanionManager onClose={() => setIsCompanionManagerOpen(false)} />
+      )}
     </CommonCard>
   );
 }
+
+

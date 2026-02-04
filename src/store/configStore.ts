@@ -24,6 +24,8 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
       fontFamily: "sys",
     },
     system: {
+      companion: false,
+      hotkeyActivation: false,
       closeButtonBehavior: "quit", // 假设默认行为
       logLevel: "info",
       downloadConcurrency: 3,
@@ -34,10 +36,16 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
     },
   },
   updateConfig(fn: (config: Config) => void) {
+    console.log("开始更新用户数据")
     set(state => {
       fn(state.config)
     })
-    invoke(Cmds.UPDATE_CONFIG, { config: get().config })
+    try {
+      invoke(Cmds.UPDATE_CONFIG, { config: get().config })
+      console.log("更新完成")
+    } catch (error) {
+      console.error("更新用户数据失败", error)
+    }
   },
 })))
 

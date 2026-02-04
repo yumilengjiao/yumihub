@@ -106,6 +106,8 @@ pub struct Storage {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct System {
+    pub companion: bool,
+    pub hotkey_activation: bool,
     pub close_button_behavior: String,
     pub log_level: String,
     pub download_concurrency: i64,
@@ -114,6 +116,8 @@ pub struct System {
 impl Default for System {
     fn default() -> Self {
         Self {
+            companion: false,
+            hotkey_activation: false,
             close_button_behavior: "Exit".into(),
             log_level: "info".into(),
             download_concurrency: 5,

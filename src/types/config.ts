@@ -63,10 +63,12 @@ export interface Storage {
 // -----------------------------------------------------
 
 export interface System {
+  companion: boolean
+  hotkeyActivation: boolean
   /** 关闭按钮行为 (例如: "minimize" | "quit") */
-  closeButtonBehavior: string;
+  closeButtonBehavior: string
   /** 日志级别 (例如: "info" | "debug" | "error") */
-  logLevel: string;
+  logLevel: string
   /** 下载并发量上限 */
-  downloadConcurrency: number; // Rust 中的 i64 对应 TS 的 number
+  downloadConcurrency: number // Rust 中的 i64 对应 TS 的 number
 }

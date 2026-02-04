@@ -13,6 +13,7 @@ use tauri_plugin_fs::FsExt;
 use tauri_plugin_log::log::{debug, error, info};
 use uuid::Uuid;
 
+use crate::companion::entity::Companion;
 use crate::game::entity::{PlaySession, ResourceTarget};
 use crate::util::{extract_zip_sync, get_dir_size};
 use crate::{
@@ -880,7 +881,6 @@ pub async fn authorize_path_access<R: Runtime>(
         .map_err(|e| AppError::Auth(format!("Tauri 权限注入失败: {}", e)))?;
 
     // 持久化到权限表
-    // 使用 INSERT OR IGNORE 确保路径重复添加时不会报错
     let id = Uuid::new_v4().to_string();
     sqlx::query("INSERT OR IGNORE INTO authorized_scopes (id, path) VALUES (?, ?)")
         .bind(&id)
@@ -888,5 +888,79 @@ pub async fn authorize_path_access<R: Runtime>(
         .execute(pool.inner())
         .await
         .map_err(|e| AppError::DB(format!("数据库记录权限失败: {}", e)))?;
+    Ok(())
+}
+
+/// 查询所有的连携程序信息
+///
+/// * `pool`: 数据库连接池-自动注入
+#[tauri::command]
+pub async fn get_companions(pool: State<'_, Pool<Sqlite>>) -> Result<Vec<Companion>, AppError> {
+    // 按 sort_order 从小到大排序，权重小的先启动
+    let rows = sqlx::query_as::<_, Companion>(
+        r#"
+        SELECT id, name, path, args, is_enabled, trigger_mode, sort_order, description 
+        FROM companions
+        "#,
+    )
+    .fetch_all(&*pool)
+    .await
+    .map_err(|e| AppError::DB(format!("数据库查询失败: {}", e)))?;
+
+    Ok(rows)
+}
+
+/// 更新所有连携程序信息
+///
+/// * `companions`: 连携程序
+/// * `pool`: 数据库连接池-自动注入
+#[tauri::command]
+pub async fn update_companions(
+    companions: Vec<Companion>,
+    pool: State<'_, Pool<Sqlite>>,
+) -> Result<(), AppError> {
+    // 开启事务
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    // 清空原有的所有连携程序数据
+    sqlx::query("DELETE FROM companions")
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::DB(format!("数据删除失败: {}", e)))?;
+
+    // 批量插入新数据
+    for item in companions {
+        sqlx::query(
+            r#"
+            INSERT INTO companions 
+            (
+                name,
+                path,
+                args,
+                is_enabled,
+                trigger_mode,
+                sort_order,
+                description
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            "#,
+        )
+        .bind(item.name)
+        .bind(item.path)
+        .bind(item.args)
+        .bind(item.is_enabled)
+        .bind(item.trigger_mode)
+        .bind(item.sort_order)
+        .bind(item.description)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::DB(format!("数据更新失败: {}", e)))?;
+    }
+
+    tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
+
     Ok(())
 }

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 export default function StepSliderCard({ title, description, value, min = 1, max = 100, step = 1, unit = "", onChange, className }: any) {
   return (
-    <div className={cn("flex items-center justify-between gap-8 p-6 rounded-[24px] hover:bg-zinc-50 transition-all", className)}>
+    <div className={cn("flex items-center justify-between gap-8 p-6 pl-2 rounded-[24px] hover:bg-zinc-50 transition-all", className)}>
       <div className="flex flex-col space-y-1 shrink-0">
         <Label className="text-2xl font-bold tracking-tight text-zinc-900">{title}</Label>
         {description && <p className="text-sm text-zinc-500 font-medium">{description}</p>}

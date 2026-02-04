@@ -6,19 +6,24 @@ import {
 } from "@/components/ui/carousel"
 import { Link2, Rocket } from "lucide-react"
 import SuperSwitch from "@/components/SuperSwitch";
+import { Trans } from "@lingui/react/macro";
+import useConfigStore from "@/store/configStore";
+import { Config } from "@/types/config";
 
 // 定义组件接收的 Props，直接使用你的 GameMeta 类型逻辑
 interface DashboardToolsProps {
-  companionPath: string | undefined;
-  isCompanionEnabled: boolean;
-  onCompanionToggle: (enabled: boolean) => void;
   quote?: { text: string; from: string };
 }
 
-export function ToolBox({
-  isCompanionEnabled,
-  onCompanionToggle,
-}: DashboardToolsProps) {
+export function ToolBox({ }: DashboardToolsProps) {
+  const { config, updateConfig } = useConfigStore()
+
+  const setOption = (field: keyof Config['system'], value: boolean) => {
+    updateConfig((config) => {
+      (config.system as any)[field] = value
+    })
+  }
+
   return (
     <div className="w-full h-full relative">
       <Carousel className="w-full h-full">
@@ -33,11 +38,11 @@ export function ToolBox({
             <div className="flex h-full justify-around items-center">
               <div className="flex items-center gap-2">
                 <Rocket className="w-15 h-15 text-blue-400" />
-                <span className="font-bold text-zinc-300 uppercase tracking-wider text-[35px]">流畅模式</span>
+                <span className="font-bold text-zinc-300 uppercase tracking-wider text-[20px]"><Trans>链式启动</Trans></span>
               </div>
               <SuperSwitch
-                checked={isCompanionEnabled}
-                onChange={onCompanionToggle}
+                checked={config.system.compainion}
+                onChange={() => setOption('compainion', !config.system.compainion)}
               />
             </div>
           </CarouselItem>
@@ -47,26 +52,11 @@ export function ToolBox({
             <div className="flex h-full justify-around items-center">
               <div className="flex items-center gap-2">
                 <Link2 className="w-18 h-18 text-blue-400" />
-                <span className="font-bold text-zinc-300 uppercase tracking-wider text-[35px]">伴随模式</span>
+                <span className="font-bold text-zinc-300 uppercase tracking-wider text-[20px]"><Trans>开启热键</Trans></span>
               </div>
               <SuperSwitch
-                checked={isCompanionEnabled}
-                onChange={onCompanionToggle}
-              />
-            </div>
-          </CarouselItem>
-
-
-          {/* 第三页 */}
-          <CarouselItem className="aspect-auto h-full basis-full w-full px-8">
-            <div className="flex h-full justify-around items-center">
-              <div className="flex items-center gap-2">
-                <Link2 className="w-18 h-18 text-blue-400" />
-                <span className="font-bold text-zinc-300 uppercase tracking-wider text-[35px]">伴随模式</span>
-              </div>
-              <SuperSwitch
-                checked={isCompanionEnabled}
-                onChange={onCompanionToggle}
+                checked={config.system.hotkeyActivation}
+                onChange={() => setOption('hotkeyActivation', !config.system.hotkeyActivation)}
               />
             </div>
           </CarouselItem>

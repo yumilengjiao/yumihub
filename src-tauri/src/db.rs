@@ -76,12 +76,36 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
         -- 创建索引加速按日期查询
         CREATE INDEX IF NOT EXISTS idx_play_date ON game_play_sessions (play_date);
 
-
+        -- 游戏快照表
         CREATE TABLE IF NOT EXISTS game_screenshots (
             id TEXT PRIMARY KEY,
-            game_id TEXT NOT NULL,          -- 关联 games 表的 id
-            file_path TEXT NOT NULL,        -- 截图在硬盘的绝对路径
-            created_at DATETIME DEFAULT (datetime('now', 'localtime')) -- 截图时间
+            -- 关联 games 表的 id
+            game_id TEXT NOT NULL,
+            -- 截图在硬盘的绝对路径
+            file_path TEXT NOT NULL,
+            -- 截图时间
+            created_at DATETIME DEFAULT (datetime('now', 'localtime')),
+            -- 瞬间感想
+            thoughts Text
+        );
+
+        CREATE TABLE IF NOT EXISTS companions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            -- 程序别名，如 "翻译程序"、"手柄映射"
+            name TEXT NOT NULL,
+            -- 程序的绝对路径
+            path TEXT NOT NULL,
+            -- 启动参数，例如 "-windowed" 或 "--minimized"
+            args TEXT,
+            -- 是否在联动启动时包含此程序
+            trigger_mode TEXT NOT NULL DEFAULT 'game',
+            -- 是否启用此程序的连携启动
+            is_enabled INTEGER DEFAULT 1,
+            -- 排序权重，如果希望某些程序先启动
+            sort_order INTEGER DEFAULT 0,
+            -- 备注
+            description TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
 
         -- 用户信息表

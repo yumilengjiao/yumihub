@@ -116,7 +116,7 @@ export default function User() {
 
           {/* 右上角黑色卡片 */}
           <CommonCard title={t`信息和工具`} className="bg-zinc-800 text-white col-span-3 row-span-1">
-            <ToolBox companionPath="/" isCompanionEnabled={false} onCompanionToggle={() => { alert("nihao") }} />
+            <ToolBox />
           </CommonCard>
           {/* 右二黑色卡片 */}
           <CommonCard className="bg-zinc-800 col-span-3 row-span-3" >

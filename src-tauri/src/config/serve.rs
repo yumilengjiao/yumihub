@@ -35,6 +35,8 @@ pub fn listening_loop(app_handler: AppHandle) {
                 }
                 ConfigEvent::System { sys } => {
                     debug!("系统设置开始更新");
+                    change_compainion(sys.companion);
+                    change_hotkey_activation(sys.hotkey_activation);
                     change_close_button_action(sys.close_button_behavior);
                     change_log_level(sys.log_level);
                     set_concurrent_number(sys.download_concurrency);
@@ -115,6 +117,32 @@ fn set_language(language: String) {
 // ----------------------------------------------------------
 // ------------------------系统设置--------------------------
 // ----------------------------------------------------------
+
+/// 控制是否启用链式模式(启动游戏时其他自定义程序自动启动)
+///
+/// * `activation`: 激活状态
+fn change_compainion(activation: bool) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.system.companion = activation,
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
+
+/// 控制是否启用快捷键系统
+///
+/// * `activation`: 激活状态
+fn change_hotkey_activation(activation: bool) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.system.hotkey_activation = activation,
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
 
 /// 改变关闭按钮的行为
 ///
