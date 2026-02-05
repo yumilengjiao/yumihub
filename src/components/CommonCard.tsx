@@ -35,7 +35,7 @@ const CommonCard = React.forwardRef<HTMLDivElement, CommonCardProps>(
           </div>
         )}
 
-        <div className="p-6 pt-0 flex-1">
+        <div className="p-6 pt-0 flex-1 h-full">
           <div className="flex flex-col gap-2 h-full">
             {children}
           </div>

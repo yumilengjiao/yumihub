@@ -47,6 +47,9 @@ pub fn run() {
             cmd::start_game,
             cmd::get_sessions,
             cmd::get_sessions_by_year,
+            //游戏快照
+            cmd::get_screenshots_by_year_month,
+            cmd::update_screenshot_by_id,
             // 配置
             cmd::get_config,
             cmd::update_config,

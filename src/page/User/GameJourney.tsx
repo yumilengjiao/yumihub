@@ -1,120 +1,115 @@
-import { GameMetaList } from "@/types/game";
-import { Trans } from "@lingui/react/macro";
+import { useEffect, useState, useRef } from "react";
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { invoke } from "@tauri-apps/api/core";
+import { cn } from "@/lib/utils";
 import { t } from "@lingui/core/macro";
-import { Camera, Clock } from "lucide-react"; // 增加小图标提升精致感
+import { Quote, Camera, Clock, PencilLine, Check } from "lucide-react";
+import { Screenshot } from "@/types/screenshot";
 
-const GameJourney = ({ games }: { games: GameMetaList }) => {
-  // 1. 新用户空状态展示 (保留原逻辑)
-  if (!games || games.length === 0) {
+const GameJourney = ({ selectedYear, selectedMonth }: { selectedYear: number, selectedMonth: number }) => {
+  const [snapshots, setSnapshots] = useState<Screenshot[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const loadSnapshots = async () => {
+    setLoading(true);
+    try {
+      const data = await invoke<Screenshot[]>("get_screenshots_by_year_month", {
+        year: selectedYear,
+        month: selectedMonth
+      });
+      setSnapshots(data || []);
+      if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    } catch (e) {
+      console.error("Failed:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { loadSnapshots(); }, [selectedYear, selectedMonth]);
+
+  const handleUpdateThoughts = async (id: string, text: string) => {
+    const original = snapshots.find(s => s.id === id)?.thoughts || "";
+    if (text === original) { setEditingId(null); return; }
+    try {
+      await invoke("update_screenshot_by_id", { screenshotId: id, thoughts: text });
+      setEditingId(null);
+      setSnapshots(prev => prev.map(s => s.id === id ? { ...s, thoughts: text } : s));
+    } catch (e) { console.error("Update failed:", e); }
+  };
+
+  if (!loading && snapshots.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-8 text-center space-y-4">
-        <div className="text-6xl opacity-20 animate-pulse">🍃</div>
-        <div>
-          <h3 className="text-zinc-400 font-medium text-sm">
-            <Trans>还没有开启任何物语</Trans>
-          </h3>
-          <p className="text-zinc-600 text-[11px] mt-2 leading-relaxed">
-            <Trans>
-              在游戏仓库添加你的第一款 Galgame，
-              <br />
-            </Trans>
-            <Trans>让时间在这里留下足迹。</Trans>
-          </p>
-        </div>
+      <div className="h-full flex flex-col items-center justify-center opacity-40 text-zinc-600">
+        <Camera size={40} strokeWidth={1} className="mb-3" />
+        <p className="text-sm font-bold">{t`暂无记录`}</p>
       </div>
     );
   }
 
-  // 模拟假数据：假设每个游戏有几张截图
-  // 实际开发中，这些数据应来自 game 对象内部
-  const mockScreenshots = [
-    {
-      url: "https://images.unsplash.com/photo-1614732414444-af9613f3f1a3?q=80&w=500",
-      time: "2024-03-20 14:20",
-    },
-    {
-      url: "https://images.unsplash.com/photo-1578632738981-433035c598b4?q=80&w=500",
-      time: "2024-03-19 23:10",
-    },
-  ];
-
   return (
-    <div className="flex flex-col h-full gap-5 overflow-y-auto pr-2 custom-scrollbar">
-      {/* 头部装饰 */}
-      <div className="flex justify-between items-end px-1 border-b border-zinc-800 pb-2">
-        <div className="flex flex-col">
-          <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.2em]">
-            Memory Gallery
-          </span>
-          <span className="text-[18px] text-zinc-200 font-serif italic">游玩历程</span>
-        </div>
-        <span className="text-[10px] text-zinc-600 font-mono">
-          Items: {games.length.toString().padStart(2, "0")}
-        </span>
-      </div>
+    <div className="h-full w-full overflow-hidden rounded-2xl">
+      <div
+        ref={scrollRef}
+        /* 2. padding-x 移到这里，防止裁剪掉左右边框 */
+        className="h-full overflow-y-auto mt-4 flex flex-col gap-10 pb-10 px-1 rounded-2xl
+                   [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+      >
+        {snapshots.map((ss) => (
+          <div key={ss.id} className="flex flex-col animate-in fade-in duration-700">
 
-      <div className="grid gap-6">
-        {games.map((game, index) => (
-          <div
-            key={game.id}
-            className="group relative flex flex-col bg-zinc-900/40 border border-zinc-800/50 rounded-lg overflow-hidden transition-all duration-500 hover:border-zinc-700/50 hover:shadow-2xl hover:shadow-black/50"
-          >
-            {/* 1. 游戏截图展示区 (关键改动) */}
-            <div className="relative aspect-video w-full overflow-hidden bg-zinc-950">
-              <img
-                src={mockScreenshots[index % 2].url} // 使用假截图
-                alt="Screenshot"
-                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-              />
-
-              {/* 截图左上角的时间戳标签 */}
-              <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 bg-black/60 backdrop-blur-md rounded border border-white/10 text-[9px] text-zinc-300 font-mono">
-                <Camera size={10} className="text-zinc-400" />
-                {mockScreenshots[index % 2].time}
+            {/* 感想区域 */}
+            <div className="mb-4 relative">
+              <div className="flex items-center gap-2 mb-2">
+                <Quote size={18} className="text-black fill-black" />
+                <span className="text-[12px] font-black uppercase tracking-widest text-zinc-400">Thought</span>
               </div>
 
-              {/* 底部信息遮罩 */}
-              <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent pointer-events-none" />
+              {editingId === ss.id ? (
+                /* 3. 给 textarea 加上 animate-in fade-in */
+                <textarea
+                  autoFocus
+                  className="w-full bg-white p-5 rounded-xl border-2 border-black outline-none text-[18px] font-black text-black leading-relaxed min-h-[140px] 
+                             animate-in fade-in duration-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  defaultValue={ss.thoughts || ""}
+                  onBlur={(e) => handleUpdateThoughts(ss.id, e.target.value)}
+                />
+              ) : (
+                /* 4. 给显示态也加上动画，切换时更顺滑 */
+                <div
+                  onClick={() => setEditingId(ss.id)}
+                  className="relative cursor-pointer bg-black/5 p-5 rounded-2xl hover:bg-black/[0.08] transition-colors group/text 
+                             animate-in fade-in duration-300"
+                >
+                  <p className={cn(
+                    "text-[20px] leading-[1.5] tracking-tight font-black transition-all",
+                    ss.thoughts ? "text-black" : "text-zinc-400 italic"
+                  )}>
+                    {ss.thoughts || t`点击记录感想...`}
+                  </p>
+                  <PencilLine size={16} className="absolute top-4 right-4 text-black opacity-0 group-hover/text:opacity-100 transition-opacity" />
+                </div>
+              )}
             </div>
 
-            {/* 2. 底部悬浮信息栏 */}
-            <div className="absolute bottom-0 inset-x-0 p-3 flex gap-3 items-end">
-              {/* 封面图：小尺寸悬浮感 */}
-              <div className="w-14 h-20 flex-shrink-0 rounded shadow-2xl border border-white/10 overflow-hidden z-20 transform -translate-y-2 group-hover:-translate-y-3 transition-transform duration-500">
-                <img
-                  src={game.local_cover || game.cover}
-                  alt={game.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            {/* 图片区域 */}
+            <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-black bg-white group/img">
+              <img
+                src={convertFileSrc(ss.filePath)}
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/img:scale-105"
+                alt="Snapshot"
+              />
 
-              {/* 文字信息 */}
-              <div className="flex-1 min-w-0 pb-1 z-20">
-                <h4 className="text-sm font-bold text-white truncate drop-shadow-md mb-1">
-                  {game.name}
-                </h4>
-                <div className="flex items-center gap-3 text-zinc-400 text-[10px]">
-                  <div className="flex items-center gap-1">
-                    <Clock size={10} />
-                    <span>{(game.playTime / 60).toFixed(1)}h</span>
-                  </div>
-                  <div className="h-2 w-[1px] bg-zinc-700" />
-                  <span className="truncate">
-                    {game.lastPlayedAt
-                      ? game.lastPlayedAt
-                      : t`尚未开始`}
-                  </span>
-                </div>
+              <div className="absolute top-4 right-4 px-3 py-1 bg-black/70 backdrop-blur-md rounded-lg border border-white/20">
+                <span className="text-[11px] text-white font-bold tracking-tighter">{ss.createdAt}</span>
               </div>
+            </div>
 
-              {/* 装饰图标 */}
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 pb-2">
-                <div className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white cursor-pointer transition-colors border border-white/5">
-                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-3 h-3">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </div>
-              </div>
+            {/* 分隔线 */}
+            <div className="mt-10 flex justify-center">
+              <div className="w-12 h-1 bg-zinc-200 rounded-full" />
             </div>
           </div>
         ))}

@@ -8,13 +8,12 @@ use sysinfo::Disks;
 use tauri::{async_runtime, AppHandle, Manager, Runtime, State};
 use tauri_plugin_fs::FsExt;
 use tauri_plugin_log::log::{debug, error, info};
-use tauri_plugin_notification::NotificationExt;
 use uuid::Uuid;
 
 use crate::companion::entity::Companion;
 use crate::game::commands::execute_start_game;
 use crate::game::entity::{PlaySession, ResourceTarget};
-use crate::screenshot::commands::capture_game_screenshot;
+use crate::screenshot::entity::Screenshot;
 use crate::shortcut::entity::ShortcutSetting;
 use crate::shortcut::refresh_shortcuts;
 use crate::util::{extract_zip_sync, get_dir_size};
@@ -552,8 +551,78 @@ pub async fn update_config(config: Config) {
 }
 
 // --------------------------------------------------------
+// ----------------------游戏快照类------------------------
+// --------------------------------------------------------
+
+/// 根据年月份查看快照数据
+///
+/// * `pool`: 数据库连接池-自动注入
+/// * `year`: 年份
+/// * `month`: 月份
+#[tauri::command]
+pub async fn get_screenshots_by_year_month(
+    pool: State<'_, SqlitePool>,
+    year: i32, // 例如 2026
+    month: u8, // 1 ~ 12
+) -> Result<Vec<Screenshot>, AppError> {
+    // 月份补零：2 -> "02"
+    let month_str = format!("{:02}", month);
+    let year_str = year.to_string();
+
+    let rows = sqlx::query_as::<_, Screenshot>(
+        r#"
+        SELECT *
+        FROM game_screenshots
+        WHERE strftime('%Y', created_at) = ?
+          AND strftime('%m', created_at) = ?
+        ORDER BY created_at DESC
+        "#,
+    )
+    .bind(year_str)
+    .bind(month_str)
+    .fetch_all(&*pool)
+    .await
+    .map_err(|e| AppError::DB(e.to_string()))?;
+
+    Ok(rows)
+}
+
+/// 修改快照信息(修改游戏感想)
+///
+/// * `pool`: 数据库连接池-自动注入
+/// * `screenshot_id`: 快照id
+/// * `thoughts`: 感想
+#[tauri::command]
+pub async fn update_screenshot_by_id(
+    pool: State<'_, SqlitePool>,
+    screenshot_id: String,
+    thoughts: Option<String>,
+) -> Result<(), AppError> {
+    let result = sqlx::query(
+        r#"
+        UPDATE game_screenshots
+        SET thoughts = ?
+        WHERE id = ?
+        "#,
+    )
+    .bind(thoughts)
+    .bind(screenshot_id)
+    .execute(&*pool)
+    .await
+    .map_err(|e| AppError::DB(e.to_string()))?;
+
+    // 可选：如果你想知道有没有更新到行
+    if result.rows_affected() == 0 {
+        return Err(AppError::Generic("screenshot not found".into()));
+    }
+
+    Ok(())
+}
+
+// --------------------------------------------------------
 // -----------------------快捷键类-------------------------
 // --------------------------------------------------------
+
 #[tauri::command]
 /// 查询所有快捷键
 ///

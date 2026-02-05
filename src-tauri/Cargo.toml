@@ -1,5 +1,5 @@
 [package]
-name = "galhub"
+name = "yumihub"
 version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
@@ -7,7 +7,7 @@ edition = "2021"
 
 
 [lib]
-name = "galhub_lib"
+name = "yumihub_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

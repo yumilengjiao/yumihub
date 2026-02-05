@@ -6,7 +6,7 @@ import Radar from "./Radar";
 import { Avatar } from "@/components/SideBar/Avatar"
 import ToolBox from "./Tool";
 import CommonCard from "@/components/CommonCard"
-import { CircleEllipsis, Clock, Trophy } from "lucide-react"
+import { CircleEllipsis, Clock, Trophy, X } from "lucide-react"
 import { useEffect, useMemo, useState } from "react";
 import { DragScroller } from "./DragScroller";
 import EditUserInfoDialog from "./EditUserInfoDialog";
@@ -24,9 +24,17 @@ import { t } from "@lingui/core/macro"
 export default function User() {
   const [isEditingUser, setIsEditingUser] = useState(false)
   const [isDiskPickerOpen, setIsDiskPickerOpen] = useState(false)
-  const [isYearPickerOpen, setIsYearPickerOpen] = useState(false);
   const [diskUsage, setDiskUsage] = useState<number>(0.0)
+  // 热力图的控制
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString())
+  // 快照显示的控制
+  const [journeyYear, setJourneyYear] = useState(new Date().getFullYear()); // 历程专用
+  const [journeyMonth, setJourneyMonth] = useState(new Date().getMonth() + 1); // 历程专用
+
+  // 热力图
+  const [isYearPickerOpen, setIsYearPickerOpen] = useState(false);
+  // 快照
+  const [isJourneyPickerOpen, setIsJourneyPickerOpen] = useState(false)
   const { user, setUser } = useUserStore()
   console.log("用户信息: ", user)
 
@@ -67,6 +75,15 @@ export default function User() {
           currentYear={selectedYear}
           onSelect={(year) => setSelectedYear(year)}
           onClose={() => setIsYearPickerOpen(false)}
+        />
+      )}
+
+      {isJourneyPickerOpen && (
+        <YearMonthPicker
+          currentYear={journeyYear}
+          currentMonth={journeyMonth}
+          onSelect={(y, m) => { setJourneyYear(y); setJourneyMonth(m); }}
+          onClose={() => setIsJourneyPickerOpen(false)}
         />
       )}
 
@@ -149,8 +166,16 @@ export default function User() {
             <SysMonitor diskUsage={diskUsage} />
           </CommonCard>
 
-          <CommonCard className="col-span-5 row-span-3" >
-            <GameJourney games={[]} />
+          <CommonCard
+            title={t`历程 (${journeyYear}-${journeyMonth.toString().padStart(2, '0')})`}
+            className="col-span-5 row-span-3 flex flex-col overflow-hidden pb-12"
+            headerAction={
+              <MoreOptions entries={[{ entryName: t`切换日期`, entryFunc: () => setIsJourneyPickerOpen(true) }]} />
+            }
+          >
+            <div className="flex-1 h-full w-full overflow-hidden">
+              <GameJourney selectedYear={journeyYear} selectedMonth={journeyMonth} />
+            </div>
           </CommonCard>
         </div>
       </div >
@@ -254,4 +279,33 @@ export function YearPicker({
       </div>
     </div>
   )
+}
+
+export function YearMonthPicker({ currentYear, currentMonth, onSelect, onClose }: any) {
+  const years = [2024, 2025, 2026]; // 根据需求写死或动态生成
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="font-bold text-zinc-200">选择历程日期</h3>
+          <X className="cursor-pointer text-zinc-500 hover:text-white" onClick={onClose} />
+        </div>
+
+        <div className="space-y-6">
+          <div className="flex flex-wrap gap-2">
+            {years.map(y => (
+              <button key={y} onClick={() => onSelect(y, currentMonth)} className={cn("px-4 py-1.5 rounded-full text-xs transition-all", currentYear === y ? "bg-white text-black font-bold" : "bg-zinc-800 text-zinc-400")}>{y}</button>
+            ))}
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            {months.map(m => (
+              <button key={m} onClick={() => onSelect(currentYear, m)} className={cn("py-2 rounded-lg text-xs transition-all", currentMonth === m ? "bg-zinc-200 text-black font-bold" : "bg-zinc-800 text-zinc-400")}>{m}月</button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

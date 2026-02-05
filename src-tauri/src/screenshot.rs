@@ -1,11 +1,9 @@
-use chrono::Local;
 use lazy_static::lazy_static;
-use screenshots::Screen;
-use sqlx::SqlitePool;
 use std::{path::PathBuf, sync::Mutex};
 use tauri::{AppHandle, Manager, Runtime};
 
 pub mod commands;
+pub mod entity;
 
 lazy_static! {
     // 存储截图的物理路径

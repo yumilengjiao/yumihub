@@ -1740,40 +1740,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "galhub"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "directories",
- "font-kit",
- "lazy_static",
- "reqwest 0.13.1",
- "screenshots",
- "serde",
- "serde_json",
- "sqlx",
- "sysinfo 0.38.0",
- "tauri",
- "tauri-build",
- "tauri-plugin-autostart",
- "tauri-plugin-dialog",
- "tauri-plugin-fs",
- "tauri-plugin-global-shortcut",
- "tauri-plugin-http",
- "tauri-plugin-log",
- "tauri-plugin-notification",
- "tauri-plugin-opener",
- "tauri-plugin-system-info",
- "thiserror 2.0.17",
- "tokio",
- "uuid",
- "walkdir",
- "window-vibrancy 0.7.1",
- "windows 0.62.2",
- "zip",
-]
-
-[[package]]
 name = "gdk"
 version = "0.18.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7722,6 +7688,40 @@ dependencies = [
  "quote",
  "syn 2.0.114",
  "synstructure",
+]
+
+[[package]]
+name = "yumihub"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "directories",
+ "font-kit",
+ "lazy_static",
+ "reqwest 0.13.1",
+ "screenshots",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "sysinfo 0.38.0",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-autostart",
+ "tauri-plugin-dialog",
+ "tauri-plugin-fs",
+ "tauri-plugin-global-shortcut",
+ "tauri-plugin-http",
+ "tauri-plugin-log",
+ "tauri-plugin-notification",
+ "tauri-plugin-opener",
+ "tauri-plugin-system-info",
+ "thiserror 2.0.17",
+ "tokio",
+ "uuid",
+ "walkdir",
+ "window-vibrancy 0.7.1",
+ "windows 0.62.2",
+ "zip",
 ]
 
 [[package]]

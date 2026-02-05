@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "galhub",
-  "version": "0.1.0",
-  "identifier": "galhub",
+  "productName": "yumihub",
+  "version": "../package.json",
+  "identifier": "io.github.yumilengjiao.yumihub",
   "build": {
     "beforeDevCommand": "bun run dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "galhub",
+        "title": "yumihub",
         "width": 900,
         "height": 600,
         "minWidth": 1100,
