@@ -4,7 +4,7 @@ import { invoke } from '@tauri-apps/api/core'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
-type GameStore = {
+interface GameStoreParams {
   selectedGame: GameMeta | null,
   gameMetaList: GameMetaList,
   updateSelectedGame: (game: GameMeta | null) => void,
@@ -17,7 +17,7 @@ type GameStore = {
 }
 
 // 存储当前存在的所有的游戏元信息
-const useGameStore = create<GameStore>()(
+const useGameStore = create<GameStoreParams>()(
   immer((set, get) => ({
     selectedGame: null,
     gameMetaList: [],

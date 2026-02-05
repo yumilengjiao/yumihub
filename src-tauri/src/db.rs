@@ -89,6 +89,8 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
             thoughts Text
         );
 
+        -- 游戏的连携程序表
+
         CREATE TABLE IF NOT EXISTS companions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             -- 程序别名，如 "翻译程序"、"手柄映射"
@@ -101,12 +103,36 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
             trigger_mode TEXT NOT NULL DEFAULT 'game',
             -- 是否启用此程序的连携启动
             is_enabled INTEGER DEFAULT 1,
+            -- 窗口是否被程序控制
+            is_window_managed INTEGER DEFAULT 0,
             -- 排序权重，如果希望某些程序先启动
             sort_order INTEGER DEFAULT 0,
             -- 备注
             description TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
+
+        -- app的快捷键表
+        CREATE TABLE IF NOT EXISTS shortcut (
+        id TEXT PRIMARY KEY,          -- 唯一标识符 (如: "launch_last_game")
+        key_combo TEXT,               -- 绑定的键组合 (如: "Alt+Space", 为空表示未绑定)
+        is_global BOOLEAN DEFAULT 0   -- 是否为全局快捷键 (1 是, 0 仅应用内有效)
+        );
+
+        -- 初始化种子数据 (只在第一次执行时生效)
+        INSERT OR IGNORE INTO shortcut (id, key_combo, is_global) VALUES 
+        ('launch_last', 'Ctrl+L', 1),
+        ('confirm_launch', 'Enter', 0),
+        ('screenshot', 'CTRL+F12', 0),
+        -- 路由切换快捷键
+        ('nav_home', NULL, 0),
+        ('nav_library', NULL, 0),
+        ('nav_profile', NULL, 0),
+        ('nav_settings', NULL, 0),
+        -- 系统功能
+        ('boss_key', NULL, 1),
+        ('emergency_stop', NULL, 1);
+
 
         -- 用户信息表
         CREATE TABLE IF NOT EXISTS account (

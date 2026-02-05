@@ -2,6 +2,7 @@ import React, { useState, useRef, ChangeEvent } from 'react';
 import { SortAsc, SortDesc, Search, ArrowUpDown, Trash2, X, Clock, Type, CalendarDays } from 'lucide-react'; // 引入新图标
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { t } from '@lingui/core/macro'
 
 interface TopToolbarProps {
   isAsc: boolean
@@ -46,9 +47,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
 
   // 排序规则配置
   const sortOptions = [
-    { id: 'duration', label: '按游玩时长', icon: <Clock size={20} /> },
-    { id: 'name', label: '按名称排序', icon: <Type size={20} /> },
-    { id: 'lastPlayed', label: '按最后游玩', icon: <CalendarDays size={20} /> },
+    { id: 'duration', label: t`按游玩时长`, icon: <Clock size={20} /> },
+    { id: 'name', label: t`按名称排序`, icon: <Type size={20} /> },
+    { id: 'lastPlayed', label: t`按最后游玩`, icon: <CalendarDays size={20} /> },
   ] as const;
 
   return (
@@ -69,7 +70,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
       >
         <button
           onClick={handleToggleSearch}
-          className="w-20 h-20 flex-shrink-0 flex items-center justify-center text-zinc-900 active:scale-95 transition-all"
+          className=" w-20 h-20 shrink-0 flex items-center justify-center text-zinc-900 active:scale-95 transition-all"
         >
           {isSearchOpen ? (
             <X size={34} strokeWidth={2} className="text-zinc-500" />
@@ -95,6 +96,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
                   onSearchChange(e.target.value);
                 }}
                 placeholder="SEARCH..."
+                id='library-search'
                 className="w-full bg-transparent border-none outline-none text-2xl font-black text-zinc-900 placeholder:text-zinc-300 tracking-tighter"
               />
             </motion.div>
@@ -132,7 +134,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
                 </div>
               </button>
 
-              <div className="h-[1px] bg-zinc-100 my-2" />
+              <div className="h-px bg-zinc-100 my-2" />
               {sortOptions.map((opt) => (
                 <button
                   key={opt.id}

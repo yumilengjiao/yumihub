@@ -11,6 +11,7 @@
   "permissions": [
     "autostart:default",
     "autostart:allow-enable",
-    "autostart:allow-disable"
+    "autostart:allow-disable",
+    "global-shortcut:default"
   ]
 }

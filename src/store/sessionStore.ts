@@ -4,13 +4,13 @@ import { invoke } from "@tauri-apps/api/core";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-interface gameSesstionParam {
+interface gameSesstionParams {
   sessions: PlaySession[],
   fetchSessions: (year?: string) => Promise<void>,
   getSessions: () => PlaySession[]
 }
 
-const useSessionStore = create<gameSesstionParam>()(immer((set, get) => ({
+const useSessionStore = create<gameSesstionParams>()(immer((set, get) => ({
   sessions: [],
   async fetchSessions(year?: string) {
     const current_year = new Date().getFullYear().toString()

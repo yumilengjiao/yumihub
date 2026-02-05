@@ -54,6 +54,11 @@ pub struct GameScreenshot {
     pub created_at: Option<DateTime<Local>>,
 }
 
+// 游戏运行状态模型
+pub struct RunningGameStatus {
+    pub game_pid: u32,
+}
+
 #[derive(Clone, Debug)]
 pub enum GameEvent {
     // 用户资源任务

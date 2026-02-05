@@ -93,6 +93,16 @@ export enum Cmds {
   RESTORE_ARCHIVE_BY_ID = "restore_archive_by_id",
 
   /**
+   * 获取所有快捷键信息
+   */
+  GET_SHORTCUTS = "get_shortcuts",
+
+  /**
+   * 更新所有快捷键信息
+   */
+  UPDATE_SHORTCUTS = "update_shortcuts",
+
+  /**
    * 获取游戏启动路径
    */
   GET_START_UP_PATH = "get_start_up_path",

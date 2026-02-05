@@ -6,8 +6,14 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 
 use walkdir::WalkDir;
+use windows::core::BOOL;
 use zip::write::FileOptions;
 use zip::{ZipArchive, ZipWriter};
+
+use windows::Win32::Foundation::{HWND, LPARAM};
+use windows::Win32::UI::WindowsAndMessaging::{
+    EnumWindows, GetWindowThreadProcessId, ShowWindow, SW_HIDE, SW_SHOW,
+};
 
 use crate::error::AppError;
 
@@ -230,4 +236,48 @@ pub fn get_dir_size<P: AsRef<Path>>(path: P) -> u64 {
         .filter_map(|entry| entry.metadata().ok())
         .map(|meta| meta.len())
         .sum()
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------窗口工具相关--------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
+
+struct EnumParam {
+    pids: Vec<u32>,
+    show_cmd: windows::Win32::UI::WindowsAndMessaging::SHOW_WINDOW_CMD,
+}
+
+pub fn toggle_windows_by_pids(pids: Vec<u32>, visible: bool) {
+    let show_cmd = if visible { SW_SHOW } else { SW_HIDE };
+
+    // 把数据封装进结构体
+    let param = EnumParam { pids, show_cmd };
+
+    unsafe {
+        let _ = EnumWindows(
+            Some(enum_window_callback),
+            LPARAM(&param as *const _ as isize), // 传结构体的指针
+        );
+    }
+}
+
+/// 根据进程 PID 列表切换窗口显示或隐藏
+///
+/// * `pids`: 所有要操作窗口的pid
+/// * `visible`: 隐藏还是可见
+// 定义一个结构体用来传递多个参数
+unsafe extern "system" fn enum_window_callback(hwnd: HWND, lparam: LPARAM) -> BOOL {
+    // 还原结构体引用
+    let param = &*(lparam.0 as *const EnumParam);
+
+    let mut process_id = 0;
+    GetWindowThreadProcessId(hwnd, Some(&mut process_id));
+
+    if param.pids.contains(&process_id) {
+        // 使用结构体里带进来的指令（SW_SHOW 或 SW_HIDE）
+        ShowWindow(hwnd, param.show_cmd);
+    }
+    BOOL::from(true)
 }

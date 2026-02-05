@@ -5,16 +5,19 @@ import { cn } from "@/lib/utils"
 import useConfigStore from "@/store/configStore"
 import { i18n } from "@lingui/core"
 import { t } from "@lingui/core/macro"
-import { Plus, Settings2 } from "lucide-react"
+import { Keyboard, Plus, Settings2 } from "lucide-react"
 import { useState } from "react"
 import { CompanionManager } from "./CompanionManager"
+import { ShortcutManager } from "./ShortcutManager"
 
 export default function BaseSetting() {
-  // 性能优化：仅订阅需要的字段
+  // 基本设置的信息
   const basic = useConfigStore(s => s.config.basic)
   const { config, updateConfig } = useConfigStore()
-  // 控制全屏对话框状态
+  // 控制连携程序全屏对话框状态
   const [isCompanionManagerOpen, setIsCompanionManagerOpen] = useState(false)
+  // 控制快捷键全屏对话框状态
+  const [isShortcutManagerOpen, setIsShortcutManagerOpen] = useState(false)
 
   const updateBasic = (key: keyof typeof basic, val: any) => {
     updateConfig((draft) => {
@@ -37,22 +40,26 @@ export default function BaseSetting() {
   return (
     <CommonCard title={t`基础设置`} icon="🛠️">
       <div className="space-y-1">
+        {/* 开机自启动 */}
         <SwitchCard
           title={t`开机自启动`}
           checked={basic.autoStart}
           onCheckedChange={(v) => updateBasic('autoStart', v)}
         />
+        {/* 静默启动 */}
         <SwitchCard
           title={t`静默启动`}
           checked={basic.silentStart}
           onCheckedChange={(v) => updateBasic('silentStart', v)}
         />
+        {/* 语言选择 */}
         <SelectCard
           title={t`语言设置 / Language`}
           value={config.basic.language}
           options={langOpt}
           onValueChange={(v) => updateLanguage(v)}
         />
+        {/* 添加连携程序 */}
         <button
           onClick={() => setIsCompanionManagerOpen(true)}
           className={cn(
@@ -66,14 +73,32 @@ export default function BaseSetting() {
             <span className="text-2xl font-bold tracking-tight">{t`管理连携启动程序`}</span>
           </div>
           <Plus className="w-6 h-6 text-emerald-600" />
-        </button>      </div>
+        </button>
+        {/* 快捷键设置 */}
+        <button
+          onClick={() => setIsShortcutManagerOpen(true)}
+          className={cn(
+            "w-full h-16 mt-3! m flex items-center justify-between px-6 rounded-xl transition-all",
+            "bg-white border-2 hover:border-indigo-500 text-black hover:bg-indigo-50",
+            "active:scale-[0.98]"
+          )}
+        >
+          <div className="flex items-center gap-3">
+            <Keyboard className="w-6 h-6 text-indigo-600" />
+            <span className="text-2xl font-bold tracking-tight">配置系统快捷键</span>
+          </div>
+          <div className="bg-indigo-100 text-indigo-600 text-xs px-2 py-1 rounded-md font-bold">HOTKEY</div>
+        </button>
+      </div>
 
       {/* 连携程序管理对话框 */}
       {isCompanionManagerOpen && (
         <CompanionManager onClose={() => setIsCompanionManagerOpen(false)} />
       )}
+      {/* 快捷键管理对话框 */}
+      {isShortcutManagerOpen && (
+        <ShortcutManager onClose={() => setIsShortcutManagerOpen(false)} />
+      )}
     </CommonCard>
   );
 }
-
-

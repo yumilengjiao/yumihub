@@ -3,7 +3,7 @@
 use std::sync::Arc;
 
 use sqlx::{Pool, Sqlite};
-use tauri::{AppHandle,  Manager};
+use tauri::{AppHandle, Manager};
 use tauri_plugin_log::log::{debug, error, info};
 use tokio::sync::Semaphore;
 

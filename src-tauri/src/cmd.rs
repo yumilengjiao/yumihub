@@ -1,9 +1,6 @@
 //! 前端发送的所有调用请求命令在此定义，get方法只会调用state_system,
 use std::path::{Path, PathBuf};
-use std::process::Command;
-use std::time::Instant;
 
-use chrono::Local;
 use font_kit::source::SystemSource;
 use sqlx::{Pool, Sqlite, SqlitePool};
 use sqlx::{Row, Transaction};
@@ -11,10 +8,15 @@ use sysinfo::Disks;
 use tauri::{async_runtime, AppHandle, Manager, Runtime, State};
 use tauri_plugin_fs::FsExt;
 use tauri_plugin_log::log::{debug, error, info};
+use tauri_plugin_notification::NotificationExt;
 use uuid::Uuid;
 
 use crate::companion::entity::Companion;
+use crate::game::commands::execute_start_game;
 use crate::game::entity::{PlaySession, ResourceTarget};
+use crate::screenshot::commands::capture_game_screenshot;
+use crate::shortcut::entity::ShortcutSetting;
+use crate::shortcut::refresh_shortcuts;
 use crate::util::{extract_zip_sync, get_dir_size};
 use crate::{
     config::{
@@ -447,70 +449,7 @@ pub async fn delete_game_list(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppEr
 #[tauri::command]
 pub async fn start_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Result<(), AppError> {
     let pool_cl = pool.inner().clone();
-    let start_time = Local::now();
-    let start_instant = Instant::now();
-    let mut child = Command::new(&game.abs_path)
-        .spawn() // 异步启动，不阻塞主进程
-        .map_err(|e| AppError::Resolve(game.abs_path, e.to_string()))?;
-    // 启动异步监听在游戏结束时持久化数据
-    tauri::async_runtime::spawn(async move {
-        let res: Result<(), AppError> = async move {
-            let _ = child.wait().map_err(|e| AppError::Process(e.to_string()))?;
-            let duration = start_instant.elapsed();
-            let mut tx = pool_cl
-                .begin()
-                .await
-                .map_err(|e| AppError::DB(e.to_string()))?;
-
-            let _ = sqlx::query(
-                r#"
-                    insert into game_play_sessions
-                        (
-                            id,
-                            game_id,
-                            play_date,
-                            duration_minutes,
-                            last_played_at
-                        )
-                        VALUES (?,?,?,?,?);
-                    "#,
-            )
-            .bind(Uuid::new_v4().to_string())
-            .bind(&game.id)
-            .bind(start_time)
-            .bind((duration.as_secs() / 60) as i64)
-            .bind(Local::now())
-            .execute(&mut *tx)
-            .await
-            .map_err(|e| error!("数据库错误: {}", e));
-
-            let _ = sqlx::query(
-                r#"
-                UPDATE games 
-                SET 
-                    play_time = play_time + ?,
-                    last_played_at = ? 
-                WHERE id = ?
-                "#,
-            )
-            .bind((duration.as_secs() / 60) as i64) // 本次游玩的分钟数
-            .bind(Local::now())
-            .bind(&game.id)
-            .execute(&mut *tx)
-            .await
-            .map_err(|e| error!("更新游戏总时长失败: {}", e));
-            tx.commit()
-                .await
-                .unwrap_or_else(|e| error!("事务错误: {}", e));
-
-            Ok(())
-        }
-        .await;
-        if let Err(e) = res {
-            error!("监听时出现错误: {}", e);
-        }
-    });
-    Ok(())
+    execute_start_game(pool_cl, game).await
 }
 
 /// 获取所有游戏启动的会话记录
@@ -610,6 +549,134 @@ pub async fn update_config(config: Config) {
             error!("无法获取全局配置信息,无法更新配置,错误: {}", e);
         }
     }
+}
+
+// --------------------------------------------------------
+// -----------------------快捷键类-------------------------
+// --------------------------------------------------------
+#[tauri::command]
+/// 查询所有快捷键
+///
+/// * `pool`: 数据库连接池-自动注入
+pub async fn get_shortcuts(
+    pool: State<'_, Pool<Sqlite>>,
+) -> Result<Vec<ShortcutSetting>, AppError> {
+    let shortcuts =
+        sqlx::query_as::<_, ShortcutSetting>("SELECT id, key_combo, is_global FROM shortcut")
+            .fetch_all(pool.inner())
+            .await
+            .map_err(|e| AppError::DB(e.to_string()))?;
+
+    Ok(shortcuts)
+}
+
+/// 修改快捷键接口,直接更新所有快捷键
+///
+/// * `app_handle`: app句柄-自动注入
+/// * `pool`: 数据库连接池-自动注入
+/// * `shortcuts`: 所有快捷键
+#[tauri::command]
+pub async fn update_shortcuts(
+    app_handle: tauri::AppHandle,
+    pool: State<'_, SqlitePool>,
+    shortcuts: Vec<ShortcutSetting>,
+) -> Result<(), AppError> {
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+    for shortcut in shortcuts {
+        sqlx::query("UPDATE shortcut SET key_combo = ? WHERE id = ?")
+            .bind(&shortcut.key_combo)
+            .bind(&shortcut.id)
+            .execute(&mut *tx)
+            .await
+            .map_err(|e| AppError::DB(e.to_string()))?;
+    }
+    tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
+
+    // 更新完数据库后，刷新实机运行的监听
+    refresh_shortcuts(&app_handle).await?;
+
+    Ok(())
+}
+
+// --------------------------------------------------------
+// ----------------------连携程序类------------------------
+// --------------------------------------------------------
+
+/// 查询所有的连携程序信息
+///
+/// * `pool`: 数据库连接池-自动注入
+#[tauri::command]
+pub async fn get_companions(pool: State<'_, Pool<Sqlite>>) -> Result<Vec<Companion>, AppError> {
+    // 按 sort_order 从小到大排序，权重小的先启动
+    let rows = sqlx::query_as::<_, Companion>(
+        r#"
+        SELECT id, name, path, args, is_enabled, trigger_mode, sort_order, description 
+        FROM companions
+        "#,
+    )
+    .fetch_all(&*pool)
+    .await
+    .map_err(|e| AppError::DB(format!("数据库查询失败: {}", e)))?;
+
+    Ok(rows)
+}
+
+/// 更新所有连携程序信息
+///
+/// * `companions`: 连携程序
+/// * `pool`: 数据库连接池-自动注入
+#[tauri::command]
+pub async fn update_companions(
+    companions: Vec<Companion>,
+    pool: State<'_, Pool<Sqlite>>,
+) -> Result<(), AppError> {
+    // 开启事务
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    // 清空原有的所有连携程序数据
+    sqlx::query("DELETE FROM companions")
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::DB(format!("数据删除失败: {}", e)))?;
+
+    // 批量插入新数据
+    for item in companions {
+        sqlx::query(
+            r#"
+            INSERT INTO companions 
+            (
+                name,
+                path,
+                args,
+                is_enabled,
+                trigger_mode,
+                sort_order,
+                description
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            "#,
+        )
+        .bind(item.name)
+        .bind(item.path)
+        .bind(item.args)
+        .bind(item.is_enabled)
+        .bind(item.trigger_mode)
+        .bind(item.sort_order)
+        .bind(item.description)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::DB(format!("数据更新失败: {}", e)))?;
+    }
+
+    tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
+
+    Ok(())
 }
 
 // --------------------------------------------------------
@@ -888,79 +955,5 @@ pub async fn authorize_path_access<R: Runtime>(
         .execute(pool.inner())
         .await
         .map_err(|e| AppError::DB(format!("数据库记录权限失败: {}", e)))?;
-    Ok(())
-}
-
-/// 查询所有的连携程序信息
-///
-/// * `pool`: 数据库连接池-自动注入
-#[tauri::command]
-pub async fn get_companions(pool: State<'_, Pool<Sqlite>>) -> Result<Vec<Companion>, AppError> {
-    // 按 sort_order 从小到大排序，权重小的先启动
-    let rows = sqlx::query_as::<_, Companion>(
-        r#"
-        SELECT id, name, path, args, is_enabled, trigger_mode, sort_order, description 
-        FROM companions
-        "#,
-    )
-    .fetch_all(&*pool)
-    .await
-    .map_err(|e| AppError::DB(format!("数据库查询失败: {}", e)))?;
-
-    Ok(rows)
-}
-
-/// 更新所有连携程序信息
-///
-/// * `companions`: 连携程序
-/// * `pool`: 数据库连接池-自动注入
-#[tauri::command]
-pub async fn update_companions(
-    companions: Vec<Companion>,
-    pool: State<'_, Pool<Sqlite>>,
-) -> Result<(), AppError> {
-    // 开启事务
-    let mut tx = pool
-        .begin()
-        .await
-        .map_err(|e| AppError::DB(e.to_string()))?;
-
-    // 清空原有的所有连携程序数据
-    sqlx::query("DELETE FROM companions")
-        .execute(&mut *tx)
-        .await
-        .map_err(|e| AppError::DB(format!("数据删除失败: {}", e)))?;
-
-    // 批量插入新数据
-    for item in companions {
-        sqlx::query(
-            r#"
-            INSERT INTO companions 
-            (
-                name,
-                path,
-                args,
-                is_enabled,
-                trigger_mode,
-                sort_order,
-                description
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            "#,
-        )
-        .bind(item.name)
-        .bind(item.path)
-        .bind(item.args)
-        .bind(item.is_enabled)
-        .bind(item.trigger_mode)
-        .bind(item.sort_order)
-        .bind(item.description)
-        .execute(&mut *tx)
-        .await
-        .map_err(|e| AppError::DB(format!("数据更新失败: {}", e)))?;
-    }
-
-    tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
-
     Ok(())
 }

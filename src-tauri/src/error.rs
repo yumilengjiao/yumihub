@@ -36,4 +36,7 @@ pub enum AppError {
 
     #[error("进程错误: {0}")]
     Process(String),
+
+    #[error("错误: {0}")]
+    Generic(String),
 }

@@ -15,6 +15,7 @@ import useConfigStore from "@/store/configStore";
 import { Config } from "@/types/config";
 import { cn } from "@/lib/utils";
 import { i18n } from "@lingui/core"
+import { useShortcutHandler } from "@/hooks/useShortcutr";
 
 export default function Layout() {
   const { setUser } = useUserStore()
@@ -23,6 +24,7 @@ export default function Layout() {
   const fontFamily = useConfigStore(c => c.config.interface.fontFamily)
   const sidebarMode = useConfigStore(c => c.config.interface.sidebarMode) || "Trigger"
 
+  useShortcutHandler()
   /**
    * 获取所有的游戏信息
    */
