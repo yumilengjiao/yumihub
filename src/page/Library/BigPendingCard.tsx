@@ -183,19 +183,19 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
       transition={{ type: "spring", stiffness: 400, damping: 40 }}
       className="fixed top-12 left-1/2 z-100 w-[95%] max-w-6xl pointer-events-none"
     >
-      <div className="pointer-events-auto bg-white shadow-2xl rounded-[32px] overflow-hidden border border-zinc-100 flex flex-col">
+      <div className="pointer-events-auto bg-zinc-100 dark:bg-zinc-800 shadow-2xl rounded-[32px] overflow-hidden border border-zinc-100/20 flex flex-col">
 
         {/* --- Header --- */}
-        <div className="h-20 px-8 flex items-center justify-between gap-10 shrink-0 bg-white relative z-30">
+        <div className="h-20 px-8 flex items-center justify-between gap-10 shrink-0 bg-zinc-100 dark:bg-zinc-800 relative z-30">
           <div className="flex items-center gap-5 flex-1 min-w-0">
             <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center text-white shrink-0">
               <FileText size={28} strokeWidth={2.5} />
             </div>
             <div className="min-w-0">
-              <h2 className="text-2xl font-black text-zinc-900 leading-none tracking-tighter uppercase truncate">
+              <h2 className="text-2xl font-black dark:text-foreground/80 leading-none tracking-tighter uppercase truncate">
                 {displayInfo?.title || extractedName}
               </h2>
-              <p className="text-zinc-400 font-mono text-[10px] truncate mt-1.5 font-bold opacity-60">
+              <p className="text-zinc-600 dark:text-zinc-200 font-mono text-[10px] truncate mt-1.5 font-bold opacity-60">
                 {absPath}
               </p>
             </div>
@@ -204,18 +204,18 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
           <div className="flex items-center gap-2 shrink-0">
             <AnimatePresence mode="wait">
               {isFetching ? (
-                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-3 bg-zinc-50 border border-zinc-100 py-2 px-5 rounded-xl">
+                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-3 bg-zinc-200 border border-zinc-100 py-2 px-5 rounded-xl">
                   <Loader2 className="animate-spin text-zinc-900" size={20} strokeWidth={4} />
                   <span className="font-black text-xs text-zinc-900 tracking-widest uppercase">Matching...</span>
                   <Button variant="ghost" size="icon" onClick={handleCancelAll} className="w-8 h-8 rounded-full"><X size={16} /></Button>
                 </motion.div>
               ) : !resultData ? (
                 <motion.div key="btns" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-2">
-                  <Button variant="ghost" onClick={handleCancelAll} className="h-12 px-5 text-sm font-black text-zinc-400"><Trans>取消</Trans></Button>
-                  <Button onClick={handleFetchMetadata} variant="outline" className="h-12 px-7 border-2 border-zinc-100 rounded-xl font-black text-sm gap-2">
+                  <Button variant="ghost" onClick={handleCancelAll} className="h-12 px-5 text-sm rounded-2xl font-black text-zinc-400"><Trans>取消</Trans></Button>
+                  <Button onClick={handleFetchMetadata} className="h-12 px-8 dark:bg-zinc-200 rounded-xl text-sm gap-2">
                     <Search size={18} strokeWidth={3} /><Trans> 匹配元数据</Trans>
                   </Button>
-                  <Button onClick={() => handleFinalConfirm(false)} className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-black text-sm gap-2 shadow-lg">
+                  <Button onClick={() => handleFinalConfirm(false)} className="h-12 px-8 dark:bg-zinc-200 rounded-xl text-sm gap-2">
                     <Check size={18} strokeWidth={3} /><Trans> 直接确认</Trans>
                   </Button>
                 </motion.div>
@@ -231,36 +231,36 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
         {/* --- Content Area --- */}
         <AnimatePresence>
           {resultData && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="px-8 pb-10 pt-4 border-t-2 border-zinc-50">
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="px-8 pb-10 pt-4 ">
               <div className="flex gap-10">
                 <div className="w-64 flex flex-col gap-4 shrink-0">
-                  <div className="w-64 h-80 rounded-[32px] overflow-hidden shadow-2xl border-4 border-white bg-zinc-100">
+                  <div className="w-64 h-80 rounded-[32px] overflow-hidden shadow-2xl border-3 dark:border-zinc-600 bg-zinc-900">
                     {displayInfo?.cover ? (
                       <img src={displayInfo.cover} className="w-full h-full object-cover" alt="cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-zinc-300 font-black">NO COVER</div>
+                      <div className="w-full h-full flex items-center justify-center text-zinc-900 font-black">NO COVER</div>
                     )}
                   </div>
-                  <div className="flex gap-2 p-2 bg-zinc-50 rounded-2xl border border-zinc-100">
+                  <div className="flex gap-2 p-2 bg-zinc-300 dark:bg-zinc-700 rounded-2xl border border-zinc-100/20">
                     <Input
                       placeholder="ID..."
                       value={searchId}
                       onChange={(e) => setSearchId(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleIdSearch()}
-                      className="h-9 bg-white border-none text-xs font-bold focus-visible:ring-0"
+                      className="h-9 bg-zinc-300 dark:bg-zinc-700 border-none text-xs font-bold focus-visible:ring-0"
                     />
-                    <Button size="icon" onClick={handleIdSearch} className="h-9 w-9 bg-zinc-900 shrink-0">
-                      {isUpdating ? <Loader2 className="animate-spin text-white" size={14} /> : <RefreshCw size={14} className="text-white" />}
+                    <Button size="icon" onClick={handleIdSearch} className="h-9 w-9 rounded-2xl bg-zinc-300 dark:bg-zinc-700 shrink-0">
+                      {isUpdating ? <Loader2 className="animate-spin text-zinc-900 dark:text-white hover:text-zinc-900" size={14} /> : <RefreshCw size={14} className="text-zinc-900 dark:text-foreground" />}
                     </Button>
                   </div>
                 </div>
 
                 <div className="flex-1 flex flex-col min-w-0 h-100">
                   <div className="flex justify-between items-start mb-5 shrink-0">
-                    <h3 className="text-4xl font-black text-zinc-900 leading-none tracking-tighter uppercase italic flex-1 pr-4 truncate">
+                    <h3 className="text-4xl font-black text-zinc-900 dark:text-foreground leading-none tracking-tighter uppercase italic flex-1 pr-4 truncate">
                       {displayInfo?.title || t`未找到匹配数据`}
                     </h3>
-                    <div className="flex bg-zinc-100 p-1.5 rounded-xl shrink-0">
+                    <div className="flex bg-zinc-300 dark:bg-zinc-700 p-1.5 rounded-xl shrink-0">
                       {['bangumi', 'vndb', 'ymgal'].map(src => (
                         <button key={src} onClick={() => { setActiveSource(src as any); setSearchId(''); }} className={cn("px-4 py-2 text-[10px] font-black rounded-lg uppercase transition-all", activeSource === src ? "bg-white shadow-sm text-zinc-900" : "text-zinc-400")}>{src}</button>
                       ))}
@@ -268,12 +268,12 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
                   </div>
 
                   <div className="flex-1 min-h-0 mb-8 relative">
-                    <ScrollArea className="h-full bg-zinc-50/50 rounded-[24px] p-6 border border-zinc-100/50 overflow-hidden">
+                    <ScrollArea className="h-full bg-zinc-300 dark:bg-zinc-800 rounded-[10px] p-6 border border-zinc-100/10 overflow-hidden">
                       <AnimatePresence mode="wait">
                         <motion.p
                           key={activeSource}
                           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                          className="text-base leading-relaxed text-zinc-500 font-bold italic w-full break-all whitespace-pre-wrap"
+                          className="text-base leading-relaxed text-zinc-700 dark:text-foreground font-bold italic w-full break-all whitespace-pre-wrap"
                         >
                           {displayInfo?.desc || t`暂无详细介绍`}
                         </motion.p>

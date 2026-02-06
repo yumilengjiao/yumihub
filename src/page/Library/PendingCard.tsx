@@ -238,44 +238,44 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-zinc-950/60 backdrop-blur-xl p-8" onClick={onCancel}>
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-zinc-800/50 backdrop-blur-xl p-8" onClick={onCancel}>
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-6xl bg-white shadow-2xl rounded-[52px] flex flex-col h-[88vh] overflow-hidden relative">
 
         {/* Header */}
-        <div className="px-12 py-10 flex items-center justify-between bg-white relative z-50">
+        <div className="px-12 py-10 flex items-center justify-between bg-zinc-300 dark:bg-zinc-900 relative z-50">
           <div className="flex items-center gap-6">
             <div className="w-16 h-16 bg-zinc-900 rounded-[22px] flex items-center justify-center text-white"><ListChecks size={32} /></div>
             <div>
               <h2 className="text-4xl font-black italic tracking-tighter uppercase leading-none"><Trans>批量导入确认</Trans></h2>
-              <p className="text-zinc-400 font-bold text-[10px] mt-2 uppercase opacity-60 italic"><Trans>{items.length} 个项目就绪</Trans></p>
+              <p className="text-zinc-500 font-bold text-[10px] mt-2 uppercase opacity-60 italic"><Trans>{items.length} 个项目就绪</Trans></p>
             </div>
           </div>
           <Button variant="ghost" onClick={onCancel} className="h-16 px-6 rounded-2xl group flex items-center gap-4 hover:bg-red-50">
             <div className="flex flex-col items-end leading-none"><span className="text-[9px] font-black text-zinc-400 uppercase">Cancel</span><span className="text-xl font-black italic text-zinc-500 group-hover:text-red-500">取消操作</span></div>
-            <X size={32} className="text-zinc-300 group-hover:text-red-500" />
+            <X size={32} className="text-zinc-800 dark:text-zinc-300 group-hover:text-red-500" />
           </Button>
         </div>
 
-        <div className="h-1.5 w-full bg-zinc-50 relative z-50">
+        <div className="h-1.5 w-full bg-zinc-100 dark:bg-zinc-800 relative z-50">
           <motion.div animate={{ width: `${matchProgress}%` }} className="h-full bg-violet-600 shadow-[0_0_15px_rgba(124,58,237,0.5)]" />
         </div>
 
         <div className="flex-1 min-h-0 relative z-10">
-          <ScrollArea className="h-full px-12 pt-6">
+          <ScrollArea className="h-full px-12 pt-6 bg-zinc-100 dark:bg-zinc-800">
             <div className="grid grid-cols-1 gap-5 pb-10">
               {items.map((item) => {
                 const meta = transformToGameMeta(item);
                 return (
-                  <div key={item.id} className="bg-zinc-50/80 rounded-[40px] border border-zinc-100 overflow-hidden hover:bg-white transition-all duration-300 group/card">
+                  <div key={item.id} className="rounded-[40px] border border-zinc-800/50 overflow-hidden hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-all duration-300 group/card">
                     <div className="p-6 flex items-center gap-7 cursor-pointer" onClick={() => setItems(prev => prev.map(it => it.id === item.id ? { ...it, expanded: !it.expanded } : it))}>
-                      <div className="w-16 h-16 shrink-0 rounded-2xl bg-zinc-200 overflow-hidden border-2 border-white shadow-sm">
-                        {meta.cover ? <img src={meta.cover} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-400"><FileCode size={24} /></div>}
+                      <div className="w-16 h-16 shrink-0 rounded-2xl bg-zinc-200 dark:bg-zinc-800 overflow-hidden border-2 border-white shadow-sm">
+                        {meta.cover ? <img src={meta.cover} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-900 dark:text-zinc-200"><FileCode size={24} /></div>}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-black text-zinc-900 text-2xl truncate italic uppercase tracking-tighter">{meta.name}</h4>
-                        <div className="flex items-center gap-2 px-3 py-1 mt-1 bg-white/50 border border-zinc-200 rounded-lg w-fit">
-                          <HardDrive size={12} className="text-zinc-400" />
-                          <span className="text-[10px] font-mono text-zinc-400 truncate max-w-100">{item.exePath}</span>
+                        <h4 className="font-black text-zinc-900 dark:text-zinc-100 text-2xl truncate italic uppercase tracking-tighter">{meta.name}</h4>
+                        <div className="flex items-center gap-2 px-3 py-1 mt-1 bg-zinc-200 dark:bg-zinc-700 border border-zinc-200/20 rounded-lg w-fit">
+                          <HardDrive size={12} className="text-zinc-900 dark:text-zinc-200" />
+                          <span className="text-[10px] font-mono text-zinc-800 dark:text-zinc-400 truncate max-w-100">{item.exePath}</span>
                         </div>
                       </div>
                       <div className="shrink-0 flex items-center gap-4">
@@ -288,21 +288,21 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                       {item.expanded && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
                           <div className="px-8 pb-8 pt-2 flex gap-8">
-                            <div className="w-44 h-60 shrink-0 rounded-[32px] bg-zinc-100 overflow-hidden shadow-2xl border-4 border-white">
+                            <div className="w-44 h-60 shrink-0 rounded-[24px] bg-zinc-200 dark:bg-zinc-700 overflow-hidden shadow-2xl border-3 border-white">
                               {meta.cover ? <img src={meta.cover} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-300 font-black">NO COVER</div>}
                             </div>
 
                             <div className="flex-1 flex flex-col gap-5 min-w-0">
                               <div className="flex items-center justify-between gap-4">
-                                <div className="flex bg-zinc-100 p-1.5 rounded-2xl flex-none">
+                                <div className="flex bg-zinc-200 dark:bg-zinc-600 p-1.5 rounded-2xl flex-none">
                                   {['bangumi', 'vndb', 'ymgal'].map(src => (
-                                    <button key={src} onClick={(e) => { e.stopPropagation(); setItems(prev => prev.map(it => it.id === item.id ? { ...it, activeSource: src as any } : it)); }} className={cn("px-5 py-2 text-[11px] font-black rounded-xl uppercase transition-all", item.activeSource === src ? "bg-white shadow-sm text-zinc-900" : "text-zinc-400 hover:text-zinc-600")}>{src}</button>
+                                    <button key={src} onClick={(e) => { e.stopPropagation(); setItems(prev => prev.map(it => it.id === item.id ? { ...it, activeSource: src as any } : it)); }} className={cn("px-5 py-2 text-[11px] font-black rounded-xl uppercase transition-all", item.activeSource === src ? "bg-white shadow-sm text-zinc-900" : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-900")}>{src}</button>
                                   ))}
                                 </div>
 
-                                <div className="flex-none w-60 flex gap-2 p-1.5 bg-zinc-100 rounded-2xl border border-zinc-200/50">
+                                <div className="flex-none w-60 flex gap-2 p-1.5 bg-zinc-200 dark:bg-zinc-600 rounded-2xl border border-zinc-200/20">
                                   <input
-                                    className="bg-transparent border-none outline-none flex-1 px-3 text-xs font-bold text-zinc-600 placeholder:text-zinc-400 min-w-0"
+                                    className="bg-transparent border-none outline-none flex-1 px-3 text-xs font-bold text-zinc-800 dark:text-zinc-100 placeholder:text-zinc-400 min-w-0"
                                     placeholder={`${item.activeSource.toUpperCase()} ID...`}
                                     value={item.idInput}
                                     onClick={(e) => e.stopPropagation()}
@@ -319,12 +319,12 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                                   </Button>
                                 </div>
 
-                                <Button variant="outline" onClick={(e) => { e.stopPropagation(); open({ filters: [{ name: 'Exe', extensions: ['exe'] }] }).then(p => p && setItems(prev => prev.map(it => it.id === item.id ? { ...it, exePath: p.toString().replace(/\\/g, '/') } : it))); }} className="flex-none rounded-xl border-violet-100 text-violet-600 font-black px-6 hover:bg-violet-50">修正路径</Button>
+                                <Button variant="outline" onClick={(e) => { e.stopPropagation(); open({ filters: [{ name: 'Exe', extensions: ['exe'] }] }).then(p => p && setItems(prev => prev.map(it => it.id === item.id ? { ...it, exePath: p.toString().replace(/\\/g, '/') } : it))); }} className="flex-none rounded-xl border-violet-100 text-violet-500 font-black px-6 hover:bg-violet-50">修正路径</Button>
                               </div>
 
-                              <ScrollArea className="flex-1 bg-white rounded-[32px] p-6 border border-zinc-100 shadow-inner h-32">
-                                {/* 这里直接展示 meta.description，它会随源切换动态改变 */}
-                                <p className="text-sm font-bold text-zinc-500 italic leading-relaxed">{meta.description}</p>
+                              <ScrollArea className="flex-1 bg-zinc-100 dark:bg-zinc-600 rounded-2xl p-6 border border-zinc-100/20 shadow-inner h-32">
+                                {/* 展示 meta.description */}
+                                <p className="text-sm font-bold text-zinc-600 dark:text-zinc-200 italic leading-relaxed">{meta.description}</p>
                               </ScrollArea>
                             </div>
                           </div>
@@ -339,7 +339,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-12 py-10 bg-white border-t-2 border-zinc-50 flex items-center gap-8 shrink-0 relative z-100 shadow-[0_-20px_50px_rgba(255,255,255,1)]">
+        <div className="px-12 py-10 bg-zinc-100 dark:bg-zinc-800  flex items-center gap-8 shrink-0 relative z-100">
           <Button onClick={handleGlobalMatch} disabled={isGlobalMatching} className={cn("h-24 flex-1 rounded-[36px] font-black text-3xl gap-4 border-none shadow-none", isGlobalMatching ? "bg-violet-100 text-violet-400 opacity-100" : "bg-violet-600 text-white hover:bg-violet-700")}>
             {isGlobalMatching ? <div className="flex items-center gap-4"><Loader2 className="animate-spin" size={36} /><span className="text-4xl font-black">{matchProgress}%</span></div> : <><Search size={36} strokeWidth={4} /><Trans>匹配元数据</Trans></>}
           </Button>

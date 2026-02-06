@@ -38,20 +38,8 @@ export default function BaseSetting() {
   ];
 
   return (
-    <CommonCard title={t`基础设置`} icon="🛠️">
+    <CommonCard title={t`基础设置`} icon="🛠️" className="dark:bg-zinc-800">
       <div className="space-y-1">
-        {/* 开机自启动 */}
-        <SwitchCard
-          title={t`开机自启动`}
-          checked={basic.autoStart}
-          onCheckedChange={(v) => updateBasic('autoStart', v)}
-        />
-        {/* 静默启动 */}
-        <SwitchCard
-          title={t`静默启动`}
-          checked={basic.silentStart}
-          onCheckedChange={(v) => updateBasic('silentStart', v)}
-        />
         {/* 语言选择 */}
         <SelectCard
           title={t`语言设置 / Language`}
@@ -64,8 +52,8 @@ export default function BaseSetting() {
           onClick={() => setIsCompanionManagerOpen(true)}
           className={cn(
             "w-full h-16 mt-4 flex items-center justify-between px-6 rounded-xl transition-all",
-            "bg-white border-2 hover:border-emerald-500 text-black hover:bg-emerald-50 ",
-            "active:scale-[0.98]"
+            "bg-white border-2 hover:border-emerald-500 text-zinc-950 dark:text-zinc-100 hover:bg-emerald-50 ",
+            "active:scale-[0.98] dark:bg-zinc-800"
           )}
         >
           <div className="flex items-center gap-3">
@@ -78,9 +66,9 @@ export default function BaseSetting() {
         <button
           onClick={() => setIsShortcutManagerOpen(true)}
           className={cn(
-            "w-full h-16 mt-3! m flex items-center justify-between px-6 rounded-xl transition-all",
-            "bg-white border-2 hover:border-indigo-500 text-black hover:bg-indigo-50",
-            "active:scale-[0.98]"
+            "w-full h-16 mt-3! mb-3! flex items-center justify-between px-6 rounded-xl transition-all",
+            "bg-white border-2 hover:border-indigo-500 text-zinc-950 dark:text-zinc-100 hover:bg-indigo-50",
+            "active:scale-[0.98] dark:bg-zinc-800"
           )}
         >
           <div className="flex items-center gap-3">
@@ -89,6 +77,19 @@ export default function BaseSetting() {
           </div>
           <div className="bg-indigo-100 text-indigo-600 text-xs px-2 py-1 rounded-md font-bold">HOTKEY</div>
         </button>
+        {/* 开机自启动 */}
+        <SwitchCard
+          className="mb-3!"
+          title={t`开机自启动`}
+          checked={basic.autoStart}
+          onCheckedChange={(v) => updateBasic('autoStart', v)}
+        />
+        {/* 静默启动 */}
+        <SwitchCard
+          title={t`静默启动`}
+          checked={basic.silentStart}
+          onCheckedChange={(v) => updateBasic('silentStart', v)}
+        />
       </div>
 
       {/* 连携程序管理对话框 */}

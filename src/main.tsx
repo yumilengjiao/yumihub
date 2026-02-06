@@ -10,6 +10,7 @@ import { messages as enMessages } from "./locales/en/messages";
 import { messages as jaMessages } from "./locales/ja/messages";
 import { messages as koMessages } from "./locales/ko/messages";
 import './index.css'
+import './style/custom.css'
 
 i18n.load({
   zh: zhMessages,

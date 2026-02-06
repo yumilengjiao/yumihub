@@ -56,28 +56,28 @@ export function ShortcutManager({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-100 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-300"
+      className="fixed inset-0 z-100 bg-black/40 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div
         className={cn(
-          "bg-white border border-zinc-200 w-full max-w-4xl max-h-[80vh] rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.2)] flex flex-col overflow-hidden animate-in zoom-in-95 duration-300"
+          "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 w-full max-w-4xl max-h-[80vh] rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.2)] flex flex-col overflow-hidden animate-in zoom-in-95 duration-300"
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header - 白色背景 + 翡翠绿装饰 */}
-        <div className="px-10 py-7 border-b border-zinc-100 flex items-center justify-between bg-emerald-50/30">
+        <div className="px-10 py-7 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-emerald-50/30 dark:bg-emerald-950/10">
           <div className="flex items-center gap-5">
             <div className="p-4 bg-emerald-500/10 rounded-2xl">
-              <Keyboard className="w-8 h-8 text-emerald-600" />
+              <Keyboard className="w-8 h-8 text-emerald-600 dark:text-emerald-500" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-zinc-900 tracking-tight"><Trans>快捷键设置</Trans></h2>
-              <p className="text-zinc-500 text-sm font-medium"><Trans>配置您的操作偏好，提升启动效率</Trans></p>
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight"><Trans>快捷键设置</Trans></h2>
+              <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium"><Trans>配置您的操作偏好，提升启动效率</Trans></p>
             </div>
           </div>
-          <button onClick={onClose} className="p-3 hover:bg-zinc-100 rounded-full transition-colors group">
-            <X className="w-6 h-6 text-zinc-400 group-hover:text-zinc-900" />
+          <button onClick={onClose} className="p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors group">
+            <X className="w-6 h-6 text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100" />
           </button>
         </div>
 
@@ -103,18 +103,18 @@ export function ShortcutManager({ onClose }: { onClose: () => void }) {
                 className={cn(
                   "flex items-center justify-between p-5 rounded-[1.5rem] border transition-all duration-300",
                   isRecording
-                    ? "border-emerald-500 bg-emerald-50 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
-                    : "border-zinc-100 bg-zinc-50/50 hover:border-emerald-200 hover:bg-white"
+                    ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
+                    : "border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 hover:border-emerald-200 dark:hover:border-emerald-800 hover:bg-white dark:hover:bg-zinc-800/60"
                 )}
               >
                 <div className="flex-1 pr-10">
                   <div className="flex items-center gap-3">
-                    <span className="text-base font-bold text-zinc-800">{info?.name || s.id}</span>
+                    <span className="text-base font-bold text-zinc-800 dark:text-zinc-200">{info?.name || s.id}</span>
                     {s.isGlobal && (
-                      <span className="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-md font-black uppercase tracking-widest">Global</span>
+                      <span className="px-2 py-0.5 text-[10px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 rounded-md font-black uppercase tracking-widest">Global</span>
                     )}
                   </div>
-                  <p className="text-zinc-500 text-sm mt-1">{info?.desc || "暂无详细描述"}</p>
+                  <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-1">{info?.desc || "暂无详细描述"}</p>
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -124,7 +124,7 @@ export function ShortcutManager({ onClose }: { onClose: () => void }) {
                       "min-w-44 h-12 px-6 rounded-2xl font-mono text-sm font-black border-2 transition-all",
                       isRecording
                         ? "bg-emerald-600 border-emerald-500 text-white animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                        : "bg-white border-zinc-200 text-emerald-600 hover:border-emerald-500 hover:shadow-sm"
+                        : "bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-emerald-600 dark:text-emerald-400 hover:border-emerald-500 hover:shadow-sm"
                     )}
                   >
                     {isRecording ? t`请录制按键...` : (s.keyCombo || t`未绑定`)}
@@ -132,7 +132,7 @@ export function ShortcutManager({ onClose }: { onClose: () => void }) {
 
                   <button
                     onClick={() => setLocalShortcuts(prev => prev.map(item => item.id === s.id ? { ...item, keyCombo: null } : item))}
-                    className="p-3 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 rounded-2xl transition-all"
+                    className="p-3 text-zinc-400 dark:text-zinc-500 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-2xl transition-all"
                   >
                     <RotateCcw className="w-5 h-5" />
                   </button>
@@ -143,10 +143,10 @@ export function ShortcutManager({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Footer */}
-        <div className="px-10 py-6 border-t border-zinc-100 bg-zinc-50/50 flex justify-end items-center gap-6">
+        <div className="px-10 py-6 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 flex justify-end items-center gap-6">
           <button
             onClick={onClose}
-            className="text-zinc-500 hover:text-zinc-900 font-bold transition-colors"
+            className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 font-bold transition-colors"
           >
             <Trans>放弃修改</Trans>
           </button>

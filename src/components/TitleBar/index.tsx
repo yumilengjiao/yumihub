@@ -15,8 +15,13 @@ const closeWindow = (window: Window) => {
   window.close()
 }
 const switchTheme = () => {
-  const html = document.documentElement
-}
+  const html = document.documentElement;
+  if (html.classList.contains('dark')) {
+    html.classList.remove('dark');
+  } else {
+    html.classList.add('dark');
+  }
+};
 
 
 export default function index() {
@@ -57,7 +62,7 @@ export default function index() {
         "relative flex justify-end pl-8 pr-5 rounded-bl-[70px]",
         "bg-background/40 backdrop-blur-sm cursor-default"
       )}>
-        <MainButton onClick={() => alert("nihao")}>
+        <MainButton onClick={() => switchTheme()}>
           <LampCeiling className="h-full w-auto block" />
         </MainButton>
 

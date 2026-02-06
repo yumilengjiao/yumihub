@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { open } from "@tauri-apps/plugin-dialog";
 import { Trans } from "@lingui/react/macro";
-import {t} from "@lingui/core/macro"
+import { t } from "@lingui/core/macro"
 
 interface PathCardProps {
   title: string;
@@ -34,9 +34,9 @@ export function PathCard({ title, path, onSelect, className }: PathCardProps) {
   };
 
   return (
-    <div className={cn("flex items-center justify-between gap-8 p-6 rounded-[24px] hover:bg-zinc-50 transition-all", className)}>
+    <div className={cn("flex items-center justify-between gap-8 p-6 rounded-[24px] hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-all", className)}>
       <div className="flex flex-col space-y-1 overflow-hidden">
-        <Label className="text-2xl font-bold tracking-tight text-zinc-900">{title}</Label>
+        <Label className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">{title}</Label>
         {/* 路径通常很长，增加提示和截断 */}
         <p className="text-sm text-zinc-400 font-mono truncate" title={path}>
           {path || t`尚未选择路径...`}

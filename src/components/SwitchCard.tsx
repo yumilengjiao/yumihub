@@ -24,10 +24,9 @@ export function SwitchCard({
       <div className="flex items-center gap-5">
 
         <div className="flex flex-col space-y-2">
-          <Label className="text-4xl font-bold tracking-tight text-zinc-900 cursor-pointer" htmlFor={title}>
+          <Label className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-zinc-100 cursor-pointer" htmlFor={title}>
             {title}
           </Label>
-          {/* 4. 描述变大：从 text-xs 变为 text-base */}
           {description && (
             <p className="text-base text-zinc-400">
               {description}

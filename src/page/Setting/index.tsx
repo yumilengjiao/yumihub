@@ -26,7 +26,7 @@ const itemVariants: Variants = {
 
 export default function Setting() {
   return (
-    <div className="h-full w-full bg-zinc-50 overflow-y-auto pt-28 pb-20">
+    <div className="h-full w-full bg-zinc-200 dark:bg-zinc-900 overflow-y-auto pt-28 pb-20">
       <motion.div
         variants={containerVariants}
         initial="hidden"

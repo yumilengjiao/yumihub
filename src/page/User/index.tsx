@@ -3,7 +3,6 @@ import GameJourney from "./GameJourney";
 import MoreOptions from "@/components/MoreOption";
 import ProfileHeader from "./ProfileHeader";
 import Radar from "./Radar";
-import { Avatar } from "@/components/SideBar/Avatar"
 import ToolBox from "./Tool";
 import CommonCard from "@/components/CommonCard"
 import { CircleEllipsis, Clock, Trophy, X } from "lucide-react"
@@ -59,7 +58,7 @@ export default function User() {
   }, [])
 
   return (
-    <div className="h-full flex justify-center items-center bg-zinc-300 px-4">
+    <div className="h-full flex justify-center items-center bg-zinc-200 dark:bg-zinc-900 px-4">
       {/* ------------各种对话框组件------------- */}
       <EditUserInfoDialog isOpen={isEditingUser} onClose={() => setIsEditingUser(false)} />
 
@@ -90,12 +89,11 @@ export default function User() {
 
       <div className="flex h-[90vh] w-[93vw] gap-4 mt-3">
         {/* 左侧长条卡片 (头像/成就/时间) */}
-        <CommonCard className="w-35 h-full flex flex-col">
+        <CommonCard className="w-35 h-full flex flex-col dark:bg-zinc-800">
           <div className="w-full h-full flex flex-col justify-between">
             <div className="w-full flex flex-col gap-6">
-              <Avatar className="w-full h-auto" />
-              <div className="@container inline-size! w-full">
-                <Trophy className="w-full h-auto" />
+              <div className="@container inline-size! w-full pt-10">
+                <Trophy className="w-full h-auto text-blue-500" />
                 <div className={cn(
                   "w-full text-center mt-2",
                   "text-[clamp(1rem,30cqw,5rem)]",
@@ -105,7 +103,7 @@ export default function User() {
                 </div>
               </div>
               <div className="@container inline-size! w-full">
-                <Clock className="w-full h-auto" />
+                <Clock className="w-full h-auto text-amber-500" />
                 <div className={cn(
                   "w-full text-center mt-2",
                   "text-[clamp(1rem,30cqw,5rem)]",
@@ -125,18 +123,18 @@ export default function User() {
         <div className="flex-1 grid grid-cols-9 grid-rows-7 gap-4">
 
           {/* 顶部个人信息 (占 2 列) */}
-          <CommonCard title="Profile" className="col-span-6 row-span-2" headerAction={
+          <CommonCard title="Profile" className="col-span-6 row-span-2 bg-background dark:bg-zinc-800" headerAction={
             <MoreOptions entries={[{ entryName: t`修改信息`, entryFunc: () => handleUserInfo() }]} />
           }>
             <ProfileHeader username={user?.userName || "user"} />
           </CommonCard>
 
           {/* 右上角黑色卡片 */}
-          <CommonCard title={t`信息和工具`} className="bg-zinc-800 text-white col-span-3 row-span-1">
+          <CommonCard title={t`信息和工具`} className="bg-background dark:bg-zinc-800 col-span-3 row-span-1">
             <ToolBox />
           </CommonCard>
           {/* 右二黑色卡片 */}
-          <CommonCard className="bg-zinc-800 col-span-3 row-span-3" >
+          <CommonCard className="bg-background/80 dark:bg-zinc-800 col-span-3 row-span-3" >
             <Radar />
           </CommonCard>
 
@@ -151,7 +149,7 @@ export default function User() {
                 }]}
               />
             }
-            className="col-span-4 row-span-5"
+            className="col-span-4 row-span-5 bg-background dark:bg-zinc-800"
           >
             <DragScroller>
               {/* 传入 selectedYear 给热力图 */}
@@ -161,14 +159,14 @@ export default function User() {
           {/* 其他小方块 */}
           <CommonCard
             title="usage"
-            className="bg-zinc-800 col-span-2 row-span-2"
+            className="bg-background dark:bg-zinc-800 col-span-2 row-span-2"
             headerAction={<MoreOptions entries={[{ entryName: t`选择磁盘`, entryFunc: () => selectDisk() }]} />}>
             <SysMonitor diskUsage={diskUsage} />
           </CommonCard>
 
           <CommonCard
             title={t`历程 (${journeyYear}-${journeyMonth.toString().padStart(2, '0')})`}
-            className="col-span-5 row-span-3 flex flex-col overflow-hidden pb-12"
+            className="col-span-5 row-span-3 flex flex-col overflow-hidden pb-12 bg-background dark:bg-zinc-800"
             headerAction={
               <MoreOptions entries={[{ entryName: t`切换日期`, entryFunc: () => setIsJourneyPickerOpen(true) }]} />
             }
@@ -289,7 +287,7 @@ export function YearMonthPicker({ currentYear, currentMonth, onSelect, onClose }
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl p-6">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="font-bold text-zinc-200">选择历程日期</h3>
+          <h3 className="font-bold text-zinc-200"><Trans>选择历程日期</Trans></h3>
           <X className="cursor-pointer text-zinc-500 hover:text-white" onClick={onClose} />
         </div>
 

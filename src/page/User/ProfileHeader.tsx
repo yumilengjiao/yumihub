@@ -29,14 +29,14 @@ const ProfileHeader = ({ username }: { username: string }) => {
 
       <div className="flex items-center gap-6">
         {/* 左侧：动态图标 */}
-        <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-100 shadow-sm">
+        <div className="p-4 bg-zinc-200 dark:bg-zinc-100 rounded-2xl border border-zinc-100/20 shadow-sm">
           {greeting.icon}
         </div>
 
         {/* 右侧：文字信息 */}
-        <div className="space-y-2">
+        <div >
           <div className="flex items-baseline gap-2">
-            <h1 className="font-black text-zinc-900 tracking-tight">
+            <h1 className="font-black text-zinc-900 dark:text-zinc-100 tracking-tight">
               {greeting.text}，{username}
             </h1>
           </div>
@@ -47,8 +47,8 @@ const ProfileHeader = ({ username }: { username: string }) => {
       </div>
 
       {/* 底部小玩意：今日 Tips / 状态 */}
-      <div className="mt-3 pt-6 border-t border-zinc-50 flex items-center gap-2">
-        <div className="px-2 py-1 bg-amber-50 rounded text-amber-600">
+      <div className="mt-3 pt-6 border-t border-zinc-50/20 flex items-center gap-2">
+        <div className="px-2 py-1 bg-amber-50 dark:bg-zinc-800 rounded text-amber-600">
           <Sparkles className="w-3 h-3" />
         </div>
         <span className="text-[11px] text-zinc-400 font-medium tracking-wide italic">

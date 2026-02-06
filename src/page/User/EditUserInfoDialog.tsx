@@ -88,13 +88,13 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
 
       <motion.div
         initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-        className="relative w-full max-w-lg bg-white rounded-[40px] shadow-2xl overflow-hidden border border-zinc-100"
+        className="relative w-full max-w-lg bg-white dark:bg-zinc-800 rounded-[40px] shadow-2xl overflow-hidden border border-zinc-100/20"
       >
         {/* Header */}
-        <div className="h-24 bg-zinc-900 flex items-center justify-between px-10 text-white">
+        <div className="h-24 bg-zinc-300 dark:bg-zinc-800 flex items-center justify-between px-10 text-white">
           <div className="flex flex-col">
             <span className="text-xs font-black italic text-zinc-500 uppercase tracking-widest">Identity Settings</span>
-            <span className="text-xl font-black italic uppercase tracking-tighter"><Trans>修改用户信息</Trans></span>
+            <span className="text-xl font-black italic text-zinc-500 uppercase tracking-tighter"><Trans>修改用户信息</Trans></span>
           </div>
           <X className="cursor-pointer opacity-40 hover:opacity-100 transition-opacity" onClick={onClose} />
         </div>
@@ -104,7 +104,7 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
           {/* 头像编辑区 - 双模式 */}
           <div className="flex flex-col items-center mb-10">
             <div className="relative group mb-6">
-              <div className="w-32 h-32 rounded-[36px] border-[6px] border-white shadow-2xl overflow-hidden bg-zinc-100">
+              <div className="w-32 h-32 rounded-[36px] border-[3px] border-white dark:border-zinc-400 shadow-2xl overflow-hidden bg-zinc-100">
                 <img
                   src={getDisplaySrc(formData.avatar)}
                   className="w-full h-full object-cover transition-transform group-hover:scale-110"
@@ -117,11 +117,11 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
             </div>
 
             {/* 头像源切换控制 */}
-            <div className="w-full grid grid-cols-2 gap-3 bg-zinc-50 p-1.5 rounded-2xl border border-zinc-100">
+            <div className="w-full grid grid-cols-2 gap-3 bg-zinc-50 dark:bg-zinc-600 p-1.5 rounded-2xl border border-zinc-100/20">
               <button
                 type="button"
                 onClick={handleSelectLocalFile}
-                className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white shadow-sm border border-zinc-200 text-xs font-black uppercase hover:bg-zinc-100 transition-all"
+                className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white dark:bg-zinc-500 shadow-sm border border-zinc-200/10 text-xs font-black uppercase dark:hover:bg-zinc-800 transition-all"
               >
                 <ImageIcon size={14} /><Trans> 本地上传</Trans>
               </button>
@@ -168,13 +168,13 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
               type="button"
               variant="ghost"
               onClick={onClose}
-              className="flex-1 h-16 rounded-[24px] font-black uppercase text-zinc-400 hover:bg-zinc-100"
+              className="flex-1 h-16 rounded-[24px] font-black uppercase bg-zinc-300 text-zinc-500 hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700"
             >
               <Trans>取消</Trans>
             </Button>
             <Button
               type="submit"
-              className="flex-1 h-16 rounded-[24px] bg-zinc-900 hover:bg-black text-white font-black uppercase shadow-xl shadow-zinc-200 transition-all active:scale-95"
+              className="flex-1 h-16 rounded-[24px] bg-zinc-700 hover:bg-zinc-950 text-white font-black uppercase transition-all active:scale-95"
             >
               <Trans>保存信息</Trans>
             </Button>

@@ -14,7 +14,7 @@ export default function SysSetting() {
   const { i18n } = useLingui()
 
   return (
-    <CommonCard key={i18n.locale} title={t`系统策略`} icon="⚙️">
+    <CommonCard key={i18n.locale} title={t`系统策略`} icon="⚙️" className="dark:bg-zinc-800">
       <div className="space-y-1">
         <SelectCard
           title={t`点击关闭按钮时`}

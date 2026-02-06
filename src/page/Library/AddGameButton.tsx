@@ -46,6 +46,7 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
 
   return (
     <div className={cn("fixed bottom-10 right-10 z-50", className)}>
+      {/* 弹窗部分逻辑保持不变 */}
       {matchSuccess && (
         <BigPendingCard
           absPath={singleGameBootPath}
@@ -64,16 +65,21 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
         layout
         initial={false}
         animate={{
-          // 稍微加宽一点点（320），给 around 分布留出呼吸空间
           width: isExpanded ? 320 : 60,
           height: 60,
+          // 💡 优化：根据展开状态切换背景深度
+          backgroundColor: isExpanded ? "var(--popover)" : "var(--primary)",
         }}
         transition={{
           type: "spring",
           stiffness: 500,
           damping: 35,
         }}
-        className="bg-zinc-900 shadow-2xl rounded-full overflow-hidden flex flex-row items-center border border-white/5"
+        // 💡 优化：使用 bg-primary (闭合时) 和 bg-popover (展开时)，增加 border-border
+        className={cn(
+          "shadow-2xl rounded-full overflow-hidden flex flex-row items-center border transition-colors duration-300",
+          isExpanded ? "border-border" : "border-primary-foreground/10"
+        )}
       >
         <AnimatePresence>
           {isExpanded && (
@@ -81,7 +87,6 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, transition: { duration: 0.1 } }}
-              // 使用 flex-1 占据左侧所有空间，justify-evenly 实现平分间距
               className="flex-1 flex items-center justify-evenly pl-4"
             >
               <OptionButton
@@ -90,7 +95,8 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
                 onClick={() => handleAction(onImportSingle)}
               />
 
-              <div className="w-px h-6 bg-zinc-800 shrink-0" />
+              {/* 分割线改用 border 变量 */}
+              <div className="w-px h-6 bg-border shrink-0" />
 
               <OptionButton
                 icon={<FolderSearch size={22} strokeWidth={2.5} />}
@@ -104,7 +110,11 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
         <div className="w-[60px] h-[60px] shrink-0 flex items-center justify-center">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full h-full flex items-center justify-center text-zinc-100 active:scale-90 transition-transform"
+            // 💡 优化：文字颜色根据背景自动反转
+            className={cn(
+              "w-full h-full flex items-center justify-center active:scale-90 transition-all",
+              isExpanded ? "text-foreground" : "text-primary-foreground"
+            )}
           >
             <motion.div animate={{ rotate: isExpanded ? 45 : 0 }} transition={{ duration: 0.2 }}>
               <Plus size={28} strokeWidth={3} />
@@ -121,7 +131,8 @@ const OptionButton: React.FC<{ icon: React.ReactNode; label: string; onClick: ()
 }) => (
   <button
     onClick={onClick}
-    className="flex flex-col items-center justify-center text-zinc-400 hover:text-white transition-all active:scale-95 group shrink-0"
+    // 💡 优化：使用 text-muted-foreground 和 hover:text-primary
+    className="flex flex-col items-center justify-center text-muted-foreground hover:text-primary transition-all active:scale-95 group shrink-0"
   >
     <div className="opacity-80 group-hover:opacity-100">{icon}</div>
     <span className="text-[10px] font-black tracking-[0.2em] whitespace-nowrap uppercase mt-0.5">{label}</span>

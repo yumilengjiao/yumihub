@@ -41,11 +41,11 @@ export default function ResourceSetting() {
   }
 
   return (
-    <CommonCard key={i18n.locale} title={t`资源管理`} icon="📂">
+    <CommonCard key={i18n.locale} title={t`资源管理`} icon="📂" className="dark:bg-zinc-800">
       <div className="space-y-4">
         <div className="space-y-1">
-          <PathCard title={t`游戏存档备份目录`} onSelect={() => console.log('')} />
-          <PathCard title={t`游戏元数据存储目录`} onSelect={() => console.log('')} />
+          <PathCard className="" title={t`游戏存档备份目录`} onSelect={() => console.log('')} />
+          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" title={t`游戏元数据存储目录`} onSelect={() => console.log('')} />
         </div>
 
         <div className="pt-4 border-t border-zinc-100">

@@ -13,7 +13,7 @@ const CommonCard = React.forwardRef<HTMLDivElement, CommonCardProps>(
       <div
         ref={ref}
         className={cn(
-          "rounded-[32px] border border-zinc-200/60 bg-white shadow-xl shadow-zinc-200/40",
+          "rounded-[32px] border  bg-white shadow-xl ",
           "flex flex-col overflow-hidden transition-all duration-300",
           className
         )}
@@ -27,7 +27,7 @@ const CommonCard = React.forwardRef<HTMLDivElement, CommonCardProps>(
                   {icon}
                 </span>
               )}
-              <h3 className="text-2xl font-black text-zinc-800 tracking-tight uppercase italic">
+              <h3 className="text-xl mb-3 font-black text-foreground/70 tracking-tight uppercase italic">
                 {title}
               </h3>
             </div>
