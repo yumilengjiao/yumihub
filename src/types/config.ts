@@ -13,10 +13,10 @@ export interface Config {
 // -----------------------------------------------------
 
 export interface Basic {
-  autoStart: boolean;
-  silentStart: boolean;
-  autoCheckUpdate: boolean;
-  language: string;
+  autoStart: boolean
+  silentStart: boolean
+  autoCheckUpdate: boolean
+  language: string
 }
 
 // -----------------------------------------------------
@@ -53,9 +53,11 @@ export enum SideBarMode {
 
 export interface Storage {
   /** 游戏存档备份路径 */
-  backupSavePath: string;
+  backupSavePath: string
   /** 游戏资源下载路径 */
-  metaSavePath: string;
+  metaSavePath: string
+  /** 是否自动备份 */
+  auto_backup: boolean
 }
 
 // -----------------------------------------------------

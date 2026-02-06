@@ -4,23 +4,28 @@ import useShortcutStore from "@/store/shortcutStore";
 import useGameStore from "@/store/gameStore";
 import { invoke } from "@tauri-apps/api/core";
 import { Cmds } from "@/lib/enum";
+import useConfigStore from "@/store/configStore";
 
 export function useShortcutHandler() {
   const { shortcuts } = useShortcutStore();
   const { selectedGame } = useGameStore()
+  const { config } = useConfigStore()
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // 如果正在打字，不触发快捷键
+      console.log("现在: ", config.system.hotkeyActivation)
+      // 如果正在打字，或不允许快捷键，不触发快捷键
       const target = e.target as HTMLElement
       if (
         target instanceof HTMLInputElement ||
         target instanceof HTMLTextAreaElement ||
-        target.isContentEditable
+        target.isContentEditable ||
+        !config.system.hotkeyActivation
       ) {
         return
       }
+
 
       const keys = [];
       if (e.ctrlKey) keys.push("Control");
@@ -65,5 +70,5 @@ export function useShortcutHandler() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [shortcuts, navigate]); // 监听配置变化，确保快捷键实时生效
+  }, [shortcuts, navigate,config.system.hotkeyActivation]); // 监听配置变化，确保快捷键实时生效
 }

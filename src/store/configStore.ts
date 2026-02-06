@@ -33,6 +33,7 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
     storage: {
       backupSavePath: "",
       metaSavePath: "",
+      auto_backup: false,
     },
   },
   updateConfig(fn: (config: Config) => void) {

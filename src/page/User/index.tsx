@@ -82,7 +82,7 @@ export default function User() {
         <YearMonthPicker
           currentYear={journeyYear}
           currentMonth={journeyMonth}
-          onSelect={(y, m) => { setJourneyYear(y); setJourneyMonth(m); }}
+          onSelect={(y: number, m: number) => { setJourneyYear(y); setJourneyMonth(m); }}
           onClose={() => setIsJourneyPickerOpen(false)}
         />
       )}

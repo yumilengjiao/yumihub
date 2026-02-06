@@ -5,11 +5,13 @@ use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_log::log::{debug, error, info, warn};
 
 use crate::{
+    companion::commands::refresh_companions,
     config::{
         entity::{ConfigEvent, SideBarMode, ThemeColor, ThemeMode},
         GLOBAL_CONFIG,
     },
     message::{traits::MessageHub, CONFIG_MESSAGE_HUB},
+    shortcut::commands::refresh_shortcuts,
     util::copy_dir_recursive,
 };
 
@@ -35,8 +37,8 @@ pub fn listening_loop(app_handler: AppHandle) {
                 }
                 ConfigEvent::System { sys } => {
                     debug!("系统设置开始更新");
-                    change_compainion(sys.companion);
-                    change_hotkey_activation(sys.hotkey_activation);
+                    change_compainion(app_handler.clone(), sys.companion);
+                    change_hotkey_activation(app_handler.clone(), sys.hotkey_activation);
                     change_close_button_action(sys.close_button_behavior);
                     change_log_level(sys.log_level);
                     set_concurrent_number(sys.download_concurrency);
@@ -121,10 +123,18 @@ fn set_language(language: String) {
 /// 控制是否启用链式模式(启动游戏时其他自定义程序自动启动)
 ///
 /// * `activation`: 激活状态
-fn change_compainion(activation: bool) {
+fn change_compainion(app_handler: AppHandle, activation: bool) {
     let result = GLOBAL_CONFIG.write();
     match result {
-        Ok(mut config) => config.system.companion = activation,
+        Ok(mut config) => {
+            config.system.companion = activation;
+            tauri::async_runtime::spawn(async move {
+                let result = refresh_companions(&app_handler, false).await;
+                if result.is_err() {
+                    error!("无法刷新连携程序设置");
+                }
+            });
+        }
         Err(e) => {
             error!("{}", e);
         }
@@ -134,10 +144,18 @@ fn change_compainion(activation: bool) {
 /// 控制是否启用快捷键系统
 ///
 /// * `activation`: 激活状态
-fn change_hotkey_activation(activation: bool) {
+fn change_hotkey_activation(app_handler: AppHandle, activation: bool) {
     let result = GLOBAL_CONFIG.write();
     match result {
-        Ok(mut config) => config.system.hotkey_activation = activation,
+        Ok(mut config) => {
+            config.system.hotkey_activation = activation;
+            tauri::async_runtime::spawn(async move {
+                let result = refresh_shortcuts(&app_handler).await;
+                if result.is_err() {
+                    error!("无法刷新快捷键功能");
+                }
+            });
+        }
         Err(e) => {
             error!("{}", e);
         }

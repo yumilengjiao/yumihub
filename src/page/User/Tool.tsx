@@ -4,7 +4,7 @@ import {
   CarouselItem,
   CarouselDots, // 确保你的 shadcn carousel 包含 dots 扩展
 } from "@/components/ui/carousel"
-import { Link2, Rocket } from "lucide-react"
+import { HardDriveDownload, Link2, Rocket } from "lucide-react"
 import SuperSwitch from "@/components/SuperSwitch";
 import { Trans } from "@lingui/react/macro";
 import useConfigStore from "@/store/configStore";
@@ -41,8 +41,8 @@ export function ToolBox({ }: DashboardToolsProps) {
                 <span className="font-bold text-zinc-300 uppercase tracking-wider text-[20px]"><Trans>链式启动</Trans></span>
               </div>
               <SuperSwitch
-                checked={config.system.compainion}
-                onChange={() => setOption('compainion', !config.system.compainion)}
+                checked={config.system.companion}
+                onChange={() => setOption('companion', !config.system.companion)}
               />
             </div>
           </CarouselItem>
@@ -60,6 +60,21 @@ export function ToolBox({ }: DashboardToolsProps) {
               />
             </div>
           </CarouselItem>
+
+          {/* 第三页 */}
+          <CarouselItem className="aspect-auto h-full basis-full w-full px-8">
+            <div className="flex h-full justify-around items-center">
+              <div className="flex items-center gap-2">
+                <HardDriveDownload className="w-15 h-15 mb-5 text-blue-400" />
+                <span className="font-bold text-zinc-300 uppercase tracking-wider text-[20px]"><Trans>自动备份</Trans></span>
+              </div>
+              <SuperSwitch
+                checked={config.storage.auto_backup}
+                onChange={() => setOption('hotkeyActivation', !config.system.hotkeyActivation)}
+              />
+            </div>
+          </CarouselItem>
+
         </CarouselContent>
       </Carousel>
     </div >

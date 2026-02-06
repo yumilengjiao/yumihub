@@ -41,7 +41,7 @@ pub async fn execute_start_game(pool: SqlitePool, game: GameMeta) -> Result<(), 
             }
         }
         // 连携模块内部会处理自己的 PID 记录，这里直接启动
-        companion::launch_companion(comp);
+        companion::commands::launch_companion(comp);
     }
 
     // 启动游戏主进程

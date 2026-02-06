@@ -14,8 +14,8 @@ use crate::companion::entity::Companion;
 use crate::game::commands::execute_start_game;
 use crate::game::entity::{PlaySession, ResourceTarget};
 use crate::screenshot::entity::Screenshot;
+use crate::shortcut::commands::refresh_shortcuts;
 use crate::shortcut::entity::ShortcutSetting;
-use crate::shortcut::refresh_shortcuts;
 use crate::util::{extract_zip_sync, get_dir_size};
 use crate::{
     config::{
@@ -682,7 +682,7 @@ pub async fn get_companions(pool: State<'_, Pool<Sqlite>>) -> Result<Vec<Compani
     // 按 sort_order 从小到大排序，权重小的先启动
     let rows = sqlx::query_as::<_, Companion>(
         r#"
-        SELECT id, name, path, args, is_enabled, trigger_mode, sort_order, description 
+        SELECT id, name, path, args, is_enabled, is_window_managed, trigger_mode, sort_order, description 
         FROM companions
         "#,
     )
@@ -724,17 +724,19 @@ pub async fn update_companions(
                 path,
                 args,
                 is_enabled,
+                is_window_managed,
                 trigger_mode,
                 sort_order,
                 description
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             "#,
         )
         .bind(item.name)
         .bind(item.path)
         .bind(item.args)
         .bind(item.is_enabled)
+        .bind(item.is_window_managed)
         .bind(item.trigger_mode)
         .bind(item.sort_order)
         .bind(item.description)

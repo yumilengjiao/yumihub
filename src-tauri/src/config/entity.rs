@@ -97,6 +97,7 @@ impl Default for Basic {
 pub struct Storage {
     pub backup_save_path: PathBuf,
     pub meta_save_path: PathBuf,
+    pub auto_backup: bool,
 }
 
 // -----------------------------------------------------
@@ -116,8 +117,8 @@ pub struct System {
 impl Default for System {
     fn default() -> Self {
         Self {
-            companion: false,
-            hotkey_activation: false,
+            companion: true,
+            hotkey_activation: true,
             close_button_behavior: "Exit".into(),
             log_level: "info".into(),
             download_concurrency: 5,

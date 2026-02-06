@@ -4,6 +4,7 @@ interface Companion {
   path: string
   args: string
   isEnabled: boolean
+  isWindowManaged: boolean
   triggerMode: 'app' | 'game'
   sortOrder: number
   description: string

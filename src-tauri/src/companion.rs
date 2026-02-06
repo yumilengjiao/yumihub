@@ -1,17 +1,11 @@
 //! 此模块用于管理程序的连携程序，也就是游戏启动时会连带着一起启动的程序
 
 use lazy_static::lazy_static;
-use std::{
-    path::Path,
-    process::{Command, Stdio},
-    sync::Mutex,
-};
-use tauri_plugin_log::log::debug;
+use std::{process::Stdio, sync::Mutex};
 
-use sqlx::SqlitePool;
-use tauri::{AppHandle, Manager, Runtime};
+use tauri::{AppHandle, Runtime};
 
-use crate::companion::entity::{ActiveProcess, Companion};
+use crate::companion::{commands::refresh_companions, entity::ActiveProcess};
 
 pub mod commands;
 pub mod entity;
@@ -27,17 +21,7 @@ lazy_static! {
 pub fn init<R: Runtime>(app_handle: &AppHandle<R>) {
     let handle = app_handle.clone();
     tauri::async_runtime::spawn(async move {
-        match fetch_enabled_app_companions(&handle).await {
-            Ok(apps) => {
-                for app in apps {
-                    // SQL 已经排好序了，这里的循环会从 sort_order 最大的开始启动
-                    launch_companion(app);
-
-                    tokio::time::sleep(std::time::Duration::from_millis(500)).await;
-                }
-            }
-            Err(e) => eprintln!("加载连携程序失败: {}", e),
-        }
+        let _ = refresh_companions(&handle, true).await;
     });
 }
 
@@ -64,58 +48,5 @@ pub fn exit() {
         let _ = std::process::Command::new("pkill")
             .args(["-9", "-x", &name])
             .spawn();
-    }
-}
-
-// --- 辅助函数 ---
-
-/// 从数据库获取所有需要随 App 启动的程序
-async fn fetch_enabled_app_companions<R: Runtime>(
-    handle: &AppHandle<R>,
-) -> Result<Vec<Companion>, sqlx::Error> {
-    let pool = handle.state::<SqlitePool>();
-
-    // DESC 保证了 sort_order 数值最大的排在结果集的第一个
-    sqlx::query_as::<_, Companion>(
-        "SELECT * FROM companions WHERE is_enabled = 1 AND trigger_mode = 'app' ORDER BY sort_order DESC"
-    )
-    .fetch_all(&*pool)
-    .await
-}
-
-/// 启动单个程序并将其句柄存入全局列表
-pub fn launch_companion(comp: Companion) {
-    // 记录受控状态
-    let is_managed = comp.is_window_managed;
-
-    if let Some(file_name) = Path::new(&comp.path).file_name() {
-        if let Some(name_str) = file_name.to_str() {
-            PROCESS_NAMES.lock().unwrap().push(name_str.to_string());
-        }
-    }
-
-    let args_str = comp.args.as_deref().unwrap_or("");
-    let args: Vec<&str> = args_str.split_whitespace().collect();
-
-    let result = Command::new(&comp.path)
-        .args(args)
-        .stdin(Stdio::null())
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .spawn();
-
-    match result {
-        Ok(child) => {
-            debug!("启动连携程序 PID: {}, 受控: {}", child.id(), is_managed);
-            let mut processes = ACTIVE_PROCESSES.lock().unwrap();
-            // 存入 child 句柄和受控标记
-            processes.push(ActiveProcess {
-                child,
-                is_window_managed: is_managed,
-            });
-        }
-        Err(e) => {
-            eprintln!("无法启动程序 {}: {} (路径: {})", comp.name, e, comp.path);
-        }
     }
 }

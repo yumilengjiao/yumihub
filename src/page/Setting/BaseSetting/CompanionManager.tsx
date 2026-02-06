@@ -5,7 +5,7 @@ import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
 import { invoke } from "@tauri-apps/api/core"
 import { open } from "@tauri-apps/plugin-dialog"
-import { Plus, Trash2, CheckCircle2, Settings2, Loader2, X, FolderOpen } from "lucide-react"
+import { Plus, Trash2, CheckCircle2, Settings2, Loader2, X, FolderOpen, Layout } from "lucide-react"
 import { useEffect, useState } from "react"
 
 export function CompanionManager({ onClose }: { onClose: () => void }) {
@@ -62,6 +62,7 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
       path: '',
       args: '',
       isEnabled: true,
+      isWindowManaged: true,
       triggerMode: 'game',
       sortOrder: localCompanions.length + 1,
       description: ''
@@ -94,13 +95,12 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
         className="bg-white border border-zinc-200 w-full max-w-4xl max-h-[85vh] rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* CSS 修复：隐藏 number 输入框的默认箭头并修复溢出 */}
         <style>{`
           div::-webkit-scrollbar { display: none }
           input[type=number]::-webkit-inner-spin-button, 
           input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none 
-            margin: 0 
+            -webkit-appearance: none;
+            margin: 0;
           }
           input[type=number] { -moz-appearance: textfield }
         `}</style>
@@ -138,13 +138,12 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                     : "bg-zinc-50/10 border-zinc-50 opacity-60 grayscale-[0.5]"
                 )}>
 
-                  {/* 标题行：整合删除按钮和名称输入 */}
-                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
+                  {/* 标题行 */}
+                  <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-8">
                     <div className="flex items-center gap-4 flex-1">
-                      {/* 删除按钮挪到了名字左侧，更直观且不遮挡开关 */}
                       <button
                         onClick={() => handleRemove(index)}
-                        className="w-10 h-10 flex-shrink-0 bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl flex items-center justify-center transition-all active:scale-90"
+                        className="w-10 h-10 shrink-0 bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl flex items-center justify-center transition-all active:scale-90"
                       >
                         <Trash2 className="w-5 h-5" />
                       </button>
@@ -156,13 +155,13 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                       />
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      {/* 模式切换 */}
-                      <div className="flex bg-zinc-100/80 p-1.5 rounded-2xl border border-zinc-200/50">
+                    <div className="flex flex-wrap items-center gap-3">
+                      {/* 模式切换 - 强制横向排列 */}
+                      <div className="flex flex-row bg-zinc-100/80 p-1.5 rounded-2xl border border-zinc-200/50">
                         <button
                           onClick={() => handleUpdateField(index, 'triggerMode', 'app')}
                           className={cn(
-                            "px-5 py-2 text-xs font-bold rounded-xl transition-all",
+                            "px-4 py-2 text-xs font-bold rounded-xl transition-all whitespace-nowrap",
                             item.triggerMode === 'app' ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-900"
                           )}
                         >
@@ -171,7 +170,7 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                         <button
                           onClick={() => handleUpdateField(index, 'triggerMode', 'game')}
                           className={cn(
-                            "px-5 py-2 text-xs font-bold rounded-xl transition-all",
+                            "px-4 py-2 text-xs font-bold rounded-xl transition-all whitespace-nowrap",
                             item.triggerMode === 'game' ? "bg-emerald-600 text-white shadow-md" : "text-zinc-500 hover:text-emerald-600"
                           )}
                         >
@@ -179,14 +178,31 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                         </button>
                       </div>
 
-                      <div className="h-8 w-px bg-zinc-200 mx-1" />
+                      <div className="hidden sm:block h-8 w-px bg-zinc-200 mx-1" />
 
-                      {/* 开关：绝对不会被遮挡 */}
+                      {/* 窗口管理开关 */}
+                      <label className={cn(
+                        "flex items-center gap-2 px-3 py-2.5 rounded-2xl border transition-all cursor-pointer select-none",
+                        item.isWindowManaged ? "bg-blue-50 border-blue-100 text-blue-700" : "bg-zinc-100 border-zinc-200 text-zinc-400"
+                      )}>
+                        <Layout className="w-4 h-4" />
+                        <span className="text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
+                          <Trans>窗口托管</Trans>
+                        </span>
+                        <input
+                          type="checkbox"
+                          checked={item.isWindowManaged}
+                          onChange={(e) => handleUpdateField(index, 'isWindowManaged', e.target.checked)}
+                          className="w-4 h-4 accent-blue-600 cursor-pointer"
+                        />
+                      </label>
+
+                      {/* 启用开关 */}
                       <label className={cn(
                         "flex items-center gap-3 px-4 py-2.5 rounded-2xl border transition-all cursor-pointer select-none",
                         item.isEnabled ? "bg-emerald-50 border-emerald-100 text-emerald-700" : "bg-zinc-100 border-zinc-200 text-zinc-400"
                       )}>
-                        <span className="text-[10px] font-black uppercase tracking-wider">
+                        <span className="text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
                           {item.isEnabled ? t`已启用` : t`已禁用`}
                         </span>
                         <input
@@ -237,7 +253,6 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                           value={item.sortOrder}
                           onChange={(e) => handleUpdateField(index, 'sortOrder', parseInt(e.target.value) || 0)}
                         />
-                        {/* 手动加一对美化的增减按钮，解决原生按钮被遮挡问题 */}
                         <div className="absolute right-2 flex flex-col gap-0.5">
                           <button
                             onClick={() => handleUpdateField(index, 'sortOrder', (item.sortOrder || 0) + 1)}
