@@ -15,14 +15,21 @@ pub fn load_config(app_handle: AppHandle) -> Result<(), AppError> {
 
     let backup_dir = app_handle
         .path()
-        .app_data_dir()
+        .app_local_data_dir()
         .expect("读取程序data目录失败")
         .join("backup");
+
     let assets_dir = app_handle
         .path()
-        .app_data_dir()
+        .app_local_data_dir()
         .expect("读取程序data目录失败")
         .join("assets");
+
+    let screenshots_dir = app_handle
+        .path()
+        .app_local_data_dir()
+        .expect("读取程序data目录失败")
+        .join("screenshots");
 
     // 如果配置文件不存在则创建一个配置文件并赋予初始值
     if let Some(config_dir) = config_path.parent() {
@@ -36,6 +43,7 @@ pub fn load_config(app_handle: AppHandle) -> Result<(), AppError> {
             let mut config = GLOBAL_CONFIG.write().unwrap();
             config.storage.backup_save_path = backup_dir.clone();
             config.storage.meta_save_path = assets_dir.clone();
+            config.storage.screenshot_path = screenshots_dir.clone();
         }
     }
     if !config_path.exists() {
@@ -51,6 +59,11 @@ pub fn load_config(app_handle: AppHandle) -> Result<(), AppError> {
     // 如果存档备份目录不存在则创建一个备份目录
     if !backup_dir.exists() {
         std::fs::create_dir_all(&*backup_dir).ok();
+    }
+
+    // 如果快照目录不存在则创建一个备份目录
+    if !screenshots_dir.exists() {
+        std::fs::create_dir_all(&*screenshots_dir).ok();
     }
 
     // 读取配置文件并加载到全局变量

@@ -17,6 +17,7 @@ export interface Basic {
   silentStart: boolean
   autoCheckUpdate: boolean
   language: string
+  gameDisplayOrder: string[]
 }
 
 // -----------------------------------------------------
@@ -54,8 +55,10 @@ export enum SideBarMode {
 export interface Storage {
   /** 游戏存档备份路径 */
   backupSavePath: string
-  /** 游戏资源下载路径 */
+  /** 游戏资源保存路径 */
   metaSavePath: string
+  /** 游戏快照保存路径 */
+  screenshotPath: string
   /** 是否自动备份 */
   auto_backup: boolean
 }

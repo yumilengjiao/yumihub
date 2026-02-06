@@ -1,4 +1,5 @@
 import useGameStore from '@/store/gameStore';
+import useConfigStore from '@/store/configStore'; // 1. 引入 ConfigStore
 import { GameMeta } from '@/types/game';
 import { useNavigate, useParams } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,14 +21,15 @@ import { toast } from 'sonner';
 export default function GameDetail() {
   const { id } = useParams<{ id: string }>();
   const { getGameMetaById, setGameMeta } = useGameStore();
+  const { updateConfig } = useConfigStore(); // 2. 获取更新方法
   const navigate = useNavigate();
   const [game, setGame] = useState<GameMeta>(getGameMetaById(id!)!)
 
   const backupArchive = async () => {
     const promise = invoke(Cmds.BACKUP_ARCHIVE_BY_ID, { id: game.id })
     toast.promise(promise, {
-      loading: '正在备份存档...',  // 这里的提示会在点击时立即出现
-      success: '存档备份完毕',      // 这里的提示会在 invoke 成功后替换上面的内容
+      loading: '正在备份存档...',
+      success: '存档备份完毕',
       error: (err: any) => ({
         message: '备份存档失败',
         description: err.details || '未知错误'
@@ -36,17 +38,17 @@ export default function GameDetail() {
   }
 
   const restoreGameArchive = () => {
-    const promise = invoke(Cmds.RESTORE_ARCHIVE_BY_ID,{id: game.id})
+    const promise = invoke(Cmds.RESTORE_ARCHIVE_BY_ID, { id: game.id })
     toast.promise(promise, {
-      loading: '正在恢复存档...',  // 这里的提示会在点击时立即出现
-      success: '存档恢复完毕',      // 这里的提示会在 invoke 成功后替换上面的内容
+      loading: '正在恢复存档...',
+      success: '存档恢复完毕',
       error: (err: any) => ({
         message: '恢复存档失败',
         description: err.details || '未知错误'
       })
     });
   }
-  // 获取数据
+
   useEffect(() => {
     async function getGame() {
       try {
@@ -63,7 +65,6 @@ export default function GameDetail() {
   const CARD_STYLE = "bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-10 flex flex-col w-full h-full";
   const INPUT_STYLE = "flex items-center justify-between bg-slate-50 border border-slate-100 p-6 rounded-2xl hover:bg-white hover:border-emerald-400 hover:shadow-lg transition-all cursor-pointer group";
 
-  // 通用路径选择逻辑
   const pickPath = async (field: keyof GameMeta) => {
     const isFile = field === 'background' || field === 'cover' || field === 'absPath';
     const selected = await open({
@@ -76,15 +77,33 @@ export default function GameDetail() {
     }
   }
 
-  // 更新数值或开关状态
+  // 修改后的核心更新逻辑
   const updateField = <K extends keyof GameMeta>(field: K, value: GameMeta[K]) => {
-    setGame({ ...game, [field]: value })
-    setGameMeta({ ...game, [field]: value });
+    const updatedGame = { ...game, [field]: value };
+
+    // 同步到 UI 状态和 GameStore
+    setGame(updatedGame);
+    setGameMeta(updatedGame);
+
+    // 特殊逻辑：当修改 "首页展示" (isDisplayed) 时，同步到配置文件的队列中
+    if (field === 'isDisplayed') {
+      updateConfig((prev) => {
+        const currentOrder = prev.basic.gameDisplayOrder || [];
+        if (value === true) {
+          // 开启展示：如果不在队列里，则 push 进去
+          if (!currentOrder.includes(game.id)) {
+            prev.basic.gameDisplayOrder = [...currentOrder, game.id];
+          }
+        } else {
+          // 关闭展示：从队列中移除
+          prev.basic.gameDisplayOrder = currentOrder.filter(orderId => orderId !== game.id);
+        }
+      });
+    }
   };
 
   return (
     <div className="fixed inset-0 bg-[#fcfdfe] text-slate-800 overflow-y-auto z-50">
-      {/* 注入 CSS 修复数字输入框箭头遮挡 */}
       <style>{`
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
@@ -99,7 +118,7 @@ export default function GameDetail() {
         <div className="relative h-125 w-full shrink-0">
           <div
             className="absolute inset-0 bg-cover bg-center opacity-30 blur-[10px]"
-            style={{ backgroundImage: `url(${game.local_background ? convertFileSrc(game.local_background) : game.background})` }}
+            style={{ backgroundImage: `url(${game.localBackground ? convertFileSrc(game.localBackground) : game.background})` }}
           />
           <div className="absolute inset-0 bg-linear-to-b from-transparent via-white/50 to-[#fcfdfe]" />
           <div className="relative z-30 pt-24 px-16 max-w-7xl mx-auto">
@@ -113,10 +132,9 @@ export default function GameDetail() {
         <AnimatePresence mode="wait">
           <motion.div key={id} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className="relative z-20 max-w-7xl mx-auto px-16 -mt-32">
 
-            {/* 头部区域 */}
             <div className="flex flex-col md:flex-row gap-16 items-end">
               <div className="relative w-72 aspect-3/4 bg-white p-4 rounded-[3.5rem] shadow-2xl border border-white shrink-0 group">
-                <img src={game.local_cover ? convertFileSrc(game.local_cover) : game.cover} className="w-full h-full object-cover rounded-[2.5rem]" />
+                <img src={game.localCover ? convertFileSrc(game.localCover) : game.cover} className="w-full h-full object-cover rounded-[2.5rem]" />
                 {game.isPassed && (
                   <div className="absolute -top-4 -right-4 bg-amber-400 text-white p-3 rounded-full shadow-lg border-4 border-white z-40">
                     <CheckCircle2 size={32} fill="currentColor" className="text-white" />
@@ -124,7 +142,6 @@ export default function GameDetail() {
                 )}
               </div>
               <div className="flex-1 pb-4">
-                {/* 游戏名修改 */}
                 <input
                   value={game.name}
                   onChange={(e) => updateField('name', e.target.value)}
@@ -237,8 +254,7 @@ export default function GameDetail() {
   );
 }
 
-
-// --- 辅助组件 ---
+// --- 辅助组件 (保持不变) ---
 function ToggleItem({ label, isEnabled, onToggle, icon, activeColor = "bg-emerald-500" }: { label: string, isEnabled: boolean, onToggle: () => void, icon: any, activeColor?: string }) {
   return (
     <div className="flex items-center justify-between cursor-pointer group select-none" onClick={onToggle}>

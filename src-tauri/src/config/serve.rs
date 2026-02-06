@@ -28,12 +28,14 @@ pub fn listening_loop(app_handler: AppHandle) {
                     enable_auto_start(app_handler.clone(), base.auto_start);
                     enable_slient_start(base.silent_start);
                     enable_auto_update(base.auto_check_update);
+                    set_game_display_order(base.game_display_order);
                     set_language(base.language);
                 }
                 ConfigEvent::Storage { stroage } => {
                     debug!("备份设置开始更新");
                     set_game_meta_data_load_path(stroage.meta_save_path);
                     set_backup_path(stroage.backup_save_path);
+                    set_screenshot_path(stroage.screenshot_path);
                 }
                 ConfigEvent::System { sys } => {
                     debug!("系统设置开始更新");
@@ -97,6 +99,19 @@ fn enable_auto_update(yes: bool) {
     let result = GLOBAL_CONFIG.write();
     match result {
         Ok(mut config) => config.basic.auto_check_update = yes,
+        Err(_) => {
+            error!("获取config写锁失败");
+        }
+    }
+}
+
+/// 修改首页展示游戏的排行顺序
+///
+/// * `new_order`: 新的游戏展示顺序
+fn set_game_display_order(new_order: Vec<String>) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.basic.game_display_order = new_order,
         Err(_) => {
             error!("获取config写锁失败");
         }
@@ -334,6 +349,51 @@ pub fn set_backup_path(path: PathBuf) {
                     Ok(_) => {
                         info!("资源复制成功，准备清理旧数据");
                         // 4. 复制成功后，删除旧文件夹
+                        let _ = std::fs::remove_dir_all(old_path);
+                        info!("旧资源已清理完毕");
+                    }
+                    Err(e) => error!("迁移失败: {:?}", e),
+                }
+            });
+        }
+        Err(_) => {
+            error!("获取config写锁失败");
+        }
+    }
+}
+
+/// 用于更改快照文件目录
+///
+/// * `path`: 新的存放快照文件的目录
+pub fn set_screenshot_path(path: PathBuf) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => {
+            let old_path = config.storage.screenshot_path.clone();
+            //改config全变量数据
+            let cp_path = path.clone();
+            config.storage.screenshot_path = path;
+            async_runtime::spawn(async move {
+                let new_path: PathBuf = cp_path;
+
+                // 检查旧路径是否存在
+                if !old_path.exists() {
+                    warn!("旧路径 {:?} 不存在，跳过迁移", old_path);
+                    return;
+                }
+
+                // 创建新目标目录（确保父级目录都存在）
+                if let Err(e) = std::fs::create_dir_all(&new_path) {
+                    error!("无法创建新目录: {:?}", e);
+                    return;
+                }
+
+                // 执行迁移
+                // TODO:这里数据库的数据也要一起改
+                match copy_dir_recursive(&old_path, &new_path).await {
+                    Ok(_) => {
+                        info!("资源复制成功，准备清理旧数据");
+                        // 复制成功后，删除旧文件夹
                         let _ = std::fs::remove_dir_all(old_path);
                         info!("旧资源已清理完毕");
                     }

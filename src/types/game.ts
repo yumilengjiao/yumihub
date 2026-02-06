@@ -15,9 +15,9 @@ export interface GameMeta {
   // 游戏背景图
   background: string
   // 本地封面路径
-  local_cover?: string
+  localCover?: string
   // 本地背景路径
-  local_background?: string
+  localBackground?: string
   // 游戏描述
   description: string
   // 游戏开发商

@@ -44,7 +44,7 @@ fn set_path(app_handler: &AppHandle) {
         .set(
             app_handler
                 .path()
-                .app_config_dir()
+                .app_local_data_dir()
                 .unwrap()
                 .join("config.json"),
         )

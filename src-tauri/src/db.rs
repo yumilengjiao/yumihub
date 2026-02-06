@@ -16,7 +16,10 @@ pub fn init(app_handle: &AppHandle) {
 ///
 /// * `app_handle`: tauri程序句柄
 pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
-    let app_dir = app_handle.path().app_data_dir().expect("找不到数据目录");
+    let app_dir = app_handle
+        .path()
+        .app_local_data_dir()
+        .expect("找不到数据目录");
     if !app_dir.exists() {
         fs::create_dir_all(&app_dir).expect("创建数据库文件夹失败，请检查权限");
     }
@@ -123,7 +126,7 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
         INSERT OR IGNORE INTO shortcut (id, key_combo, is_global) VALUES 
         ('launch_last', 'Ctrl+L', 1),
         ('confirm_launch', 'Enter', 0),
-        ('screenshot', 'CTRL+F12', 0),
+        ('screenshot', 'CTRL+F12', 1),
         -- 路由切换快捷键
         ('nav_home', NULL, 0),
         ('nav_library', NULL, 0),

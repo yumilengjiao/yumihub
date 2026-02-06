@@ -71,6 +71,7 @@ pub struct Basic {
     pub silent_start: bool,
     pub auto_check_update: bool,
     pub language: String,
+    pub game_display_order: Vec<String>,
 }
 
 impl Default for Basic {
@@ -80,6 +81,7 @@ impl Default for Basic {
             silent_start: false,
             auto_check_update: false,
             language: "zh".into(),
+            game_display_order: Vec::new(),
         }
     }
 }
@@ -97,6 +99,7 @@ impl Default for Basic {
 pub struct Storage {
     pub backup_save_path: PathBuf,
     pub meta_save_path: PathBuf,
+    pub screenshot_path: PathBuf,
     pub auto_backup: bool,
 }
 

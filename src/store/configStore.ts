@@ -15,6 +15,7 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
       autoStart: false,
       silentStart: false,
       autoCheckUpdate: false,
+      gameDisplayOrder: [],
       language: "zh-cn",
     },
     interface: {
@@ -33,11 +34,12 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
     storage: {
       backupSavePath: "",
       metaSavePath: "",
+      screenshotPath: "",
       auto_backup: false,
     },
   },
   updateConfig(fn: (config: Config) => void) {
-    console.log("开始更新用户数据")
+    console.log("开始更新配置信息")
     set(state => {
       fn(state.config)
     })
@@ -45,7 +47,7 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
       invoke(Cmds.UPDATE_CONFIG, { config: get().config })
       console.log("更新完成")
     } catch (error) {
-      console.error("更新用户数据失败", error)
+      console.error("更新配置信息失败", error)
     }
   },
 })))
