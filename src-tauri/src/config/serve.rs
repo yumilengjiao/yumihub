@@ -11,6 +11,7 @@ use crate::{
         GLOBAL_CONFIG,
     },
     message::{traits::MessageHub, CONFIG_MESSAGE_HUB},
+    resource,
     shortcut::commands::refresh_shortcuts,
     util::copy_dir_recursive,
 };
@@ -36,6 +37,7 @@ pub fn listening_loop(app_handler: AppHandle) {
                     set_game_meta_data_load_path(stroage.meta_save_path);
                     set_backup_path(stroage.backup_save_path);
                     set_screenshot_path(stroage.screenshot_path);
+                    set_auto_back_up(stroage.auto_backup);
                 }
                 ConfigEvent::System { sys } => {
                     debug!("系统设置开始更新");
@@ -281,6 +283,16 @@ pub fn set_game_meta_data_load_path(path: PathBuf) {
     match result {
         Ok(mut config) => {
             let path_cp = path.clone();
+            let p1 = path.canonicalize().unwrap_or_else(|_| path.clone());
+            let p2 = config
+                .storage
+                .meta_save_path
+                .canonicalize()
+                .unwrap_or_else(|_| config.storage.meta_save_path.clone());
+
+            if p1 == p2 {
+                return;
+            }
             let old_path = config.storage.meta_save_path.clone();
             let assets_path: PathBuf = path;
             config.storage.meta_save_path = assets_path;
@@ -328,6 +340,16 @@ pub fn set_backup_path(path: PathBuf) {
             let old_path = config.storage.backup_save_path.clone();
             //改config全变量数据
             let cp_path = path.clone();
+            let p1 = path.canonicalize().unwrap_or_else(|_| path.clone());
+            let p2 = config
+                .storage
+                .backup_save_path
+                .canonicalize()
+                .unwrap_or_else(|_| config.storage.backup_save_path.clone());
+            if p1 == p2 {
+                return;
+            }
+
             config.storage.backup_save_path = path;
             async_runtime::spawn(async move {
                 let new_path: PathBuf = cp_path;
@@ -372,6 +394,17 @@ pub fn set_screenshot_path(path: PathBuf) {
             let old_path = config.storage.screenshot_path.clone();
             //改config全变量数据
             let cp_path = path.clone();
+
+            let p1 = path.canonicalize().unwrap_or_else(|_| path.clone());
+            let p2 = config
+                .storage
+                .screenshot_path
+                .canonicalize()
+                .unwrap_or_else(|_| config.storage.screenshot_path.clone());
+            if p1 == p2 {
+                return;
+            }
+
             config.storage.screenshot_path = path;
             async_runtime::spawn(async move {
                 let new_path: PathBuf = cp_path;
@@ -403,6 +436,21 @@ pub fn set_screenshot_path(path: PathBuf) {
         }
         Err(_) => {
             error!("获取config写锁失败");
+        }
+    }
+}
+
+/// 改变自动备份字段
+///
+/// * `is_enabled`: 是否开启自动备份
+fn set_auto_back_up(is_enabled: bool) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => {
+            config.storage.auto_backup = is_enabled;
+        }
+        Err(e) => {
+            error!("{}", e);
         }
     }
 }

@@ -11,6 +11,7 @@ mod message;
 mod resource;
 mod screenshot;
 mod shortcut;
+mod backup;
 mod sys;
 mod user;
 mod util;

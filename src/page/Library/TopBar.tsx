@@ -12,12 +12,15 @@ import useGameStore from "@/store/gameStore";
 import useConfigStore from "@/store/configStore";
 import { GameMeta } from '@/types/game';
 
+// 扩展 Props 类型，支持 passed 排序/过滤
 interface TopToolbarProps {
   isAsc: boolean;
   onSearchChange: (value: string) => void;
-  onSortChange: (type: 'duration' | 'name' | 'lastPlayed') => void;
+  // 关键：增加了 'passed'
+  onSortChange: (type: 'duration' | 'name' | 'lastPlayed' | 'passed') => void;
   onDeleteModeToggle: (isDeleteMode: boolean) => void;
   onOrderToggle: () => void;
+  activeSort?: string; // 可选：用于高亮当前选中的排序项
 }
 
 const noScrollbarStyle: React.CSSProperties = {
@@ -25,7 +28,7 @@ const noScrollbarStyle: React.CSSProperties = {
   scrollbarWidth: 'none',
 };
 
-// --- 右侧海报单项 ---
+// --- 右侧海报单项 (保持原样) ---
 const GameGridItem = memo(({ game, isActive, onClick }: { game: GameMeta; isActive: boolean; onClick: () => void }) => {
   const coverUrl = game.localCover ? convertFileSrc(game.localCover) : game.cover;
   return (
@@ -52,27 +55,25 @@ const GameGridItem = memo(({ game, isActive, onClick }: { game: GameMeta; isActi
 export const TopToolbar: React.FC<TopToolbarProps> = ({
   isAsc, onSearchChange, onSortChange, onDeleteModeToggle, onOrderToggle,
 }) => {
-  // --- 原始状态保持 ---
+  // --- 状态完全保持你的原始版本 ---
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
   const [isSortMenuOpen, setIsSortMenuOpen] = useState<boolean>(false);
   const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // --- 新增状态：布局管理 ---
   const [isLayoutOpen, setIsLayoutOpen] = useState<boolean>(false);
   const { gameMetaList, setGameMeta } = useGameStore();
   const { config, updateConfig } = useConfigStore();
   const [localDisplayList, setLocalDisplayList] = useState<GameMeta[]>([]);
 
-  // 同步展示列表
+  // ... useEffect 和各种 handle 函数保持绝对不动 ...
   useEffect(() => {
     const orderIds: string[] = config.basic.gameDisplayOrder || [];
     const games = orderIds.map(id => gameMetaList.find(g => g.id === id)).filter((g): g is GameMeta => !!g);
     setLocalDisplayList(games);
   }, [config.basic.gameDisplayOrder, gameMetaList]);
 
-  // --- 逻辑函数 ---
   const handleToggleSearch = () => {
     if (isSearchOpen) {
       setIsSearchOpen(false);
@@ -99,7 +100,6 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
       const order = prev.basic.gameDisplayOrder || [];
       prev.basic.gameDisplayOrder = isCurrentlyInOrder ? order.filter(id => id !== gameId) : [...order, gameId];
     });
-    // 关键：修改为 bool 值同步到 store
     setGameMeta({ ...game, isDisplayed: !isCurrentlyInOrder });
   };
 
@@ -111,42 +111,33 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
     updateConfig(prev => { prev.basic.gameDisplayOrder = []; });
   };
 
+  // --- 仅在这里增加一个选项 ---
   const sortOptions = [
     { id: 'duration', label: t`按游玩时长`, icon: <Clock size={20} /> },
     { id: 'name', label: t`按名称排序`, icon: <Type size={20} /> },
     { id: 'lastPlayed', label: t`按最后游玩`, icon: <CalendarDays size={20} /> },
+    { id: 'passed', label: t`仅看已通关`, icon: <CheckCircle2 size={20} className="text-emerald-500" /> }, // 新增
   ] as const;
 
   return (
     <div className="flex items-center justify-end gap-8 w-full px-12 pt-10">
       <style>{`.no-scrollbar::-webkit-scrollbar { display: none; }`}</style>
 
-      {/* 1. 搜索功能 (原始) */}
-      <motion.div
-        layout
-        animate={{ width: isSearchOpen ? 480 : 80, backgroundColor: isSearchOpen ? "rgb(244 244 245)" : "transparent" }}
-        className={cn("h-20 flex flex-row-reverse items-center rounded-[28px] overflow-hidden", isSearchOpen ? "ring-2 ring-zinc-200" : "hover:bg-zinc-100")}
-      >
+      {/* 1. 搜索 (不动) */}
+      <motion.div layout animate={{ width: isSearchOpen ? 480 : 80, backgroundColor: isSearchOpen ? "rgb(244 244 245)" : "transparent" }} className={cn("h-20 flex flex-row-reverse items-center rounded-[28px] overflow-hidden", isSearchOpen ? "ring-2 ring-zinc-200" : "hover:bg-zinc-100")}>
         <button onClick={handleToggleSearch} className="w-20 h-20 shrink-0 flex items-center justify-center text-zinc-900 active:scale-95 transition-all">
           {isSearchOpen ? <X size={34} strokeWidth={2} className="text-zinc-500" /> : <Search size={34} strokeWidth={2} />}
         </button>
         <AnimatePresence>
           {isSearchOpen && (
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="flex-1 pl-8">
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={(e) => { setQuery(e.target.value); onSearchChange(e.target.value); }}
-                placeholder="SEARCH..."
-                className="w-full bg-transparent border-none outline-none text-2xl font-black text-zinc-900 tracking-tighter"
-              />
+              <input ref={inputRef} type="text" value={query} onChange={(e) => { setQuery(e.target.value); onSearchChange(e.target.value); }} placeholder="SEARCH..." className="w-full bg-transparent border-none outline-none text-2xl font-black text-zinc-900 tracking-tighter" />
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
 
-      {/* 2. 排序功能 (原始回调完全保留) */}
+      {/* 2. 排序菜单 (仅在 map 里渲染新选项) */}
       <div className="relative">
         <ToolbarButton onClick={() => setIsSortMenuOpen(!isSortMenuOpen)} icon={<ArrowUpDown size={34} strokeWidth={2} />} active={isSortMenuOpen} />
         <AnimatePresence>
@@ -160,7 +151,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
               </button>
               <div className="h-px bg-zinc-100 my-2" />
               {sortOptions.map((opt) => (
-                <button key={opt.id} onClick={() => { onSortChange(opt.id); setIsSortMenuOpen(false); }} className="w-full flex items-center gap-4 px-4 py-4 hover:bg-zinc-100 rounded-2xl text-zinc-700 font-bold text-lg active:scale-95">
+                <button key={opt.id} onClick={() => { onSortChange(opt.id as any); setIsSortMenuOpen(false); }} className="w-full flex items-center gap-4 px-4 py-4 hover:bg-zinc-100 rounded-2xl text-zinc-700 font-bold text-lg active:scale-95">
                   <span className="text-zinc-400">{opt.icon}</span>{opt.label}
                 </button>
               ))}
@@ -169,19 +160,13 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
         </AnimatePresence>
       </div>
 
-      {/* 3. 布局管理入口 (新) */}
+      {/* 3. 布局管理入口 (不动) */}
       <ToolbarButton onClick={() => setIsLayoutOpen(true)} icon={<Layout size={34} strokeWidth={2} />} active={isLayoutOpen} />
 
-      {/* 4. 删除模式 (原始) */}
-      <ToolbarButton
-        onClick={handleToggleDeleteMode}
-        icon={isDeleteMode ? <X size={34} strokeWidth={2} /> : <Trash2 size={34} strokeWidth={2} />}
-        danger={!isDeleteMode}
-        active={isDeleteMode}
-        className={isDeleteMode ? "bg-red-600 text-white hover:bg-red-700" : ""}
-      />
+      {/* 4. 删除模式 (不动) */}
+      <ToolbarButton onClick={handleToggleDeleteMode} icon={isDeleteMode ? <X size={34} strokeWidth={2} /> : <Trash2 size={34} strokeWidth={2} />} danger={!isDeleteMode} active={isDeleteMode} className={isDeleteMode ? "bg-red-600 text-white hover:bg-red-700" : ""} />
 
-      {/* --- 首页布局管理弹窗 (修复版) --- */}
+      {/* --- 首页布局管理弹窗 (完全还原你的原始尺寸 w-350 h-260 和 结构) --- */}
       <AnimatePresence>
         {isLayoutOpen && (
           <div className="fixed inset-0 z-100 flex items-center justify-center p-6">
@@ -197,7 +182,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
               </div>
 
               <div className="flex-1 flex overflow-hidden">
-                {/* 左侧：丝滑拖拽 */}
+                {/* 左侧：拖拽列表 (不动) */}
                 <div className="w-[300px] border-r flex flex-col bg-zinc-50/30">
                   <div className="p-6 flex justify-between items-center shrink-0">
                     <span className="text-[11px] font-black text-zinc-400 uppercase tracking-widest">展示顺序</span>
@@ -217,7 +202,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
                   </div>
                 </div>
 
-                {/* 右侧：选择库 (修复重叠) */}
+                {/* 右侧：选择库 (不动) */}
                 <div className="flex-1 bg-white flex flex-col">
                   <div className="p-6 text-[11px] font-black text-zinc-400 uppercase tracking-widest text-center shrink-0">点击海报添加至首页</div>
                   <div className="flex-1 overflow-y-auto p-6 pt-0 grid grid-cols-3 gap-y-8 gap-x-4 no-scrollbar align-content-start" style={{ ...noScrollbarStyle, gridAutoRows: 'max-content' }}>
@@ -236,6 +221,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
   );
 };
 
+// --- 子组件 (保持原样) ---
 const ReorderItem = memo(({ game, onRemove }: { game: GameMeta; onRemove: (id: string) => void }) => {
   const dragControls = useDragControls();
   const coverUrl = game.localCover ? convertFileSrc(game.localCover) : game.cover;

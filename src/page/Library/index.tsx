@@ -15,11 +15,14 @@ export default function Library() {
   const { gameMetaList, discardGame, filterGameMetaListByName } = useGameStore()
   const [discardMode, setDiscardMode] = useState<boolean>(false)
   const [isAsc, setIsAsc] = useState<boolean>(false)
-  const [sortMode, setSortMode] = useState<"duration" | "name" | "lastPlayed">("lastPlayed")
+  const [sortMode, setSortMode] = useState<"duration" | "name" | "lastPlayed" | "passed">("lastPlayed")
   const [keyword, setKeyword] = useState<string>("")
   const navigate = useNavigate()
 
   const displayGames = useMemo(() => {
+    if (sortMode == "passed") {
+      return filterGameMetaListByName(keyword).filter(g => g.isPassed)
+    }
     return [...filterGameMetaListByName(keyword)].sort((ga, gb) => {
       let result = 0
       switch (sortMode) {
@@ -99,7 +102,7 @@ export default function Library() {
                   discardMode ? "scale-95 blur-[1px] grayscale-[0.3]" : ""
                 )}>
                   <img
-                    src={g.local_cover ? convertFileSrc(g.local_cover) : g.cover}
+                    src={g.localCover ? convertFileSrc(g.localCover) : g.cover}
                     className="w-full h-full object-cover"
                     alt={g.name}
                   />

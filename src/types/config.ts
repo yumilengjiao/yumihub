@@ -60,7 +60,7 @@ export interface Storage {
   /** 游戏快照保存路径 */
   screenshotPath: string
   /** 是否自动备份 */
-  auto_backup: boolean
+  autoBackup: boolean
 }
 
 // -----------------------------------------------------

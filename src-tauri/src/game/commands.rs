@@ -2,11 +2,13 @@ use std::{path::Path, process::Command, time::Instant};
 
 use chrono::Local;
 use sqlx::SqlitePool;
-use tauri_plugin_log::log::error;
+use tauri_plugin_log::log::{debug, error};
 use uuid::Uuid;
 
 use crate::{
+    backup::commands::backup_archive_by_game_id,
     companion::{self, entity::Companion},
+    config::GLOBAL_CONFIG,
     error::AppError,
     game::{
         entity::{GameMeta, RunningGameStatus},
@@ -67,13 +69,29 @@ pub async fn execute_start_game(pool: SqlitePool, game: GameMeta) -> Result<(), 
             let _ = child.wait().map_err(|e| AppError::Process(e.to_string()))?;
             let duration = start_instant.elapsed();
 
+            // 检查是否开启自动备份
+            let auto_backup = GLOBAL_CONFIG
+                .read()
+                .map_err(|e| AppError::Mutex(e.to_string()))?
+                .storage
+                .auto_backup;
+
+            if auto_backup {
+                // 备份游戏
+                let result = backup_archive_by_game_id(pool.clone(), game_id_clone.clone()).await;
+                if result.is_err() {
+                    error!("无法保存id为{} 的数据", game_id_clone);
+                }
+                debug!("保存成功")
+            }
+
             // 游戏结束，立即清理全局 PID 记录
             {
                 let mut games = RUNNING_GAMES.lock().unwrap();
                 games.remove(&game_id_clone);
             }
 
-            // C. 关闭连携程序 (原有逻辑)
+            // 关闭连携程序 (原有逻辑)
             for name in game_companions_names {
                 #[cfg(target_os = "windows")]
                 let _ = std::process::Command::new("taskkill")

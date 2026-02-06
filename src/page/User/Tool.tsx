@@ -18,9 +18,15 @@ interface DashboardToolsProps {
 export function ToolBox({ }: DashboardToolsProps) {
   const { config, updateConfig } = useConfigStore()
 
-  const setOption = (field: keyof Config['system'], value: boolean) => {
+  const setSysOption = (field: keyof Config['system'], value: boolean) => {
     updateConfig((config) => {
       (config.system as any)[field] = value
+    })
+  }
+
+  const setStorageOption = (field: keyof Config['storage'], value: boolean) => {
+    updateConfig((config) => {
+      (config.storage as any)[field] = value
     })
   }
 
@@ -42,7 +48,7 @@ export function ToolBox({ }: DashboardToolsProps) {
               </div>
               <SuperSwitch
                 checked={config.system.companion}
-                onChange={() => setOption('companion', !config.system.companion)}
+                onChange={() => setSysOption('companion', !config.system.companion)}
               />
             </div>
           </CarouselItem>
@@ -56,7 +62,7 @@ export function ToolBox({ }: DashboardToolsProps) {
               </div>
               <SuperSwitch
                 checked={config.system.hotkeyActivation}
-                onChange={() => setOption('hotkeyActivation', !config.system.hotkeyActivation)}
+                onChange={() => setSysOption('hotkeyActivation', !config.system.hotkeyActivation)}
               />
             </div>
           </CarouselItem>
@@ -69,8 +75,8 @@ export function ToolBox({ }: DashboardToolsProps) {
                 <span className="font-bold text-zinc-300 uppercase tracking-wider text-[20px]"><Trans>自动备份</Trans></span>
               </div>
               <SuperSwitch
-                checked={config.storage.auto_backup}
-                onChange={() => setOption('hotkeyActivation', !config.system.hotkeyActivation)}
+                checked={config.storage.autoBackup}
+                onChange={() => setStorageOption('autoBackup', !config.storage.autoBackup)}
               />
             </div>
           </CarouselItem>
