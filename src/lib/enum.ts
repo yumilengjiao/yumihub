@@ -20,7 +20,7 @@ export enum Cmds {
   /**
    * 更新用户信息
    */
-  SET_USER_INFO = "set_user_info",
+  UPDATE_USER_INFO = "update_user_info",
 
   /**
    * 获取单个游戏元数据

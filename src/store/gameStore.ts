@@ -47,13 +47,13 @@ const useGameStore = create<GameStoreParams>()(
      * @param game - 要用于修改的游戏数据
      */
     setGameMeta: async (updatedGame: GameMeta) => {
-      set((state) => ({
-        gameMetaList: state.gameMetaList.map((g) =>
+      set((state) => {
+        const gameMetaList = state.gameMetaList.map((g) =>
           g.id === updatedGame.id ? updatedGame : g
-        ),
-      }));
+        )
+        state.gameMetaList = gameMetaList
+      });
       try {
-        // 这里的 invoke 对应你之前写的 pub async fn update_game
         await invoke(Cmds.UPDATE_GAME, { game: updatedGame });
         console.log(`${updatedGame.name} 同步成功`);
       } catch (error) {

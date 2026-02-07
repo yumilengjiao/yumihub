@@ -131,6 +131,12 @@
 /* 禁止图片、链接、元素拖拽 */
 * {
   -webkit-user-drag: none;
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 :root,

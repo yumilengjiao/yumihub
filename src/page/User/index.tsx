@@ -17,6 +17,7 @@ import useUserStore from "@/store/userStore";
 import { User as Account } from "@/types/user";
 import { Trans } from "@lingui/react/macro";
 import { t } from "@lingui/core/macro"
+import useGameStore from "@/store/gameStore";
 
 
 
@@ -24,6 +25,7 @@ export default function User() {
   const [isEditingUser, setIsEditingUser] = useState(false)
   const [isDiskPickerOpen, setIsDiskPickerOpen] = useState(false)
   const [diskUsage, setDiskUsage] = useState<number>(0.0)
+  const { gameMetaList } = useGameStore()
   // 热力图的控制
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString())
   // 快照显示的控制
@@ -35,7 +37,6 @@ export default function User() {
   // 快照
   const [isJourneyPickerOpen, setIsJourneyPickerOpen] = useState(false)
   const { user, setUser } = useUserStore()
-  console.log("用户信息: ", user)
 
   const handleUserInfo = () => {
     setIsEditingUser(true)
@@ -56,6 +57,23 @@ export default function User() {
   useEffect(() => {
     handleDiskChange(user?.selectedDisk || "")
   }, [])
+
+  useEffect(() => {
+    console.log("触发了更新")
+    if (!user) return;
+
+    const count = gameMetaList.filter(g => g.isPassed).length;
+    const totalMinutes = gameMetaList.reduce((prev, g) => prev + (g.playTime || 0), 0);
+
+    const needUpdate = user.gamesCompletedNumber !== count || user.totalPlayTime !== totalMinutes;
+
+    if (needUpdate) {
+      setUser({
+        gamesCompletedNumber: count,
+        totalPlayTime: totalMinutes
+      });
+    }
+  }, [gameMetaList]);
 
   return (
     <div className="h-full flex justify-center items-center bg-zinc-200 dark:bg-zinc-900 px-4">
@@ -109,7 +127,7 @@ export default function User() {
                   "text-[clamp(1rem,30cqw,5rem)]",
                   "leading-none font-bold italic"
                 )}>
-                  {user?.totalPlayTime || 0}h
+                  {((user?.totalPlayTime || 0) / 60).toFixed(2)}h
                 </div>
               </div>
             </div>

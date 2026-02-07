@@ -1,3 +1,4 @@
+import { Cmds } from "@/lib/enum"
 import { User } from "@/types/user"
 import { invoke } from "@tauri-apps/api/core"
 import { create } from "zustand"
@@ -10,20 +11,31 @@ interface UserStore {
    * 设置/更新并且更新数据库
    * @param user 要更新的用户数据
    */
-  setUser: (user: User) => void
+  setUser: (fields: Partial<User>) => void
 }
 
 const useUserStore = create<UserStore>()(
-  immer((set) => ({
+  immer((set, get) => ({
     user: null,
-    setUser: (user) => {
-      set(state => {
-        state.user = user
-      })
-      invoke("update_user_info", {
-        account: user
-      })
-    }
+
+    setUser: (fields) => {
+      set((state) => {
+        if (state.user) {
+          Object.assign(state.user, fields);
+        } else {
+          state.user = fields as User;
+        }
+      });
+
+      const updatedUser = get().user;
+      if (updatedUser) {
+        invoke(Cmds.UPDATE_USER_INFO, {
+          account: updatedUser,
+        }).catch((err) => {
+          console.error("同步用户信息失败:", err);
+        });
+      }
+    },
   }))
 )
 

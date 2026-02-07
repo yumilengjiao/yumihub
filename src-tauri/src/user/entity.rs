@@ -9,6 +9,7 @@ pub struct User {
     pub avatar: String,
     pub games_count: i64,
     pub favorite_game: String,
+    // 分钟
     pub total_play_time: i64,
     pub games_completed_number: i64,
     pub selected_disk: Option<String>,

@@ -97,6 +97,14 @@ pub async fn update_user_info(
     .map_err(|e| AppError::DB(e.to_string()))?;
 
     if is_network_resource {
+        let allow_downloading = GLOBAL_CONFIG
+            .read()
+            .map_err(|e| AppError::Generic(e.to_string()))?
+            .storage
+            .allow_downloading_resources;
+        if allow_downloading {
+            return Ok(());
+        }
         info!("发送消息到消息平台下载用户头像资源");
         GAME_MESSAGE_HUB.publish(GameEvent::UserResourceTask {
             meta: account.clone(),
@@ -233,6 +241,14 @@ pub async fn add_new_game(
     .map_err(|e| AppError::DB(e.to_string()))?;
 
     // 向消息模块发布信息说明有资源需要下载
+    let allow_downloading = GLOBAL_CONFIG
+        .read()
+        .map_err(|e| AppError::Generic(e.to_string()))?
+        .storage
+        .allow_downloading_resources;
+    if allow_downloading {
+        return Ok(());
+    }
     GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask {
         meta: game,
         target: ResourceTarget::All,
@@ -295,6 +311,16 @@ pub async fn add_new_game_list(
         .execute(&mut *tx) // 这里在事务中执行
         .await
         .map_err(|e| AppError::DB(e.to_string()))?;
+
+        let allow_downloading = GLOBAL_CONFIG
+            .read()
+            .map_err(|e| AppError::Generic(e.to_string()))?
+            .storage
+            .allow_downloading_resources;
+        if allow_downloading {
+            return Ok(());
+        }
+
         GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask {
             meta: game,
             target: ResourceTarget::All,
@@ -395,6 +421,14 @@ pub async fn update_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Resul
 
     // 如果有资源变动，发布下载任务给 Resource Manager
     if let Some(target) = resource_target {
+        let allow_downloading = GLOBAL_CONFIG
+            .read()
+            .map_err(|e| AppError::Generic(e.to_string()))?
+            .storage
+            .allow_downloading_resources;
+        if allow_downloading {
+            return Ok(());
+        }
         // 只有当新路径是网络路径时才触发任务
         if game.cover.starts_with("http") || game.background.starts_with("http") {
             debug!("已向资源模块发送下载指令: {:?}", target);

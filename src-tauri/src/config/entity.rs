@@ -3,7 +3,10 @@ use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use tokio::sync::broadcast;
 
-use crate::message::traits::{MessageEvent, MessageHub};
+use crate::{
+    backup,
+    message::traits::{MessageEvent, MessageHub},
+};
 
 /// 全局配置类型
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
@@ -88,13 +91,26 @@ impl Default for Basic {
 ///
 /// * `backup_save_path`: 游戏存档备份路径
 /// * `meta_save_path`: 游戏资源下载路径
-#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Storage {
     pub backup_save_path: PathBuf,
     pub meta_save_path: PathBuf,
     pub screenshot_path: PathBuf,
+    pub allow_downloading_resources: bool,
     pub auto_backup: bool,
+}
+
+impl Default for Storage {
+    fn default() -> Self {
+        Self {
+            backup_save_path: PathBuf::new(),
+            meta_save_path: PathBuf::new(),
+            screenshot_path: PathBuf::new(),
+            allow_downloading_resources: true,
+            auto_backup: false,
+        }
+    }
 }
 
 // -----------------------------------------------------

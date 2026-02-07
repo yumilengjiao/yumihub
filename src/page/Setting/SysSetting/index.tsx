@@ -1,6 +1,7 @@
 import CommonCard from "@/components/CommonCard";
 import SelectCard from "@/components/SelectCard";
 import StepSliderCard from "@/components/StepSliderCard";
+import SwitchCard from "@/components/SwitchCard";
 import useConfigStore from "@/store/configStore";
 import { t } from "@lingui/core/macro"
 import { useLingui } from "@lingui/react";
@@ -16,6 +17,7 @@ export default function SysSetting() {
   return (
     <CommonCard key={i18n.locale} title={t`系统策略`} icon="⚙️" className="dark:bg-zinc-800">
       <div className="space-y-1">
+
         <SelectCard
           title={t`点击关闭按钮时`}
           options={closeOpts}

@@ -40,7 +40,6 @@ fn start_resource_manager(app_handle: &AppHandle) {
 
         while let Ok(event) = rx.recv().await {
             match event {
-                // 假设 GameResourceTask 现在接收 (GameMeta, ResourceTarget)
                 GameEvent::GameResourceTask { meta, target } => {
                     let cp_handle = handle.clone();
                     let permit_semaphore = Arc::clone(&semaphore);

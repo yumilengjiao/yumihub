@@ -36,6 +36,7 @@ pub fn listening_loop(app_handler: AppHandle) {
                     set_game_meta_data_load_path(stroage.meta_save_path);
                     set_backup_path(stroage.backup_save_path);
                     set_screenshot_path(stroage.screenshot_path);
+                    set_allow_downloading_resources(stroage.allow_downloading_resources);
                     set_auto_back_up(stroage.auto_backup);
                 }
                 ConfigEvent::System { sys } => {
@@ -435,6 +436,19 @@ pub fn set_screenshot_path(path: PathBuf) {
         }
         Err(_) => {
             error!("获取config写锁失败");
+        }
+    }
+}
+
+/// 改变是否允许下载资源字段
+///
+/// * `allowed`: 是否允许下载
+fn set_allow_downloading_resources(allowed: bool) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.storage.allow_downloading_resources = allowed,
+        Err(e) => {
+            error!("{}", e);
         }
     }
 }
