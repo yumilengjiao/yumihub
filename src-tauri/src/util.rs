@@ -5,6 +5,7 @@ use std::io::Read;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
+use unrar::Archive;
 use walkdir::WalkDir;
 use windows::core::BOOL;
 use zip::write::FileOptions;
@@ -16,6 +17,13 @@ use windows::Win32::UI::WindowsAndMessaging::{
 };
 
 use crate::error::AppError;
+use crate::game::entity::ArchiveEntry;
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------游戏路径相关--------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 /// 通过游戏的父目录(游戏目录),获取单个游戏的启动路径
 ///
@@ -85,6 +93,12 @@ pub fn get_start_up_program(parent_path: String) -> Result<String, AppError> {
     // 如果前端传的是相对路径，这里返回的就是相对路径
     Ok(best_match.to_string_lossy().replace("\\", "/"))
 }
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------文件/压缩包相关------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 /// 把一个目录下的所有文件迁移到另一个目录下
 ///
@@ -186,29 +200,39 @@ pub fn zip_directory_sync(src: &Path, dst: &Path) -> Result<(), Box<dyn std::err
     Ok(())
 }
 
-/// 辅助函数-解压一个压缩包并把里面的所有文件解压到另一个目录
+/// 解压一个zip压缩包并把里面的所有文件解压到另一个目录,并返回父目录信息
 ///
 /// * `zip_path`: 压缩包路径
 /// * `extract_to`: 解压目的地
 pub fn extract_zip_sync(
     zip_path: &Path,
     extract_to: &Path,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> Result<String, Box<dyn std::error::Error>> {
     let file = File::open(zip_path)?;
     let mut archive = ZipArchive::new(file)?;
 
-    // 如果目标目录不存在则创建，如果存在则可选清空（这里采取先删除后创建确保覆盖纯净）
-    if extract_to.exists() {
-        fs::remove_dir_all(extract_to)?;
-    }
     fs::create_dir_all(extract_to)?;
+
+    // 用于记录第一个条目的根目录名
+    let mut first_dir: Option<String> = None;
 
     for i in 0..archive.len() {
         let mut file = archive.by_index(i)?;
-        let outpath = match file.enclosed_name() {
-            Some(path) => extract_to.join(path),
+
+        // enclosed_name 会处理相对路径风险（安全重要！）
+        let enclosed_path = match file.enclosed_name() {
+            Some(path) => path.to_owned(),
             None => continue,
         };
+
+        // 记录第一个根目录
+        if first_dir.is_none() {
+            if let Some(first_component) = enclosed_path.components().next() {
+                first_dir = Some(first_component.as_os_str().to_string_lossy().into_owned());
+            }
+        }
+
+        let outpath = extract_to.join(&enclosed_path);
 
         if (*file.name()).ends_with('/') {
             fs::create_dir_all(&outpath)?;
@@ -222,7 +246,61 @@ pub fn extract_zip_sync(
             std::io::copy(&mut file, &mut outfile)?;
         }
     }
-    Ok(())
+
+    // 根据记录的第一个目录名拼接完整路径
+    let final_path = match first_dir {
+        Some(dir_name) => extract_to.join(dir_name),
+        None => extract_to.to_path_buf(),
+    };
+
+    Ok(final_path.to_string_lossy().into_owned())
+}
+
+/// 解压一个rar压缩包并把里面的所有文件解压到另一个目录,并返回父目录信息
+///
+/// * `rar_path`: 压缩包路径
+/// * `extract_to`: 解压目的地
+pub fn extract_rar_sync(rar_path: &Path, extract_to: &Path) -> Result<String, AppError> {
+    if !extract_to.exists() {
+        fs::create_dir_all(extract_to)
+            .map_err(|e| AppError::File(format!("创建解压目录失败: {}", e)))?;
+    }
+
+    let mut archive = Archive::new(rar_path)
+        .open_for_processing()
+        .map_err(|e| AppError::File(format!("打开 RAR 失败: {:?}", e)))?;
+
+    // 用于保存解压出的第一个目录名
+    let mut first_dir: Option<String> = None;
+
+    while let Some(header) = archive
+        .read_header()
+        .map_err(|e| AppError::File(e.to_string()))?
+    {
+        let entry = header.entry();
+        let filename_path = entry.filename.clone();
+
+        // 记录第一个条目的根目录名
+        // 比如 filename 是 "MyGame/config.ini"，我们拿到的第一个组件就是 "MyGame"
+        if first_dir.is_none() {
+            if let Some(first_component) = filename_path.components().next() {
+                first_dir = Some(first_component.as_os_str().to_string_lossy().into_owned());
+            }
+        }
+
+        archive = header
+            .extract_with_base(extract_to)
+            .map_err(|e| AppError::File(format!("解压失败: {:?} ({})", filename_path, e)))?;
+    }
+
+    // 拼接成完整的物理路径并返回
+    match first_dir {
+        Some(dir_name) => {
+            let full_game_path = extract_to.join(dir_name);
+            Ok(full_game_path.to_string_lossy().into_owned())
+        }
+        None => Ok(extract_to.to_string_lossy().into_owned()), // 如果包是散装的，返回 base
+    }
 }
 
 /// 计算一个目录的大小
@@ -236,6 +314,52 @@ pub fn get_dir_size<P: AsRef<Path>>(path: P) -> u64 {
         .filter_map(|entry| entry.metadata().ok())
         .map(|meta| meta.len())
         .sum()
+}
+
+/// 读取(不解压)zip压缩包并返回文件元数据信息
+///
+/// * `path`: 压缩包路径
+pub fn parse_zip(path: &str) -> Result<Vec<ArchiveEntry>, AppError> {
+    let file = File::open(path).map_err(|e| AppError::File(e.to_string()))?;
+    let mut archive = ZipArchive::new(file).map_err(|e| AppError::File(e.to_string()))?;
+    let mut entries = Vec::new();
+
+    for i in 0..archive.len() {
+        let file = archive
+            .by_index(i)
+            .map_err(|e| AppError::File(e.to_string()))?;
+        entries.push(ArchiveEntry {
+            name: file.name().to_string(),
+            size: file.size(),
+            is_dir: file.is_dir(),
+            encrypted: file.encrypted(),
+        });
+    }
+    Ok(entries)
+}
+
+/// 读取(不解压)rar压缩包并返回文件元数据信息
+///
+/// * `path`: 压缩包路径
+pub fn parse_rar(path: &str) -> Result<Vec<ArchiveEntry>, AppError> {
+    let archive = Archive::new(path)
+        .open_for_listing()
+        .map_err(|e| AppError::File(format!("无法打开RAR文件: {:?}", e)))?;
+
+    let mut entries: Vec<ArchiveEntry> = Vec::new();
+
+    for entry in archive {
+        let header = entry.map_err(|e| AppError::File(format!("读取头部出错: {:?}", e)))?;
+
+        entries.push(ArchiveEntry {
+            name: header.filename.to_string_lossy().into_owned(),
+            size: header.unpacked_size,
+            is_dir: header.is_directory(),
+            encrypted: header.is_encrypted(),
+        });
+    }
+
+    Ok(entries)
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------------

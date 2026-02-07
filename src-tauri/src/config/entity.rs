@@ -95,6 +95,7 @@ pub struct Storage {
     pub backup_save_path: PathBuf,
     pub meta_save_path: PathBuf,
     pub screenshot_path: PathBuf,
+    pub gal_root_dir: PathBuf,
     pub allow_downloading_resources: bool,
     pub auto_backup: bool,
 }
@@ -105,6 +106,7 @@ impl Default for Storage {
             backup_save_path: PathBuf::new(),
             meta_save_path: PathBuf::new(),
             screenshot_path: PathBuf::new(),
+            gal_root_dir: PathBuf::new(),
             allow_downloading_resources: true,
             auto_backup: false,
         }

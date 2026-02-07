@@ -103,3 +103,16 @@ impl MessageHub<GameEvent> for GameMessageHub {
         let _ = self.game_tx.send(event);
     }
 }
+
+// ----------------------------------------------------------------------------------
+// ----------------------------------游戏压缩包相关----------------------------------
+// ----------------------------------------------------------------------------------
+
+#[derive(serde::Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct ArchiveEntry {
+    pub name: String,
+    pub size: u64,
+    pub is_dir: bool,
+    pub encrypted: bool,
+}

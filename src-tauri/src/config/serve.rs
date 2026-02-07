@@ -31,14 +31,6 @@ pub fn listening_loop(app_handler: AppHandle) {
                     set_game_display_order(base.game_display_order);
                     set_language(base.language);
                 }
-                ConfigEvent::Storage { stroage } => {
-                    debug!("备份设置开始更新");
-                    set_game_meta_data_load_path(stroage.meta_save_path);
-                    set_backup_path(stroage.backup_save_path);
-                    set_screenshot_path(stroage.screenshot_path);
-                    set_allow_downloading_resources(stroage.allow_downloading_resources);
-                    set_auto_back_up(stroage.auto_backup);
-                }
                 ConfigEvent::System { sys } => {
                     debug!("系统设置开始更新");
                     change_compainion(app_handler.clone(), sys.companion);
@@ -53,6 +45,15 @@ pub fn listening_loop(app_handler: AppHandle) {
                     change_interface_color(interface.theme_color);
                     change_sidebar_mode(interface.sidebar_mode);
                     change_font_family(interface.font_family);
+                }
+                ConfigEvent::Storage { stroage } => {
+                    debug!("备份设置开始更新");
+                    set_game_meta_data_load_path(stroage.meta_save_path);
+                    set_backup_path(stroage.backup_save_path);
+                    set_screenshot_path(stroage.screenshot_path);
+                    set_gal_root_dir(stroage.gal_root_dir);
+                    set_allow_downloading_resources(stroage.allow_downloading_resources);
+                    set_auto_back_up(stroage.auto_backup);
                 }
             }
         }
@@ -436,6 +437,20 @@ pub fn set_screenshot_path(path: PathBuf) {
         }
         Err(_) => {
             error!("获取config写锁失败");
+        }
+    }
+}
+
+/// 用于设置所有游戏的根目录(实机是压缩包解压的根目录)
+///
+/// * `path`: 所有游戏的目录
+pub fn set_gal_root_dir(path: PathBuf) {
+    println!("config内的galroot被更新");
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.storage.gal_root_dir = path,
+        Err(e) => {
+            error!("{}", e);
         }
     }
 }

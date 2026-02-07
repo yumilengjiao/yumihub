@@ -55,6 +55,10 @@ export interface Storage {
   metaSavePath: string
   /** 游戏快照保存路径 */
   screenshotPath: string
+  /** 所有游戏的根目录(用于防止所有游戏压缩后的目录) */
+  galRootDir: string
+  /** 是否允许下载游戏资源到本地 */
+  allowDownloadingResources: boolean
   /** 是否自动备份 */
   autoBackup: boolean
 }

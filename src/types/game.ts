@@ -217,3 +217,10 @@ export interface YmResult {
   haveChinese: boolean
 }
 
+
+export interface ArchiveEntry {
+  name: string,
+  size: number,
+  isDir: boolean,
+  encrypted: boolean,
+}

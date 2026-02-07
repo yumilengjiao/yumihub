@@ -44,6 +44,9 @@ pub fn run() {
             cmd::start_game,
             cmd::get_sessions,
             cmd::get_sessions_by_year,
+            // 压缩包
+            cmd::get_archive_list,
+            cmd::extract_archive,
             //游戏快照
             cmd::get_screenshots_by_year_month,
             cmd::update_screenshot_by_id,

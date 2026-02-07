@@ -13,11 +13,11 @@ use uuid::Uuid;
 use crate::backup::commands::backup_archive_by_game_id;
 use crate::companion::entity::Companion;
 use crate::game::commands::execute_start_game;
-use crate::game::entity::{PlaySession, ResourceTarget};
+use crate::game::entity::{ArchiveEntry, PlaySession, ResourceTarget};
 use crate::screenshot::entity::Screenshot;
 use crate::shortcut::commands::refresh_shortcuts;
 use crate::shortcut::entity::ShortcutSetting;
-use crate::util::{extract_zip_sync, get_dir_size};
+use crate::util::{extract_rar_sync, extract_zip_sync, get_dir_size, parse_rar, parse_zip};
 use crate::{
     config::{
         entity::{Config, ConfigEvent},
@@ -537,6 +537,75 @@ pub async fn get_sessions_by_year(
 }
 
 // --------------------------------------------------------
+// ------------------------压缩类--------------------------
+// --------------------------------------------------------
+
+/// 提取(游戏)压缩包内所有文件的元数据信息
+///
+/// * `path`: 压缩包路径
+#[tauri::command]
+pub async fn get_archive_list(path: String) -> Result<Vec<ArchiveEntry>, AppError> {
+    let path_buf = Path::new(&path);
+    if !path_buf.exists() {
+        return Err(AppError::Resolve(
+            path_buf.to_string_lossy().to_string(),
+            "文件路径不存在".to_string(),
+        ));
+    }
+
+    let extension = path_buf
+        .extension()
+        .and_then(|s| s.to_str())
+        .unwrap_or("")
+        .to_lowercase();
+
+    match extension.as_str() {
+        "zip" => parse_zip(&path),
+        "rar" => parse_rar(&path),
+        _ => Err(AppError::File("暂不支持该压缩格式".to_string())),
+    }
+}
+
+/// 解压压缩包到指定目录
+///
+/// * `archive_path`: 压缩包路径
+/// * `dest_path`: 目的路径
+#[tauri::command]
+pub async fn extract_archive(
+    archive_path: String,
+    dest_path: Option<String>,
+) -> Result<String, AppError> {
+    let src = PathBuf::from(&archive_path);
+
+    let final_dest = if let Some(d) = dest_path {
+        PathBuf::from(d)
+    } else {
+        // 如果没有传路径，默认解压到压缩包同名目录下（Galgame常见做法）
+        let mut d = src.clone();
+        d.set_extension(""); // 去掉 .zip 或 .rar
+        d
+    };
+
+    if !src.exists() {
+        return Err(AppError::File(format!("源文件不存在: {}", archive_path)));
+    }
+
+    let ext = src
+        .extension()
+        .and_then(|s| s.to_str())
+        .unwrap_or("")
+        .to_lowercase();
+
+    let parent_dir = match ext.as_str() {
+        "zip" => extract_zip_sync(&src, &final_dest).map_err(|e| AppError::File(e.to_string()))?,
+        "rar" => extract_rar_sync(&src, &final_dest)?,
+        _ => return Err(AppError::Generic("不支持的压缩格式".to_string())),
+    };
+
+    Ok(parent_dir)
+}
+
+// --------------------------------------------------------
 // ------------------------配置类--------------------------
 // --------------------------------------------------------
 
@@ -1003,12 +1072,12 @@ pub fn get_disk_usage(path: String) -> Result<f64, String> {
     }
 }
 
-#[tauri::command]
 /// 添加指定的文件路径，使其可以被赋予访问权限
 ///
 /// * `app_handle`: app句柄自动注入
 /// * `pool`: 数据库连接池自动注入
 /// * `path`: 要赋予权限的路径
+#[tauri::command]
 pub async fn authorize_path_access<R: Runtime>(
     app_handle: AppHandle<R>,
     pool: State<'_, SqlitePool>,

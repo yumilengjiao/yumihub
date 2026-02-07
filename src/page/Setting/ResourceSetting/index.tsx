@@ -27,7 +27,7 @@ export default function ResourceSetting() {
     title: "",
     desc: "",
   });
-  const { config } = useConfigStore()
+  const { config, updateConfig } = useConfigStore()
 
   const openConfirm = (opts: {
     title: string;
@@ -76,13 +76,14 @@ export default function ResourceSetting() {
           className="mb-3!"
           title={t`允许资源下载到本地`}
           checked={true}
-          onCheckedChange={(v) => alert("aaa")}
+          onCheckedChange={(v) => updateConfig(config => config.storage.allowDownloadingResources = v)}
         />
 
         <div className="space-y-1">
-          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" path={config.storage.backupSavePath} title={t`游戏存档备份目录`} onSelect={() => console.log('')} />
-          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" path={config.storage.metaSavePath} title={t`游戏资源存储目录`} onSelect={() => console.log('')} />
-          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" path={config.storage.screenshotPath} title={t`游戏快照截图目录`} onSelect={() => console.log('')} />
+          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" path={config.storage.galRootDir} title={t`游戏统一解压目录`} onSelect={(selected) => updateConfig(config => config.storage.galRootDir = selected)} />
+          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" path={config.storage.backupSavePath} title={t`游戏存档备份目录`} />
+          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" path={config.storage.metaSavePath} title={t`游戏资源存储目录`} />
+          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" path={config.storage.screenshotPath} title={t`游戏快照截图目录`} />
         </div>
 
         <div className="pt-4">
