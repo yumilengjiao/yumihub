@@ -282,7 +282,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
                   </div>
 
                   <div className="flex justify-end shrink-0">
-                    <Button onClick={() => handleFinalConfirm(true)} className="h-20 px-14 bg-green-500 hover:bg-green-600 text-white rounded-[24px] font-black text-3xl gap-4 shadow-2xl transition-all active:scale-95">
+                    <Button onClick={() => handleFinalConfirm(true)} className="h-20 px-14 bg-custom-500 hover:bg-custom-600 text-white rounded-[24px] font-black text-3xl gap-4 shadow-2xl transition-all active:scale-95">
                       <Check size={40} strokeWidth={6} /><Trans> 确认添加</Trans>
                     </Button>
                   </div>

@@ -23,7 +23,7 @@ pub struct Config {
 #[serde(rename_all = "camelCase")]
 pub struct Interface {
     pub theme_mode: ThemeMode,
-    pub theme_color: ThemeColor,
+    pub theme_color: String,
     pub sidebar_mode: SideBarMode,
     pub font_family: String,
 }
@@ -33,12 +33,6 @@ pub enum ThemeMode {
     #[default]
     Daytime,
     Night,
-}
-
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
-pub enum ThemeColor {
-    #[default]
-    White,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -53,7 +47,7 @@ impl Default for Interface {
     fn default() -> Self {
         Self {
             theme_mode: ThemeMode::Daytime,
-            theme_color: ThemeColor::White,
+            theme_color: "theme-emerald".into(),
             sidebar_mode: SideBarMode::Trigger,
             font_family: "sys".into(),
         }

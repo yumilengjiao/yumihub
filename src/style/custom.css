@@ -1,3 +1,20 @@
+/* src/styles/themes.css */
+
+@theme {
+  /* 映射 custom 颜色序列到 CSS 变量 */
+  --color-custom-50: hsl(var(--custom-50));
+  --color-custom-100: hsl(var(--custom-100));
+  --color-custom-200: hsl(var(--custom-200));
+  --color-custom-300: hsl(var(--custom-300));
+  --color-custom-400: hsl(var(--custom-400));
+  --color-custom-500: hsl(var(--custom-500));
+  --color-custom-600: hsl(var(--custom-600));
+  --color-custom-700: hsl(var(--custom-700));
+  --color-custom-800: hsl(var(--custom-800));
+  --color-custom-900: hsl(var(--custom-900));
+}
+
+/* 2. 定义具体的 HSL 数值变量 */
 @layer base {
 
   /* 默认/绿色主题 (Emerald) */
@@ -99,7 +116,7 @@
     --custom-900: 196 85% 16%;
   }
 
-  /* 极客灰 (Slate/Zinc 风格的冷色) */
+  /* 极客灰 (Slate) */
   .theme-slate {
     --custom-50: 210 20% 98%;
     --custom-100: 210 20% 94%;

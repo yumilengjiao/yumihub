@@ -48,7 +48,7 @@ export default function ResourceSetting() {
           <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" title={t`游戏元数据存储目录`} onSelect={() => console.log('')} />
         </div>
 
-        <div className="pt-4 border-t border-zinc-100">
+        <div className="pt-4">
           <Button
             onClick={handleQuickBackup}
             disabled={isBackingUp}
@@ -63,7 +63,7 @@ export default function ResourceSetting() {
             </Trans>
           </p>
         </div>
-        <div className="pt-4 border-t border-zinc-100">
+        <div className="pt-4">
           <Button
             onClick={handleQuickRestore}
             disabled={isBackingUp}

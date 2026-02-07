@@ -7,11 +7,10 @@ use tauri_plugin_log::log::{debug, error, info, warn};
 use crate::{
     companion::commands::refresh_companions,
     config::{
-        entity::{ConfigEvent, SideBarMode, ThemeColor, ThemeMode},
+        entity::{ConfigEvent, SideBarMode, ThemeMode},
         GLOBAL_CONFIG,
     },
     message::{traits::MessageHub, CONFIG_MESSAGE_HUB},
-    resource,
     shortcut::commands::refresh_shortcuts,
     util::copy_dir_recursive,
 };
@@ -238,7 +237,7 @@ pub fn change_interface_mode(mode: ThemeMode) {
 /// 改变主题色
 ///
 /// * `mode`: 外观模式--夜间或白天模式
-pub fn change_interface_color(color: ThemeColor) {
+pub fn change_interface_color(color: String) {
     let result = GLOBAL_CONFIG.write();
     match result {
         Ok(mut config) => config.interface.theme_color = color,

@@ -26,7 +26,7 @@ export interface Basic {
 
 export interface Interface {
   themeMode: ThemeMode;
-  themeColor: ThemeColor;
+  themeColor: string;
   sidebarMode: SideBarMode;
   fontFamily: string;
 }
@@ -36,11 +36,6 @@ export enum ThemeMode {
   Night = "Night",
 }
 
-export enum ThemeColor {
-  White = "White",
-  Green = "Green",
-  Orange = "Orange"
-}
 
 export enum SideBarMode {
   Trigger = "Trigger",

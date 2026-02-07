@@ -1,6 +1,6 @@
 interface ProgressBarProps {
   label: string
-  value: number 
+  value: number
 }
 
 const ProgressBar = ({ label, value }: ProgressBarProps) => {

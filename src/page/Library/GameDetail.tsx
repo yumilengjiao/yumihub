@@ -63,7 +63,7 @@ export default function GameDetail() {
 
   // 这里的 CARD_STYLE 和 INPUT_STYLE 增加了暗色模式适配
   const CARD_STYLE = "bg-white dark:bg-zinc-800 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-zinc-700 p-10 flex flex-col w-full h-full";
-  const INPUT_STYLE = "flex items-center justify-between bg-slate-50 dark:bg-zinc-900/50 border border-slate-100 dark:border-zinc-700 p-6 rounded-2xl hover:bg-white dark:hover:bg-zinc-800 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-lg transition-all cursor-pointer group";
+  const INPUT_STYLE = "flex items-center justify-between bg-slate-50 dark:bg-zinc-900/50 border border-slate-100 dark:border-zinc-700 p-6 rounded-2xl hover:bg-white dark:hover:bg-zinc-800 hover:border-custom-400 dark:hover:border-custom-500 hover:shadow-lg transition-all cursor-pointer group";
 
   const pickPath = async (field: keyof GameMeta) => {
     const isFile = field === 'background' || field === 'cover' || field === 'absPath';
@@ -115,7 +115,7 @@ export default function GameDetail() {
           />
           <div className="absolute inset-0 bg-linear-to-b from-transparent via-white/50 dark:via-zinc-950/50 to-[#fcfdfe] dark:to-zinc-950" />
           <div className="relative z-30 pt-24 px-16 max-w-7xl mx-auto">
-            <button onClick={() => navigate(-1)} className="group flex items-center gap-6 px-10 py-5 bg-white dark:bg-zinc-800 shadow-xl border border-slate-100 dark:border-zinc-700 rounded-[2rem] text-slate-800 dark:text-zinc-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all active:scale-95">
+            <button onClick={() => navigate(-1)} className="group flex items-center gap-6 px-10 py-5 bg-white dark:bg-zinc-800 shadow-xl border border-slate-100 dark:border-zinc-700 rounded-[2rem] text-slate-800 dark:text-zinc-200 hover:text-custom-600 dark:hover:text-custom-400 transition-all active:scale-95">
               <ArrowLeft size={32} strokeWidth={3} className="group-hover:-translate-x-3 transition-transform" />
               <span className="text-3xl font-[1000] tracking-tighter"><Trans>返回库</Trans></span>
             </button>
@@ -141,8 +141,8 @@ export default function GameDetail() {
                   className="bg-transparent text-7xl! font-[1000] mb-4 w-full border-none focus:ring-0 p-0 text-slate-900 dark:text-zinc-100 tracking-tighter"
                 />
                 <div className="flex items-center gap-4 mb-10">
-                  <div className="flex items-center gap-4 bg-white/80 dark:bg-zinc-800/80 backdrop-blur-md border border-slate-100 dark:border-zinc-700 px-6 py-3 rounded-[1.5rem] shadow-sm focus-within:border-emerald-400 focus-within:shadow-xl focus-within:bg-white dark:focus-within:bg-zinc-800 transition-all group">
-                    <Building2 size={24} className="text-emerald-500 group-focus-within:scale-110 transition-transform" />
+                  <div className="flex items-center gap-4 bg-white/80 dark:bg-zinc-800/80 backdrop-blur-md border border-slate-100 dark:border-zinc-700 px-6 py-3 rounded-[1.5rem] shadow-sm focus-within:border-custom-400 focus-within:shadow-xl focus-within:bg-white dark:focus-within:bg-zinc-800 transition-all group">
+                    <Building2 size={24} className="text-custom-500 group-focus-within:scale-110 transition-transform" />
                     <input
                       value={game.developer || ""}
                       placeholder="未设定制作商"
@@ -150,20 +150,20 @@ export default function GameDetail() {
                       className="bg-transparent border-none focus:ring-0 p-0 text-4xl! font-black text-slate-600 dark:text-zinc-400 w-64 placeholder:text-slate-300 dark:placeholder:text-zinc-600"
                     />
                   </div>
-                  <button onClick={() => backupArchive()} className="flex items-center gap-3 px-6 py-4 bg-white dark:bg-zinc-800 border border-slate-100 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 rounded-2xl font-bold text-xl shadow-sm hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:shadow-lg transition-all active:scale-95 group">
+                  <button onClick={() => backupArchive()} className="flex items-center gap-3 px-6 py-4 bg-white dark:bg-zinc-800 border border-slate-100 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 rounded-2xl font-bold text-xl shadow-sm hover:border-custom-400 hover:text-custom-600 dark:hover:text-custom-400 hover:shadow-lg transition-all active:scale-95 group">
                     <DatabaseBackup size={20} className="group-hover:rotate-12 transition-transform" /><Trans>立即备份</Trans>
                   </button>
-                  <button onClick={() => restoreGameArchive()} className="flex items-center gap-3 px-6 py-4 bg-white dark:bg-zinc-800 border border-slate-100 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 rounded-2xl font-bold text-xl shadow-sm hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:shadow-lg transition-all active:scale-95 group">
+                  <button onClick={() => restoreGameArchive()} className="flex items-center gap-3 px-6 py-4 bg-white dark:bg-zinc-800 border border-slate-100 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 rounded-2xl font-bold text-xl shadow-sm hover:border-custom-400 hover:text-custom-600 dark:hover:text-custom-400 hover:shadow-lg transition-all active:scale-95 group">
                     <ArchiveRestore size={20} className="group-hover:rotate-12 transition-transform" /> <Trans>从备份存档恢复</Trans>
                   </button>
                 </div>
 
                 <div className="flex flex-wrap gap-8 items-center">
-                  <button onClick={() => invoke(Cmds.START_GAME, { game: game })} className="flex items-center gap-6 px-16 py-8 bg-emerald-500 hover:bg-emerald-600 text-white rounded-[2rem] font-[1000] text-3xl shadow-[0_20px_40px_-10px_rgba(16,185,129,0.4)] transition-all active:scale-95" >
+                  <button onClick={() => invoke(Cmds.START_GAME, { game: game })} className="flex items-center gap-6 px-16 py-8 bg-custom-500 hover:bg-custom-600 text-white rounded-[2rem] font-[1000] text-3xl shadow-[0_20px_40px_-10px_rgba(16,185,129,0.4)] transition-all active:scale-95" >
                     <Play fill="currentColor" size={32} /><Trans>启动游戏</Trans>
                   </button>
                   <div className="flex gap-12 bg-white dark:bg-zinc-800 border border-slate-100 dark:border-zinc-700 px-12 py-5 rounded-[2rem] shadow-sm">
-                    <StatItem label={t`已游玩`} value={`${(game.playTime / 60).toFixed(2)}H`} color="text-emerald-500" />
+                    <StatItem label={t`已游玩`} value={`${(game.playTime / 60).toFixed(2)}H`} color="text-custom-500" />
                     <div className="w-px bg-slate-100 dark:bg-zinc-700 h-16" />
                     <StatItem label={t`占用空间`} value={`${(game.size ? (game.size / 1024 / 1024).toFixed(1) : "0")}MB`} />
                   </div>
@@ -174,9 +174,9 @@ export default function GameDetail() {
               <div className="lg:col-span-2">
                 <div className={CARD_STYLE}>
                   <h3 className="text-lg font-black text-slate-400 dark:text-zinc-500 mb-8 uppercase tracking-[0.2em] flex items-center gap-3">
-                    <Info size={24} className="text-emerald-500" /><Trans> 游戏简介</Trans>
+                    <Info size={24} className="text-custom-500" /><Trans> 游戏简介</Trans>
                   </h3>
-                  <textarea value={game.description} onChange={(e) => updateField('description', e.target.value)} placeholder={t`输入游戏描述...`} className="w-full flex-1 bg-slate-50 dark:bg-zinc-900/50 border-none rounded-2xl p-8 text-2xl text-slate-600 dark:text-zinc-400 leading-relaxed resize-none outline-none focus:ring-1 focus:ring-emerald-100 dark:focus:ring-emerald-900 transition-all min-h-80" />
+                  <textarea value={game.description} onChange={(e) => updateField('description', e.target.value)} placeholder={t`输入游戏描述...`} className="w-full flex-1 bg-slate-50 dark:bg-zinc-900/50 border-none rounded-2xl p-8 text-2xl text-slate-600 dark:text-zinc-400 leading-relaxed resize-none outline-none focus:ring-1 focus:ring-custom-100 dark:focus:ring-custom-900 transition-all min-h-80" />
                 </div>
               </div>
               <div className="lg:col-span-1 flex flex-col gap-10">
@@ -191,7 +191,7 @@ export default function GameDetail() {
                         type="number"
                         value={game.playTime}
                         onChange={(e) => updateField('playTime', parseInt(e.target.value) || 0)}
-                        className="ml-8 text-2xl! font-[1000] text-emerald-500 bg-transparent border-none focus:ring-0 p-4 w-full leading-normal"
+                        className="ml-8 text-2xl! font-[1000] text-custom-500 bg-transparent border-none focus:ring-0 p-4 w-full leading-normal"
                       />
                     </div>
 
@@ -227,14 +227,14 @@ export default function GameDetail() {
                   <p className="text-sm font-black text-slate-400 dark:text-zinc-500 uppercase mb-6 flex items-center gap-3"><Save size={24} /><Trans> 存档目录</Trans></p>
                   <div onClick={() => pickPath('saveDataPath')} className={INPUT_STYLE}>
                     <span className="text-xl font-mono text-slate-500 dark:text-zinc-400 truncate pr-6">{game.saveDataPath || t`点击配置路径...`}</span>
-                    <FolderOpen size={28} className="text-emerald-500" />
+                    <FolderOpen size={28} className="text-custom-500" />
                   </div>
                 </div>
                 <div className={CARD_STYLE}>
                   <p className="text-sm font-black text-slate-400 dark:text-zinc-500 uppercase mb-6 flex items-center gap-3"><ImageIcon size={24} /> <Trans>自定义背景</Trans></p>
                   <div onClick={() => pickPath('background')} className={INPUT_STYLE}>
                     <span className="text-xl font-mono text-slate-500 dark:text-zinc-400 truncate pr-6">{game.background || t`默认图片...`}</span>
-                    <ImageIcon size={28} className="text-emerald-500" />
+                    <ImageIcon size={28} className="text-custom-500" />
                   </div>
                 </div>
               </div>
@@ -247,11 +247,11 @@ export default function GameDetail() {
 }
 
 // --- 辅助组件 (适配 dark:) ---
-function ToggleItem({ label, isEnabled, onToggle, icon, activeColor = "bg-emerald-500" }: { label: string, isEnabled: boolean, onToggle: () => void, icon: any, activeColor?: string }) {
+function ToggleItem({ label, isEnabled, onToggle, icon, activeColor = "bg-custom-500" }: { label: string, isEnabled: boolean, onToggle: () => void, icon: any, activeColor?: string }) {
   return (
     <div className="flex items-center justify-between cursor-pointer group select-none" onClick={onToggle}>
       <div className="flex items-center gap-3 text-slate-700 dark:text-zinc-200">
-        <span className="text-slate-400 dark:text-zinc-500 group-hover:text-emerald-500 transition-colors">{icon}</span>
+        <span className="text-slate-400 dark:text-zinc-500 group-hover:text-custom-500 transition-colors">{icon}</span>
         <span className="text-xl font-[1000]">{label}</span>
       </div>
 

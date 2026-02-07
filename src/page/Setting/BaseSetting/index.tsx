@@ -52,15 +52,15 @@ export default function BaseSetting() {
           onClick={() => setIsCompanionManagerOpen(true)}
           className={cn(
             "w-full h-16 mt-4 flex items-center justify-between px-6 rounded-xl transition-all",
-            "bg-white border-2 hover:border-emerald-500 text-zinc-950 dark:text-zinc-100 hover:bg-emerald-50 ",
+            "bg-white border-2 hover:border-custom-500 text-zinc-950 dark:text-zinc-100 hover:bg-custom-50 ",
             "active:scale-[0.98] dark:bg-zinc-800"
           )}
         >
           <div className="flex items-center gap-3">
-            <Settings2 className="w-6 h-6 text-emerald-600" />
+            <Settings2 className="w-6 h-6 text-custom-600" />
             <span className="text-2xl font-bold tracking-tight">{t`管理连携启动程序`}</span>
           </div>
-          <Plus className="w-6 h-6 text-emerald-600" />
+          <Plus className="w-6 h-6 text-custom-600" />
         </button>
         {/* 快捷键设置 */}
         <button

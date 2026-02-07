@@ -106,10 +106,10 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
         `}</style>
 
         {/* Header */}
-        <div className="px-10 py-7 border-b border-zinc-100/20 flex justify-between items-center bg-emerald-50/30 dark:bg-zinc-800">
+        <div className="px-10 py-7 border-b border-zinc-100/20 flex justify-between items-center bg-custom-50/30 dark:bg-zinc-800">
           <div className="flex items-center gap-5">
-            <div className="p-4 bg-emerald-500/10 rounded-2xl">
-              <Settings2 className="w-8 h-8 text-emerald-600" />
+            <div className="p-4 bg-custom-500/10 rounded-2xl">
+              <Settings2 className="w-8 h-8 text-custom-600" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-foreground tracking-tight"><Trans>连携程序管理</Trans></h2>
@@ -125,7 +125,7 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
         <div className="flex-1 overflow-y-auto px-10 py-8 space-y-6 bg-white dark:bg-zinc-800" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {isLoading ? (
             <div className="h-64 flex flex-col items-center justify-center gap-4 text-zinc-400">
-              <Loader2 className="w-12 h-12 animate-spin text-emerald-500" />
+              <Loader2 className="w-12 h-12 animate-spin text-custom-500" />
               <span className="font-bold tracking-widest text-sm uppercase"><Trans>加载配置中...</Trans></span>
             </div>
           ) : (
@@ -134,7 +134,7 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                 <div key={index} className={cn(
                   "group relative border-2 rounded-[2rem] p-8 transition-all duration-300",
                   item.isEnabled
-                    ? "bg-zinc-200 dark:bg-zinc-700/30 border-zinc-100/20 hover:border-emerald-200 hover:bg-zinc-300 dark:hover:bg-zinc-600/70 hover:shadow-xl hover:shadow-emerald-500/5"
+                    ? "bg-zinc-200 dark:bg-zinc-700/30 border-zinc-100/20 hover:border-custom-200 hover:bg-zinc-300 dark:hover:bg-zinc-600/70 hover:shadow-xl hover:shadow-custom-500/5"
                     : "bg-zinc-100 dark:bg-zinc-700/30 border-zinc-50/20 opacity-60 grayscale-[0.5]"
                 )}>
 
@@ -148,7 +148,7 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                         <Trash2 className="w-5 h-5" />
                       </button>
                       <input
-                        className="text-2xl font-black text-zinc-900 dark:text-zinc-200 bg-transparent outline-none border-b-2 border-transparent focus:border-emerald-500 transition-all flex-1 py-1"
+                        className="text-2xl font-black text-zinc-900 dark:text-zinc-200 bg-transparent outline-none border-b-2 border-transparent focus:border-custom-500 transition-all flex-1 py-1"
                         value={item.name}
                         onChange={(e) => handleUpdateField(index, 'name', e.target.value)}
                         placeholder={t`程序名称`}
@@ -170,7 +170,7 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                           onClick={() => handleUpdateField(index, 'triggerMode', 'game')}
                           className={cn(
                             "px-4 py-2 text-xs font-bold rounded-xl transition-all whitespace-nowrap",
-                            item.triggerMode === 'game' ? "bg-emerald-600 text-white shadow-md" : "text-zinc-500 hover:text-emerald-600"
+                            item.triggerMode === 'game' ? "bg-custom-600 text-white shadow-md" : "text-zinc-500 hover:text-custom-600"
                           )}
                         >
                           <Trans>随游戏</Trans>
@@ -199,7 +199,7 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                       {/* 启用开关 */}
                       <label className={cn(
                         "flex items-center gap-3 px-4 py-2.5 rounded-2xl border transition-all cursor-pointer select-none",
-                        item.isEnabled ? "bg-emerald-50 border-emerald-100 text-emerald-700" : "bg-zinc-100 border-zinc-200 text-zinc-400"
+                        item.isEnabled ? "bg-custom-50 border-custom-100 text-custom-700" : "bg-zinc-100 border-zinc-200 text-zinc-400"
                       )}>
                         <span className="text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
                           {item.isEnabled ? t`已启用` : t`已禁用`}
@@ -208,7 +208,7 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                           type="checkbox"
                           checked={item.isEnabled}
                           onChange={(e) => handleUpdateField(index, 'isEnabled', e.target.checked)}
-                          className="w-5 h-5 accent-emerald-600 cursor-pointer"
+                          className="w-5 h-5 accent-custom-600 cursor-pointer"
                         />
                       </label>
                     </div>
@@ -222,11 +222,11 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                         <input
                           readOnly
                           onClick={() => handlePickFile(index)}
-                          className="w-full bg-white dark:bg-zinc-500 border border-zinc-200/20 rounded-2xl px-5 py-4 text-zinc-800 font-bold text-sm cursor-pointer hover:border-emerald-400 transition-all outline-none pr-32"
+                          className="w-full bg-white dark:bg-zinc-500 border border-zinc-200/20 rounded-2xl px-5 py-4 text-zinc-800 font-bold text-sm cursor-pointer hover:border-custom-400 transition-all outline-none pr-32"
                           value={item.path}
                           placeholder={t`点击选择可执行文件...`}
                         />
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-emerald-600 font-bold text-xs bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100 pointer-events-none transition-all group-hover/path:bg-emerald-600 group-hover/path:text-white">
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-custom-600 font-bold text-xs bg-custom-50 px-4 py-2 rounded-xl border border-custom-100 pointer-events-none transition-all group-hover/path:bg-custom-600 group-hover/path:text-white">
                           <FolderOpen className="w-4 h-4" />
                           <Trans>浏览</Trans>
                         </div>
@@ -236,7 +236,7 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                     <div className="md:col-span-9 space-y-2">
                       <label className="text-zinc-400 font-bold text-[10px] uppercase ml-1 tracking-widest"><Trans>启动参数</Trans></label>
                       <input
-                        className="w-full dark:bg-zinc-500 border border-zinc-200/20 rounded-2xl px-5 py-4 text-zinc-800 text-sm font-bold focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 bg-white outline-none transition-all shadow-sm"
+                        className="w-full dark:bg-zinc-500 border border-zinc-200/20 rounded-2xl px-5 py-4 text-zinc-800 text-sm font-bold focus:border-custom-500 focus:ring-4 focus:ring-custom-500/5 bg-white outline-none transition-all shadow-sm"
                         value={item.args}
                         onChange={(e) => handleUpdateField(index, 'args', e.target.value)}
                         placeholder="e.g. --windowed"
@@ -248,14 +248,14 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
                       <div className="relative flex items-center">
                         <input
                           type="number"
-                          className="w-full dark:bg-zinc-500 border border-zinc-200/20 rounded-2xl px-5 py-4 text-zinc-800 text-sm font-bold focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 bg-white outline-none transition-all shadow-sm text-center appearance-none"
+                          className="w-full dark:bg-zinc-500 border border-zinc-200/20 rounded-2xl px-5 py-4 text-zinc-800 text-sm font-bold focus:border-custom-500 focus:ring-4 focus:ring-custom-500/5 bg-white outline-none transition-all shadow-sm text-center appearance-none"
                           value={item.sortOrder}
                           onChange={(e) => handleUpdateField(index, 'sortOrder', parseInt(e.target.value) || 0)}
                         />
                         <div className="absolute right-2 flex flex-col gap-0.5">
                           <button
                             onClick={() => handleUpdateField(index, 'sortOrder', (item.sortOrder || 0) + 1)}
-                            className="p-1 hover:text-emerald-500 text-zinc-300 transition-colors"
+                            className="p-1 hover:text-custom-500 text-zinc-300 transition-colors"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -268,7 +268,7 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
 
               <button
                 onClick={handleAddNew}
-                className="w-full py-12 border-2 border-dashed border-zinc-200/20 rounded-[2rem] text-zinc-400 hover:text-emerald-600 hover:bg-emerald-50/50 hover:border-emerald-500 transition-all flex flex-col items-center justify-center gap-3 bg-zinc-50/30 dark:bg-zinc-700/30 dark:hover:bg-zinc-600"
+                className="w-full py-12 border-2 border-dashed border-zinc-200/20 rounded-[2rem] text-zinc-400 hover:text-custom-600 hover:bg-custom-50/50 hover:border-custom-500 transition-all flex flex-col items-center justify-center gap-3 bg-zinc-50/30 dark:bg-zinc-700/30 dark:hover:bg-zinc-600"
               >
                 <div className="w-14 h-14 bg-white dark:bg-zinc-900 border border-zinc-100/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-all duration-300">
                   <Plus className="w-6 h-6" />
@@ -287,7 +287,7 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
           <button
             onClick={handleSaveAll}
             disabled={isSaving}
-            className="flex items-center gap-3 px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold transition-all shadow-lg shadow-emerald-500/30 active:scale-95 disabled:bg-zinc-300"
+            className="flex items-center gap-3 px-10 py-4 bg-custom-600 hover:bg-custom-500 text-white rounded-2xl font-bold transition-all shadow-lg shadow-custom-500/30 active:scale-95 disabled:bg-zinc-300"
           >
             {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle2 className="w-5 h-5" />}
             <span className="text-lg"><Trans>保存连携配置</Trans></span>

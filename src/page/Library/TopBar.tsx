@@ -11,7 +11,6 @@ import { convertFileSrc } from '@tauri-apps/api/core';
 import useGameStore from "@/store/gameStore";
 import useConfigStore from "@/store/configStore";
 import { GameMeta } from '@/types/game';
-import { Trans } from '@lingui/react/macro';
 
 // 扩展 Props 类型，支持 passed 排序/过滤
 interface TopToolbarProps {
@@ -39,13 +38,13 @@ const GameGridItem = memo(({ game, isActive, onClick }: { game: GameMeta; isActi
         "group relative w-full h-[210px] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 border-[3px]",
         // 修正：使用 bg-muted 代替 bg-zinc-100，使用 border-border
         "bg-muted border-transparent",
-        isActive ? "border-emerald-500 shadow-md scale-95" : "hover:border-primary/20 shadow-sm"
+        isActive ? "border-custom-500 shadow-md scale-95" : "hover:border-primary/20 shadow-sm"
       )}
     >
       <img src={coverUrl} alt={game.name} className={cn("w-full h-full object-cover transition-all duration-500", isActive && "opacity-30 grayscale blur-[1px]")} />
       {isActive && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <CheckCircle2 size={32} className="text-emerald-500" strokeWidth={3} />
+          <CheckCircle2 size={32} className="text-custom-500" strokeWidth={3} />
         </div>
       )}
       <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
@@ -115,7 +114,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
     { id: 'duration', label: t`按游玩时长`, icon: <Clock size={20} /> },
     { id: 'name', label: t`按名称排序`, icon: <Type size={20} /> },
     { id: 'lastPlayed', label: t`按最后游玩`, icon: <CalendarDays size={20} /> },
-    { id: 'passed', label: t`仅看已通关`, icon: <CheckCircle2 size={20} className="text-emerald-500" /> },
+    { id: 'passed', label: t`仅看已通关`, icon: <CheckCircle2 size={20} className="text-custom-500" /> },
   ] as const;
 
   return (

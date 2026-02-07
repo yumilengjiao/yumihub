@@ -56,7 +56,7 @@ export default function Sidebar() {
             )} />
             <div className="h-6 flex items-center justify-center mt-4">
               <span className={cn(
-                "text-[10px] font-black text-emerald-600 tracking-[0.2em] uppercase transition-all duration-300",
+                "text-[10px] font-black text-custom-500 tracking-[0.2em] uppercase transition-all duration-300",
                 isExpanded ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
               )}>
                 DASHBOARD
@@ -82,7 +82,7 @@ export default function Sidebar() {
           {
             sidebarMode != "Trigger" &&
             <div className={cn("px-8 transition-opacity duration-500", isExpanded ? "opacity-100" : "opacity-0")}>
-              <div className="h-1 w-full bg-linear-to-r from-transparent via-emerald-200 to-transparent rounded-full" />
+              <div className="h-1 w-full bg-linear-to-r from-transparent via-custom-200 to-transparent rounded-full" />
             </div>
           }
         </div>

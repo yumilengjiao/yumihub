@@ -1,5 +1,5 @@
 import { Cmds } from "@/lib/enum";
-import { Config, SideBarMode, ThemeColor, ThemeMode } from "@/types/config";
+import { Config, SideBarMode, ThemeMode } from "@/types/config";
 import { invoke } from "@tauri-apps/api/core";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
@@ -20,7 +20,7 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
     },
     interface: {
       themeMode: ThemeMode.Daytime,
-      themeColor: ThemeColor.White,
+      themeColor: "Emerald",
       sidebarMode: SideBarMode.Trigger,
       fontFamily: "sys",
     },
@@ -35,7 +35,7 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
       backupSavePath: "",
       metaSavePath: "",
       screenshotPath: "",
-      auto_backup: false,
+      autoBackup: false,
     },
   },
   updateConfig(fn: (config: Config) => void) {

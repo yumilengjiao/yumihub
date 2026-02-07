@@ -18,8 +18,8 @@ export default function Entry({ children, title, isExpanded, isActive, onClick }
         "justify-start overflow-hidden",
 
         isActive
-          ? "bg-emerald-500 text-white shadow-lg shadow-emerald-100 scale-[1.02]"
-          : "text-white hover:bg-zinc-100 hover:text-emerald-600"
+          ? "bg-custom-500 text-white shadow-lg shadow-custom-300/50 scale-[1.02]"
+          : "text-white hover:bg-zinc-100 hover:text-custom-600"
       )}
     >
 

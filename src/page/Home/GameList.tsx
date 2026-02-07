@@ -106,7 +106,7 @@ const GameList = () => {
               <Card className={cn(
                 "relative group overflow-hidden border-none",
                 "aspect-165/225 min-w-41.25 min-h-56.25 origin-bottom transition-all duration-300",
-                currentIndex !== index ? "scale-80" : "scale-100 shadow-2xl shadow-emerald-500/20",
+                currentIndex !== index ? "scale-80" : "scale-100 shadow-2xl shadow-custom-500/20",
               )}>
                 {/* 非选中状态的黑色蒙罩 */}
                 {currentIndex !== index && (
@@ -118,7 +118,7 @@ const GameList = () => {
                   <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button
                       onClick={(e) => handleStartGame(g, e)}
-                      className="w-20 h-20 flex items-center justify-center bg-emerald-500 hover:bg-emerald-400 text-white rounded-full shadow-[0_0_30px_rgba(16,185,129,0.6)] transition-all active:scale-90"
+                      className="w-20 h-20 flex items-center justify-center bg-custom-500 hover:bg-custom-400 text-white rounded-full shadow-[0_0_30px_rgba(16,185,129,0.6)] transition-all active:scale-90"
                     >
                       <Play size={32} fill="white" className="ml-1" />
                     </button>

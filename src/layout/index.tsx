@@ -20,7 +20,7 @@ import { useShortcutHandler } from "@/hooks/useShortcutr";
 export default function Layout() {
   const { setUser } = useUserStore()
   const { updateSelectedGame, setGameMetaList, setGameMeta } = useGameStore()
-  const { updateConfig } = useConfigStore()
+  const { config, updateConfig } = useConfigStore()
   const fontFamily = useConfigStore(c => c.config.interface.fontFamily)
   const sidebarMode = useConfigStore(c => c.config.interface.sidebarMode) || "Trigger"
 
@@ -59,6 +59,11 @@ export default function Layout() {
       // 设置语言
       i18n.activate(config.basic.language)
       updateConfig((oldConfig) => Object.assign(oldConfig, config))
+      // 这里应用主题色
+      const html = document.documentElement;
+      // 添加选中的主题类
+      html.classList.add(config.interface.themeColor);
+
     } catch (err) { console.error("无法获取config", err) }
   }
 

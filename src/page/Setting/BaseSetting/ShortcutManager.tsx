@@ -20,7 +20,7 @@ export function ShortcutManager({ onClose }: { onClose: () => void }) {
     nav_settings: { name: t`切换至：设置界面`, desc: t`跳转到系统设置` },
     boss_key: { name: t`老板键`, desc: t`全局隐藏窗口并静音` },
     global_wake: { name: t`全局唤醒`, desc: t`在任何界面调出程序主窗口` },
-    emergency_stop: { name: t`紧急停止`, desc: t`强杀当前游戏及其关联的所有连携程序` },
+    custom: { name: t`紧急停止`, desc: t`强杀当前游戏及其关联的所有连携程序` },
     screenshot: { name: t`游戏截图`, desc: t`捕获当前游戏画面` },
   }), [])
 
@@ -66,10 +66,10 @@ export function ShortcutManager({ onClose }: { onClose: () => void }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header - 白色背景 + 翡翠绿装饰 */}
-        <div className="px-10 py-7 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-emerald-50/30 dark:bg-emerald-950/10">
+        <div className="px-10 py-7 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-custom-50/30 dark:bg-custom-950/10">
           <div className="flex items-center gap-5">
-            <div className="p-4 bg-emerald-500/10 rounded-2xl">
-              <Keyboard className="w-8 h-8 text-emerald-600 dark:text-emerald-500" />
+            <div className="p-4 bg-custom-500/10 rounded-2xl">
+              <Keyboard className="w-8 h-8 text-custom-600 dark:text-custom-500" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight"><Trans>快捷键设置</Trans></h2>
@@ -103,15 +103,15 @@ export function ShortcutManager({ onClose }: { onClose: () => void }) {
                 className={cn(
                   "flex items-center justify-between p-5 rounded-[1.5rem] border transition-all duration-300",
                   isRecording
-                    ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
-                    : "border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 hover:border-emerald-200 dark:hover:border-emerald-800 hover:bg-white dark:hover:bg-zinc-800/60"
+                    ? "border-custom-500 bg-custom-50 dark:bg-custom-950/20 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
+                    : "border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 hover:border-custom-200 dark:hover:border-custom-800 hover:bg-white dark:hover:bg-zinc-800/60"
                 )}
               >
                 <div className="flex-1 pr-10">
                   <div className="flex items-center gap-3">
                     <span className="text-base font-bold text-zinc-800 dark:text-zinc-200">{info?.name || s.id}</span>
                     {s.isGlobal && (
-                      <span className="px-2 py-0.5 text-[10px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 rounded-md font-black uppercase tracking-widest">Global</span>
+                      <span className="px-2 py-0.5 text-[10px] bg-custom-100 dark:bg-custom-900/30 text-custom-700 dark:text-custom-400 border border-custom-200 dark:border-custom-800 rounded-md font-black uppercase tracking-widest">Global</span>
                     )}
                   </div>
                   <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-1">{info?.desc || "暂无详细描述"}</p>
@@ -123,8 +123,8 @@ export function ShortcutManager({ onClose }: { onClose: () => void }) {
                     className={cn(
                       "min-w-44 h-12 px-6 rounded-2xl font-mono text-sm font-black border-2 transition-all",
                       isRecording
-                        ? "bg-emerald-600 border-emerald-500 text-white animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                        : "bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-emerald-600 dark:text-emerald-400 hover:border-emerald-500 hover:shadow-sm"
+                        ? "bg-custom-600 border-custom-500 text-white animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                        : "bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-custom-600 dark:text-custom-400 hover:border-custom-500 hover:shadow-sm"
                     )}
                   >
                     {isRecording ? t`请录制按键...` : (s.keyCombo || t`未绑定`)}
@@ -155,7 +155,7 @@ export function ShortcutManager({ onClose }: { onClose: () => void }) {
               await updateShorts(localShortcuts)
               onClose()
             }}
-            className="flex items-center gap-3 px-10 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold transition-all shadow-lg shadow-emerald-500/30 active:scale-95 text-lg"
+            className="flex items-center gap-3 px-10 py-3.5 bg-custom-600 hover:bg-custom-500 text-white rounded-2xl font-bold transition-all shadow-lg shadow-custom-500/30 active:scale-95 text-lg"
           >
             <Save className="w-6 h-6" /> <Trans>保存并应用</Trans>
           </button>

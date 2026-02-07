@@ -13,7 +13,7 @@ export default function Home() {
       {gameMetaList.map((g) => (
         <img
           key={g.id}
-          src={g.local_background ? convertFileSrc(g.local_background) : g.background}
+          src={g.localBackground ? convertFileSrc(g.localBackground) : g.background}
           decoding="async"
           // 这里根据 currentIndex 控制透明度，实现无缝切换
           className={cn(

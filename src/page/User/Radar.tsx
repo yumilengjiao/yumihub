@@ -65,7 +65,7 @@ const Radar = () => {
 
           theme={{
             text: {
-              fill: isDark ? "#a1a1aa" : "#3f3f46", // zinc-400 : zinc-700
+              fill: isDark ? "#a1a1aa" : "#3f3f46",
               fontWeight: 600
             },
             grid: {
@@ -86,13 +86,15 @@ const Radar = () => {
 
           gridLevels={3}
           fillOpacity={0.4}
-          colors={isDark ? ['#10b981'] : ['#059669']} // 暗色深绿，亮色稍微浅一点
-          blendMode={isDark ? "screen" : "multiply"} // 混合模式根据模式切换
+
+          colors={['hsl(var(--custom-500))']}
+
+          blendMode={isDark ? "screen" : "multiply"}
 
           dotSize={6}
-          dotColor={isDark ? "#10b981" : "#ffffff"}
+          dotColor={isDark ? "#ffffff" : "hsl(var(--custom-500))"}
           dotBorderWidth={2}
-          dotBorderColor={isDark ? "#ffffff" : "#059669"}
+          dotBorderColor={"hsl(var(--custom-500))"}
 
           isInteractive={true}
           animate={true}

@@ -257,7 +257,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
         </div>
 
         <div className="h-1.5 w-full bg-zinc-100 dark:bg-zinc-800 relative z-50">
-          <motion.div animate={{ width: `${matchProgress}%` }} className="h-full bg-violet-600 shadow-[0_0_15px_rgba(124,58,237,0.5)]" />
+          <motion.div animate={{ width: `${matchProgress}%` }} className="h-full bg-custom-600 shadow-[0_0_15px_rgba(124,58,237,0.5)]" />
         </div>
 
         <div className="flex-1 min-h-0 relative z-10">
@@ -279,7 +279,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                         </div>
                       </div>
                       <div className="shrink-0 flex items-center gap-4">
-                        {item.data && <Sparkles size={20} className="text-violet-500 animate-pulse" />}
+                        {item.data && <Sparkles size={20} className="text-custom-500 animate-pulse" />}
                         <ChevronDown size={28} className={cn("text-zinc-300 transition-transform duration-500", item.expanded && "rotate-180")} />
                       </div>
                     </div>
@@ -319,7 +319,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                                   </Button>
                                 </div>
 
-                                <Button variant="outline" onClick={(e) => { e.stopPropagation(); open({ filters: [{ name: 'Exe', extensions: ['exe'] }] }).then(p => p && setItems(prev => prev.map(it => it.id === item.id ? { ...it, exePath: p.toString().replace(/\\/g, '/') } : it))); }} className="flex-none rounded-xl border-violet-100 text-violet-500 font-black px-6 hover:bg-violet-50">修正路径</Button>
+                                <Button variant="outline" onClick={(e) => { e.stopPropagation(); open({ filters: [{ name: 'Exe', extensions: ['exe'] }] }).then(p => p && setItems(prev => prev.map(it => it.id === item.id ? { ...it, exePath: p.toString().replace(/\\/g, '/') } : it))); }} className="flex-none rounded-xl border-custom-100 text-custom-500 font-black px-6 hover:bg-custom-50">修正路径</Button>
                               </div>
 
                               <ScrollArea className="flex-1 bg-zinc-100 dark:bg-zinc-600 rounded-2xl p-6 border border-zinc-100/20 shadow-inner h-32">
@@ -340,7 +340,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
 
         {/* Footer */}
         <div className="px-12 py-10 bg-zinc-100 dark:bg-zinc-800  flex items-center gap-8 shrink-0 relative z-100">
-          <Button onClick={handleGlobalMatch} disabled={isGlobalMatching} className={cn("h-24 flex-1 rounded-[36px] font-black text-3xl gap-4 border-none shadow-none", isGlobalMatching ? "bg-violet-100 text-violet-400 opacity-100" : "bg-violet-600 text-white hover:bg-violet-700")}>
+          <Button onClick={handleGlobalMatch} disabled={isGlobalMatching} className={cn("h-24 flex-1 rounded-[36px] font-black text-3xl gap-4 border-none shadow-none", isGlobalMatching ? "bg-custom-100 text-custom-400 opacity-100" : "bg-custom-600 text-white hover:bg-custom-700")}>
             {isGlobalMatching ? <div className="flex items-center gap-4"><Loader2 className="animate-spin" size={36} /><span className="text-4xl font-black">{matchProgress}%</span></div> : <><Search size={36} strokeWidth={4} /><Trans>匹配元数据</Trans></>}
           </Button>
           <Button onClick={handleFinalConfirm} disabled={isGlobalMatching || items.length === 0} className={cn("h-24 flex-1 rounded-[36px] font-black text-3xl gap-4 border-none shadow-none", isGlobalMatching ? "bg-zinc-100 text-zinc-300 opacity-100" : "bg-zinc-900 text-white hover:bg-black")}>
