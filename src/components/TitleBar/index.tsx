@@ -4,96 +4,129 @@ import { getCurrentWindow, Window } from '@tauri-apps/api/window';
 import { cn } from "@/lib/utils";
 import { ButtonGroupSeparator } from "./ButtonGroupSeparator";
 import { useEffect, useState } from "react";
-
-const minisizeWindow = (window: Window) => {
-  window.minimize()
-}
-const toogleMaximizeWindow = (window: Window) => {
-  window.toggleMaximize()
-}
-const closeWindow = (window: Window) => {
-  window.close()
-}
-const switchTheme = () => {
-  const html = document.documentElement;
-  if (html.classList.contains('dark')) {
-    html.classList.remove('dark');
-  } else {
-    html.classList.add('dark');
-  }
-};
+import useConfigStore from "@/store/configStore";
+import { ThemeMode } from "@/types/config";
 
 
-export default function index() {
-  const [isMax, setIsMax] = useState(false)
+// 窗口操作辅助函数
+const minisizeWindow = (window: Window) => window.minimize();
+const toogleMaximizeWindow = (window: Window) => window.toggleMaximize();
+const closeWindow = (window: Window) => window.close();
+const hideWindow = (window: Window) => window.hide();
 
-  const appWindow = getCurrentWindow()
+export default function TitleBar() {
+  const [isMax, setIsMax] = useState(false);
+  const { config, updateConfig } = useConfigStore();
+  const appWindow = getCurrentWindow();
+
+  const applyTheme = (mode: ThemeMode) => {
+    const html = document.documentElement;
+    if (mode === ThemeMode.Night) {
+      html.classList.add('dark');
+    } else if (mode === ThemeMode.Daytime) {
+      html.classList.remove('dark');
+    } else if (mode === ThemeMode.System) {
+      const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      html.classList.toggle('dark', isSystemDark);
+    }
+  };
+
+  // 响应式监听主题变化
+  useEffect(() => {
+    // 1. 立即执行当前配置的主题
+    applyTheme(config.interface.themeMode);
+
+    // 2. 如果是 System 模式，注册系统监听
+    if (config.interface.themeMode === ThemeMode.System) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const listener = () => applyTheme(ThemeMode.System);
+      mediaQuery.addEventListener('change', listener);
+      return () => mediaQuery.removeEventListener('change', listener);
+    }
+  }, [config.interface.themeMode]);
+
+  // 灯泡按钮点击：在 Night 和 Daytime 之间切换
+  const handleSwitchTheme = () => {
+    let nextMode: ThemeMode;
+
+    // 如果当前是 System，点一下根据当前系统状态切到相反模式
+    if (config.interface.themeMode === ThemeMode.System) {
+      const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      nextMode = isSystemDark ? ThemeMode.Daytime : ThemeMode.Night;
+    } else {
+      // 否则在白天/黑夜间互切
+      nextMode = config.interface.themeMode === ThemeMode.Night
+        ? ThemeMode.Daytime
+        : ThemeMode.Night;
+    }
+
+    updateConfig(d => { d.interface.themeMode = nextMode });
+  };
+
+  // --- 窗口管理逻辑 ---
+  const execteCloseWindow = () => {
+    // 这里的 "Exit" 建议也检查一下是否是枚举，目前按你之前的代码逻辑
+    if (config.system.closeButtonBehavior === "Exit") {
+      closeWindow(appWindow);
+    } else {
+      hideWindow(appWindow);
+    }
+  };
 
   useEffect(() => {
-    // 定义一个更新状态的函数
     const updateIsMax = async () => {
       const maximized = await appWindow.isMaximized();
       setIsMax(maximized);
     };
 
-    // 初始化检查一次
     updateIsMax();
 
-    //  监听窗口大小改变事件
-    // 无论是手动拖拽还是点击按钮，只要窗口大小变了就重新检测
+    // 监听窗口大小改变及最大化状态
     const unlisten = appWindow.onResized(() => {
       updateIsMax();
     });
 
-    // 监听最大化事件
-    const unlistenMax = appWindow.onResized(() => {
-      updateIsMax();
-    });
-
     return () => {
-      // 组件卸载时取消监听
       unlisten.then(f => f());
     };
-  }, []);
+  }, [appWindow]);
 
   return (
-    <div className="fixed w-full h-[5vh] z-50 flex justify-end cursor-pointer" data-tauri-drag-region >
+    <div className="fixed w-full h-[5vh] z-50 flex justify-end cursor-pointer" data-tauri-drag-region>
       <div className={cn(
         "relative flex justify-end pl-8 pr-5 rounded-bl-[70px]",
         "bg-background/40 backdrop-blur-sm cursor-default"
       )}>
-        <MainButton onClick={() => switchTheme()}>
+        {/* 灯泡：切换主题 */}
+        <MainButton onClick={handleSwitchTheme}>
           <LampCeiling className="h-full w-auto block" />
         </MainButton>
 
         <ButtonGroupSeparator />
+
+        {/* 最小化 */}
         <MainButton onClick={() => minisizeWindow(appWindow)}>
           <Minus className="h-full w-auto block" />
         </MainButton>
 
         <ButtonGroupSeparator />
-        {!isMax
-          ?
-          <MainButton onClick={() => {
-            toogleMaximizeWindow(appWindow)
-          }} >
-            <Expand className="h-full w-auto block" />
-          </MainButton>
-          :
-          <MainButton onClick={() => {
-            toogleMaximizeWindow(appWindow)
-          }} >
-            <Minimize2 className="h-full w-auto block" />
-          </MainButton>
-        }
 
-        <ButtonGroupSeparator />
-        <MainButton onClick={() => closeWindow(appWindow)} >
-          <X className="h-full w-auto block" />
+        {/* 最大化 / 还原 */}
+        <MainButton onClick={() => toogleMaximizeWindow(appWindow)}>
+          {!isMax ? (
+            <Expand className="h-full w-auto block" />
+          ) : (
+            <Minimize2 className="h-full w-auto block" />
+          )}
         </MainButton>
 
+        <ButtonGroupSeparator />
+
+        {/* 关闭按钮（根据配置隐藏或退出） */}
+        <MainButton onClick={execteCloseWindow}>
+          <X className="h-full w-auto block" />
+        </MainButton>
       </div>
     </div>
-  )
+  );
 }
-

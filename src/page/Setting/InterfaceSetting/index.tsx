@@ -11,7 +11,7 @@ export default function InterfaceSetting() {
   const [fontFamilyVec, setFontFamilyVec] = useState<SettingOption[]>([{ label: t`系统默认`, value: "sys" }]);
   const { config } = useConfigStore()
   // 主题模式
-  const themeOpts = [{ label: t`随系统`, value: "Sys" }, { label: t`日间模式`, value: "Daytime" }, { label: t`夜间模式`, value: "Night" }];
+  const themeOpts = [{ label: t`随系统`, value: "System" }, { label: t`日间模式`, value: "Daytime" }, { label: t`夜间模式`, value: "Night" }];
   // 主题颜色
   const colorOpts = [
     { label: t`翡翠绿 (Emerald)`, value: "theme-emerald", color: "#10b981" },
@@ -33,7 +33,7 @@ export default function InterfaceSetting() {
   }, []);
 
 
-  // 辅助函数：切换 HTML 上的主题类名实现亮暗色切换
+  // 辅助函数：切换 HTML 上的主题类名实现亮主体色切换
   const applyThemeColor = (themeClass: string) => {
     updateConfig(d => { d.interface.themeColor = themeClass })
     const html = document.documentElement;
@@ -54,12 +54,12 @@ export default function InterfaceSetting() {
         <SelectCard
           title={t`外观主题`}
           options={themeOpts}
-          value={useConfigStore(s => s.config.interface.themeMode)}
+          value={config.interface.themeMode}
           onValueChange={(v) => updateConfig(d => { d.interface.themeMode = v as any })} />
         <SelectCard
           title={t`主题颜色`}
           options={colorOpts}
-          value={useConfigStore(s => s.config.interface.themeColor)}
+          value={config.interface.themeColor}
           onValueChange={(v) => applyThemeColor(v)} />
         <SelectCard
           title={t`侧边栏显示`}
@@ -67,7 +67,7 @@ export default function InterfaceSetting() {
           {[{ label: t`自动触发`, value: "Trigger" },
           { label: t`固定展示(正常)`, value: "NormalFixed" },
           { label: t`固定展示(短)`, value: "ShortFixed" }]}
-          value={useConfigStore(s => s.config.interface.sidebarMode)}
+          value={config.interface.sidebarMode}
           onValueChange={(v) => updateConfig(d => { d.interface.sidebarMode = v as any })} />
         <SelectCard
           title={t`选择应用字体`}

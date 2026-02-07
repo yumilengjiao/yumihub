@@ -1,5 +1,6 @@
 use tauri::RunEvent;
 
+mod backup;
 mod cmd;
 mod companion;
 mod config;
@@ -11,8 +12,8 @@ mod message;
 mod resource;
 mod screenshot;
 mod shortcut;
-mod backup;
 mod sys;
+mod tray;
 mod user;
 mod util;
 
@@ -23,11 +24,6 @@ pub fn run() {
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_autostart::Builder::new().build())
-        .plugin(
-            tauri_plugin_log::Builder::new()
-                .level(tauri_plugin_log::log::LevelFilter::Debug)
-                .build(),
-        )
         .plugin(tauri_plugin_system_info::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_dialog::init())

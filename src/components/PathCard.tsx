@@ -19,9 +19,10 @@ export function PathCard({ title, path, onSelect, className }: PathCardProps) {
     try {
       // 调用 Tauri 原生选择框
       const selected = await open({
-        directory: true, // 设置为 true 表示选择文件夹
+        directory: false,
         multiple: false,
-        title: `选择${title}`
+        title: `选择${title}`,
+        defaultPath: path
       });
 
       // 如果用户选择了路径（不是取消）
@@ -45,7 +46,7 @@ export function PathCard({ title, path, onSelect, className }: PathCardProps) {
 
       <Button
         onClick={handleBrowse}
-        className="h-14 px-8 rounded-2xl bg-emerald-100 hover:bg-emerald-500 text-emerald-600 hover:text-white transition-all gap-3 border-none shadow-none group"
+        className="h-14 px-8 rounded-2xl bg-custom-100 hover:bg-custom-500 text-custom-600 hover:text-white transition-all gap-3 border-none shadow-none group"
       >
         <span className="text-lg font-bold"><Trans>浏览</Trans></span>
         <FolderOpen size={20} className="group-hover:scale-110 transition-transform" />

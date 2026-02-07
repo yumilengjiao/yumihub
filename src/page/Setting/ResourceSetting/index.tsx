@@ -11,6 +11,7 @@ import { useLingui } from "@lingui/react";
 import { Cmds } from "@/lib/enum";
 import SwitchCard from "@/components/SwitchCard";
 import ConfirmDialog from "./ComfirmDialog";
+import useConfigStore from "@/store/configStore";
 
 export default function ResourceSetting() {
   const [isBackingUp, setIsBackingUp] = useState(false);
@@ -26,6 +27,7 @@ export default function ResourceSetting() {
     title: "",
     desc: "",
   });
+  const { config } = useConfigStore()
 
   const openConfirm = (opts: {
     title: string;
@@ -78,8 +80,9 @@ export default function ResourceSetting() {
         />
 
         <div className="space-y-1">
-          <PathCard className="" title={t`游戏存档备份目录`} onSelect={() => console.log('')} />
-          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" title={t`游戏资源存储目录`} onSelect={() => console.log('')} />
+          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" path={config.storage.backupSavePath} title={t`游戏存档备份目录`} onSelect={() => console.log('')} />
+          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" path={config.storage.metaSavePath} title={t`游戏资源存储目录`} onSelect={() => console.log('')} />
+          <PathCard className="hover:bg-zinc-200 dark:hover:bg-zinc-600" path={config.storage.screenshotPath} title={t`游戏快照截图目录`} onSelect={() => console.log('')} />
         </div>
 
         <div className="pt-4">

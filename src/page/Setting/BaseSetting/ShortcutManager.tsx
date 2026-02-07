@@ -20,7 +20,7 @@ export function ShortcutManager({ onClose }: { onClose: () => void }) {
     nav_settings: { name: t`切换至：设置界面`, desc: t`跳转到系统设置` },
     boss_key: { name: t`老板键`, desc: t`全局隐藏窗口并静音` },
     global_wake: { name: t`全局唤醒`, desc: t`在任何界面调出程序主窗口` },
-    custom: { name: t`紧急停止`, desc: t`强杀当前游戏及其关联的所有连携程序` },
+    emergency_stop: { name: t`紧急停止`, desc: t`强杀当前游戏及其关联的所有连携程序` },
     screenshot: { name: t`游戏截图`, desc: t`捕获当前游戏画面` },
   }), [])
 

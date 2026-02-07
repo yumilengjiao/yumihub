@@ -7,7 +7,10 @@ use std::{
 use lazy_static::lazy_static;
 use tauri::{AppHandle, Manager};
 
-use crate::config::{entity::Config, fs::load_config};
+use crate::config::{
+    entity::{Config, LogLevel},
+    fs::load_config,
+};
 
 pub mod entity;
 pub mod fs;
@@ -22,18 +25,20 @@ lazy_static! {
 }
 
 /// config模块初始化函数
-pub fn init(app_handler: &AppHandle) -> Result<(), Box<dyn Error>> {
-    set_path(app_handler);
+pub fn init(app_handle: &AppHandle) -> Result<(), Box<dyn Error>> {
+    set_path(app_handle);
     // 加载配置文件
-    load_config(app_handler.clone())?;
+    load_config(app_handle.clone())?;
     let config = GLOBAL_CONFIG.read().expect("读取配置变量出错");
     // 查看程序是否需要静默启动进行设置
     if config.basic.silent_start {
-        if let Some(window) = app_handler.get_webview_window("main") {
+        if let Some(window) = app_handle.get_webview_window("main") {
             window.hide().unwrap();
         }
     }
-    serve::listening_loop(app_handler.clone());
+    // 初始化日志等级
+    set_log_level(app_handle, config.system.log_level.clone());
+    serve::listening_loop(app_handle.clone());
     Ok(())
 }
 
@@ -49,4 +54,24 @@ fn set_path(app_handler: &AppHandle) {
                 .join("config.json"),
         )
         .expect("设置配置文件路径失败");
+}
+
+/// 设置日志等级
+///
+/// * `level`: 日志等级
+fn set_log_level(app_handle: &AppHandle, level: LogLevel) {
+    let filter = match level {
+        LogLevel::Trace => tauri_plugin_log::log::LevelFilter::Trace,
+        LogLevel::Debug => tauri_plugin_log::log::LevelFilter::Debug,
+        LogLevel::Warn => tauri_plugin_log::log::LevelFilter::Warn,
+        LogLevel::Error => tauri_plugin_log::log::LevelFilter::Error,
+        _ => tauri_plugin_log::log::LevelFilter::Info,
+    };
+    app_handle
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .level(filter) // 使用动态确定的等级
+                .build(),
+        )
+        .expect("无法初始化日志系统");
 }

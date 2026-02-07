@@ -3,10 +3,7 @@ use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use tokio::sync::broadcast;
 
-use crate::{
-    backup,
-    message::traits::{MessageEvent, MessageHub},
-};
+use crate::message::traits::{MessageEvent, MessageHub};
 
 /// 全局配置类型
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
@@ -34,6 +31,7 @@ pub struct Interface {
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub enum ThemeMode {
     #[default]
+    System,
     Daytime,
     Night,
 }
@@ -122,9 +120,24 @@ impl Default for Storage {
 pub struct System {
     pub companion: bool,
     pub hotkey_activation: bool,
-    pub close_button_behavior: String,
-    pub log_level: String,
+    pub close_button_behavior: CloseBehavior,
+    pub log_level: LogLevel,
     pub download_concurrency: i64,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub enum CloseBehavior {
+    Exit,
+    Hide,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub enum LogLevel {
+    Trace,
+    Debug,
+    Info,
+    Warn,
+    Error,
 }
 
 impl Default for System {
@@ -132,8 +145,8 @@ impl Default for System {
         Self {
             companion: true,
             hotkey_activation: true,
-            close_button_behavior: "Exit".into(),
-            log_level: "info".into(),
+            close_button_behavior: CloseBehavior::Exit,
+            log_level: LogLevel::Info,
             download_concurrency: 5,
         }
     }

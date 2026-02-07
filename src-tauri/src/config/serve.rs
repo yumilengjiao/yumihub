@@ -7,7 +7,7 @@ use tauri_plugin_log::log::{debug, error, info, warn};
 use crate::{
     companion::commands::refresh_companions,
     config::{
-        entity::{ConfigEvent, SideBarMode, ThemeMode},
+        entity::{CloseBehavior, ConfigEvent, LogLevel, SideBarMode, ThemeMode},
         GLOBAL_CONFIG,
     },
     message::{traits::MessageHub, CONFIG_MESSAGE_HUB},
@@ -182,7 +182,7 @@ fn change_hotkey_activation(app_handler: AppHandle, activation: bool) {
 /// 改变关闭按钮的行为
 ///
 /// * `action`: 关闭按钮的行为
-pub fn change_close_button_action(action: String) {
+pub fn change_close_button_action(action: CloseBehavior) {
     let result = GLOBAL_CONFIG.write();
     match result {
         Ok(mut config) => config.system.close_button_behavior = action,
@@ -195,7 +195,7 @@ pub fn change_close_button_action(action: String) {
 /// 改变日志记录级别
 ///
 /// * `level`: 日志级别
-pub fn change_log_level(level: String) {
+pub fn change_log_level(level: LogLevel) {
     let result = GLOBAL_CONFIG.write();
     match result {
         Ok(mut config) => config.system.log_level = level,

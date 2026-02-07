@@ -2,7 +2,7 @@
 use crate::{
     companion,
     config::{self, fs},
-    db, resource, screenshot, shortcut, sys,
+    db, resource, screenshot, shortcut, sys, tray,
     user::{self},
 };
 use std::error::Error;
@@ -24,6 +24,7 @@ pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
     db::init(app.handle());
     sys::init(app.handle());
     config::init(app.handle())?;
+    tray::init(app.handle())?;
     companion::init(app.handle());
     shortcut::init(app.handle());
     screenshot::init(app.handle());
