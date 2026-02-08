@@ -1,4 +1,4 @@
-import { BangumiReq, VNDBReq, YmgalReq } from "@/types/game"
+import { BangumiReq, BangumiResponse, Datum, GameMeta, VNDBReq, VNDBResult, YmgalReq } from "@/types/game"
 
 
 /**
@@ -81,3 +81,57 @@ export const createYmgalQueryFromBootFile = (name: string) => {
   }
   return bangumiParam
 }
+
+/**
+ * 将 Bangumi 数据转化并合并。
+ * @param partial - 除去网络数据部分的游戏数据
+ * @param bangumiRes - bangumu返回的游戏数据
+ * @returns 返回完整的数据库结构的游戏数据
+ */
+export const transBangumiToGameMeta = (
+  partial: Omit<GameMeta, 'cover' | 'background' | 'description' | 'developer'>,
+  bangumiRes: Datum
+): GameMeta => {
+
+  // 提取同步字段
+  const syncedData: Pick<GameMeta, 'cover' | 'background' | 'description' | 'developer'> = {
+    cover: bangumiRes.images?.common || "",
+    background: bangumiRes.images?.large || "",
+    description: bangumiRes.summary || "",
+    // 增加对“开发”、“制作”等不同 Key 的兼容
+    developer: (bangumiRes.infobox?.find(g => ['开发', '制作', '开发商'].includes(g.key))?.value as string) || "",
+  };
+
+  // 2. 返回完整的 GameMeta
+  return {
+    ...partial,
+    ...syncedData,
+  };
+};
+
+/**
+ * 将 VNDB 数据转化并合并。
+ * @param partial - 除去网络数据部分的游戏数据
+ * @param bangumiRes - vndb返回的游戏数据
+ * @returns 返回完整的数据库结构的游戏数据
+ */
+export const transVNDBToGameMeta = (
+  partial: Omit<GameMeta, 'cover' | 'background' | 'description' | 'developer'>,
+  vndbRes: VNDBResult
+): GameMeta => {
+
+  // 提取同步字段
+  const syncedData: Pick<GameMeta, 'cover' | 'background' | 'description' | 'developer'> = {
+    cover: vndbRes.image.url || "",
+    background: vndbRes.screenshots[0].url || "",
+    description: vndbRes.description || "",
+    // 增加对“开发”、“制作”等不同 Key 的兼容
+    developer: vndbRes.developers[0].name || "",
+  }
+
+  // 2. 返回完整的 GameMeta
+  return {
+    ...partial,
+    ...syncedData,
+  };
+};

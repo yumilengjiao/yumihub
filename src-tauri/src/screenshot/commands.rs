@@ -45,3 +45,34 @@ pub async fn capture_game_screenshot(
 
     Ok(path_str)
 }
+
+/// 删除游戏的快照截图
+///
+/// * `id`: 快照id
+pub async fn delete_game_screenshot(pool: &sqlx::SqlitePool, id: &str) -> Result<(), AppError> {
+    // 先查询该记录获取文件路径，以便稍后删除物理文件
+    let record: (String,) = sqlx::query_as("SELECT file_path FROM game_screenshots WHERE id = ?")
+        .bind(id)
+        .fetch_one(pool)
+        .await
+        .map_err(|e| AppError::Generic(format!("未找到该截图记录: {}", e)))?;
+
+    let file_path = record.0;
+
+    // 执行数据库删除操作
+    sqlx::query("DELETE FROM game_screenshots WHERE id = ?")
+        .bind(id)
+        .execute(pool)
+        .await
+        .map_err(|e| AppError::Generic(format!("数据库删除失败: {}", e)))?;
+
+    // 删除磁盘上的物理文件
+    let path = std::path::Path::new(&file_path);
+    if path.exists() {
+        tokio::fs::remove_file(path)
+            .await
+            .map_err(|e| AppError::File(format!("物理文件删除失败: {}", e)))?;
+    }
+
+    Ok(())
+}

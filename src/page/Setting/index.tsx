@@ -3,6 +3,7 @@ import BaseSetting from "./BaseSetting";
 import InterfaceSetting from "./InterfaceSetting";
 import SysSetting from "./SysSetting";
 import ResourceSetting from "./ResourceSetting";
+import AuthSetting from "./AuthSetting";
 
 // 容器动画：让子组件交错显现
 const containerVariants: Variants = {
@@ -40,6 +41,9 @@ export default function Setting() {
           </motion.div>
           <motion.div variants={itemVariants}>
             <SysSetting />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <AuthSetting />
           </motion.div>
         </div>
 

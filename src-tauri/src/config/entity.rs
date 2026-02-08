@@ -13,6 +13,7 @@ pub struct Config {
     pub interface: Interface,
     pub system: System,
     pub storage: Storage,
+    pub auth: Authorization,
 }
 
 // -----------------------------------------------------
@@ -169,6 +170,8 @@ pub enum ConfigEvent {
     System { sys: System },
     // 界面任务
     Interface { interface: Interface },
+    // 权限任务
+    Authorization { auth: Authorization },
 }
 
 impl MessageEvent for ConfigEvent {}
@@ -193,4 +196,13 @@ impl MessageHub<ConfigEvent> for ConfigMessageHub {
     fn publish(&self, event: ConfigEvent) {
         let _ = self.config_tx.send(event);
     }
+}
+// -----------------------------------------------------
+// --------------------权限(token)相关------------------
+// -----------------------------------------------------
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, PartialOrd)]
+#[serde(rename_all = "camelCase")]
+pub struct Authorization {
+    pub bangumi_token: String,
 }

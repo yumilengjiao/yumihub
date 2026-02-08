@@ -3,13 +3,15 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import { invoke } from "@tauri-apps/api/core";
 import { cn } from "@/lib/utils";
 import { t } from "@lingui/core/macro";
-import { Quote, Camera, Clock, PencilLine, Check } from "lucide-react";
+import { Quote, Camera, PencilLine, Trash2, X, AlertCircle } from "lucide-react";
 import { Screenshot } from "@/types/screenshot";
+import { Cmds } from "@/lib/enum";
 
 const GameJourney = ({ selectedYear, selectedMonth }: { selectedYear: number, selectedMonth: number }) => {
   const [snapshots, setSnapshots] = useState<Screenshot[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null); // 用于二次确认
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const loadSnapshots = async () => {
@@ -40,6 +42,17 @@ const GameJourney = ({ selectedYear, selectedMonth }: { selectedYear: number, se
     } catch (e) { console.error("Update failed:", e); }
   };
 
+  // 删除逻辑
+  const handleDelete = async (id: string) => {
+    try {
+      await invoke(Cmds.DELETE_SCREENSHOT_BY_ID, { screenshotId: id });
+      setSnapshots(prev => prev.filter(s => s.id !== id));
+      setDeletingId(null);
+    } catch (e) {
+      console.error("Delete failed:", e);
+    }
+  };
+
   if (!loading && snapshots.length === 0) {
     return (
       <div className="h-full flex flex-col items-center justify-center opacity-40 text-zinc-600">
@@ -53,22 +66,50 @@ const GameJourney = ({ selectedYear, selectedMonth }: { selectedYear: number, se
     <div className="h-full w-full overflow-hidden rounded-2xl">
       <div
         ref={scrollRef}
-        /* 2. padding-x 移到这里，防止裁剪掉左右边框 */
         className="h-full overflow-y-auto mt-4 flex flex-col gap-10 pb-10 px-1 rounded-2xl
                    [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         {snapshots.map((ss) => (
-          <div key={ss.id} className="flex flex-col animate-in fade-in duration-700">
+          <div key={ss.id} className="flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700">
 
             {/* 感想区域 */}
             <div className="mb-4 relative">
-              <div className="flex items-center gap-2 mb-2">
-                <Quote size={18} className="text-black fill-black" />
-                <span className="text-[12px] font-black uppercase tracking-widest text-zinc-400">Thought</span>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Quote size={18} className="text-black fill-black" />
+                  <span className="text-[12px] font-black uppercase tracking-widest text-zinc-400">Thought</span>
+                </div>
+
+                {/* 删除按钮交互 */}
+                <div className="flex items-center gap-2">
+                  {deletingId === ss.id ? (
+                    <div className="flex items-center gap-2 animate-in zoom-in duration-200">
+                      <span className="text-[10px] font-bold text-red-500 uppercase tracking-tighter">{t`确认删除?`}</span>
+                      <button
+                        onClick={() => handleDelete(ss.id)}
+                        className="p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => setDeletingId(null)}
+                        className="p-1.5 bg-zinc-100 text-zinc-400 rounded-lg hover:bg-zinc-200 transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setDeletingId(ss.id)}
+                      className="p-1.5 text-zinc-300 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
               </div>
 
               {editingId === ss.id ? (
-                /* 3. 给 textarea 加上 animate-in fade-in */
                 <textarea
                   autoFocus
                   className="w-full bg-white p-5 rounded-xl border-2 border-black outline-none text-[18px] font-black text-black leading-relaxed min-h-[140px] 
@@ -77,7 +118,6 @@ const GameJourney = ({ selectedYear, selectedMonth }: { selectedYear: number, se
                   onBlur={(e) => handleUpdateThoughts(ss.id, e.target.value)}
                 />
               ) : (
-                /* 4. 给显示态也加上动画，切换时更顺滑 */
                 <div
                   onClick={() => setEditingId(ss.id)}
                   className="relative cursor-pointer bg-black/5 p-5 rounded-2xl hover:bg-black/[0.08] transition-colors group/text 
@@ -95,7 +135,7 @@ const GameJourney = ({ selectedYear, selectedMonth }: { selectedYear: number, se
             </div>
 
             {/* 图片区域 */}
-            <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-black bg-white group/img">
+            <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-black bg-white group/img shadow-[8px_8px_0px_0px_rgba(0,0,0,0.05)]">
               <img
                 src={convertFileSrc(ss.filePath)}
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/img:scale-105"
@@ -118,4 +158,4 @@ const GameJourney = ({ selectedYear, selectedMonth }: { selectedYear: number, se
   );
 };
 
-export default GameJourney
+export default GameJourney;

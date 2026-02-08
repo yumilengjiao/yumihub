@@ -50,6 +50,7 @@ pub fn run() {
             //游戏快照
             cmd::get_screenshots_by_year_month,
             cmd::update_screenshot_by_id,
+            cmd::delete_screenshot_by_id,
             // 配置
             cmd::get_config,
             cmd::update_config,

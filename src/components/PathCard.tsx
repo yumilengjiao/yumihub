@@ -24,13 +24,23 @@ export function PathCard({ title, path, onSelect, readOnly = false, className }:
 
   const handleAction = async () => {
     try {
-      const selected = await open({
-        directory: true,
-        multiple: false,
-        title: isViewOnly ? t`查看${title}` : t`选择${title}`,
-        defaultPath: path
-      });
+      let selected: string | null = ""
+      if (onSelect && !readOnly) {
+        selected = await open({
+          directory: true,
+          multiple: false,
+          title: isViewOnly ? t`查看${title}` : t`选择${title}`,
+          defaultPath: path
+        });
+      } else {
+        open({
+          directory: false,
+          multiple: false,
+          title: isViewOnly ? t`查看${title}` : t`选择${title}`,
+          defaultPath: path
+        });
 
+      }
       // 只有在非只读模式且有回调时，才执行修改
       if (selected && typeof selected === 'string' && !isViewOnly) {
         onSelect?.(selected);

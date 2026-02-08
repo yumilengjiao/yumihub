@@ -2,10 +2,11 @@
  * 全局配置类型
  */
 export interface Config {
-  basic: Basic;
-  interface: Interface;
-  system: System;
-  storage: Storage;
+  basic: Basic
+  interface: Interface
+  system: System
+  storage: Storage
+  auth: Authorization
 }
 
 // -----------------------------------------------------
@@ -75,5 +76,12 @@ export interface System {
   logLevel: string
   /** 下载并发量上限 */
   downloadConcurrency: number // Rust 中的 i64 对应 TS 的 number
+}
+
+// -----------------------------------------------------
+// ------------------------授权配置---------------------
+// -----------------------------------------------------
+export interface Authorization {
+  bangumiToken: string
 }
 

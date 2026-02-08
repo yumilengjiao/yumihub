@@ -151,7 +151,7 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
         animate={{
           width: isExpanded ? 460 : 60,
           height: 60,
-          backgroundColor: isExpanded ? "var(--popover)" : "var(--primary)",
+          backgroundColor: "var(--primary)"
         }}
         transition={{ type: "spring", stiffness: 500, damping: 35 }}
         className={cn(
@@ -193,16 +193,18 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
             onClick={() => setIsExpanded(!isExpanded)}
             className={cn(
               "w-full h-full flex items-center justify-center active:scale-90 transition-all",
-              isExpanded ? "text-foreground" : "text-primary-foreground"
+              // 按钮颜色反转：背景深则字浅，背景浅则字深
+              isExpanded
+                ? "text-zinc-100 dark:text-zinc-800"
+                : "text-primary-foreground"
             )}
           >
             <motion.div animate={{ rotate: isExpanded ? 45 : 0 }} transition={{ duration: 0.2 }}>
               <Plus size={28} strokeWidth={3} />
             </motion.div>
           </button>
-        </div>
-      </motion.div>
-    </div>
+        </div>      </motion.div>
+    </div >
   );
 };
 
@@ -211,10 +213,20 @@ const OptionButton: React.FC<{ icon: React.ReactNode; label: string; onClick: ()
 }) => (
   <button
     onClick={onClick}
-    className="flex flex-col items-center justify-center text-muted-foreground hover:text-primary transition-all active:scale-95 group shrink-0 min-w-[70px]"
+    className={cn(
+      "flex flex-col items-center justify-center transition-all active:scale-95 group shrink-0 min-w-[70px]",
+      // 核心逻辑：
+      // 在明亮模式下（父级变黑锌），文字强制变白锌 (text-zinc-100)
+      // 在黑暗模式下（父级变白锌），文字强制变黑锌 (text-zinc-800)
+      "text-zinc-100 dark:text-zinc-800"
+    )}
   >
-    <div className="opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-transform">{icon}</div>
-    <span className="text-[9px] font-black tracking-[0.2em] whitespace-nowrap uppercase mt-1">{label}</span>
+    <div className="opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all">
+      {icon}
+    </div>
+    <span className="text-[9px] font-black tracking-[0.2em] whitespace-nowrap uppercase mt-1">
+      {label}
+    </span>
   </button>
 );
 

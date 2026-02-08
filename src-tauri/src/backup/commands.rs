@@ -26,7 +26,10 @@ pub async fn backup_archive_by_game_id(pool: SqlitePool, id: String) -> Result<(
     let save_path: Option<String> = game.get("save_data_path");
 
     if save_path.is_none() {
-        return Err(AppError::Resolve("none".into(), "没有设置存档路径".into()));
+        return Err(AppError::Resolve(
+            "无路径".into(),
+            "没有设置存档路径".into(),
+        ));
     }
     let save_path: PathBuf = save_path.unwrap().into();
 

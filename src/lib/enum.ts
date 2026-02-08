@@ -104,7 +104,15 @@ export enum Cmds {
    */
   GET_SCREENSHOTS_BY_YEAR_MONTH = "get_screenshots_by_year_month",
 
+  /**
+   * 更新快照感想信息
+   */
   UPDATE_SCREENSHOT_BY_ID = "update_screenshot_by_id",
+
+  /**
+   * 删除快照
+   */
+  DELETE_SCREENSHOT_BY_ID = "delete_screenshot_by_id",
 
   // ------------------------------------------------------------------------------------------------------------------
   // ------------------------------------------------------备份类------------------------------------------------------

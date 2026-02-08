@@ -75,7 +75,7 @@ export default function ResourceSetting() {
         <SwitchCard
           className="mb-3!"
           title={t`允许资源下载到本地`}
-          checked={true}
+          checked={config.storage.allowDownloadingResources}
           onCheckedChange={(v) => updateConfig(config => config.storage.allowDownloadingResources = v)}
         />
 

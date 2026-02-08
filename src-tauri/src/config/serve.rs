@@ -55,6 +55,10 @@ pub fn listening_loop(app_handler: AppHandle) {
                     set_allow_downloading_resources(stroage.allow_downloading_resources);
                     set_auto_back_up(stroage.auto_backup);
                 }
+                ConfigEvent::Authorization { auth } => {
+                    debug!("权限设置开始更新");
+                    set_bangumi_token(auth.bangumi_token);
+                }
             }
         }
     });
@@ -476,6 +480,22 @@ fn set_auto_back_up(is_enabled: bool) {
     match result {
         Ok(mut config) => {
             config.storage.auto_backup = is_enabled;
+        }
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
+
+// ----------------------------------------------------------
+// ------------------------权限设置--------------------------
+// ----------------------------------------------------------
+
+fn set_bangumi_token(bangumi_token: String) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => {
+            config.auth.bangumi_token = bangumi_token;
         }
         Err(e) => {
             error!("{}", e);

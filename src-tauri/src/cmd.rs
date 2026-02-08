@@ -14,6 +14,7 @@ use crate::backup::commands::backup_archive_by_game_id;
 use crate::companion::entity::Companion;
 use crate::game::commands::execute_start_game;
 use crate::game::entity::{ArchiveEntry, PlaySession, ResourceTarget};
+use crate::screenshot::commands::delete_game_screenshot;
 use crate::screenshot::entity::Screenshot;
 use crate::shortcut::commands::refresh_shortcuts;
 use crate::shortcut::entity::ShortcutSetting;
@@ -240,15 +241,15 @@ pub async fn add_new_game(
     .await
     .map_err(|e| AppError::DB(e.to_string()))?;
 
-    // 向消息模块发布信息说明有资源需要下载
     let allow_downloading = GLOBAL_CONFIG
         .read()
         .map_err(|e| AppError::Generic(e.to_string()))?
         .storage
         .allow_downloading_resources;
-    if allow_downloading {
+    if !allow_downloading {
         return Ok(());
     }
+    // 向消息模块发布信息说明有资源需要下载
     GAME_MESSAGE_HUB.publish(GameEvent::GameResourceTask {
         meta: game,
         target: ResourceTarget::All,
@@ -426,7 +427,7 @@ pub async fn update_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Resul
             .map_err(|e| AppError::Generic(e.to_string()))?
             .storage
             .allow_downloading_resources;
-        if allow_downloading {
+        if !allow_downloading {
             return Ok(());
         }
         // 只有当新路径是网络路径时才触发任务
@@ -647,6 +648,9 @@ pub async fn update_config(config: Config) {
             if old_config.system != config.system {
                 CONFIG_MESSAGE_HUB.publish(ConfigEvent::System { sys: config.system });
             }
+            if old_config.auth != config.auth {
+                CONFIG_MESSAGE_HUB.publish(ConfigEvent::Authorization { auth: config.auth });
+            }
         }
         Err(e) => {
             error!("无法获取全局配置信息,无法更新配置,错误: {}", e);
@@ -721,6 +725,18 @@ pub async fn update_screenshot_by_id(
     }
 
     Ok(())
+}
+
+/// 根据id删除一个快照信息及其截图
+///
+/// * `pool`: 数据库连接池-自动注入
+/// * `screenshot_id`: 快照id
+#[tauri::command]
+pub async fn delete_screenshot_by_id(
+    pool: State<'_, SqlitePool>,
+    screenshot_id: String,
+) -> Result<(), AppError> {
+    delete_game_screenshot(&pool, &screenshot_id).await
 }
 
 // --------------------------------------------------------
