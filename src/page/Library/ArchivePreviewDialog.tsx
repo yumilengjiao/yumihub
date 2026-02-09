@@ -99,21 +99,21 @@ const ArchivePreviewDialog: React.FC<ArchivePreviewDialogProps> = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-8 bg-slate-900/20 backdrop-blur-sm">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-8 bg-slate-900/20 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, scale: 0.98, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 20 }}
-            className="relative w-full max-w-4xl bg-white shadow-[0_40px_100px_rgba(0,0,0,0.2)] rounded-[2rem] overflow-hidden flex flex-col max-h-[85vh] border border-slate-200"
+            className="relative w-full max-w-4xl bg-slate-50 dark:bg-zinc-800 shadow-[0_40px_100px_rgba(0,0,0,0.2)] rounded-[2rem] overflow-hidden flex flex-col max-h-[85vh] border border-slate-200/20"
           >
             {/* Header */}
-            <div className="px-10 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div className="px-10 py-6 border-b border-slate-100/10 flex items-center justify-between dark:bg-zinc-800">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-slate-900 rounded-xl text-white">
                   <Package size={20} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-slate-800 tracking-tight">确认解压清单</h3>
+                  <h3 className="text-xl font-black text-slate-800 dark:text-slate-50 tracking-tight"><Trans>确认解压清单</Trans></h3>
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mt-1">Files will be placed in the folder below</p>
                 </div>
               </div>
@@ -125,15 +125,15 @@ const ArchivePreviewDialog: React.FC<ArchivePreviewDialogProps> = ({
             {/* Path Selection */}
             <div className="px-10 py-8">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em]">解压至目的地</span>
+                <span className="text-[11px] font-black text-slate-800  dark:text-slate-400 uppercase tracking-[0.2em]"><Trans>解压至目的地</Trans></span>
                 <button
                   onClick={handleSelectFolder}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-black hover:bg-blue-100 transition-all cursor-pointer active:scale-95"
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-slate-400 text-blue-600 rounded-xl text-xs font-black hover:bg-blue-100 transition-all cursor-pointer active:scale-95"
                 >
-                  <FolderOpen size={14} /> 更改目录
+                  <FolderOpen size={14} /> <Trans>更改目录</Trans>
                 </button>
               </div>
-              <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl font-mono text-sm text-slate-600 shadow-inner break-all">
+              <div className="p-5 bg-slate-50 dark:bg-zinc-700 border border-slate-200/20 rounded-2xl font-mono text-sm text-slate-600  dark:text-slate-300 shadow-inner break-all">
                 {visualFinalPath}
               </div>
             </div>
@@ -141,8 +141,8 @@ const ArchivePreviewDialog: React.FC<ArchivePreviewDialogProps> = ({
             {/* File Manifest */}
             <div className="flex-1 overflow-hidden flex flex-col px-10">
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                  内容预览
+                <span className="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">
+                  <Trans>内容预览</Trans>
                 </span>
               </div>
 
@@ -150,7 +150,6 @@ const ArchivePreviewDialog: React.FC<ArchivePreviewDialogProps> = ({
                 {visibleEntries.map((entry, i) => (
                   <div
                     key={i}
-                    // 彻底移除点击交互，预览列表仅供观察，防止用户产生“进入”文件夹的错觉
                     className="flex items-center gap-4 px-5 py-3 rounded-2xl hover:bg-slate-50 transition-all border border-transparent"
                   >
                     <div className={entry.isDir ? "text-blue-500" : "text-slate-400"}>
@@ -160,21 +159,21 @@ const ArchivePreviewDialog: React.FC<ArchivePreviewDialogProps> = ({
                         <File size={18} />
                       )}
                     </div>
-                    <span className="flex-1 truncate text-sm font-bold text-slate-600">
+                    <span className="flex-1 truncate text-sm font-bold text-slate-600 dark:text-slate-300">
                       {entry.name}
                     </span>
                   </div>
                 ))}
                 {visibleEntries.length === 0 && (
                   <div className="py-20 text-center text-slate-400 text-sm italic">
-                    压缩包内容为空
+                    <Trans>压缩包内容为空</Trans>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Footer */}
-            <div className="p-10 border-t border-slate-100 flex justify-end items-center gap-6">
+            <div className="p-10 border-t border-slate-100/20 flex justify-end items-center gap-6">
               <button
                 onClick={onClose}
                 className="text-sm font-black text-slate-400 hover:text-slate-600 transition-colors cursor-pointer uppercase tracking-widest"
@@ -185,7 +184,7 @@ const ArchivePreviewDialog: React.FC<ArchivePreviewDialogProps> = ({
                 disabled={!displayPath}
                 onClick={onConfirm}
                 className={cn(
-                  "px-8 py-5 rounded-2xl font-black text-sm transition-all flex items-center shadow-2xl gap-2",
+                  "px-8 py-5 rounded-2xl font-black text-sm transition-all flex items-center gap-2",
                   displayPath
                     ? "bg-custom-600 text-white hover:bg-custom-600/80 cursor-pointer active:scale-95 shadow-slate-200"
                     : "bg-slate-100 text-slate-300 cursor-not-allowed"

@@ -1,4 +1,4 @@
-import { VNDBReq, VNDBResponse } from "@/types/game";
+import { VNDBReq, VNDBResponse, VNDBResult } from "@/types/game";
 import { fetch } from "@tauri-apps/plugin-http";
 
 /**
@@ -37,7 +37,7 @@ export const requestVNDB = async (param: VNDBReq): Promise<VNDBResponse | null> 
  * @param id vndb条目的id
  * @returns 精确匹配,返回查找到的游戏数据
  */
-export const requestVNDBById = async (id: string): Promise<VNDBResponse | null> => {
+export const requestVNDBById = async (id: string): Promise<VNDBResult | null> => {
   const param = {
     "filters": [
       "id", "=", id
@@ -61,7 +61,10 @@ export const requestVNDBById = async (id: string): Promise<VNDBResponse | null> 
     }
 
     // 确定是字符串后再手动解析
-    return JSON.parse(rawData);
+    if (JSON.parse(rawData).results.length > 0)
+      return JSON.parse(rawData).results[0]
+    else
+      return null
 
   } catch (e) {
     console.error("请求根本没发出去，检查 net.json 权限配置:", e);

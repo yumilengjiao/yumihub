@@ -93,7 +93,7 @@ export default function GameDetail() {
           updatedData = transBangumiToGameMeta(game, newData);
         } else {
           console.log("处理 VNDB 数据");
-          updatedData = transVNDBToGameMeta(game, newData["results"][0]);
+          updatedData = transVNDBToGameMeta(game, newData);
         }
         updatedData.localBackground = ""
         updatedData.localCover = ""

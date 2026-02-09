@@ -7,7 +7,7 @@ import { PendingGameInfo } from "@/store/pendingGamesStore";
 /**
  * 用于发送网络请求识别游戏并加结果放入仓库
  * @param absPath 游戏绝对路径
- * @returns 返回所有数据源拿到的数据
+ * @returns 返回所有数据源拿到的数据,每个数据源的单个数据
  */
 export async function recognizeGame(absPath: string): Promise<PendingGameInfo> {
   // 兼容不同系统的路径分隔符
@@ -16,6 +16,7 @@ export async function recognizeGame(absPath: string): Promise<PendingGameInfo> {
   //拿名字
   let name: string | undefined = "";
 
+  // 父目录就是默认名字
   name = arr[arr.length - 2];
 
   if (!name) {
@@ -54,8 +55,8 @@ export async function recognizeGame(absPath: string): Promise<PendingGameInfo> {
   }
   return {
     absPath: absPath,
-    vndb: vndbData,
-    bangumi: bangumiData,
-    ymgal: ymlData
+    vndb: vndbData?.results[0] || null,
+    bangumi: bangumiData?.data[0] || null,
+    ymgal: ymlData?.data.result[0] || null
   }
 }

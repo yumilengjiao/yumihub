@@ -266,6 +266,7 @@ pub async fn add_new_game_list(
     pool: State<'_, Pool<Sqlite>>,
     games: Vec<GameMeta>, // 假设 GameMetaList 是 Vec 的包装，这里直接用 Vec
 ) -> Result<(), AppError> {
+    debug!("接受到了新的游戏列表: {:?}", games);
     // 开启事务
     let mut tx = pool
         .begin()
@@ -318,7 +319,8 @@ pub async fn add_new_game_list(
             .map_err(|e| AppError::Generic(e.to_string()))?
             .storage
             .allow_downloading_resources;
-        if allow_downloading {
+
+        if !allow_downloading {
             return Ok(());
         }
 

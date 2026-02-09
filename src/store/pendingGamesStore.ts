@@ -3,7 +3,7 @@
  * 在网络io后的信息会存到这里
  */
 
-import { BangumiResponse, GameMetaList, VNDBResponse, YmgalResponse } from "@/types/game";
+import { Datum, GameMetaList, VNDBResult, YmResult } from "@/types/game";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { GameMeta } from "@/types/game";
@@ -11,9 +11,9 @@ import { GameMeta } from "@/types/game";
 //查询游戏获取的来自三个平台所有的数据
 export interface PendingGameInfo {
   absPath: string | null
-  vndb: VNDBResponse | null
-  bangumi: BangumiResponse | null
-  ymgal: YmgalResponse | null
+  vndb: VNDBResult | null
+  bangumi: Datum | null
+  ymgal: YmResult | null
 }
 
 interface PendingGameStore {
