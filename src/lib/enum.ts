@@ -194,5 +194,10 @@ export enum Cmds {
   /**
    * 更新所有的连携程序
    */
-  UPDATE_COMPAIONS = "update_companions"
+  UPDATE_COMPAIONS = "update_companions",
+
+  /**
+   * 清理程序的所有数据
+   */
+  CLEAR_APP_DATA = "clear_app_data"
 }

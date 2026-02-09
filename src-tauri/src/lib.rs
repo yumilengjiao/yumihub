@@ -71,7 +71,8 @@ pub fn run() {
             cmd::get_game_size,
             cmd::get_disks,
             cmd::get_disk_usage,
-            cmd::authorize_path_access
+            cmd::authorize_path_access,
+            cmd::clear_app_data
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

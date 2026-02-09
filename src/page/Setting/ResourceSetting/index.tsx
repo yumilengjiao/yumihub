@@ -12,10 +12,13 @@ import { Cmds } from "@/lib/enum";
 import SwitchCard from "@/components/SwitchCard";
 import ConfirmDialog from "./ComfirmDialog";
 import useConfigStore from "@/store/configStore";
+import useGameStore from "@/store/gameStore";
 
 export default function ResourceSetting() {
   const [isBackingUp, setIsBackingUp] = useState(false);
   const { i18n } = useLingui()
+  const { setGameMetaList
+  } = useGameStore()
   const [confirm, setConfirm] = useState<{
     open: boolean;
     title: string;
@@ -107,7 +110,7 @@ export default function ResourceSetting() {
             onClick={() =>
               openConfirm({
                 title: t`确认还原所有存档？`,
-                desc: t`该操作将覆盖当前所有游戏的本地存档，且无法撤销，请确认你已经做好备份。`,
+                desc: t`该操作将覆盖当前所有已备份的游戏的本地存档，且无法撤销，请确认你已经做好备份。`,
                 danger: true,
                 action: handleQuickRestore,
               })
@@ -127,12 +130,13 @@ export default function ResourceSetting() {
                 desc: t`该操作将删除所有程序配置、游戏信息及本地数据，且无法恢复。请谨慎操作。`,
                 danger: true,
                 action: () => {
-                  alert("清除中")
-                },
+                  invoke(Cmds.CLEAR_APP_DATA)
+                  setGameMetaList([])
+                }
               })
             }
             disabled={isBackingUp}
-            className="w-full h-12 rounded-xl bg-red-700 hover:bg-red-800 text-white font-bold gap-2"
+            className="w-full h-12 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold gap-2"
           >
             <DatabaseBackup size={18} />
             <Trans>清除程序所有数据</Trans>

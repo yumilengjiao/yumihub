@@ -1,8 +1,10 @@
 //! db模块用来进行数据库的一些初始化操作
 
-use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
-use std::fs;
+use database::setup_database;
+use sqlx::{Pool, Sqlite};
 use tauri::{AppHandle, Manager};
+
+use tauri_plugin_log::log::info;
 
 /// db模块初始化函数
 pub fn init(app_handle: &AppHandle) {
@@ -20,145 +22,18 @@ pub async fn init_db(app_handle: &AppHandle) -> Pool<Sqlite> {
         .path()
         .app_local_data_dir()
         .expect("找不到数据目录");
+
     if !app_dir.exists() {
-        fs::create_dir_all(&app_dir).expect("创建数据库文件夹失败，请检查权限");
+        std::fs::create_dir_all(&app_dir).expect("创建数据库文件夹失败");
     }
 
     let db_path = app_dir.join("app.db");
-    let db_url = format!(
-        "sqlite://{}?mode=rwc&cache=shared",
-        db_path.to_str().unwrap()
-    );
-    println!("数据库路径:{}", db_url);
 
-    // 连接数据库（如果不存在会自动创建文件）
-    let pool = SqlitePoolOptions::new()
-        .max_connections(5)
-        .connect(&db_url)
+    let pool = setup_database(&db_path)
         .await
-        .expect("无法连接/创建数据库");
+        .expect("数据库初始化/迁移失败");
 
-    let create_tables_sql = r#"
-        -- 游戏元数据表
-        CREATE TABLE IF NOT EXISTS games (
-            id TEXT PRIMARY KEY,
-            name TEXT NOT NULL,
-            abs_path TEXT NOT NULL,
-            is_passed INTEGER,
-            is_displayed INTEGER,
-            cover TEXT,
-            background TEXT,
-            description TEXT,
-            developer TEXT,
-            local_cover TEXT,
-            local_background TEXT,
-            save_data_path TEXT,
-            backup_data_path TEXT,
-            play_time INTEGER DEFAULT 0,
-            length INTEGER DEFAULT 0,
-            size INTEGER,
-            last_played_at TEXT 
-        );
+    info!("数据库已就绪，路径: {:?}", db_path);
 
-        -- 文件路径权限
-        CREATE TABLE IF NOT EXISTS authorized_scopes (
-            id TEXT PRIMARY KEY,
-            path TEXT NOT NULL UNIQUE,
-            authorized_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
-
-        -- 游戏游玩时长日期表
-        CREATE TABLE IF NOT EXISTS game_play_sessions (
-            id TEXT PRIMARY KEY,
-            game_id TEXT NOT NULL,          -- 关联 games 表的 id
-            play_date DATE NOT NULL,        -- 日期（例如 2025-05-20）
-            duration_minutes INTEGER DEFAULT 0, -- 当日时长（分钟）
-            last_played_at DATETIME        -- 该日最后一次运行的时间
-        );
-
-        -- 创建索引加速按日期查询
-        CREATE INDEX IF NOT EXISTS idx_play_date ON game_play_sessions (play_date);
-
-        -- 游戏快照表
-        CREATE TABLE IF NOT EXISTS game_screenshots (
-            id TEXT PRIMARY KEY,
-            -- 关联 games 表的 id
-            game_id TEXT NOT NULL,
-            -- 截图在硬盘的绝对路径
-            file_path TEXT NOT NULL,
-            -- 截图时间
-            created_at DATETIME DEFAULT (datetime('now', 'localtime')),
-            -- 瞬间感想
-            thoughts Text
-        );
-
-        -- 游戏的连携程序表
-
-        CREATE TABLE IF NOT EXISTS companions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            -- 程序别名，如 "翻译程序"、"手柄映射"
-            name TEXT NOT NULL,
-            -- 程序的绝对路径
-            path TEXT NOT NULL,
-            -- 启动参数，例如 "-windowed" 或 "--minimized"
-            args TEXT,
-            -- 是否在联动启动时包含此程序
-            trigger_mode TEXT NOT NULL DEFAULT 'game',
-            -- 是否启用此程序的连携启动
-            is_enabled INTEGER DEFAULT 1,
-            -- 窗口是否被程序控制
-            is_window_managed INTEGER DEFAULT 0,
-            -- 排序权重，如果希望某些程序先启动
-            sort_order INTEGER DEFAULT 0,
-            -- 备注
-            description TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
-
-        -- app的快捷键表
-        CREATE TABLE IF NOT EXISTS shortcut (
-        id TEXT PRIMARY KEY,          -- 唯一标识符 (如: "launch_last_game")
-        key_combo TEXT,               -- 绑定的键组合 (如: "Alt+Space", 为空表示未绑定)
-        is_global BOOLEAN DEFAULT 0   -- 是否为全局快捷键 (1 是, 0 仅应用内有效)
-        );
-
-        -- 初始化种子数据 (只在第一次执行时生效)
-        INSERT OR IGNORE INTO shortcut (id, key_combo, is_global) VALUES 
-        ('launch_last', 'Ctrl+L', 1),
-        ('confirm_launch', 'Enter', 0),
-        ('screenshot', 'CTRL+F12', 1),
-        -- 路由切换快捷键
-        ('nav_home', NULL, 0),
-        ('nav_library', NULL, 0),
-        ('nav_profile', NULL, 0),
-        ('nav_settings', NULL, 0),
-        -- 系统功能
-        ('boss_key', NULL, 1),
-        ('emergency_stop', NULL, 1);
-
-
-        -- 用户信息表
-        CREATE TABLE IF NOT EXISTS account (
-            id TEXT PRIMARY KEY,
-            user_name TEXT NOT NULL,
-            avatar TEXT,
-            games_count INTEGER DEFAULT 0,
-            favorite_game TEXT,
-            total_play_time INTEGER DEFAULT 0,
-            games_completed_number INTEGER DEFAULT 0,
-            selected_disk TEXT,
-            last_play_at TEXT,
-            created_at TEXT
-        );
-
-        -- 初始化默认用户 (如果不存在)
-        INSERT OR IGNORE INTO account (id, user_name, created_at) 
-        VALUES ('default', 'user', datetime('now'));
-    "#;
-    // 执行建表语句
-    sqlx::query(create_tables_sql)
-        .execute(&pool)
-        .await
-        .expect("数据库表初始化失败");
     pool
 }

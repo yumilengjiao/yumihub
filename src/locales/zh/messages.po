@@ -17,7 +17,7 @@ msgstr ""
 msgid " 最喜欢的游戏"
 msgstr " 最喜欢的游戏"
 
-#: src/page/Setting/SysSetting/index.tsx:31
+#: src/page/Setting/SysSetting/index.tsx:39
 msgid " 最大下载并发数"
 msgstr " 最大下载并发数"
 
@@ -26,16 +26,16 @@ msgid " 匹配元数据"
 msgstr " 匹配元数据"
 
 #: src/page/Library/GameDetail.tsx:192
-msgid " 存档目录"
-msgstr " 存档目录"
+#~ msgid " 存档目录"
+#~ msgstr " 存档目录"
 
 #: src/page/User/EditUserInfoDialog.tsx:126
 msgid " 本地上传"
 msgstr " 本地上传"
 
 #: src/page/Library/GameDetail.tsx:141
-msgid " 游戏简介"
-msgstr " 游戏简介"
+#~ msgid " 游戏简介"
+#~ msgstr " 游戏简介"
 
 #: src/page/User/EditUserInfoDialog.tsx:144
 msgid " 用户昵称"
@@ -54,8 +54,8 @@ msgid " 确认添加项目"
 msgstr " 确认添加项目"
 
 #: src/page/Library/GameDetail.tsx:179
-msgid "\"从未启动\""
-msgstr "\"从未启动\""
+#~ msgid "\"从未启动\""
+#~ msgstr "\"从未启动\""
 
 #: src/page/User/ProfileHeader.tsx:20
 msgid "\"存档是 Gal 玩家的生命线，记得备份。\""
@@ -63,8 +63,8 @@ msgstr "\"存档是 Gal 玩家的生命线，记得备份。\""
 
 #. placeholder {0}: keyword ? "尝试调整搜索关键词" : "点击上方按钮开始收藏游戏"
 #. placeholder {0}: keyword ? "无匹配项" : "库中无数据"
-#: src/page/Library/index.tsx:121
-#: src/page/Library/index.tsx:126
+#: src/page/Library/index.tsx:124
+#: src/page/Library/index.tsx:129
 msgid "{0}"
 msgstr "{0}"
 
@@ -90,7 +90,11 @@ msgstr "ID 检索成功"
 #~ msgid "VNDB 数据已同步"
 #~ msgstr "VNDB 数据已同步"
 
-#: src/page/Setting/ResourceSetting/index.tsx:57
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:14
+msgid "一键拉起最后一次关闭的游戏及连携程序"
+msgstr "一键拉起最后一次关闭的游戏及连携程序"
+
+#: src/page/Setting/ResourceSetting/index.tsx:122
 msgid "一键还原存档"
 msgstr "一键还原存档"
 
@@ -98,11 +102,11 @@ msgstr "一键还原存档"
 msgid "下午好"
 msgstr "下午好"
 
-#: src/components/SideBar/index.tsx:75
+#: src/components/SideBar/index.tsx:74
 msgid "个人"
 msgstr "个人"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:24
+#: src/page/Setting/InterfaceSetting/index.tsx:52
 msgid "个性化界面"
 msgstr "个性化界面"
 
@@ -110,23 +114,27 @@ msgstr "个性化界面"
 msgid "中午好"
 msgstr "中午好"
 
-#: src/components/SideBar/index.tsx:69
+#: src/components/SideBar/index.tsx:68
 msgid "主页"
 msgstr "主页"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:32
+#: src/page/Setting/InterfaceSetting/index.tsx:60
 msgid "主题颜色"
 msgstr "主题颜色"
+
+#: src/page/Library/TopBar.tsx:117
+msgid "仅看已通关"
+msgstr "仅看已通关"
 
 #: src/page/User/ProfileHeader.tsx:22
 msgid "今天的心情适合推一部催泪神作吗？"
 msgstr "今天的心情适合推一部催泪神作吗？"
 
 #: src/page/Library/GameDetail.tsx:121
-msgid "从备份存档恢复"
-msgstr "从备份存档恢复"
+#~ msgid "从备份存档恢复"
+#~ msgstr "从备份存档恢复"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:37
+#: src/page/Setting/InterfaceSetting/index.tsx:65
 msgid "侧边栏显示"
 msgstr "侧边栏显示"
 
@@ -134,11 +142,19 @@ msgstr "侧边栏显示"
 msgid "保存信息"
 msgstr "保存信息"
 
-#: src/page/User/index.tsx:108
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:160
+msgid "保存并应用"
+msgstr "保存并应用"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:293
+msgid "保存连携配置"
+msgstr "保存连携配置"
+
+#: src/page/User/index.tsx:151
 msgid "信息和工具"
 msgstr "信息和工具"
 
-#: src/page/User/index.tsx:102
+#: src/page/User/index.tsx:145
 msgid "修改信息"
 msgstr "修改信息"
 
@@ -146,25 +162,65 @@ msgstr "修改信息"
 msgid "修改用户信息"
 msgstr "修改用户信息"
 
+#: src/page/Setting/ResourceSetting/index.tsx:80
+msgid "允许资源下载到本地"
+msgstr "允许资源下载到本地"
+
 #: src/page/Library/PendingCard.tsx:169
 msgid "全局匹配完成"
 msgstr "全局匹配完成"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:22
+msgid "全局唤醒"
+msgstr "全局唤醒"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:21
+msgid "全局隐藏窗口并静音"
+msgstr "全局隐藏窗口并静音"
 
 #: src/page/User/ProfileHeader.tsx:21
 msgid "全线通关后的后劲，是青春的证明。"
 msgstr "全线通关后的后劲，是青春的证明。"
 
 #: src/page/Setting/SysSetting/index.tsx:12
-msgid "关闭日志"
-msgstr "关闭日志"
+#~ msgid "关闭日志"
+#~ msgstr "关闭日志"
 
-#: src/page/Library/GameDetail.tsx:179
+#: src/page/Library/GameDetail.tsx:284
 msgid "最后运行"
 msgstr "最后运行"
 
-#: src/page/Setting/SysSetting/index.tsx:11
+#: src/page/Setting/SysSetting/index.tsx:12
 msgid "最小化至托盘"
 msgstr "最小化至托盘"
+
+#: src/page/User/index.tsx:189
+msgid "切换日期"
+msgstr "切换日期"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:19
+msgid "切换至：个人页面"
+msgstr "切换至：个人页面"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:17
+msgid "切换至：主页"
+msgstr "切换至：主页"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:18
+msgid "切换至：游戏库"
+msgstr "切换至：游戏库"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:20
+msgid "切换至：设置界面"
+msgstr "切换至：设置界面"
+
+#: src/page/Library/GameDetail.tsx:228
+msgid "制作商"
+msgstr "制作商"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:129
+msgid "加载配置中..."
+msgstr "加载配置中..."
 
 #: src/page/User/ProfileHeader.tsx:23
 msgid "劳逸结合，眼睛也需要休息呢。"
@@ -191,40 +247,94 @@ msgid "午饭吃了吗？记得休息一下。"
 msgstr "午饭吃了吗？记得休息一下。"
 
 #: src/page/Library/GameDetail.tsx:132
-msgid "占用空间"
-msgstr "占用空间"
+#~ msgid "占用空间"
+#~ msgstr "占用空间"
+
+#. placeholder {0}: journeyMonth.toString().padStart(2, '0')
+#: src/page/User/index.tsx:186
+msgid "历程 ({journeyYear}-{0})"
+msgstr "历程 ({journeyYear}-{0})"
 
 #: src/page/Library/BigPendingCard.tsx:214
 #: src/page/User/EditUserInfoDialog.tsx:173
-#: src/page/User/index.tsx:173
+#: src/page/User/index.tsx:232
+#: src/page/User/index.tsx:293
 msgid "取消"
 msgstr "取消"
 
+#: src/components/PathCard.tsx:68
+msgid "只读"
+msgstr "只读"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:220
+msgid "可执行文件路径"
+msgstr "可执行文件路径"
+
+#: src/page/Library/GameDetail.tsx:106
+msgid "同步失败: "
+msgstr "同步失败: "
+
+#: src/page/Library/GameDetail.tsx:104
+msgid "同步成功"
+msgstr "同步成功"
+
+#: src/page/Library/GameDetail.tsx:249
+msgid "启动"
+msgstr "启动"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:14
+msgid "启动上次游戏"
+msgstr "启动上次游戏"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:237
+msgid "启动参数"
+msgstr "启动参数"
+
 #: src/page/Library/GameDetail.tsx:127
-msgid "启动游戏"
-msgstr "启动游戏"
+#~ msgid "启动游戏"
+#~ msgstr "启动游戏"
 
 #: src/page/Library/GameDetail.tsx:181
-msgid "启动路径"
-msgstr "启动路径"
+#~ msgid "启动路径"
+#~ msgstr "启动路径"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:40
+#: src/page/Setting/InterfaceSetting/index.tsx:68
 msgid "固定展示(正常)"
 msgstr "固定展示(正常)"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:41
+#: src/page/Setting/InterfaceSetting/index.tsx:69
 msgid "固定展示(短)"
 msgstr "固定展示(短)"
 
-#: src/page/User/GameJourney.tsx:17
-msgid "在游戏仓库添加你的第一款 Galgame，<0/>"
-msgstr "在游戏仓库添加你的第一款 Galgame，<0/>"
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:22
+msgid "在任何界面调出程序主窗口"
+msgstr "在任何界面调出程序主窗口"
 
-#: src/page/Setting/BaseSetting/index.tsx:32
+#: src/page/Setting/AuthSetting/index.tsx:38
+msgid "在此粘贴你的个人令牌..."
+msgstr "在此粘贴你的个人令牌..."
+
+#: src/page/User/GameJourney.tsx:17
+#~ msgid "在游戏仓库添加你的第一款 Galgame，<0/>"
+#~ msgstr "在游戏仓库添加你的第一款 Galgame，<0/>"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:15
+msgid "在界面选中游戏时按回车直接启动"
+msgstr "在界面选中游戏时按回车直接启动"
+
+#: src/page/Setting/BaseSetting/index.tsx:41
 msgid "基础设置"
 msgstr "基础设置"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:27
+#: src/page/Library/GameDetail.tsx:236
+msgid "备份"
+msgstr "备份"
+
+#: src/page/Library/GameDetail.tsx:61
+msgid "备份失败: "
+msgstr "备份失败: "
+
+#: src/page/Setting/InterfaceSetting/index.tsx:55
 msgid "外观主题"
 msgstr "外观主题"
 
@@ -232,9 +342,21 @@ msgstr "外观主题"
 msgid "夜深了，推完这节就快去睡觉吧。"
 msgstr "夜深了，推完这节就快去睡觉吧。"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:21
+#: src/page/Setting/InterfaceSetting/index.tsx:14
 msgid "夜间模式"
 msgstr "夜间模式"
+
+#: src/page/Library/GameDetail.tsx:60
+msgid "存档备份完毕"
+msgstr "存档备份完毕"
+
+#: src/page/Library/GameDetail.tsx:69
+msgid "存档恢复完毕"
+msgstr "存档恢复完毕"
+
+#: src/page/Library/GameDetail.tsx:333
+msgid "存档目录"
+msgstr "存档目录"
 
 #: src/page/Library/BigPendingCard.tsx:163
 #: src/page/Library/PendingCard.tsx:235
@@ -247,36 +369,109 @@ msgid "导入成功"
 msgstr "导入成功"
 
 #: src/page/Setting/ResourceSetting/index.tsx:45
-msgid "将所有游戏的本地存档与配置打包至备份目录"
-msgstr "将所有游戏的本地存档与配置打包至备份目录"
+#~ msgid "将所有游戏的本地存档与配置打包至备份目录"
+#~ msgstr "将所有游戏的本地存档与配置打包至备份目录"
 
 #: src/page/Setting/ResourceSetting/index.tsx:62
-msgid "将所有游戏的本地存档还原到游戏"
-msgstr "将所有游戏的本地存档还原到游戏"
+#~ msgid "将所有游戏的本地存档还原到游戏"
+#~ msgstr "将所有游戏的本地存档还原到游戏"
+
+#: src/page/Setting/ResourceSetting/index.tsx:97
+msgid "将立即对所有游戏的本地存档与配置进行全量备份，该过程可能需要一些时间。"
+msgstr "将立即对所有游戏的本地存档与配置进行全量备份，该过程可能需要一些时间。"
 
 #: src/page/User/GameJourney.tsx:105
-msgid "尚未开始"
-msgstr "尚未开始"
+#~ msgid "尚未开始"
+#~ msgstr "尚未开始"
 
-#: src/components/PathCard.tsx:42
+#: src/components/PathCard.tsx:74
 msgid "尚未选择路径..."
 msgstr "尚未选择路径..."
 
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:205
+msgid "已启用"
+msgstr "已启用"
+
 #: src/page/Library/GameDetail.tsx:130
-msgid "已游玩"
-msgstr "已游玩"
+#~ msgid "已游玩"
+#~ msgstr "已游玩"
+
+#: src/page/Library/GameDetail.tsx:273
+msgid "已游玩 (分钟)"
+msgstr "已游玩 (分钟)"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:205
+msgid "已禁用"
+msgstr "已禁用"
 
 #: src/page/User/EditUserInfoDialog.tsx:53
 msgid "已载入本地图片预览"
 msgstr "已载入本地图片预览"
 
-#: src/page/Setting/BaseSetting/index.tsx:35
+#: src/page/User/index.tsx:285
+msgid "年"
+msgstr "年"
+
+#: src/page/User/Tool.tsx:61
+msgid "开启热键"
+msgstr "开启热键"
+
+#: src/page/Setting/BaseSetting/index.tsx:83
 msgid "开机自启动"
 msgstr "开机自启动"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:23
+msgid "强杀当前游戏及其关联的所有连携程序"
+msgstr "强杀当前游戏及其关联的所有连携程序"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:75
+msgid "快捷键设置"
+msgstr "快捷键设置"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:16
+msgid "快速定位到搜索框进行过滤"
+msgstr "快速定位到搜索框进行过滤"
+
+#: src/page/Library/GameDetail.tsx:239
+msgid "恢复"
+msgstr "恢复"
+
+#: src/page/Library/GameDetail.tsx:70
+msgid "恢复失败: "
+msgstr "恢复失败: "
+
+#: src/page/Library/GameDetail.tsx:332
+msgid "执行路径"
+msgstr "执行路径"
 
 #: src/page/Library/PendingCard.tsx:249
 msgid "批量导入确认"
 msgstr "批量导入确认"
+
+#: src/page/Library/TopBar.tsx:116
+msgid "按最后游玩"
+msgstr "按最后游玩"
+
+#: src/page/Library/TopBar.tsx:115
+msgid "按名称排序"
+msgstr "按名称排序"
+
+#: src/page/Library/TopBar.tsx:114
+msgid "按游玩时长"
+msgstr "按游玩时长"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:24
+msgid "捕获当前游戏画面"
+msgstr "捕获当前游戏画面"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:247
+msgid "排序权重"
+msgstr "排序权重"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:285
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:151
+msgid "放弃修改"
+msgstr "放弃修改"
 
 #: src/page/Library/BigPendingCard.tsx:102
 msgid "数据已同步"
@@ -290,17 +485,21 @@ msgstr "新的一天，也要充满元气哦！"
 msgid "无法打开文件对话框"
 msgstr "无法打开文件对话框"
 
-#: src/page/Setting/SysSetting/index.tsx:24
+#: src/page/Setting/SysSetting/index.tsx:32
 msgid "日志追踪等级"
 msgstr "日志追踪等级"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:21
+#: src/page/Setting/InterfaceSetting/index.tsx:14
 msgid "日间模式"
 msgstr "日间模式"
 
 #: src/page/User/ProfileHeader.tsx:8
 msgid "早上好"
 msgstr "早上好"
+
+#: src/page/Setting/AuthSetting/index.tsx:45
+msgid "显示"
+msgstr "显示"
 
 #: src/page/User/ProfileHeader.tsx:11
 msgid "晚上好"
@@ -311,25 +510,70 @@ msgstr "晚上好"
 msgid "暂无描述"
 msgstr "暂无描述"
 
+#: src/page/Library/GameDetail.tsx:306
+msgid "暂无描述..."
+msgstr "暂无描述..."
+
+#: src/page/User/GameJourney.tsx:60
+msgid "暂无记录"
+msgstr "暂无记录"
+
 #: src/page/Library/BigPendingCard.tsx:278
 msgid "暂无详细介绍"
 msgstr "暂无详细介绍"
 
-#: src/page/User/Radar.tsx:79
+#: src/page/User/Radar.tsx:51
 msgid "暂无通关制作商数据"
 msgstr "暂无通关制作商数据"
+
+#: src/page/Library/GameDetail.tsx:207
+msgid "更换封面"
+msgstr "更换封面"
+
+#: src/components/PathCard.tsx:89
+msgid "更改"
+msgstr "更改"
 
 #: src/page/Library/BigPendingCard.tsx:261
 msgid "未找到匹配数据"
 msgstr "未找到匹配数据"
 
-#: src/page/User/Radar.tsx:55
+#: src/page/User/Radar.tsx:33
 msgid "未知制作商"
 msgstr "未知制作商"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:130
+msgid "未绑定"
+msgstr "未绑定"
+
+#: src/page/Library/GameDetail.tsx:363
+msgid "未设定 (点击选择)"
+msgstr "未设定 (点击选择)"
+
+#: src/page/Setting/AuthSetting/index.tsx:23
+msgid "权限相关"
+msgstr "权限相关"
 
 #: src/page/User/ProfileHeader.tsx:10
 msgid "来杯咖啡吧，又是努力的一天。"
 msgstr "来杯咖啡吧，又是努力的一天。"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:20
+msgid "极光紫 (Violet)"
+msgstr "极光紫 (Violet)"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:24
+msgid "极客灰 (Slate)"
+msgstr "极客灰 (Slate)"
+
+#: src/components/PathCard.tsx:89
+msgid "查看"
+msgstr "查看"
+
+#: src/components/PathCard.tsx:32
+#: src/components/PathCard.tsx:39
+msgid "查看{title}"
+msgstr "查看{title}"
 
 #: src/page/Library/BigPendingCard.tsx:104
 msgid "查询失败"
@@ -340,10 +584,10 @@ msgstr "查询失败"
 #~ msgstr "查询失败，请检查 ID 是否正确"
 
 #: src/page/Setting/SysSetting/index.tsx:12
-msgid "标准 (Info)"
-msgstr "标准 (Info)"
+#~ msgid "标准 (Info)"
+#~ msgstr "标准 (Info)"
 
-#: src/page/Library/GameDetail.tsx:172
+#: src/page/Library/GameDetail.tsx:322
 msgid "标记通关"
 msgstr "标记通关"
 
@@ -351,63 +595,167 @@ msgstr "标记通关"
 msgid "检索失败"
 msgstr "检索失败"
 
+#: src/page/Library/GameDetail.tsx:81
+msgid "正在同步..."
+msgstr "正在同步..."
+
 #: src/page/Library/PendingCard.tsx:220
 msgid "正在处理导入..."
 msgstr "正在处理导入..."
 
-#: src/components/PathCard.tsx:50
+#: src/page/Library/GameDetail.tsx:59
+msgid "正在备份存档..."
+msgstr "正在备份存档..."
+
+#: src/page/Library/GameDetail.tsx:68
+msgid "正在恢复存档..."
+msgstr "正在恢复存档..."
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:231
 msgid "浏览"
 msgstr "浏览"
 
-#: src/components/SideBar/index.tsx:72
+#: src/page/Setting/InterfaceSetting/index.tsx:23
+msgid "深海青 (Cyan)"
+msgstr "深海青 (Cyan)"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:276
+msgid "添加新的连携程序"
+msgstr "添加新的连携程序"
+
+#: src/page/Setting/ResourceSetting/index.tsx:142
+msgid "清除程序所有数据"
+msgstr "清除程序所有数据"
+
+#: src/components/SideBar/index.tsx:71
 msgid "游戏"
 msgstr "游戏"
 
 #: src/page/Setting/ResourceSetting/index.tsx:32
-msgid "游戏元数据存储目录"
-msgstr "游戏元数据存储目录"
+#~ msgid "游戏元数据存储目录"
+#~ msgstr "游戏元数据存储目录"
 
-#: src/page/Setting/ResourceSetting/index.tsx:31
+#: src/page/Setting/ResourceSetting/index.tsx:87
 msgid "游戏存档备份目录"
 msgstr "游戏存档备份目录"
 
+#: src/page/Setting/ResourceSetting/index.tsx:89
+msgid "游戏快照截图目录"
+msgstr "游戏快照截图目录"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:24
+msgid "游戏截图"
+msgstr "游戏截图"
+
+#: src/page/Setting/ResourceSetting/index.tsx:86
+msgid "游戏统一解压目录"
+msgstr "游戏统一解压目录"
+
+#: src/page/Setting/ResourceSetting/index.tsx:88
+msgid "游戏资源存储目录"
+msgstr "游戏资源存储目录"
+
 #: src/page/Library/GameDetail.tsx:152
-msgid "游玩时长 (分钟)"
-msgstr "游玩时长 (分钟)"
+#~ msgid "游玩时长 (分钟)"
+#~ msgstr "游玩时长 (分钟)"
 
 #: src/page/User/GameJourney.tsx:64
 #~ msgid "游玩时长: "
 #~ msgstr "游玩时长: "
 
-#: src/page/Setting/SysSetting/index.tsx:18
+#: src/page/Setting/SysSetting/index.tsx:26
 msgid "点击关闭按钮时"
 msgstr "点击关闭按钮时"
 
+#: src/page/User/GameJourney.tsx:130
+msgid "点击记录感想..."
+msgstr "点击记录感想..."
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:227
+msgid "点击选择可执行文件..."
+msgstr "点击选择可执行文件..."
+
 #: src/page/Library/GameDetail.tsx:194
-msgid "点击配置路径..."
-msgstr "点击配置路径..."
+#~ msgid "点击配置路径..."
+#~ msgstr "点击配置路径..."
+
+#: src/page/Setting/InterfaceSetting/index.tsx:21
+msgid "琥珀黄 (Amber)"
+msgstr "琥珀黄 (Amber)"
+
+#: src/page/Setting/AuthSetting/index.tsx:52
+msgid "用于访问敏感条目。你可以在 Bangumi 设置 - 开发者平台中生成此令牌。"
+msgstr "用于访问敏感条目。你可以在 Bangumi 设置 - 开发者平台中生成此令牌。"
 
 #: src/page/User/EditUserInfoDialog.tsx:75
 msgid "用户信息同步成功"
 msgstr "用户信息同步成功"
 
-#: src/page/Setting/SysSetting/index.tsx:11
+#: src/page/Setting/InterfaceSetting/index.tsx:18
+msgid "皇家蓝 (Royal Blue)"
+msgstr "皇家蓝 (Royal Blue)"
+
+#: src/page/Setting/SysSetting/index.tsx:12
 msgid "直接退出程序"
 msgstr "直接退出程序"
 
-#: src/page/Library/GameDetail.tsx:118
-msgid "立即备份"
-msgstr "立即备份"
+#: src/page/User/GameJourney.tsx:87
+msgid "确认删除?"
+msgstr "确认删除?"
 
-#: src/page/Setting/ResourceSetting/index.tsx:42
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:15
+msgid "确认启动"
+msgstr "确认启动"
+
+#: src/page/Library/ArchivePreviewDialog.tsx:194
+msgid "确认并开始解压"
+msgstr "确认并开始解压"
+
+#: src/page/Setting/ResourceSetting/index.tsx:96
+msgid "确认执行备份？"
+msgstr "确认执行备份？"
+
+#: src/page/Setting/ResourceSetting/index.tsx:129
+msgid "确认清除所有程序数据？"
+msgstr "确认清除所有程序数据？"
+
+#: src/page/Setting/ResourceSetting/index.tsx:112
+msgid "确认还原所有存档？"
+msgstr "确认还原所有存档？"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:154
+msgid "程序名称"
+msgstr "程序名称"
+
+#: src/page/Library/GameDetail.tsx:282
+msgid "空间占用"
+msgstr "空间占用"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:189
+msgid "窗口托管"
+msgstr "窗口托管"
+
+#: src/page/Library/GameDetail.tsx:118
+#~ msgid "立即备份"
+#~ msgstr "立即备份"
+
+#: src/page/Setting/ResourceSetting/index.tsx:105
 msgid "立即执行一键备份"
 msgstr "立即执行一键备份"
 
-#: src/page/Library/GameDetail.tsx:148
-msgid "管理与状态"
-msgstr "管理与状态"
+#: src/page/Library/GameDetail.tsx:300
+msgid "简介"
+msgstr "简介"
 
-#: src/page/Setting/SysSetting/index.tsx:15
+#: src/page/Library/GameDetail.tsx:148
+#~ msgid "管理与状态"
+#~ msgstr "管理与状态"
+
+#: src/page/Setting/BaseSetting/index.tsx:61
+msgid "管理连携启动程序"
+msgstr "管理连携启动程序"
+
+#: src/page/Setting/SysSetting/index.tsx:23
 msgid "系统策略"
 msgstr "系统策略"
 
@@ -415,41 +763,85 @@ msgstr "系统策略"
 msgid "系统默认"
 msgstr "系统默认"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:39
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:23
+msgid "紧急停止"
+msgstr "紧急停止"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:17
+msgid "翡翠绿 (Emerald)"
+msgstr "翡翠绿 (Emerald)"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:21
+msgid "老板键"
+msgstr "老板键"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:16
+msgid "聚焦搜索"
+msgstr "聚焦搜索"
+
+#: src/page/Library/GameDetail.tsx:334
+msgid "背景图片"
+msgstr "背景图片"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:22
+msgid "能量橙 (Orange)"
+msgstr "能量橙 (Orange)"
+
+#: src/page/User/Tool.tsx:75
+msgid "自动备份"
+msgstr "自动备份"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:67
 msgid "自动触发"
 msgstr "自动触发"
 
 #: src/page/Library/GameDetail.tsx:199
-msgid "自定义背景"
-msgstr "自定义背景"
+#~ msgid "自定义背景"
+#~ msgstr "自定义背景"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:19
+msgid "蔷薇粉 (Rose)"
+msgstr "蔷薇粉 (Rose)"
 
 #: src/page/User/GameJourney.tsx:21
-msgid "让时间在这里留下足迹。"
-msgstr "让时间在这里留下足迹。"
+#~ msgid "让时间在这里留下足迹。"
+#~ msgstr "让时间在这里留下足迹。"
 
 #: src/page/User/ProfileHeader.tsx:19
 msgid "记得多看几遍喜欢的剧情，会有新发现哦。"
 msgstr "记得多看几遍喜欢的剧情，会有新发现哦。"
 
-#: src/components/SideBar/index.tsx:78
+#: src/components/SideBar/index.tsx:77
 msgid "设置"
 msgstr "设置"
+
+#: src/page/Setting/ResourceSetting/index.tsx:130
+msgid "该操作将删除所有程序配置、游戏信息及本地数据，且无法恢复。请谨慎操作。"
+msgstr "该操作将删除所有程序配置、游戏信息及本地数据，且无法恢复。请谨慎操作。"
+
+#: src/page/Setting/ResourceSetting/index.tsx:113
+msgid "该操作将覆盖当前所有已备份的游戏的本地存档，且无法撤销，请确认你已经做好备份。"
+msgstr "该操作将覆盖当前所有已备份的游戏的本地存档，且无法撤销，请确认你已经做好备份。"
 
 #: src/page/Library/BigPendingCard.tsx:81
 msgid "该数据源暂无详细介绍"
 msgstr "该数据源暂无详细介绍"
 
 #: src/page/Setting/SysSetting/index.tsx:12
-msgid "详细 (Debug)"
-msgstr "详细 (Debug)"
+#~ msgid "详细 (Debug)"
+#~ msgstr "详细 (Debug)"
 
 #: src/page/Setting/BaseSetting/index.tsx:45
 msgid "语言设置 / Language"
 msgstr "语言设置 / Language"
 
-#: src/page/Home/GameList.tsx:52
+#: src/page/Home/GameList.tsx:67
 msgid "请在库设置中添加首页展示项目"
 msgstr "请在库设置中添加首页展示项目"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:130
+msgid "请录制按键..."
+msgstr "请录制按键..."
 
 #: src/page/Library/BigPendingCard.tsx:136
 msgid "请求发生错误"
@@ -459,50 +851,115 @@ msgstr "请求发生错误"
 msgid "请求超时"
 msgstr "请求超时"
 
-#: src/page/Setting/ResourceSetting/index.tsx:28
+#: src/page/Library/GameDetail.tsx:75
+msgid "请输入 ID"
+msgstr "请输入 ID"
+
+#: src/page/Setting/ResourceSetting/index.tsx:76
 msgid "资源管理"
 msgstr "资源管理"
 
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:19
+msgid "跳转到个人中心"
+msgstr "跳转到个人中心"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:18
+msgid "跳转到我的游戏库"
+msgstr "跳转到我的游戏库"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:20
+msgid "跳转到系统设置"
+msgstr "跳转到系统设置"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:17
+msgid "跳转到首页界面"
+msgstr "跳转到首页界面"
+
 #: src/page/Library/GameDetail.tsx:143
-msgid "输入游戏描述..."
-msgstr "输入游戏描述..."
+#~ msgid "输入游戏描述..."
+#~ msgstr "输入游戏描述..."
 
 #: src/page/User/ProfileHeader.tsx:11
 msgid "辛苦了，开启一段精彩的故事吧。"
 msgstr "辛苦了，开启一段精彩的故事吧。"
 
-#: src/page/Library/GameDetail.tsx:82
+#: src/page/Library/GameDetail.tsx:184
 msgid "返回库"
 msgstr "返回库"
 
 #: src/page/User/GameJourney.tsx:14
-msgid "还没有开启任何物语"
-msgstr "还没有开启任何物语"
+#~ msgid "还没有开启任何物语"
+#~ msgstr "还没有开启任何物语"
 
-#: src/page/User/index.tsx:119
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:115
+msgid "连携程序管理"
+msgstr "连携程序管理"
+
+#: src/components/PathCard.tsx:32
+#: src/components/PathCard.tsx:39
+msgid "选择{title}"
+msgstr "选择{title}"
+
+#: src/page/User/index.tsx:308
+msgid "选择历程日期"
+msgstr "选择历程日期"
+
+#: src/page/User/index.tsx:165
 msgid "选择年份"
 msgstr "选择年份"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:45
+#: src/page/Setting/InterfaceSetting/index.tsx:73
 msgid "选择应用字体"
 msgstr "选择应用字体"
 
-#: src/page/User/index.tsx:155
+#: src/page/User/index.tsx:214
 msgid "选择监控磁盘"
 msgstr "选择监控磁盘"
 
-#: src/page/User/index.tsx:130
+#: src/page/User/index.tsx:181
 msgid "选择磁盘"
 msgstr "选择磁盘"
 
-#: src/page/Setting/BaseSetting/index.tsx:40
+#: src/page/User/index.tsx:270
+msgid "选择统计年份"
+msgstr "选择统计年份"
+
+#: src/page/Setting/BaseSetting/ShortcutManager.tsx:76
+msgid "配置您的操作偏好，提升启动效率"
+msgstr "配置您的操作偏好，提升启动效率"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:116
+msgid "配置随游戏或程序自动启动的辅助工具"
+msgstr "配置随游戏或程序自动启动的辅助工具"
+
+#: src/page/User/Tool.tsx:47
+msgid "链式启动"
+msgstr "链式启动"
+
+#: src/page/Setting/AuthSetting/index.tsx:45
+msgid "隐藏"
+msgstr "隐藏"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:176
+msgid "随游戏"
+msgstr "随游戏"
+
+#: src/page/Setting/BaseSetting/CompanionManager.tsx:167
+msgid "随程序"
+msgstr "随程序"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:14
+msgid "随系统"
+msgstr "随系统"
+
+#: src/page/Setting/BaseSetting/index.tsx:89
 msgid "静默启动"
 msgstr "静默启动"
 
-#: src/page/Library/GameDetail.tsx:166
+#: src/page/Library/GameDetail.tsx:316
 msgid "首页展示"
 msgstr "首页展示"
 
 #: src/page/Library/GameDetail.tsx:201
-msgid "默认图片..."
-msgstr "默认图片..."
+#~ msgid "默认图片..."
+#~ msgstr "默认图片..."

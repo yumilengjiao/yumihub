@@ -35,10 +35,10 @@ use crate::{
 // --------------------------用户类------------------------
 // --------------------------------------------------------
 
-#[tauri::command]
 /// 获取用户信息
 ///
 /// * `pool`: 连接池,tauri自动注入
+#[tauri::command]
 pub async fn get_user_info(pool: State<'_, Pool<Sqlite>>) -> Result<User, AppError> {
     let user = sqlx::query_as::<_, User>("SELECT * FROM account LIMIT 1")
         .fetch_optional(&*pool) // 使用 fetch_optional 防止表为空时直接崩溃
@@ -1118,5 +1118,73 @@ pub async fn authorize_path_access<R: Runtime>(
         .execute(pool.inner())
         .await
         .map_err(|e| AppError::DB(format!("数据库记录权限失败: {}", e)))?;
+    Ok(())
+}
+
+#[tauri::command]
+/// 清空所有程序相关的数据
+///
+/// * `pool`: 数据库连接池-自动注入
+pub async fn clear_app_data(pool: State<'_, SqlitePool>) -> Result<(), String> {
+    // 获取所有表名
+    let rows = sqlx::query(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
+    )
+    .fetch_all(&*pool)
+    .await
+    .map_err(|e| e.to_string())?;
+
+    // 禁用外键约束，防止因为关联关系导致删除失败
+    sqlx::query("PRAGMA foreign_keys = OFF;")
+        .execute(&*pool)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    // 遍历并清空每一张表
+    for row in rows {
+        let table_name: String = row.get("name");
+        // 使用 DELETE FROM 而不是 DROP TABLE
+        let delete_query = format!("DELETE FROM \"{}\"", table_name);
+        sqlx::query(&delete_query)
+            .execute(&*pool)
+            .await
+            .map_err(|e| e.to_string())?;
+    }
+
+    // 重置所有自增 ID
+    sqlx::query("DELETE FROM sqlite_sequence")
+        .execute(&*pool)
+        .await
+        .ok();
+
+    // 重新启用外键约束
+    sqlx::query("PRAGMA foreign_keys = ON;")
+        .execute(&*pool)
+        .await
+        .ok();
+
+    // VACUUM,重写数据库文件，把由于删除数据腾出的空白空间物理回收。
+    // 执行完这一步，数据库文件的大小会瞬间缩减。
+    sqlx::query("VACUUM;").execute(&*pool).await.ok();
+
+    // 清空资源目录
+
+    let config = GLOBAL_CONFIG.read().unwrap();
+    let target_dirs = vec![
+        config.storage.meta_save_path.clone(),
+        config.storage.backup_save_path.clone(),
+        config.storage.screenshot_path.clone(),
+    ];
+    // 释放锁，避免占用太久
+    drop(config);
+
+    for path in target_dirs {
+        if std::path::Path::new(&path).exists() {
+            // 删除并重建
+            let _ = std::fs::remove_dir_all(&path);
+            let _ = std::fs::create_dir_all(&path);
+        }
+    }
+
     Ok(())
 }

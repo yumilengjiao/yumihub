@@ -115,10 +115,4 @@ const useGameStore = create<GameStoreParams>()(
   }))
 )
 
-
-useGameStore.subscribe((state) => {
-  // TODO:保存游戏数据
-  invoke(Cmds.GET_START_UP_PATH)
-})
-
 export default useGameStore

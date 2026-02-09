@@ -48,7 +48,7 @@ pub enum SideBarMode {
 impl Default for Interface {
     fn default() -> Self {
         Self {
-            theme_mode: ThemeMode::Daytime,
+            theme_mode: ThemeMode::System,
             theme_color: "theme-emerald".into(),
             sidebar_mode: SideBarMode::Trigger,
             font_family: "sys".into(),

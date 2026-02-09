@@ -22,7 +22,7 @@ export default function AuthSetting() {
     <CommonCard
       title={t`权限相关`}
       icon="🔑"
-      className="dark:bg-zinc-900/50 backdrop-blur-md border-black/5 dark:border-white/10 shadow-lg"
+      className="dark:bg-zinc-800 backdrop-blur-md border-black/5 dark:border-white/10 shadow-lg"
     >
       <div className="space-y-4 p-2">
         <div className="flex flex-col gap-2">
@@ -36,7 +36,7 @@ export default function AuthSetting() {
               value={token}
               onChange={(e) => handleTokenChange(e.target.value)}
               placeholder={t`在此粘贴你的个人令牌...`}
-              className="w-full bg-slate-100 dark:bg-zinc-800 border-none rounded-xl py-3 pl-4 pr-12 text-sm font-mono focus:ring-2 focus:ring-custom-500 transition-all text-slate-800 dark:text-zinc-200"
+              className="w-full bg-slate-100 dark:bg-zinc-700 border-none rounded-xl py-3 pl-4 pr-12 text-sm font-mono focus:ring-2 focus:ring-custom-500 transition-all text-slate-800 dark:text-zinc-200"
             />
 
             <button
