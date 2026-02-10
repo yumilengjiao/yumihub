@@ -1,6 +1,6 @@
-import useSessionStore from "@/store/sessionStore";
+import useSessionStore from "@/store/sessionStore"
 import { ResponsiveCalendar } from '@nivo/calendar'
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react"
 
 interface CalendarHeatMapParams {
   year: string
@@ -9,20 +9,20 @@ interface CalendarHeatMapParams {
 const CalendarHeatMap = ({ year }: CalendarHeatMapParams) => {
   const { sessions, fetchSessions } = useSessionStore()
   // 监听 dark 模式的状态
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(false)
   const calendarData = useMemo(() => {
-    const dayMap = new Map<string, number>();
+    const dayMap = new Map<string, number>()
     sessions.forEach((session) => {
-      const dateKey = session.playDate.substring(0, 10);
-      const currentMinutes = dayMap.get(dateKey) || 0;
-      dayMap.set(dateKey, currentMinutes + session.durationMinutes);
-    });
+      const dateKey = session.playDate.substring(0, 10)
+      const currentMinutes = dayMap.get(dateKey) || 0
+      dayMap.set(dateKey, currentMinutes + session.durationMinutes)
+    })
     return Array.from(dayMap.entries()).map(([day, totalMinutes]) => ({
       day,
       // 确保是数字类型，小时数
       value: Number((totalMinutes / 60).toFixed(1))
-    }));
-  }, [sessions]);
+    }))
+  }, [sessions])
 
   useEffect(() => {
     try {
@@ -34,20 +34,20 @@ const CalendarHeatMap = ({ year }: CalendarHeatMapParams) => {
 
   useEffect(() => {
     // 初始化检查
-    setIsDark(document.documentElement.classList.contains("dark"));
+    setIsDark(document.documentElement.classList.contains("dark"))
 
     // 2. 监听 HTML 节点的 class 变化
     const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains("dark"));
-    });
+      setIsDark(document.documentElement.classList.contains("dark"))
+    })
 
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["class"],
-    });
+    })
 
-    return () => observer.disconnect();
-  }, []);
+    return () => observer.disconnect()
+  }, [])
 
 
   return (
@@ -84,7 +84,7 @@ const CalendarHeatMap = ({ year }: CalendarHeatMapParams) => {
         }}
       />
     </div>
-  );
+  )
 }
 
 export default CalendarHeatMap

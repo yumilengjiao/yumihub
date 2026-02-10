@@ -1,22 +1,22 @@
-import CommonCard from "@/components/CommonCard";
-import SelectCard from "@/components/SelectCard";
-import StepSliderCard from "@/components/StepSliderCard";
-import useConfigStore from "@/store/configStore";
+import CommonCard from "@/components/CommonCard"
+import SelectCard from "@/components/SelectCard"
+import StepSliderCard from "@/components/StepSliderCard"
+import useConfigStore from "@/store/configStore"
 import { t } from "@lingui/core/macro"
-import { useLingui } from "@lingui/react";
+import { useLingui } from "@lingui/react"
 
 export default function SysSetting() {
-  const system = useConfigStore(s => s.config.system);
-  const updateConfig = useConfigStore(s => s.updateConfig);
+  const system = useConfigStore(s => s.config.system)
+  const updateConfig = useConfigStore(s => s.updateConfig)
 
-  const closeOpts = [{ label: t`最小化至托盘`, value: "Hide" }, { label: t`直接退出程序`, value: "Exit" }];
+  const closeOpts = [{ label: t`最小化至托盘`, value: "Hide" }, { label: t`直接退出程序`, value: "Exit" }]
   const logOpts = [
     { label: '详情 (Trace)', value: 'Trace' },
     { label: '调试 (Debug)', value: 'Debug' },
     { label: '标准 (Info)', value: 'Info' },
     { label: '警告 (Warn)', value: 'Warn' },
     { label: '错误 (Error)', value: 'Error' },
-  ];
+  ]
   const { i18n } = useLingui()
 
   return (
@@ -44,5 +44,5 @@ export default function SysSetting() {
         </div>
       </div>
     </CommonCard >
-  );
+  )
 }

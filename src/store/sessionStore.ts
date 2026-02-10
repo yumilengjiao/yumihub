@@ -1,8 +1,8 @@
-import { Cmds } from "@/lib/enum";
-import { PlaySession } from "@/types/session";
-import { invoke } from "@tauri-apps/api/core";
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
+import { Cmds } from "@/lib/enum"
+import { PlaySession } from "@/types/session"
+import { invoke } from "@tauri-apps/api/core"
+import { create } from "zustand"
+import { immer } from "zustand/middleware/immer"
 
 interface gameSesstionParams {
   sessions: PlaySession[],

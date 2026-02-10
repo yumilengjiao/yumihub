@@ -6,10 +6,10 @@ interface ProgressBarProps {
 const ProgressBar = ({ label, value }: ProgressBarProps) => {
   // 根据数值自动计算颜色
   const getColor = (val: number) => {
-    if (val > 90) return 'bg-red-500';
-    if (val > 70) return 'bg-amber-500';
-    return 'bg-emerald-500';
-  };
+    if (val > 90) return 'bg-red-500'
+    if (val > 70) return 'bg-amber-500'
+    return 'bg-emerald-500'
+  }
 
   return (
     <div className="mb-4">
@@ -24,7 +24,7 @@ const ProgressBar = ({ label, value }: ProgressBarProps) => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default ProgressBar 

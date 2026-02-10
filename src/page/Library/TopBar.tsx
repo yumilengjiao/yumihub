@@ -23,11 +23,6 @@ interface TopToolbarProps {
   activeSort?: string; // 可选：用于高亮当前选中的排序项
 }
 
-const noScrollbarStyle: React.CSSProperties = {
-  msOverflowStyle: 'none',
-  scrollbarWidth: 'none',
-};
-
 // --- 右侧海报单项 ---
 const GameGridItem = memo(({ game, isActive, onClick }: { game: GameMeta; isActive: boolean; onClick: () => void }) => {
   const coverUrl = game.localCover ? convertFileSrc(game.localCover) : game.cover;

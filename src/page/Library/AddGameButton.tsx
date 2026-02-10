@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, FilePlus, FolderSearch, PackagePlus, FileScan } from 'lucide-react';
+import { Plus, FilePlus, FolderSearch, PackagePlus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { analyzeArchiveStructure, cn } from "@/lib/utils";
 import BigPendingCard from './BigPendingCard';
@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import ArchivePreviewDialog from './ArchivePreviewDialog';
 import { invoke } from '@tauri-apps/api/core';
 import { Cmds } from '@/lib/enum';
+import { t } from "@lingui/core/macro"
 
 interface AddGameButtonProps {
   className?: string;
@@ -38,7 +39,7 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
   // 确认解压的函数
   const handleConfirmExtract = async () => {
     const finalPath = customDestPath || config.storage.galRootDir || "";
-    if (!finalPath) return toast.error("未找到保存路径");
+    if (!finalPath) return toast.error(t`未找到保存路径`);
 
     setIsPreviewOpen(false);
 
@@ -95,19 +96,19 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
       setCustomDestPath("");
       setIsPreviewOpen(true);
     } catch (e) {
-      toast.error("压缩包解析失败");
+      toast.error(t`压缩包解析失败`);
     }
   }
 
   const onImportSingle = async () => {
-    let selected = await open({ title: "请选择单个游戏启动文件" });
+    let selected = await open({ title: t`请选择单个游戏启动文件` });
     if (!selected) return;
     setSingleGameBootPath(selected as string);
     setMatchSuccess(true);
   };
 
   const onImportBatch = async () => {
-    let selected = await open({ title: "请选择多个游戏的目录", multiple: true, directory: true });
+    let selected = await open({ title: t`请选择多个游戏的目录`, multiple: true, directory: true });
     if (!selected) return;
     setMutiGameBootPath(selected as string[]);
     setMatchMutiSuccess(true);

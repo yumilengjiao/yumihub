@@ -1,9 +1,9 @@
-import { motion, Variants } from "framer-motion";
-import BaseSetting from "./BaseSetting";
-import InterfaceSetting from "./InterfaceSetting";
-import SysSetting from "./SysSetting";
-import ResourceSetting from "./ResourceSetting";
-import AuthSetting from "./AuthSetting";
+import { motion, Variants } from "framer-motion"
+import BaseSetting from "./BaseSetting"
+import InterfaceSetting from "./InterfaceSetting"
+import SysSetting from "./SysSetting"
+import ResourceSetting from "./ResourceSetting"
+import AuthSetting from "./AuthSetting"
 
 // 容器动画：让子组件交错显现
 const containerVariants: Variants = {
@@ -12,7 +12,7 @@ const containerVariants: Variants = {
     opacity: 1,
     transition: { staggerChildren: 0.12 }
   }
-};
+}
 
 // 子项动画：带一点缩放和位移，增加灵动感
 const itemVariants: Variants = {
@@ -23,7 +23,7 @@ const itemVariants: Variants = {
     scale: 1,
     transition: { type: "spring", stiffness: 200, damping: 20 }
   }
-};
+}
 
 export default function Setting() {
   return (
@@ -58,5 +58,5 @@ export default function Setting() {
         </div>
       </motion.div>
     </div>
-  );
+  )
 }

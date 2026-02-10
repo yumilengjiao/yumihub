@@ -11,6 +11,6 @@ export const SuperSwitch = ({ checked, onChange }: SwitchProps) => {
     >
       <div className={`bg-white rounded-full shadow-lg transition-all duration-300 h-7 w-7 ${checked ? 'translate-x-10' : 'translate-x-0'}`} />
     </div>
-  );
+  )
 }
 export default SuperSwitch

@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Home, Gamepad2, Settings, Trophy, Library } from 'lucide-react';
-import { cn } from "@/lib/utils";
+import { useState } from 'react'
+import { Home, Gamepad2, Settings, Trophy, Library } from 'lucide-react'
+import { cn } from "@/lib/utils"
 
 const menuItems = [
   { icon: Home, label: "HOME" },
@@ -8,10 +8,10 @@ const menuItems = [
   { icon: Gamepad2, label: "GAMES" },
   { icon: Trophy, label: "ACHIEVE" },
   { icon: Settings, label: "CONFIG" },
-];
+]
 
 export default function RadialSidebar() {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(false)
 
   return (
     <div
@@ -35,7 +35,7 @@ export default function RadialSidebar() {
 
         {menuItems.map((item, index) => {
           // 计算每个菜单项的角度 (180度平分)
-          const angle = (index / (menuItems.length - 1)) * 180 - 90;
+          const angle = (index / (menuItems.length - 1)) * 180 - 90
 
           return (
             <div
@@ -66,9 +66,9 @@ export default function RadialSidebar() {
                 </span>
               </div>
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }

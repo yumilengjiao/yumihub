@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react'
 
 interface Entry {
   entryName: string
@@ -6,23 +6,23 @@ interface Entry {
 }
 
 const MoreOptions: React.FC<{ entries?: Entry[] }> = ({ entries }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   // 1. 修复点：添加 <HTMLDivElement> 类型定义
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     // 2. 修复点：给 event 添加 MouseEvent 类型
     const handleClickOutside = (event: MouseEvent) => {
       // 使用 as Node 强制转换类型，确保 contains 方法可用
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        setIsOpen(false)
       }
-    };
+    }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <div className="relative inline-block text-left" ref={menuRef}>
@@ -63,6 +63,6 @@ const MoreOptions: React.FC<{ entries?: Entry[] }> = ({ entries }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 export default MoreOptions

@@ -13,14 +13,14 @@ import { cn } from "@/lib/utils"
 import { Trans } from '@lingui/react/macro'
 
 interface ArchivePreviewDialogProps {
-  isOpen: boolean;
-  path: string;                // 压缩包路径
-  entries: any[];              // 清单数组
-  displayPath: string;         // 目的地路径 (config.storage.galRootDir)
-  suggestedFolderName: string;
-  setCustomPath: (p: string) => void;
-  onClose: () => void;
-  onConfirm: () => void;
+  isOpen: boolean
+  path: string                // 压缩包路径
+  entries: any[]              // 清单数组
+  displayPath: string         // 目的地路径 (config.storage.galRootDir)
+  suggestedFolderName: string
+  setCustomPath: (p: string) => void
+  onClose: () => void
+  onConfirm: () => void
 }
 
 const ArchivePreviewDialog: React.FC<ArchivePreviewDialogProps> = ({
@@ -59,25 +59,25 @@ const ArchivePreviewDialog: React.FC<ArchivePreviewDialogProps> = ({
 
     return entries
       .map(e => {
-        let name = e.name.replace(/\//g, '\\');
+        let name = e.name.replace(/\//g, '\\')
 
         // 如果有共同根目录前缀，彻底切掉它，实现扁平化展示
         if (rootDir) {
-          const prefix = rootDir.replace(/\//g, '\\') + '\\';
+          const prefix = rootDir.replace(/\//g, '\\') + '\\'
           if (name.startsWith(prefix)) {
-            name = name.substring(prefix.length);
+            name = name.substring(prefix.length)
           } else if (name === rootDir.replace(/\//g, '\\') || name === rootDir.replace(/\//g, '\\') + '\\') {
             // 过滤掉根文件夹条目本身，不显示孤零零的一个根目录
-            return null;
+            return null
           }
         }
 
         // 过滤掉处理后为空的情况
-        if (!name) return null;
+        if (!name) return null
 
-        return { ...e, name };
+        return { ...e, name }
       })
-      .filter(Boolean) as any[];
+      .filter(Boolean) as any[]
   }, [entries, rootDir])
 
   // 3. 最终展示路径拼接
@@ -201,4 +201,4 @@ const ArchivePreviewDialog: React.FC<ArchivePreviewDialogProps> = ({
   )
 }
 
-export default ArchivePreviewDialog;
+export default ArchivePreviewDialog

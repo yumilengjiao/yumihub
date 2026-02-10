@@ -27,18 +27,18 @@ export default function Library() {
       let result = 0
       switch (sortMode) {
         case "duration":
-          result = (gb.playTime || 0) - (ga.playTime || 0);
+          result = (gb.playTime || 0) - (ga.playTime || 0)
           break
         case "name":
-          result = ga.name.localeCompare(gb.name, 'zh-CN');
+          result = ga.name.localeCompare(gb.name, 'zh-CN')
           break
         case "lastPlayed":
-          const valA = ga?.lastPlayedAt ? new Date(ga.lastPlayedAt).getTime() : 0;
-          const valB = gb?.lastPlayedAt ? new Date(gb.lastPlayedAt).getTime() : 0;
-          result = valB - valA;
-          break;
+          const valA = ga?.lastPlayedAt ? new Date(ga.lastPlayedAt).getTime() : 0
+          const valB = gb?.lastPlayedAt ? new Date(gb.lastPlayedAt).getTime() : 0
+          result = valB - valA
+          break
         default:
-          return 0;
+          return 0
       }
       return isAsc ? result : -result
     })
@@ -46,9 +46,9 @@ export default function Library() {
 
   useEffect(() => {
     return () => {
-      setDiscardMode(false);
-    };
-  }, []);
+      setDiscardMode(false)
+    }
+  }, [])
 
   return (
     <div className="w-full h-full flex flex-col pt-[5vh] bg-zinc-200 dark:bg-zinc-900 relative min-h-screen">
@@ -87,7 +87,7 @@ export default function Library() {
                       animate={{ scale: 1, opacity: 1, rotate: 0 }}
                       exit={{ scale: 0, opacity: 0, rotate: 45 }}
                       onClick={(e) => {
-                        e.stopPropagation();
+                        e.stopPropagation()
                         discardGame(g.id)
                       }}
                       className="absolute top-3 right-3 z-30 w-10 h-10 bg-red-500/60 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600"

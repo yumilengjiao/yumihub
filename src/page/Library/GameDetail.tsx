@@ -1,57 +1,57 @@
-import useGameStore from '@/store/gameStore';
-import useConfigStore from '@/store/configStore';
-import { GameMeta } from '@/types/game';
-import { useNavigate, useParams } from 'react-router';
-import { motion, Variants } from 'framer-motion';
+import useGameStore from '@/store/gameStore'
+import useConfigStore from '@/store/configStore'
+import { GameMeta } from '@/types/game'
+import { useNavigate, useParams } from 'react-router'
+import { motion, Variants } from 'framer-motion'
 import {
   Play, ArrowLeft, Image as ImageIcon,
   CheckCircle2, Building2, RefreshCw, FolderOpen,
   DatabaseBackup, ArchiveRestore, Monitor, HardDrive, Save
-} from 'lucide-react';
-import { invoke, convertFileSrc } from '@tauri-apps/api/core';
-import { open } from '@tauri-apps/plugin-dialog';
-import { useEffect, useState } from 'react';
-import { Cmds } from '@/lib/enum';
-import { Trans } from '@lingui/react/macro';
+} from 'lucide-react'
+import { invoke, convertFileSrc } from '@tauri-apps/api/core'
+import { open } from '@tauri-apps/plugin-dialog'
+import { useEffect, useState } from 'react'
+import { Cmds } from '@/lib/enum'
+import { Trans } from '@lingui/react/macro'
 import { t } from "@lingui/core/macro"
-import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
-import { requestBangumiById } from '@/api/bangumiApi';
-import { requestVNDBById } from '@/api/vndbApi';
-import { transBangumiToGameMeta, transVNDBToGameMeta } from '@/lib/resolve';
+import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
+import { requestBangumiById } from '@/api/bangumiApi'
+import { requestVNDBById } from '@/api/vndbApi'
+import { transBangumiToGameMeta, transVNDBToGameMeta } from '@/lib/resolve'
 
 // --- 动画配置 ---
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.05 } }
-};
+}
 
 const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
-};
+}
 
 export default function GameDetail() {
-  const { id } = useParams<{ id: string }>();
-  const { getGameMetaById, setGameMeta } = useGameStore();
-  const { updateConfig } = useConfigStore();
-  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>()
+  const { getGameMetaById, setGameMeta } = useGameStore()
+  const { updateConfig } = useConfigStore()
+  const navigate = useNavigate()
 
   const { config } = useConfigStore()
 
-  const [game, setGame] = useState<GameMeta>(getGameMetaById(id!)!);
-  const [syncMode, setSyncMode] = useState<'bangumi' | 'vndb'>('bangumi');
-  const [inputId, setInputId] = useState('');
+  const [game, setGame] = useState<GameMeta>(getGameMetaById(id!)!)
+  const [syncMode, setSyncMode] = useState<'bangumi' | 'vndb'>('bangumi')
+  const [inputId, setInputId] = useState('')
 
   useEffect(() => {
     async function getGame() {
       try {
         const gameInfo = await invoke<GameMeta>(Cmds.GET_GAME_META, { id: id })
-        setGame(gameInfo);
+        setGame(gameInfo)
       } catch (error) { console.error(error) }
     }
     getGame()
-  }, [id]);
+  }, [id])
 
   const backupArchive = async () => {
     const promise = invoke(Cmds.BACKUP_ARCHIVE_BY_ID, { id: game.id })
@@ -59,7 +59,7 @@ export default function GameDetail() {
       loading: t`正在备份存档...`,
       success: t`存档备份完毕`,
       error: (err: any) => t`备份失败: ` + (err.details || '未知错误')
-    });
+    })
   }
 
   const restoreGameArchive = () => {
@@ -68,78 +68,78 @@ export default function GameDetail() {
       loading: t`正在恢复存档...`,
       success: t`存档恢复完毕`,
       error: (err: any) => t`恢复失败: ` + (err.details || '未知错误')
-    });
+    })
   }
 
   const handleSync = async () => {
-    if (!inputId) return toast.error(t`请输入 ID`);
+    if (!inputId) return toast.error(t`请输入 ID`)
     const currentMode = syncMode
     const token = config.auth.bangumiToken
-    const promise = currentMode === 'bangumi' ? requestBangumiById(inputId, token) : requestVNDBById(inputId);
+    const promise = currentMode === 'bangumi' ? requestBangumiById(inputId, token) : requestVNDBById(inputId)
 
     toast.promise(promise, {
       loading: t`正在同步...`,
       success: (newData: any) => { // 先用 any 接收
         // 校验是否为空
         if (!newData) {
-          throw new Error("未找到对应数据");
+          throw new Error("未找到对应数据")
         }
 
-        let updatedData: GameMeta;
+        let updatedData: GameMeta
 
         // 直接判断发起请求时用的模式
         if (currentMode === 'bangumi') {
-          console.log("处理 Bangumi 数据");
-          updatedData = transBangumiToGameMeta(game, newData);
+          console.log("处理 Bangumi 数据")
+          updatedData = transBangumiToGameMeta(game, newData)
         } else {
-          console.log("处理 VNDB 数据");
-          updatedData = transVNDBToGameMeta(game, newData);
+          console.log("处理 VNDB 数据")
+          updatedData = transVNDBToGameMeta(game, newData)
         }
         updatedData.localBackground = ""
         updatedData.localCover = ""
 
-        setGame(updatedData);
-        setGameMeta(updatedData);
+        setGame(updatedData)
+        setGameMeta(updatedData)
 
-        return t`同步成功`;
+        return t`同步成功`
       },
       error: (err: any) => t`同步失败: ` + (err?.message || err)
     })
   }
 
   const pickPath = async (field: keyof GameMeta) => {
-    const isFile = field === 'localBackground' || field === 'localCover' || field === 'absPath';
+    const isFile = field === 'localBackground' || field === 'localCover' || field === 'absPath'
     const selected = await open({
       directory: !isFile,
       multiple: false,
       defaultPath: game[field] as string,
-    });
+    })
     if (field === 'localBackground' || field === 'localCover') {
       await invoke(Cmds.AUTHORIZE_PATH_ACCESS, { path: selected })
     }
     if (selected && typeof selected === 'string') {
-      updateField(field, selected);
+      updateField(field, selected)
     }
   }
 
   const updateField = <K extends keyof GameMeta>(field: K, value: GameMeta[K]) => {
-    const updatedGame = { ...game, [field]: value };
-    setGame(updatedGame);
-    setGameMeta(updatedGame);
+    const updatedGame = { ...game, [field]: value }
+    setGame(updatedGame)
+    setGameMeta(updatedGame)
 
     if (field === 'isDisplayed') {
       updateConfig((prev) => {
-        const currentOrder = prev.basic.gameDisplayOrder || [];
+        const currentOrder = prev.basic.gameDisplayOrder || []
         if (value === true) {
           if (!currentOrder.includes(game.id)) {
-            prev.basic.gameDisplayOrder = [...currentOrder, game.id];
+            prev.basic.gameDisplayOrder = [...currentOrder, game.id]
           }
         } else {
-          prev.basic.gameDisplayOrder = currentOrder.filter(orderId => orderId !== game.id);
+          prev.basic.gameDisplayOrder = currentOrder.filter(orderId => orderId !== game.id)
         }
-      });
+      })
     }
-  };
+  }
 
   return (
     <motion.div
@@ -152,11 +152,11 @@ export default function GameDetail() {
       <style>{`
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
-          -webkit-appearance: none; 
-          margin: 0; 
+          -webkit-appearance: none 
+          margin: 0 
         }
         input[type=number] {
-          -moz-appearance: textfield;
+          -moz-appearance: textfield
         }
       `}</style>
 
@@ -337,7 +337,7 @@ export default function GameDetail() {
         </motion.div>
       </div>
     </motion.div>
-  );
+  )
 }
 
 // --- 辅助组件 ---
@@ -348,7 +348,7 @@ function StatItem({ label, value }: { label: string, value: string }) {
       <span className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1">{label}</span>
       <span className="text-4xl font-[1000] font-mono text-zinc-800 dark:text-zinc-200">{value}</span>
     </div>
-  );
+  )
 }
 
 // PathItem - 增强亮色模式下的可读性
@@ -382,5 +382,5 @@ function ToggleItem({ label, isEnabled, onToggle, icon, activeColor = "bg-custom
         />
       </div>
     </div>
-  );
+  )
 }

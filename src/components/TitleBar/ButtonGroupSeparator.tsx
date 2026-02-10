@@ -1,8 +1,8 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
 interface SeparatorProps {
-  className?: string;
-  height?: string; // 支持自定义高度，比如 "40%"
+  className?: string
+  height?: string // 支持自定义高度，比如 "40%"
 }
 
 export function ButtonGroupSeparator({ className, height = "h-[30%]" }: SeparatorProps) {
@@ -18,5 +18,5 @@ export function ButtonGroupSeparator({ className, height = "h-[30%]" }: Separato
         )}
       />
     </div>
-  );
+  )
 }

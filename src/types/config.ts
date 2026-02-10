@@ -26,10 +26,10 @@ export interface Basic {
 // -----------------------------------------------------
 
 export interface Interface {
-  themeMode: ThemeMode;
-  themeColor: string;
-  sidebarMode: SideBarMode;
-  fontFamily: string;
+  themeMode: ThemeMode
+  themeColor: string
+  sidebarMode: SideBarMode
+  fontFamily: string
 }
 
 export enum ThemeMode {

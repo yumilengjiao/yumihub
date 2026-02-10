@@ -1,57 +1,60 @@
-import { useEffect, useState, useRef } from "react";
-import { convertFileSrc } from "@tauri-apps/api/core";
-import { invoke } from "@tauri-apps/api/core";
-import { cn } from "@/lib/utils";
-import { t } from "@lingui/core/macro";
-import { Quote, Camera, PencilLine, Trash2, X, AlertCircle } from "lucide-react";
-import { Screenshot } from "@/types/screenshot";
-import { Cmds } from "@/lib/enum";
+import { useEffect, useState, useRef } from "react"
+import { convertFileSrc } from "@tauri-apps/api/core"
+import { invoke } from "@tauri-apps/api/core"
+import { cn } from "@/lib/utils"
+import { t } from "@lingui/core/macro"
+import { Quote, Camera, PencilLine, Trash2, X } from "lucide-react"
+import { Screenshot } from "@/types/screenshot"
+import { Cmds } from "@/lib/enum"
 
 const GameJourney = ({ selectedYear, selectedMonth }: { selectedYear: number, selectedMonth: number }) => {
-  const [snapshots, setSnapshots] = useState<Screenshot[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null); // 用于二次确认
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [snapshots, setSnapshots] = useState<Screenshot[]>([])
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null) // 用于二次确认
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const loadSnapshots = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       const data = await invoke<Screenshot[]>("get_screenshots_by_year_month", {
         year: selectedYear,
         month: selectedMonth
-      });
-      setSnapshots(data || []);
-      if (scrollRef.current) scrollRef.current.scrollTop = 0;
+      })
+      setSnapshots(data || [])
+      if (scrollRef.current) scrollRef.current.scrollTop = 0
     } catch (e) {
-      console.error("Failed:", e);
+      console.error("Failed:", e)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  useEffect(() => { loadSnapshots(); }, [selectedYear, selectedMonth]);
+  useEffect(() => { loadSnapshots() }, [selectedYear, selectedMonth])
 
   const handleUpdateThoughts = async (id: string, text: string) => {
-    const original = snapshots.find(s => s.id === id)?.thoughts || "";
-    if (text === original) { setEditingId(null); return; }
+    const original = snapshots.find(s => s.id === id)?.thoughts || ""
+    if (text === original) {
+      setEditingId(null)
+      return
+    }
     try {
-      await invoke("update_screenshot_by_id", { screenshotId: id, thoughts: text });
-      setEditingId(null);
-      setSnapshots(prev => prev.map(s => s.id === id ? { ...s, thoughts: text } : s));
-    } catch (e) { console.error("Update failed:", e); }
-  };
+      await invoke("update_screenshot_by_id", { screenshotId: id, thoughts: text })
+      setEditingId(null)
+      setSnapshots(prev => prev.map(s => s.id === id ? { ...s, thoughts: text } : s))
+    } catch (e) { console.error("Update failed:", e) }
+  }
 
   // 删除逻辑
   const handleDelete = async (id: string) => {
     try {
-      await invoke(Cmds.DELETE_SCREENSHOT_BY_ID, { screenshotId: id });
-      setSnapshots(prev => prev.filter(s => s.id !== id));
-      setDeletingId(null);
+      await invoke(Cmds.DELETE_SCREENSHOT_BY_ID, { screenshotId: id })
+      setSnapshots(prev => prev.filter(s => s.id !== id))
+      setDeletingId(null)
     } catch (e) {
-      console.error("Delete failed:", e);
+      console.error("Delete failed:", e)
     }
-  };
+  }
 
   if (!loading && snapshots.length === 0) {
     return (
@@ -59,7 +62,7 @@ const GameJourney = ({ selectedYear, selectedMonth }: { selectedYear: number, se
         <Camera size={40} strokeWidth={1} className="mb-3" />
         <p className="text-sm font-bold">{t`暂无记录`}</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -155,7 +158,7 @@ const GameJourney = ({ selectedYear, selectedMonth }: { selectedYear: number, se
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default GameJourney;
+export default GameJourney

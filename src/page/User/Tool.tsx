@@ -5,14 +5,17 @@ import {
   CarouselDots, // 确保你的 shadcn carousel 包含 dots 扩展
 } from "@/components/ui/carousel"
 import { HardDriveDownload, Link2, Rocket } from "lucide-react"
-import SuperSwitch from "@/components/SuperSwitch";
-import { Trans } from "@lingui/react/macro";
-import useConfigStore from "@/store/configStore";
-import { Config } from "@/types/config";
+import SuperSwitch from "@/components/SuperSwitch"
+import { Trans } from "@lingui/react/macro"
+import useConfigStore from "@/store/configStore"
+import { Config } from "@/types/config"
 
 // 定义组件接收的 Props，直接使用你的 GameMeta 类型逻辑
 interface DashboardToolsProps {
-  quote?: { text: string; from: string };
+  quote?: {
+    text: string
+    from: string
+  }
 }
 
 export function ToolBox({ }: DashboardToolsProps) {

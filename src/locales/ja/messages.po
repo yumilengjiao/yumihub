@@ -22,8 +22,8 @@ msgid " 最大下载并发数"
 msgstr " 最大同時ダウンロード数"
 
 #: src/page/Library/BigPendingCard.tsx:216
-msgid " 匹配元数据"
-msgstr " メタデータを照合"
+#~ msgid " 匹配元数据"
+#~ msgstr " メタデータを照合"
 
 #: src/page/Library/GameDetail.tsx:192
 #~ msgid " 存档目录"
@@ -42,16 +42,16 @@ msgid " 用户昵称"
 msgstr " ユーザーニックネーム"
 
 #: src/page/Library/BigPendingCard.tsx:219
-msgid " 直接确认"
-msgstr " 直接確定"
+#~ msgid " 直接确认"
+#~ msgstr " 直接確定"
 
 #: src/page/Library/BigPendingCard.tsx:286
-msgid " 确认添加"
-msgstr " 追加を確定"
+#~ msgid " 确认添加"
+#~ msgstr " 追加を確定"
 
 #: src/page/Library/PendingCard.tsx:347
-msgid " 确认添加项目"
-msgstr " 項目の追加を確定"
+#~ msgid " 确认添加项目"
+#~ msgstr " 項目の追加を確定"
 
 #: src/page/Library/GameDetail.tsx:179
 #~ msgid "\"从未启动\""
@@ -68,13 +68,12 @@ msgstr "\"セーブデータは Gal ゲーマーの生命線です。バック�
 msgid "{0}"
 msgstr "{0}"
 
-#. placeholder {0}: meta.name
 #: src/page/Library/PendingCard.tsx:124
-msgid "{0} - 暂无详细介绍。"
-msgstr "{0} - 詳細な紹介はありません。"
+#~ msgid "{0} - 暂无详细介绍。"
+#~ msgstr "{0} - 詳細な紹介はありません。"
 
 #. placeholder {0}: items.length
-#: src/page/Library/PendingCard.tsx:250
+#: src/page/Library/PendingCard.tsx:276
 msgid "{0} 个项目就绪"
 msgstr "{0} 個の項目が準備完了"
 
@@ -83,8 +82,8 @@ msgstr "{0} 個の項目が準備完了"
 #~ msgstr "Bangumi データを同期しました"
 
 #: src/page/Library/PendingCard.tsx:199
-msgid "ID 检索成功"
-msgstr "ID 検索に成功しました"
+#~ msgid "ID 检索成功"
+#~ msgstr "ID 検索に成功しました"
 
 #: src/page/Library/BigPendingCard.tsx:108
 #~ msgid "VNDB 数据已同步"
@@ -92,7 +91,11 @@ msgstr "ID 検索に成功しました"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:14
 msgid "一键拉起最后一次关闭的游戏及连携程序"
-msgstr ""
+msgstr "最後に終了したゲームと連繋プログラムをワンクリックで起動"
+
+#: src/page/Library/PendingCard.tsx:453
+msgid "一键智能匹配"
+msgstr "スマート照合"
 
 #: src/page/Setting/ResourceSetting/index.tsx:122
 msgid "一键还原存档"
@@ -124,7 +127,7 @@ msgstr "テーマカラー"
 
 #: src/page/Library/TopBar.tsx:117
 msgid "仅看已通关"
-msgstr ""
+msgstr "クリア済みのみ"
 
 #: src/page/User/ProfileHeader.tsx:22
 msgid "今天的心情适合推一部催泪神作吗？"
@@ -144,11 +147,11 @@ msgstr "情報を保存"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:160
 msgid "保存并应用"
-msgstr ""
+msgstr "保存して適用"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:293
 msgid "保存连携配置"
-msgstr ""
+msgstr "連繋設定を保存"
 
 #: src/page/User/index.tsx:151
 msgid "信息和工具"
@@ -164,19 +167,19 @@ msgstr "ユーザー情報の変更"
 
 #: src/page/Setting/ResourceSetting/index.tsx:80
 msgid "允许资源下载到本地"
-msgstr ""
+msgstr "リソースのローカルダウンロードを許可"
 
-#: src/page/Library/PendingCard.tsx:169
+#: src/page/Library/PendingCard.tsx:186
 msgid "全局匹配完成"
 msgstr "一括照合が完了しました"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:22
 msgid "全局唤醒"
-msgstr ""
+msgstr "グローバル呼び出し"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:21
 msgid "全局隐藏窗口并静音"
-msgstr ""
+msgstr "ウィンドウを隠して消音 (ボスが来た)"
 
 #: src/page/User/ProfileHeader.tsx:21
 msgid "全线通关后的后劲，是青春的证明。"
@@ -185,6 +188,10 @@ msgstr "全ルートクリア後の余韻は、青春の証です。"
 #: src/page/Setting/SysSetting/index.tsx:12
 #~ msgid "关闭日志"
 #~ msgstr "ログを無効化"
+
+#: src/page/Library/ArchivePreviewDialog.tsx:145
+msgid "内容预览"
+msgstr "内容プレビュー"
 
 #: src/page/Library/GameDetail.tsx:284
 msgid "最后运行"
@@ -196,51 +203,55 @@ msgstr "タスクトレイに最小化"
 
 #: src/page/User/index.tsx:189
 msgid "切换日期"
-msgstr ""
+msgstr "日付を切り替え"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:19
 msgid "切换至：个人页面"
-msgstr ""
+msgstr "切り替え：プロフィール"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:17
 msgid "切换至：主页"
-msgstr ""
+msgstr "切り替え：ホーム"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:18
 msgid "切换至：游戏库"
-msgstr ""
+msgstr "切り替え：ライブラリ"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:20
 msgid "切换至：设置界面"
-msgstr ""
+msgstr "切り替え：設定"
 
 #: src/page/Library/GameDetail.tsx:228
 msgid "制作商"
-msgstr ""
+msgstr "制作会社"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:129
 msgid "加载配置中..."
-msgstr ""
+msgstr "設定を読み込み中..."
 
 #: src/page/User/ProfileHeader.tsx:23
 msgid "劳逸结合，眼睛也需要休息呢。"
 msgstr "適度に休憩しましょう。目も休ませてあげてくださいね。"
 
 #: src/page/Library/PendingCard.tsx:171
-msgid "匹配中断"
-msgstr "照合が中断されました"
+#~ msgid "匹配中断"
+#~ msgstr "照合が中断されました"
 
-#: src/page/Library/PendingCard.tsx:158
+#: src/page/Library/PendingCard.tsx:170
 msgid "匹配任务超时，请检查网络"
 msgstr "照合タスクがタイムアウトしました。ネットワークを確認してください"
 
-#: src/page/Library/PendingCard.tsx:344
+#: src/page/Library/BigPendingCard.tsx:245
 msgid "匹配元数据"
 msgstr "メタデータを照合"
 
-#: src/page/Library/BigPendingCard.tsx:121
+#: src/page/Library/BigPendingCard.tsx:137
 msgid "匹配超时"
 msgstr "照合タイムアウト"
+
+#: src/page/Library/PendingCard.tsx:188
+msgid "匹配过程中断"
+msgstr "照合プロセスが中断されました"
 
 #: src/page/User/ProfileHeader.tsx:9
 msgid "午饭吃了吗？记得休息一下。"
@@ -253,9 +264,17 @@ msgstr "お昼ごはんは食べましたか？ゆっくり休んでください
 #. placeholder {0}: journeyMonth.toString().padStart(2, '0')
 #: src/page/User/index.tsx:186
 msgid "历程 ({journeyYear}-{0})"
-msgstr ""
+msgstr "履歴 ({journeyYear}-{0})"
 
-#: src/page/Library/BigPendingCard.tsx:214
+#: src/page/Library/ArchivePreviewDialog.tsx:169
+msgid "压缩包内容为空"
+msgstr "アーカイブが空です"
+
+#: src/page/Library/AddGameButton.tsx:99
+msgid "压缩包解析失败"
+msgstr "アーカイブの解析に失敗しました"
+
+#: src/page/Library/BigPendingCard.tsx:243
 #: src/page/User/EditUserInfoDialog.tsx:173
 #: src/page/User/index.tsx:232
 #: src/page/User/index.tsx:293
@@ -264,31 +283,31 @@ msgstr "キャンセル"
 
 #: src/components/PathCard.tsx:68
 msgid "只读"
-msgstr ""
+msgstr "読み取り専用"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:220
 msgid "可执行文件路径"
-msgstr ""
+msgstr "実行ファイルパス"
 
 #: src/page/Library/GameDetail.tsx:106
 msgid "同步失败: "
-msgstr ""
+msgstr "同期失敗: "
 
 #: src/page/Library/GameDetail.tsx:104
 msgid "同步成功"
-msgstr ""
+msgstr "同期成功"
 
 #: src/page/Library/GameDetail.tsx:249
 msgid "启动"
-msgstr ""
+msgstr "起動"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:14
 msgid "启动上次游戏"
-msgstr ""
+msgstr "前回のゲームを起動"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:237
 msgid "启动参数"
-msgstr ""
+msgstr "起動オプション"
 
 #: src/page/Library/GameDetail.tsx:127
 #~ msgid "启动游戏"
@@ -308,11 +327,11 @@ msgstr "固定表示(小)"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:22
 msgid "在任何界面调出程序主窗口"
-msgstr ""
+msgstr "どの画面からでもメインウィンドウを呼び出す"
 
 #: src/page/Setting/AuthSetting/index.tsx:38
 msgid "在此粘贴你的个人令牌..."
-msgstr ""
+msgstr "ここに個人トークンを貼り付けてください..."
 
 #: src/page/User/GameJourney.tsx:17
 #~ msgid "在游戏仓库添加你的第一款 Galgame，<0/>"
@@ -320,7 +339,7 @@ msgstr ""
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:15
 msgid "在界面选中游戏时按回车直接启动"
-msgstr ""
+msgstr "ゲーム選択中にEnterキーで直接起動"
 
 #: src/page/Setting/BaseSetting/index.tsx:41
 msgid "基础设置"
@@ -328,11 +347,16 @@ msgstr "基本設定"
 
 #: src/page/Library/GameDetail.tsx:236
 msgid "备份"
-msgstr ""
+msgstr "バックアップ"
 
 #: src/page/Library/GameDetail.tsx:61
+#: src/page/Setting/ResourceSetting/index.tsx:56
 msgid "备份失败: "
-msgstr ""
+msgstr "バックアップ失敗: "
+
+#: src/page/Setting/ResourceSetting/index.tsx:54
+msgid "备份成功"
+msgstr "バックアップ成功"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:55
 msgid "外观主题"
@@ -348,23 +372,27 @@ msgstr "ダークモード"
 
 #: src/page/Library/GameDetail.tsx:60
 msgid "存档备份完毕"
-msgstr ""
+msgstr "セーブデータのバックアップが完了しました"
 
 #: src/page/Library/GameDetail.tsx:69
 msgid "存档恢复完毕"
-msgstr ""
+msgstr "セーブデータの復元が完了しました"
 
 #: src/page/Library/GameDetail.tsx:333
 msgid "存档目录"
-msgstr ""
+msgstr "セーブデータディレクトリ"
 
 #: src/page/Library/BigPendingCard.tsx:163
 #: src/page/Library/PendingCard.tsx:235
-msgid "导入失败"
-msgstr "インポート失敗"
+#~ msgid "导入失败"
+#~ msgstr "インポート失敗"
 
-#: src/page/Library/BigPendingCard.tsx:161
-#: src/page/Library/PendingCard.tsx:232
+#: src/page/Library/BigPendingCard.tsx:193
+#: src/page/Library/PendingCard.tsx:252
+msgid "导入失败,id: "
+msgstr "インポート失敗、ID: "
+
+#: src/page/Library/BigPendingCard.tsx:190
 msgid "导入成功"
 msgstr "インポート成功"
 
@@ -378,7 +406,7 @@ msgstr "インポート成功"
 
 #: src/page/Setting/ResourceSetting/index.tsx:97
 msgid "将立即对所有游戏的本地存档与配置进行全量备份，该过程可能需要一些时间。"
-msgstr ""
+msgstr "すべてのセーブデータと設定のフルバックアップを開始します。時間がかかる場合があります。"
 
 #: src/page/User/GameJourney.tsx:105
 #~ msgid "尚未开始"
@@ -390,7 +418,7 @@ msgstr "パスが選択されていません..."
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:205
 msgid "已启用"
-msgstr ""
+msgstr "有効"
 
 #: src/page/Library/GameDetail.tsx:130
 #~ msgid "已游玩"
@@ -398,11 +426,11 @@ msgstr ""
 
 #: src/page/Library/GameDetail.tsx:273
 msgid "已游玩 (分钟)"
-msgstr ""
+msgstr "プレイ時間 (分)"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:205
 msgid "已禁用"
-msgstr ""
+msgstr "無効"
 
 #: src/page/User/EditUserInfoDialog.tsx:53
 msgid "已载入本地图片预览"
@@ -410,11 +438,11 @@ msgstr "ローカル画像のプレビューを読み込みました"
 
 #: src/page/User/index.tsx:285
 msgid "年"
-msgstr ""
+msgstr "年"
 
 #: src/page/User/Tool.tsx:61
 msgid "开启热键"
-msgstr ""
+msgstr "ホットキーを有効化"
 
 #: src/page/Setting/BaseSetting/index.tsx:83
 msgid "开机自启动"
@@ -422,60 +450,74 @@ msgstr "システム起動時に実行"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:23
 msgid "强杀当前游戏及其关联的所有连携程序"
-msgstr ""
+msgstr "実行中のゲームと関連する全プログラムを強制終了"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:75
 msgid "快捷键设置"
-msgstr ""
+msgstr "ショートカット設定"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:16
 msgid "快速定位到搜索框进行过滤"
-msgstr ""
+msgstr "検索ボックスに素早くフォーカス"
 
 #: src/page/Library/GameDetail.tsx:239
 msgid "恢复"
-msgstr ""
+msgstr "復元"
 
 #: src/page/Library/GameDetail.tsx:70
+#: src/page/Setting/ResourceSetting/index.tsx:68
 msgid "恢复失败: "
-msgstr ""
+msgstr "復元失敗: "
+
+#: src/page/Setting/ResourceSetting/index.tsx:66
+msgid "恢复成功"
+msgstr "復元成功"
+
+#. placeholder {0}: finalGames.length
+#: src/page/Library/PendingCard.tsx:249
+msgid "成功导入 {0} 个游戏"
+msgstr "{0} 本のゲームをインポートしました"
 
 #: src/page/Library/GameDetail.tsx:332
 msgid "执行路径"
-msgstr ""
+msgstr "実行パス"
 
-#: src/page/Library/PendingCard.tsx:249
+#: src/page/Library/PendingCard.tsx:273
 msgid "批量导入确认"
 msgstr "一括インポートの確認"
 
 #: src/page/Library/TopBar.tsx:116
 msgid "按最后游玩"
-msgstr ""
+msgstr "最終プレイ順"
 
 #: src/page/Library/TopBar.tsx:115
 msgid "按名称排序"
-msgstr ""
+msgstr "名前順"
 
 #: src/page/Library/TopBar.tsx:114
 msgid "按游玩时长"
-msgstr ""
+msgstr "プレイ時間順"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:24
 msgid "捕获当前游戏画面"
-msgstr ""
+msgstr "ゲーム画面をキャプチャ"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:247
 msgid "排序权重"
-msgstr ""
+msgstr "ソート優先度"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:285
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:151
 msgid "放弃修改"
-msgstr ""
+msgstr "変更を破棄"
 
-#: src/page/Library/BigPendingCard.tsx:102
+#: src/page/Library/BigPendingCard.tsx:118
 msgid "数据已同步"
 msgstr "データを同期しました"
+
+#: src/page/Library/PendingCard.tsx:216
+msgid "数据更新成功"
+msgstr "データの更新に成功しました"
 
 #: src/page/User/ProfileHeader.tsx:8
 msgid "新的一天，也要充满元气哦！"
@@ -499,7 +541,7 @@ msgstr "おはようございます"
 
 #: src/page/Setting/AuthSetting/index.tsx:45
 msgid "显示"
-msgstr ""
+msgstr "表示"
 
 #: src/page/User/ProfileHeader.tsx:11
 msgid "晚上好"
@@ -507,20 +549,24 @@ msgstr "こんばんは"
 
 #: src/page/Library/BigPendingCard.tsx:59
 #: src/page/Library/BigPendingCard.tsx:70
-msgid "暂无描述"
-msgstr "説明なし"
+#~ msgid "暂无描述"
+#~ msgstr "説明なし"
 
 #: src/page/Library/GameDetail.tsx:306
 msgid "暂无描述..."
-msgstr ""
+msgstr "説明がありません..."
 
 #: src/page/User/GameJourney.tsx:60
 msgid "暂无记录"
-msgstr ""
+msgstr "記録なし"
 
-#: src/page/Library/BigPendingCard.tsx:278
+#: src/page/Library/BigPendingCard.tsx:320
 msgid "暂无详细介绍"
 msgstr "詳細な紹介はありません"
+
+#: src/page/Library/PendingCard.tsx:420
+msgid "暂无详细介绍。"
+msgstr "詳細な紹介はありません。"
 
 #: src/page/User/Radar.tsx:51
 msgid "暂无通关制作商数据"
@@ -528,13 +574,25 @@ msgstr "現在、クリア済みの制作会社データはありません"
 
 #: src/page/Library/GameDetail.tsx:207
 msgid "更换封面"
-msgstr ""
+msgstr "カバーを変更"
 
 #: src/components/PathCard.tsx:89
 msgid "更改"
-msgstr ""
+msgstr "変更"
 
-#: src/page/Library/BigPendingCard.tsx:261
+#: src/page/Library/ArchivePreviewDialog.tsx:133
+msgid "更改目录"
+msgstr "ディレクトリを変更"
+
+#: src/page/Library/PendingCard.tsx:126
+msgid "未匹配数据"
+msgstr "未照合データ"
+
+#: src/page/Library/AddGameButton.tsx:42
+msgid "未找到保存路径"
+msgstr "保存先が見つかりません"
+
+#: src/page/Library/BigPendingCard.tsx:292
 msgid "未找到匹配数据"
 msgstr "一致するデータが見つかりません"
 
@@ -544,15 +602,15 @@ msgstr "不明な制作会社"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:130
 msgid "未绑定"
-msgstr ""
+msgstr "未設定"
 
 #: src/page/Library/GameDetail.tsx:363
 msgid "未设定 (点击选择)"
-msgstr ""
+msgstr "未設定 (クリックして選択)"
 
 #: src/page/Setting/AuthSetting/index.tsx:23
 msgid "权限相关"
-msgstr ""
+msgstr "権限関連"
 
 #: src/page/User/ProfileHeader.tsx:10
 msgid "来杯咖啡吧，又是努力的一天。"
@@ -560,28 +618,28 @@ msgstr "コーヒーでも飲んで、今日も一日頑張りましょう。"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:20
 msgid "极光紫 (Violet)"
-msgstr ""
+msgstr "オーロラパープル (Violet)"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:24
 msgid "极客灰 (Slate)"
-msgstr ""
+msgstr "ギークスレート (Slate)"
 
 #: src/components/PathCard.tsx:89
 msgid "查看"
-msgstr ""
+msgstr "表示"
 
 #: src/components/PathCard.tsx:32
 #: src/components/PathCard.tsx:39
 msgid "查看{title}"
-msgstr ""
+msgstr "{title}を表示"
 
 #: src/page/Library/BigPendingCard.tsx:104
-msgid "查询失败"
-msgstr "クエリ失敗"
+#~ msgid "查询失败"
+#~ msgstr "クエリ失敗"
 
-#: src/page/Library/BigPendingCard.tsx:112
-#~ msgid "查询失败，请检查 ID 是否正确"
-#~ msgstr "検索に失敗しました。IDが正しいか確認してください"
+#: src/page/Library/BigPendingCard.tsx:120
+msgid "查询失败，请检查 ID 是否正确"
+msgstr "検索に失敗しました。IDが正しいか確認してください"
 
 #: src/page/Setting/SysSetting/index.tsx:12
 #~ msgid "标准 (Info)"
@@ -592,24 +650,44 @@ msgid "标记通关"
 msgstr "クリア済みとしてマーク"
 
 #: src/page/Library/PendingCard.tsx:202
-msgid "检索失败"
-msgstr "検索失敗"
+#~ msgid "检索失败"
+#~ msgstr "検索失敗"
+
+#: src/page/Library/PendingCard.tsx:218
+msgid "检索失败，请检查 ID 或网络"
+msgstr "検索に失敗しました。IDまたはネットワークを確認してください"
 
 #: src/page/Library/GameDetail.tsx:81
 msgid "正在同步..."
-msgstr ""
+msgstr "同期中..."
 
 #: src/page/Library/PendingCard.tsx:220
-msgid "正在处理导入..."
-msgstr "インポートを処理中..."
+#~ msgid "正在处理导入..."
+#~ msgstr "インポートを処理中..."
 
 #: src/page/Library/GameDetail.tsx:59
 msgid "正在备份存档..."
-msgstr ""
+msgstr "セーブデータをバックアップ中..."
+
+#: src/page/Library/BigPendingCard.tsx:167
+msgid "正在导入游戏..."
+msgstr "ゲームをインポート中..."
 
 #: src/page/Library/GameDetail.tsx:68
 msgid "正在恢复存档..."
-msgstr ""
+msgstr "セーブデータを復元中..."
+
+#: src/page/Setting/ResourceSetting/index.tsx:51
+msgid "正在执行全量备份..."
+msgstr "フルバックアップを実行中..."
+
+#: src/page/Setting/ResourceSetting/index.tsx:63
+msgid "正在执行全量恢复..."
+msgstr "一括復元を実行中..."
+
+#: src/page/Library/PendingCard.tsx:226
+msgid "正在计算资源并导入..."
+msgstr "リソースを計算してインポート中..."
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:231
 msgid "浏览"
@@ -617,15 +695,15 @@ msgstr "参照"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:23
 msgid "深海青 (Cyan)"
-msgstr ""
+msgstr "オーシャンシアン (Cyan)"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:276
 msgid "添加新的连携程序"
-msgstr ""
+msgstr "新しい連繋プログラムを追加"
 
 #: src/page/Setting/ResourceSetting/index.tsx:142
 msgid "清除程序所有数据"
-msgstr ""
+msgstr "全アプリデータを削除"
 
 #: src/components/SideBar/index.tsx:71
 msgid "游戏"
@@ -633,27 +711,27 @@ msgstr "ゲーム"
 
 #: src/page/Setting/ResourceSetting/index.tsx:32
 #~ msgid "游戏元数据存储目录"
-#~ msgstr "ゲームメタデータ保存先"
+#~ msgstr "ゲームメタデータ保存ディレクトリ"
 
 #: src/page/Setting/ResourceSetting/index.tsx:87
 msgid "游戏存档备份目录"
-msgstr "ゲームセーブバックアップ先"
+msgstr "ゲームバックアップディレクトリ"
 
 #: src/page/Setting/ResourceSetting/index.tsx:89
 msgid "游戏快照截图目录"
-msgstr ""
+msgstr "ゲームスクリーンショットディレクトリ"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:24
 msgid "游戏截图"
-msgstr ""
+msgstr "スクリーンショット"
 
 #: src/page/Setting/ResourceSetting/index.tsx:86
 msgid "游戏统一解压目录"
-msgstr ""
+msgstr "ゲーム展開ディレクトリ"
 
 #: src/page/Setting/ResourceSetting/index.tsx:88
 msgid "游戏资源存储目录"
-msgstr ""
+msgstr "ゲームリソースディレクトリ"
 
 #: src/page/Library/GameDetail.tsx:152
 #~ msgid "游玩时长 (分钟)"
@@ -665,15 +743,15 @@ msgstr ""
 
 #: src/page/Setting/SysSetting/index.tsx:26
 msgid "点击关闭按钮时"
-msgstr "閉じるボタンを押したとき"
+msgstr "閉じるボタンのアクション"
 
 #: src/page/User/GameJourney.tsx:130
 msgid "点击记录感想..."
-msgstr ""
+msgstr "感想を記入..."
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:227
 msgid "点击选择可执行文件..."
-msgstr ""
+msgstr "実行ファイルを選択..."
 
 #: src/page/Library/GameDetail.tsx:194
 #~ msgid "点击配置路径..."
@@ -681,11 +759,11 @@ msgstr ""
 
 #: src/page/Setting/InterfaceSetting/index.tsx:21
 msgid "琥珀黄 (Amber)"
-msgstr ""
+msgstr "アンバーイエロー (Amber)"
 
 #: src/page/Setting/AuthSetting/index.tsx:52
 msgid "用于访问敏感条目。你可以在 Bangumi 设置 - 开发者平台中生成此令牌。"
-msgstr ""
+msgstr "制限付き項目へのアクセスに使用します。Bangumi設定のデベロッパープラットフォームで生成できます。"
 
 #: src/page/User/EditUserInfoDialog.tsx:75
 msgid "用户信息同步成功"
@@ -693,7 +771,11 @@ msgstr "ユーザー情報の同期に成功しました"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:18
 msgid "皇家蓝 (Royal Blue)"
-msgstr ""
+msgstr "ロイヤルブルー (Royal Blue)"
+
+#: src/page/Library/BigPendingCard.tsx:248
+msgid "直接确认"
+msgstr "直接確定"
 
 #: src/page/Setting/SysSetting/index.tsx:12
 msgid "直接退出程序"
@@ -701,39 +783,51 @@ msgstr "プログラムを終了"
 
 #: src/page/User/GameJourney.tsx:87
 msgid "确认删除?"
-msgstr ""
+msgstr "削除しますか？"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:15
 msgid "确认启动"
-msgstr ""
+msgstr "起動を確認"
 
-#: src/page/Library/ArchivePreviewDialog.tsx:194
+#: src/page/Library/ArchivePreviewDialog.tsx:193
 msgid "确认并开始解压"
-msgstr ""
+msgstr "確認して展開を開始"
 
 #: src/page/Setting/ResourceSetting/index.tsx:96
 msgid "确认执行备份？"
-msgstr ""
+msgstr "バックアップを実行しますか？"
+
+#: src/page/Library/BigPendingCard.tsx:331
+msgid "确认添加"
+msgstr "追加を確定"
+
+#: src/page/Library/PendingCard.tsx:467
+msgid "确认添加项目"
+msgstr "項目の追加を確定"
 
 #: src/page/Setting/ResourceSetting/index.tsx:129
 msgid "确认清除所有程序数据？"
-msgstr ""
+msgstr "全アプリデータを削除しますか？"
+
+#: src/page/Library/ArchivePreviewDialog.tsx:116
+msgid "确认解压清单"
+msgstr "展開リストの確認"
 
 #: src/page/Setting/ResourceSetting/index.tsx:112
 msgid "确认还原所有存档？"
-msgstr ""
+msgstr "すべてのセーブデータを復元しますか？"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:154
 msgid "程序名称"
-msgstr ""
+msgstr "プログラム名"
 
 #: src/page/Library/GameDetail.tsx:282
 msgid "空间占用"
-msgstr ""
+msgstr "使用容量"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:189
 msgid "窗口托管"
-msgstr ""
+msgstr "ウィンドウ管理"
 
 #: src/page/Library/GameDetail.tsx:118
 #~ msgid "立即备份"
@@ -745,7 +839,7 @@ msgstr "今すぐ一括バックアップを実行"
 
 #: src/page/Library/GameDetail.tsx:300
 msgid "简介"
-msgstr ""
+msgstr "紹介"
 
 #: src/page/Library/GameDetail.tsx:148
 #~ msgid "管理与状态"
@@ -753,7 +847,7 @@ msgstr ""
 
 #: src/page/Setting/BaseSetting/index.tsx:61
 msgid "管理连携启动程序"
-msgstr ""
+msgstr "連繋起動プログラムの管理"
 
 #: src/page/Setting/SysSetting/index.tsx:23
 msgid "系统策略"
@@ -765,31 +859,35 @@ msgstr "システムデフォルト"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:23
 msgid "紧急停止"
-msgstr ""
+msgstr "緊急停止"
+
+#: src/page/Library/BigPendingCard.tsx:161
+msgid "网络请求失败"
+msgstr "ネットワークリクエスト失敗"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:17
 msgid "翡翠绿 (Emerald)"
-msgstr ""
+msgstr "エメラルドグリーン (Emerald)"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:21
 msgid "老板键"
-msgstr ""
+msgstr "ボスが来たキー"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:16
 msgid "聚焦搜索"
-msgstr ""
+msgstr "検索にフォーカス"
 
 #: src/page/Library/GameDetail.tsx:334
 msgid "背景图片"
-msgstr ""
+msgstr "背景画像"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:22
 msgid "能量橙 (Orange)"
-msgstr ""
+msgstr "エナジーオレンジ (Orange)"
 
 #: src/page/User/Tool.tsx:75
 msgid "自动备份"
-msgstr ""
+msgstr "自動バックアップ"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:67
 msgid "自动触发"
@@ -801,7 +899,11 @@ msgstr "自動トリガー"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:19
 msgid "蔷薇粉 (Rose)"
-msgstr ""
+msgstr "ローズピンク (Rose)"
+
+#: src/page/Library/ArchivePreviewDialog.tsx:128
+msgid "解压至目的地"
+msgstr "展開先を選択"
 
 #: src/page/User/GameJourney.tsx:21
 #~ msgid "让时间在这里留下足迹。"
@@ -817,15 +919,15 @@ msgstr "設定"
 
 #: src/page/Setting/ResourceSetting/index.tsx:130
 msgid "该操作将删除所有程序配置、游戏信息及本地数据，且无法恢复。请谨慎操作。"
-msgstr ""
+msgstr "この操作はアプリの設定、ゲーム情報、ローカルデータのすべてを削除し、復元できません。注意してください。"
 
 #: src/page/Setting/ResourceSetting/index.tsx:113
 msgid "该操作将覆盖当前所有已备份的游戏的本地存档，且无法撤销，请确认你已经做好备份。"
-msgstr ""
+msgstr "この操作は現在の全バックアップを上書きし、取り消せません。バックアップが完了しているか確認してください。"
 
 #: src/page/Library/BigPendingCard.tsx:81
-msgid "该数据源暂无详细介绍"
-msgstr "このデータソースには詳細な紹介がありません"
+#~ msgid "该数据源暂无详细介绍"
+#~ msgstr "このデータソースには詳細な紹介がありません"
 
 #: src/page/Setting/SysSetting/index.tsx:12
 #~ msgid "详细 (Debug)"
@@ -841,19 +943,27 @@ msgstr "ライブラリ設定でホームに表示する項目を追加してく
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:130
 msgid "请录制按键..."
-msgstr ""
+msgstr "キーを入力してください..."
 
 #: src/page/Library/BigPendingCard.tsx:136
-msgid "请求发生错误"
-msgstr "リクエストエラーが発生しました"
+#~ msgid "请求发生错误"
+#~ msgstr "リクエストエラーが発生しました"
 
 #: src/page/Library/PendingCard.tsx:186
-msgid "请求超时"
-msgstr "リクエストタイムアウト"
+#~ msgid "请求超时"
+#~ msgstr "リクエストタイムアウト"
 
 #: src/page/Library/GameDetail.tsx:75
 msgid "请输入 ID"
-msgstr ""
+msgstr "IDを入力してください"
+
+#: src/page/Library/AddGameButton.tsx:104
+msgid "请选择单个游戏启动文件"
+msgstr "ゲームの実行ファイルを選択してください"
+
+#: src/page/Library/AddGameButton.tsx:111
+msgid "请选择多个游戏的目录"
+msgstr "複数のゲームが含まれるディレクトリを選択してください"
 
 #: src/page/Setting/ResourceSetting/index.tsx:76
 msgid "资源管理"
@@ -861,19 +971,19 @@ msgstr "リソース管理"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:19
 msgid "跳转到个人中心"
-msgstr ""
+msgstr "プロフィールへ"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:18
 msgid "跳转到我的游戏库"
-msgstr ""
+msgstr "ライブラリへ"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:20
 msgid "跳转到系统设置"
-msgstr ""
+msgstr "設定へ"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:17
 msgid "跳转到首页界面"
-msgstr ""
+msgstr "ホームへ"
 
 #: src/page/Library/GameDetail.tsx:143
 #~ msgid "输入游戏描述..."
@@ -893,16 +1003,16 @@ msgstr "ライブラリに戻る"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:115
 msgid "连携程序管理"
-msgstr ""
+msgstr "連繋プログラム管理"
 
 #: src/components/PathCard.tsx:32
 #: src/components/PathCard.tsx:39
 msgid "选择{title}"
-msgstr ""
+msgstr "{title}を選択"
 
 #: src/page/User/index.tsx:308
 msgid "选择历程日期"
-msgstr ""
+msgstr "履歴の日付を選択"
 
 #: src/page/User/index.tsx:165
 msgid "选择年份"
@@ -922,35 +1032,35 @@ msgstr "ディスクを選択"
 
 #: src/page/User/index.tsx:270
 msgid "选择统计年份"
-msgstr ""
+msgstr "統計する年を選択"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:76
 msgid "配置您的操作偏好，提升启动效率"
-msgstr ""
+msgstr "操作設定をカスタマイズして効率を向上させます"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:116
 msgid "配置随游戏或程序自动启动的辅助工具"
-msgstr ""
+msgstr "ゲーム等と同時に起動する補助ツールを設定します"
 
 #: src/page/User/Tool.tsx:47
 msgid "链式启动"
-msgstr ""
+msgstr "連鎖起動"
 
 #: src/page/Setting/AuthSetting/index.tsx:45
 msgid "隐藏"
-msgstr ""
+msgstr "非表示"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:176
 msgid "随游戏"
-msgstr ""
+msgstr "ゲームに追従"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:167
 msgid "随程序"
-msgstr ""
+msgstr "プログラムに追従"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:14
 msgid "随系统"
-msgstr ""
+msgstr "システムに従う"
 
 #: src/page/Setting/BaseSetting/index.tsx:89
 msgid "静默启动"

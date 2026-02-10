@@ -1,79 +1,79 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn, getParentDir } from '@/lib/utils';
+import React, { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { cn, getParentDir } from '@/lib/utils'
 import {
   FileCode, Check, HardDrive, Loader2, Search,
   X, ListChecks, ChevronDown, RefreshCw, Sparkles
-} from 'lucide-react';
-import { toast } from "sonner";
-import { invoke } from '@tauri-apps/api/core';
-import { open } from '@tauri-apps/plugin-dialog';
-import { nanoid } from 'nanoid';
+} from 'lucide-react'
+import { toast } from "sonner"
+import { invoke } from '@tauri-apps/api/core'
+import { open } from '@tauri-apps/plugin-dialog'
+import { nanoid } from 'nanoid'
 
 // API 与 工具函数
-import { requestBangumiById } from '@/api/bangumiApi';
-import { requestVNDBById } from '@/api/vndbApi';
-import { recognizeGame } from '@/api/uniform';
+import { requestBangumiById } from '@/api/bangumiApi'
+import { requestVNDBById } from '@/api/vndbApi'
+import { recognizeGame } from '@/api/uniform'
 import { transBangumiToGameMeta, transVNDBToGameMeta } from '@/lib/resolve'
 
 // 类型定义
-import { Datum, GameMeta, VNDBResult, YmResult } from "@/types/game";
-import usePendingGameStore, { PendingGameInfo } from "@/store/pendingGamesStore";
-import useGameStore from '@/store/gameStore';
-import { Cmds } from '@/lib/enum';
-import { Trans } from '@lingui/react/macro';
+import { Datum, GameMeta, VNDBResult } from "@/types/game"
+import usePendingGameStore, { PendingGameInfo } from "@/store/pendingGamesStore"
+import useGameStore from '@/store/gameStore'
+import { Cmds } from '@/lib/enum'
+import { Trans } from '@lingui/react/macro'
 import { t } from '@lingui/core/macro'
-import useConfigStore from '@/store/configStore';
+import useConfigStore from '@/store/configStore'
 
 interface PendingCardProps {
-  pathList: string[];
-  onConfirmAll?: (results: GameMeta[]) => void;
-  onCancel: () => void;
+  pathList: string[]
+  onConfirmAll?: (results: GameMeta[]) => void
+  onCancel: () => void
 }
 
 // 扩展临时项目接口，包含 UI 交互状态
 interface TemporaryItem {
-  id: string;              // 内部前端唯一 ID
-  absPath: string;         // 用户修正后的启动路径
-  originalPath: string;    // 原始传入路径（用于文件夹识别）
-  folderName: string;      // 文件夹名
-  idInput: string;         // 输入框内的 ID
-  activeSource: 'vndb' | 'bangumi';//  |'ymgal';
-  gameInfo: PendingGameInfo | null; // 包含三个源的原始数据
-  expanded: boolean;       // 是否展开
+  id: string             // 内部前端唯一 ID
+  absPath: string        // 用户修正后的启动路径
+  originalPath: string   // 原始传入路径（用于文件夹识别）
+  folderName: string     // 文件夹名
+  idInput: string        // 输入框内的 ID
+  activeSource: 'vndb' | 'bangumi'//  |'ymgal'
+  gameInfo: PendingGameInfo | null // 包含三个源的原始数据
+  expanded: boolean      // 是否展开
 }
 
 const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
-  const [items, setItems] = useState<TemporaryItem[]>([]);
-  const [isGlobalMatching, setIsGlobalMatching] = useState(false);
-  const [matchProgress, setMatchProgress] = useState(0);
-  const [singleLoading, setSingleLoading] = useState<string | null>(null);
+  const [items, setItems] = useState<TemporaryItem[]>([])
+  const [isGlobalMatching, setIsGlobalMatching] = useState(false)
+  const [matchProgress, setMatchProgress] = useState(0)
+  const [singleLoading, setSingleLoading] = useState<string | null>(null)
 
-  const { addReadyGames, resetReadyGames } = usePendingGameStore();
-  const { addGameMeta } = useGameStore();
+  const { addReadyGames, resetReadyGames } = usePendingGameStore()
+  const { addGameMeta } = useGameStore()
 
-  const isMatchingRef = useRef(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const isMatchingRef = useRef(false)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   const { config } = useConfigStore()
 
   const clearTimer = () => {
     if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
+      clearTimeout(timerRef.current)
+      timerRef.current = null
     }
-  };
+  }
 
   // --- 初始化与路径处理 ---
   useEffect(() => {
     const init = async () => {
       const initialItems: TemporaryItem[] = pathList.map(p => {
-        const normalizedPath = p.replace(/[\\/]+/g, '/');
+        const normalizedPath = p.replace(/[\\/]+/g, '/')
         // 尝试从路径中提取文件夹名作为默认游戏名
-        const parts = normalizedPath.split('/');
-        const folderName = parts[parts.length - 1] || "Unknown Game";
+        const parts = normalizedPath.split('/')
+        const folderName = parts[parts.length - 1] || "Unknown Game"
 
         return {
           id: nanoid(),
@@ -84,178 +84,181 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
           activeSource: 'bangumi',
           gameInfo: null,
           expanded: false
-        };
-      });
-      setItems(initialItems);
+        }
+      })
+      setItems(initialItems)
 
       // 自动修正每个项目的启动程序路径（Rust 后端逻辑）
       for (let i = 0; i < initialItems.length; i++) {
         try {
           const realExe: string = await invoke(Cmds.GET_START_UP_PATH, {
             parentPath: initialItems[i].originalPath
-          });
+          })
           if (realExe) {
-            const fixedPath = realExe.replace(/[\\/]+/g, '/');
+            const fixedPath = realExe.replace(/[\\/]+/g, '/')
             setItems(prev => prev.map((it, idx) =>
               idx === i ? { ...it, absPath: fixedPath } : it
-            ));
+            ))
           }
         } catch (e) {
-          console.warn("自动搜寻执行文件失败:", initialItems[i].originalPath);
+          console.warn("自动搜寻执行文件失败:", initialItems[i].originalPath)
         }
       }
-    };
-    init();
-    return () => clearTimer();
-  }, [pathList]);
+    }
+    init()
+    return () => clearTimer()
+  }, [pathList])
 
-  // --- 核心转换逻辑 (应用你提供的工具函数逻辑) ---
+  // --- 核心转换逻辑 (已修改：优先使用网络请求返回的名字) ---
   const getItemDisplayMeta = (item: TemporaryItem): GameMeta => {
-    // 1. 构建 Partial Meta (基础字段)
+    // 注意：这里我们先默认将 folderName 放入，但在下面我们会根据 API 结果进行覆盖
     const partial: Omit<GameMeta, 'cover' | 'background' | 'description' | 'developer'> = {
       id: item.id,
-      name: item.folderName,
+      name: item.folderName, // 默认为文件夹名
       absPath: item.absPath,
       isPassed: false,
       isDisplayed: false,
       playTime: 0,
       length: 0,
-    };
+    }
 
-    const data = item.gameInfo;
-    if (!data) return { ...partial, cover: '', background: '', description: t`未匹配数据`, developer: '' };
+    const data = item.gameInfo
+    if (!data) return { ...partial, cover: '', background: '', description: t`未匹配数据`, developer: '' }
 
     // 2. 根据当前激活源调用对应的转换工具
     try {
       if (item.activeSource === 'bangumi' && data.bangumi) {
-        return transBangumiToGameMeta(partial, data.bangumi as Datum);
+        const meta = transBangumiToGameMeta(partial, data.bangumi as Datum)
+        return { ...meta, name: data.bangumi.name_cn || data.bangumi.name || item.folderName }
       }
 
       if (item.activeSource === 'vndb' && data.vndb) {
-        return transVNDBToGameMeta(partial, data.vndb as VNDBResult);
+        const meta = transVNDBToGameMeta(partial, data.vndb as VNDBResult)
+        return { ...meta, name: data.vndb.alttitle || item.folderName }
       }
 
       // TODO:将来对接ymgal源
       // if (item.activeSource === 'ymgal' && data.ymgal) {
-      //   const y = data.ymgal as YmResult;
+      //   const y = data.ymgal as YmResult
       //   return {
       //     ...partial,
-      //     name: y.chineseName || y.name,
+      //     name: y.chineseName || y.name || item.folderName, // 优先使用 API 名字
       //     cover: y.mainImg || "",
       //     background: y.mainImg || "",
       //     description: t`来自月幕 Galgame 的数据`,
       //     developer: y.orgName || ""
-      //   };
+      //   }
       // }
     } catch (e) {
-      console.error("转换出错:", e);
+      console.error("转换出错:", e)
     }
 
-    return { ...partial, cover: '', background: '', description: '', developer: '' };
-  };
+    // 如果没有匹配到数据或者转换失败，返回默认值
+    return { ...partial, cover: '', background: '', description: '', developer: '' }
+  }
 
   // --- 业务操作逻辑 ---
 
   // 全局自动匹配
   const handleGlobalMatch = async () => {
-    if (isGlobalMatching) return;
-    setIsGlobalMatching(true);
-    isMatchingRef.current = true;
-    setMatchProgress(0);
+    if (isGlobalMatching) return
+    setIsGlobalMatching(true)
+    isMatchingRef.current = true
+    setMatchProgress(0)
 
     timerRef.current = setTimeout(() => {
       if (isMatchingRef.current) {
-        isMatchingRef.current = false;
-        setIsGlobalMatching(false);
-        toast.error(t`匹配任务超时，请检查网络`);
+        isMatchingRef.current = false
+        setIsGlobalMatching(false)
+        toast.error(t`匹配任务超时，请检查网络`)
       }
-    }, 60000);
+    }, 60000)
 
     try {
       for (let i = 0; i < items.length; i++) {
-        if (!isMatchingRef.current) break;
+        if (!isMatchingRef.current) break
 
         // recognizeGame 返回的是 PendingGameInfo { bangumi, vndb, ymgal, absPath }
-        const res = await recognizeGame(items[i].absPath) as PendingGameInfo;
+        const res = await recognizeGame(items[i].absPath) as PendingGameInfo
 
         setItems(prev => prev.map((it, idx) =>
           idx === i ? { ...it, gameInfo: res } : it
-        ));
-        setMatchProgress(Math.round(((i + 1) / items.length) * 100));
+        ))
+        setMatchProgress(Math.round(((i + 1) / items.length) * 100))
       }
-      if (isMatchingRef.current) toast.success(t`全局匹配完成`);
+      if (isMatchingRef.current) toast.success(t`全局匹配完成`)
     } catch (err) {
-      toast.error(t`匹配过程中断`);
+      toast.error(t`匹配过程中断`)
     } finally {
-      clearTimer();
-      setIsGlobalMatching(false);
-      isMatchingRef.current = false;
+      clearTimer()
+      setIsGlobalMatching(false)
+      isMatchingRef.current = false
     }
-  };
+  }
 
   // 单个 ID 检索更新
   const handleSingleIdSearch = async (itemId: string) => {
-    const item = items.find(it => it.id === itemId);
-    if (!item || !item.idInput) return;
+    const item = items.find(it => it.id === itemId)
+    if (!item || !item.idInput) return
 
-    setSingleLoading(itemId);
+    setSingleLoading(itemId)
     try {
-      let updatedGameInfo = { ...(item.gameInfo || { absPath: item.absPath, bangumi: null, vndb: null, ymgal: null }) };
+      let updatedGameInfo = { ...(item.gameInfo || { absPath: item.absPath, bangumi: null, vndb: null, ymgal: null }) }
 
       if (item.activeSource === 'bangumi') {
-        const res = await requestBangumiById(item.idInput, config.auth.bangumiToken);
-        if (res) updatedGameInfo.bangumi = res as Datum;
+        const res = await requestBangumiById(item.idInput, config.auth.bangumiToken)
+        if (res) updatedGameInfo.bangumi = res as Datum
       } else if (item.activeSource === 'vndb') {
-        const res = await requestVNDBById(item.idInput);
-        if (res) updatedGameInfo.vndb = res;
+        const res = await requestVNDBById(item.idInput)
+        if (res) updatedGameInfo.vndb = res
       }
 
       setItems(prev => prev.map(it =>
         it.id === itemId ? { ...it, gameInfo: updatedGameInfo } : it
-      ));
-      toast.success(t`数据更新成功`);
+      ))
+      toast.success(t`数据更新成功`)
     } catch (err) {
-      toast.error(t`检索失败，请检查 ID 或网络`);
+      toast.error(t`检索失败，请检查 ID 或网络`)
     } finally {
-      setSingleLoading(null);
+      setSingleLoading(null)
     }
-  };
+  }
 
   // 最终确认提交
   const handleFinalConfirm = async () => {
-    const loadingId = toast.loading(t`正在计算资源并导入...`);
+    const loadingId = toast.loading(t`正在计算资源并导入...`)
     try {
-      const finalGames: GameMeta[] = [];
+      const finalGames: GameMeta[] = []
 
       for (const item of items) {
-        const meta = getItemDisplayMeta(item);
+        const meta = getItemDisplayMeta(item)
         // 调用 Rust 获取文件夹大小
-        const dir = getParentDir(meta.absPath);
-        const size = await invoke<number>(Cmds.GET_GAME_SIZE, { dir });
+        const dir = getParentDir(meta.absPath)
+        const size = await invoke<number>(Cmds.GET_GAME_SIZE, { dir })
 
-        finalGames.push({ ...meta, size });
+        finalGames.push({ ...meta, size })
       }
 
       // 同步到 Rust 后端数据库
-      await invoke(Cmds.ADD_NEW_GAME_LIST, { games: finalGames });
+      await invoke(Cmds.ADD_NEW_GAME_LIST, { games: finalGames })
 
       // 同步到前端全局 Store
-      resetReadyGames();
+      resetReadyGames()
       finalGames.forEach(g => {
-        addReadyGames(g);
-        addGameMeta(g);
-      });
+        addReadyGames(g)
+        addGameMeta(g)
+      })
 
-      toast.success(t`成功导入 ${finalGames.length} 个游戏`, { id: loadingId });
-      onCancel(); // 关闭弹窗
+      toast.success(t`成功导入 ${finalGames.length} 个游戏`, { id: loadingId })
+      onCancel() // 关闭弹窗
     } catch (err) {
-      toast.error(t`导入失败,id: `, { id: loadingId });
+      toast.error(t`导入失败,id: `, { id: loadingId })
     }
-  };
+  }
 
-  // --- UI 渲染部分 (保持你原有的所有样式和动效) ---
+  // --- UI 渲染部分 ---
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-800/50 backdrop-blur-xl p-8" onClick={onCancel}>
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-zinc-800/50 backdrop-blur-xl p-8" onClick={onCancel}>
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -299,7 +302,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
           <ScrollArea className="h-full px-12 pt-6 bg-zinc-100 dark:bg-zinc-800">
             <div className="grid grid-cols-1 gap-5 pb-10">
               {items.map((item) => {
-                const meta = getItemDisplayMeta(item);
+                const meta = getItemDisplayMeta(item)
                 return (
                   <div
                     key={item.id}
@@ -321,6 +324,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                       </div>
 
                       <div className="flex-1 min-w-0">
+                        {/* 这里的 meta.name 现在会优先显示网络请求的名字 */}
                         <h4 className="font-black text-zinc-900 dark:text-zinc-100 text-2xl truncate italic uppercase tracking-tighter">
                           {meta.name}
                         </h4>
@@ -366,8 +370,8 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                                     <button
                                       key={src}
                                       onClick={(e) => {
-                                        e.stopPropagation();
-                                        setItems(prev => prev.map(it => it.id === item.id ? { ...it, activeSource: src } : it));
+                                        e.stopPropagation()
+                                        setItems(prev => prev.map(it => it.id === item.id ? { ...it, activeSource: src } : it))
                                       }}
                                       className={cn(
                                         "px-5 py-2 text-[11px] font-black rounded-xl uppercase transition-all",
@@ -393,7 +397,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                                   />
                                   <Button
                                     size="icon"
-                                    onClick={(e) => { e.stopPropagation(); handleSingleIdSearch(item.id); }}
+                                    onClick={(e) => { e.stopPropagation(); handleSingleIdSearch(item.id) }}
                                     disabled={singleLoading === item.id || !item.idInput}
                                     className="h-8 w-8 rounded-xl bg-zinc-900 hover:bg-black shrink-0"
                                   >
@@ -404,10 +408,10 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                                 <Button
                                   variant="outline"
                                   onClick={(e) => {
-                                    e.stopPropagation();
+                                    e.stopPropagation()
                                     open({ filters: [{ name: 'Executable', extensions: ['exe', 'lnk', 'bat'] }] }).then(p => {
-                                      if (p) setItems(prev => prev.map(it => it.id === item.id ? { ...it, absPath: p.toString().replace(/\\/g, '/') } : it));
-                                    });
+                                      if (p) setItems(prev => prev.map(it => it.id === item.id ? { ...it, absPath: p.toString().replace(/\\/g, '/') } : it))
+                                    })
                                   }}
                                   className="flex-none rounded-xl border-custom-100 text-custom-500 font-black px-6 hover:bg-custom-50 dark:hover:bg-custom-900/30"
                                 >
@@ -426,14 +430,14 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
                       )}
                     </AnimatePresence>
                   </div>
-                );
+                )
               })}
             </div>
           </ScrollArea>
         </div>
 
         {/* Footer */}
-        <div className="px-12 py-10 bg-zinc-100 dark:bg-zinc-900 flex items-center gap-8 shrink-0 relative z-[100] border-t border-zinc-200 dark:border-zinc-800">
+        <div className="px-12 py-10 bg-zinc-100 dark:bg-zinc-900 flex items-center gap-8 shrink-0 relative z-100 border-t border-zinc-200 dark:border-zinc-800">
           <Button
             onClick={handleGlobalMatch}
             disabled={isGlobalMatching}
@@ -469,7 +473,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
         </div>
       </motion.div>
     </div>
-  );
-};
+  )
+}
 
-export default PendingCard;
+export default PendingCard
