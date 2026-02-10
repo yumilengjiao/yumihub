@@ -1,26 +1,26 @@
-import { Outlet } from "react-router";
+import { Outlet } from "react-router"
 import TitleBar from '@/components/TitleBar'
 import SideBar from '@/components/SideBar' // 确保这里的路径指向你的 SideBar 文件夹
-import { GlobalConfirm } from "@/components/Message";
-import { Toaster } from "sonner";
-import useUserStore from "@/store/userStore";
-import { invoke } from "@tauri-apps/api/core";
-import { useEffect } from "react";
-import { User } from "@/types/user";
-import useGameStore from "@/store/gameStore";
-import { GameMetaList } from "@/types/game";
-import { Cmds } from "@/lib/enum";
-import { debug } from "@tauri-apps/plugin-log";
-import useConfigStore from "@/store/configStore";
-import { Config } from "@/types/config";
-import { cn } from "@/lib/utils";
+import { GlobalConfirm } from "@/components/Message"
+import { Toaster } from "sonner"
+import useUserStore from "@/store/userStore"
+import { invoke } from "@tauri-apps/api/core"
+import { useEffect } from "react"
+import { User } from "@/types/user"
+import useGameStore from "@/store/gameStore"
+import { GameMetaList } from "@/types/game"
+import { Cmds } from "@/lib/enum"
+import { debug } from "@tauri-apps/plugin-log"
+import useConfigStore from "@/store/configStore"
+import { Config } from "@/types/config"
+import { cn } from "@/lib/utils"
 import { i18n } from "@lingui/core"
-import { useShortcutHandler } from "@/hooks/useShortcutr";
+import { useShortcutHandler } from "@/hooks/useShortcuter"
 
 export default function Layout() {
   const { setUser } = useUserStore()
-  const { updateSelectedGame, setGameMetaList, setGameMeta } = useGameStore()
-  const { config, updateConfig } = useConfigStore()
+  const { updateSelectedGame, setGameMetaList } = useGameStore()
+  const { updateConfig } = useConfigStore()
   const fontFamily = useConfigStore(c => c.config.interface.fontFamily)
   const sidebarMode = useConfigStore(c => c.config.interface.sidebarMode) || "Trigger"
 
@@ -60,9 +60,9 @@ export default function Layout() {
       i18n.activate(config.basic.language)
       updateConfig((oldConfig) => Object.assign(oldConfig, config))
       // 这里应用主题色
-      const html = document.documentElement;
+      const html = document.documentElement
       // 添加选中的主题类
-      html.classList.add(config.interface.themeColor);
+      html.classList.add(config.interface.themeColor)
 
     } catch (err) { console.error("无法获取config", err) }
   }
@@ -77,19 +77,19 @@ export default function Layout() {
   useEffect(() => {
     const fontValue = fontFamily === "sys"
       ? '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-      : `"${fontFamily}"`;
+      : `"${fontFamily}"`
 
-    let styleTag = document.getElementById('dynamic-font-style');
+    let styleTag = document.getElementById('dynamic-font-style')
     if (!styleTag) {
-      styleTag = document.createElement('style');
-      styleTag.id = 'dynamic-font-style';
-      document.head.appendChild(styleTag);
+      styleTag = document.createElement('style')
+      styleTag.id = 'dynamic-font-style'
+      document.head.appendChild(styleTag)
     }
     styleTag.textContent = `
-      :root { --main-font: ${fontValue}; }
-      body { font-family: var(--main-font); }
-    `;
-  }, [fontFamily]);
+      :root { --main-font: ${fontValue} }
+      body { font-family: var(--main-font) }
+    `
+  }, [fontFamily])
 
   return (
     <div className="h-screen w-full flex flex-col bg-transparent overflow-hidden font-main">

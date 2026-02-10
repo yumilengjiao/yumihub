@@ -2,9 +2,9 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 interface CommonCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  title?: string;
-  icon?: React.ReactNode;
-  headerAction?: React.ReactNode;
+  title?: string
+  icon?: React.ReactNode
+  headerAction?: React.ReactNode
 }
 
 const CommonCard = React.forwardRef<HTMLDivElement, CommonCardProps>(

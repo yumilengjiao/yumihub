@@ -64,3 +64,10 @@ unrar = "0.5.8"
 tauri-plugin-autostart = "2"
 tauri-plugin-global-shortcut = "2"
 uuid = { version = "1.20.0", features = ["v4"] }
+
+[profile.release]
+lto = true
+strip = true
+panic = "abort"
+codegen-units = 1
+opt-level = "s"

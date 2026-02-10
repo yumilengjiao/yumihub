@@ -52,12 +52,12 @@ const useGameStore = create<GameStoreParams>()(
           g.id === updatedGame.id ? updatedGame : g
         )
         state.gameMetaList = gameMetaList
-      });
+      })
       try {
-        await invoke(Cmds.UPDATE_GAME, { game: updatedGame });
-        console.log(`${updatedGame.name} 同步成功`);
+        await invoke(Cmds.UPDATE_GAME, { game: updatedGame })
+        console.log(`${updatedGame.name} 同步成功`)
       } catch (error) {
-        console.error("同步失败:", error);
+        console.error("同步失败:", error)
       }
     },
 
@@ -70,13 +70,13 @@ const useGameStore = create<GameStoreParams>()(
       // 处理空字符串逻辑：如果是空串、空格或 null/undefined，直接返回原始集合
       if (!name || name.trim() === "") {
         // 这里假设你的 state 里存原始数据的是 state.gameMetaList
-        return get().gameMetaList;
+        return get().gameMetaList
       }
-      const searchKeyword = name.trim().toLowerCase();
+      const searchKeyword = name.trim().toLowerCase()
 
       return get().gameMetaList.filter((game) => {
-        return game.name.trim().toLowerCase().includes(searchKeyword);
-      });
+        return game.name.trim().toLowerCase().includes(searchKeyword)
+      })
     },
 
     /**

@@ -1,7 +1,7 @@
-import { Cmds } from "@/lib/enum";
-import { invoke } from "@tauri-apps/api/core";
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
+import { Cmds } from "@/lib/enum"
+import { invoke } from "@tauri-apps/api/core"
+import { create } from "zustand"
+import { immer } from "zustand/middleware/immer"
 
 interface shortcutStoreParams {
   shortcuts: ShortcutSetting[],

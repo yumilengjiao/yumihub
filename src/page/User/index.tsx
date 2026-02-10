@@ -1,23 +1,23 @@
 import CalendarHeatMap from "./Calendar"
-import GameJourney from "./GameJourney";
-import MoreOptions from "@/components/MoreOption";
-import ProfileHeader from "./ProfileHeader";
-import Radar from "./Radar";
-import ToolBox from "./Tool";
+import GameJourney from "./GameJourney"
+import MoreOptions from "@/components/MoreOption"
+import ProfileHeader from "./ProfileHeader"
+import Radar from "./Radar"
+import ToolBox from "./Tool"
 import CommonCard from "@/components/CommonCard"
-import { CircleEllipsis, Clock, Trophy, X } from "lucide-react"
-import { useEffect, useMemo, useState } from "react";
-import { DragScroller } from "./DragScroller";
-import EditUserInfoDialog from "./EditUserInfoDialog";
-import { cn } from "@/lib/utils";
-import SysMonitor from "./SysMonitor";
-import { invoke } from "@tauri-apps/api/core";
-import { Cmds } from "@/lib/enum";
-import useUserStore from "@/store/userStore";
-import { User as Account } from "@/types/user";
-import { Trans } from "@lingui/react/macro";
+import { Clock, Trophy, X } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { DragScroller } from "./DragScroller"
+import EditUserInfoDialog from "./EditUserInfoDialog"
+import { cn } from "@/lib/utils"
+import SysMonitor from "./SysMonitor"
+import { invoke } from "@tauri-apps/api/core"
+import { Cmds } from "@/lib/enum"
+import useUserStore from "@/store/userStore"
+import { User as Account } from "@/types/user"
+import { Trans } from "@lingui/react/macro"
 import { t } from "@lingui/core/macro"
-import useGameStore from "@/store/gameStore";
+import useGameStore from "@/store/gameStore"
 
 
 
@@ -29,11 +29,11 @@ export default function User() {
   // 热力图的控制
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString())
   // 快照显示的控制
-  const [journeyYear, setJourneyYear] = useState(new Date().getFullYear()); // 历程专用
-  const [journeyMonth, setJourneyMonth] = useState(new Date().getMonth() + 1); // 历程专用
+  const [journeyYear, setJourneyYear] = useState(new Date().getFullYear()) // 历程专用
+  const [journeyMonth, setJourneyMonth] = useState(new Date().getMonth() + 1) // 历程专用
 
   // 热力图
-  const [isYearPickerOpen, setIsYearPickerOpen] = useState(false);
+  const [isYearPickerOpen, setIsYearPickerOpen] = useState(false)
   // 快照
   const [isJourneyPickerOpen, setIsJourneyPickerOpen] = useState(false)
   const { user, setUser } = useUserStore()
@@ -42,7 +42,7 @@ export default function User() {
     setIsEditingUser(true)
   }
   const selectDisk = () => {
-    setIsDiskPickerOpen(true);
+    setIsDiskPickerOpen(true)
   }
   const handleDiskChange = async (path: string) => {
     try {
@@ -60,20 +60,20 @@ export default function User() {
 
   useEffect(() => {
     console.log("触发了更新")
-    if (!user) return;
+    if (!user) return
 
-    const count = gameMetaList.filter(g => g.isPassed).length;
-    const totalMinutes = gameMetaList.reduce((prev, g) => prev + (g.playTime || 0), 0);
+    const count = gameMetaList.filter(g => g.isPassed).length
+    const totalMinutes = gameMetaList.reduce((prev, g) => prev + (g.playTime || 0), 0)
 
-    const needUpdate = user.gamesCompletedNumber !== count || user.totalPlayTime !== totalMinutes;
+    const needUpdate = user.gamesCompletedNumber !== count || user.totalPlayTime !== totalMinutes
 
     if (needUpdate) {
       setUser({
         gamesCompletedNumber: count,
         totalPlayTime: totalMinutes
-      });
+      })
     }
-  }, [gameMetaList]);
+  }, [gameMetaList])
 
   return (
     <div className="h-full flex justify-center items-center bg-zinc-200 dark:bg-zinc-900 px-4">
@@ -99,7 +99,10 @@ export default function User() {
         <YearMonthPicker
           currentYear={journeyYear}
           currentMonth={journeyMonth}
-          onSelect={(y: number, m: number) => { setJourneyYear(y); setJourneyMonth(m); }}
+          onSelect={(y: number, m: number) => {
+            setJourneyYear(y)
+            setJourneyMonth(m)
+          }}
           onClose={() => setIsJourneyPickerOpen(false)}
         />
       )}
@@ -131,9 +134,9 @@ export default function User() {
                 </div>
               </div>
             </div>
-            <div className="cursor-pointer">
-              <CircleEllipsis className="w-full h-auto" />
-            </div>
+            {/* <div className="cursor-pointer"> */}
+            {/*   <CircleEllipsis className="w-full h-auto" /> */}
+            {/* </div> */}
           </div>
         </CommonCard>
 
@@ -201,11 +204,11 @@ export default function User() {
 }
 
 export function DiskPicker({ onSelect, onClose }: { onSelect: (path: string) => void, onClose: () => void }) {
-  const [disks, setDisks] = useState<string[]>([]);
+  const [disks, setDisks] = useState<string[]>([])
 
   useEffect(() => {
-    invoke<string[]>(Cmds.GET_DISKS).then(setDisks);
-  }, []);
+    invoke<string[]>(Cmds.GET_DISKS).then(setDisks)
+  }, [])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -217,7 +220,10 @@ export function DiskPicker({ onSelect, onClose }: { onSelect: (path: string) => 
           {disks.map((path) => (
             <button
               key={path}
-              onClick={() => { onSelect(path); onClose(); }}
+              onClick={() => {
+                onSelect(path)
+                onClose()
+              }}
               className="flex w-full items-center px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors rounded-lg"
             >
               <span className="mr-2">💽</span>
@@ -254,7 +260,7 @@ export function YearPicker({
     const list = []
 
     // 如果当前年份小于 2026 ，至少保证有 2026
-    const effectiveEndYear = Math.max(startYear, endYear);
+    const effectiveEndYear = Math.max(startYear, endYear)
 
     for (let i = effectiveEndYear; i >= startYear; i--) {
       list.push(i.toString())
@@ -274,7 +280,10 @@ export function YearPicker({
           {years.map((year) => (
             <button
               key={year}
-              onClick={() => { onSelect(year); onClose(); }}
+              onClick={() => {
+                onSelect(year)
+                onClose()
+              }}
               className={cn(
                 "flex w-full items-center justify-center px-3 py-2 text-sm transition-colors rounded-lg",
                 currentYear === year
@@ -298,8 +307,8 @@ export function YearPicker({
 }
 
 export function YearMonthPicker({ currentYear, currentMonth, onSelect, onClose }: any) {
-  const years = [2024, 2025, 2026]; // 根据需求写死或动态生成
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const years = [2024, 2025, 2026] // 根据需求写死或动态生成
+  const months = Array.from({ length: 12 }, (_, i) => i + 1)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -323,5 +332,5 @@ export function YearMonthPicker({ currentYear, currentMonth, onSelect, onClose }
         </div>
       </div>
     </div>
-  );
+  )
 }

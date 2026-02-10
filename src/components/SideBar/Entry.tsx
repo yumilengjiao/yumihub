@@ -2,11 +2,11 @@ import { cn } from "@/lib/utils"
 import { ReactNode } from "react"
 
 interface EntryProps {
-  children: ReactNode;
-  title: string;
-  isExpanded: boolean;
-  isActive?: boolean;
-  onClick: () => void;
+  children: ReactNode
+  title: string
+  isExpanded: boolean
+  isActive?: boolean
+  onClick: () => void
 }
 
 export default function Entry({ children, title, isExpanded, isActive, onClick }: EntryProps) {

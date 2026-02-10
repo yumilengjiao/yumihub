@@ -2,7 +2,7 @@ import CommonCard from '@/components/CommonCard'
 import useConfigStore from '@/store/configStore'
 import { t } from '@lingui/core/macro'
 import { useState } from 'react'
-import { Eye, EyeOff, KeyRound } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import { Trans } from '@lingui/react/macro'
 
 export default function AuthSetting() {
@@ -13,8 +13,8 @@ export default function AuthSetting() {
 
   const handleTokenChange = (val: string) => {
     updateConfig((prev) => {
-      if (!prev.auth) prev.auth = { bangumiToken: "" };
-      prev.auth.bangumiToken = val;
+      if (!prev.auth) prev.auth = { bangumiToken: "" }
+      prev.auth.bangumiToken = val
     })
   }
 

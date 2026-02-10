@@ -1,42 +1,42 @@
-import CommonCard from "@/components/CommonCard";
-import { PathCard } from "@/components/PathCard";
-import { Button } from "@/components/ui/button";
-import { DatabaseBackup, Loader2 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { invoke } from "@tauri-apps/api/core";
+import CommonCard from "@/components/CommonCard"
+import { PathCard } from "@/components/PathCard"
+import { Button } from "@/components/ui/button"
+import { DatabaseBackup, Loader2 } from "lucide-react"
+import { useState } from "react"
+import { toast } from "sonner"
+import { invoke } from "@tauri-apps/api/core"
 import { Trans } from "@lingui/react/macro"
 import { t } from "@lingui/core/macro"
-import { useLingui } from "@lingui/react";
-import { Cmds } from "@/lib/enum";
-import SwitchCard from "@/components/SwitchCard";
-import ConfirmDialog from "./ComfirmDialog";
-import useConfigStore from "@/store/configStore";
-import useGameStore from "@/store/gameStore";
+import { useLingui } from "@lingui/react"
+import { Cmds } from "@/lib/enum"
+import SwitchCard from "@/components/SwitchCard"
+import ConfirmDialog from "./ComfirmDialog"
+import useConfigStore from "@/store/configStore"
+import useGameStore from "@/store/gameStore"
 
 export default function ResourceSetting() {
-  const [isBackingUp, setIsBackingUp] = useState(false);
+  const [isBackingUp, setIsBackingUp] = useState(false)
   const { i18n } = useLingui()
   const { setGameMetaList
   } = useGameStore()
   const [confirm, setConfirm] = useState<{
-    open: boolean;
-    title: string;
-    desc: string;
-    danger?: boolean;
-    action?: () => void;
+    open: boolean
+    title: string
+    desc: string
+    danger?: boolean
+    action?: () => void
   }>({
     open: false,
     title: "",
     desc: "",
-  });
+  })
   const { config, updateConfig } = useConfigStore()
 
   const openConfirm = (opts: {
-    title: string;
-    desc: string;
-    danger?: boolean;
-    action: () => void;
+    title: string
+    desc: string
+    danger?: boolean
+    action: () => void
   }) => {
     setConfirm({
       open: true,
@@ -44,30 +44,30 @@ export default function ResourceSetting() {
       desc: opts.desc,
       danger: opts.danger,
       action: opts.action,
-    });
-  };
+    })
+  }
   const handleQuickBackup = async () => {
-    setIsBackingUp(true);
-    const tid = toast.loading("正在执行全量备份...");
+    setIsBackingUp(true)
+    const tid = toast.loading(t`正在执行全量备份...`)
     try {
       await invoke(Cmds.BACKUP_ARCHIVE)
-      toast.success("备份成功", { id: tid })
+      toast.success(t`备份成功`, { id: tid })
     } catch (e) {
-      toast.error("备份失败: " + e, { id: tid })
+      toast.error(t`备份失败: ` + e, { id: tid })
     } finally {
-      setIsBackingUp(false);
+      setIsBackingUp(false)
     }
-  };
+  }
 
   const handleQuickRestore = async () => {
-    const tid = toast.loading("正在执行全量恢复...");
+    const tid = toast.loading(t`正在执行全量恢复...`)
     try {
       await invoke(Cmds.RESTORE_ALL_ARCHIVES)
-      toast.success("恢复成功", { id: tid })
+      toast.success(t`恢复成功`, { id: tid })
     } catch (e) {
-      toast.error("恢复失败: " + e, { id: tid })
+      toast.error(t`恢复失败: ` + e, { id: tid })
     } finally {
-      setIsBackingUp(false);
+      setIsBackingUp(false)
     }
 
   }
@@ -151,11 +151,11 @@ export default function ResourceSetting() {
         danger={confirm.danger}
         onCancel={() => setConfirm((c) => ({ ...c, open: false }))}
         onConfirm={() => {
-          confirm.action?.();
-          setConfirm((c) => ({ ...c, open: false }));
+          confirm.action?.()
+          setConfirm((c) => ({ ...c, open: false }))
         }}
       />
 
     </CommonCard >
-  );
+  )
 }

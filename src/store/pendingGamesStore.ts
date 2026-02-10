@@ -3,10 +3,10 @@
  * 在网络io后的信息会存到这里
  */
 
-import { Datum, GameMetaList, VNDBResult, YmResult } from "@/types/game";
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
-import { GameMeta } from "@/types/game";
+import { Datum, GameMetaList, VNDBResult, YmResult } from "@/types/game"
+import { create } from "zustand"
+import { immer } from "zustand/middleware/immer"
+import { GameMeta } from "@/types/game"
 
 //查询游戏获取的来自三个平台所有的数据
 export interface PendingGameInfo {
@@ -54,13 +54,13 @@ const usePendingGameStore = create<PendingGameStore>()(
     updateReadyGame: (meta: GameMeta) => {
       set((state) => {
         // 寻找是否已经存在，存在则替换，不存在则添加
-        const index = state.readyGames.findIndex(g => g.absPath === meta.absPath);
+        const index = state.readyGames.findIndex(g => g.absPath === meta.absPath)
         if (index !== -1) {
-          state.readyGames[index] = meta;
+          state.readyGames[index] = meta
         } else {
-          state.readyGames.push(meta);
+          state.readyGames.push(meta)
         }
-      });
+      })
     },
     reset() {
       set((state) => {

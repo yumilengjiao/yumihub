@@ -1,11 +1,11 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 import defaultAvatar from "@/assets/runasama😍😍😍😍.jpg"
-import useUserStore from "@/store/userStore";
-import { convertFileSrc } from "@tauri-apps/api/core";
-import { useEffect, useState } from "react";
+import useUserStore from "@/store/userStore"
+import { convertFileSrc } from "@tauri-apps/api/core"
+import { useEffect, useState } from "react"
 
 interface AvatarProps {
-  className?: string;
+  className?: string
 }
 
 export const Avatar = ({ className }: AvatarProps) => {
@@ -35,4 +35,4 @@ export const Avatar = ({ className }: AvatarProps) => {
       />
     </div>
   )
-};
+}

@@ -3,23 +3,21 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
 export interface SettingOption {
-  label: string;
-  value: string;
-  color?: string; // 用于存储颜色代码，如 #10b981
+  label: string
+  value: string
+  color?: string // 用于存储颜色代码，如 #10b981
 }
 
 interface SelectCardProps {
-  title: string;
-  description?: string;
-  options: SettingOption[];
-  value: string;
-  onValueChange: (value: string) => void;
-  className?: string;
+  title: string
+  description?: string
+  options: SettingOption[]
+  value: string
+  onValueChange: (value: string) => void
+  className?: string
 }
 
 export default function SelectCard({ title, description, options, value, onValueChange, className }: SelectCardProps) {
-  // 获取当前选中项，用于在触发器(Trigger)上显示对应颜色的圆圈
-  const selectedOption = options.find(opt => opt.value === value);
 
   return (
     <div className={cn("flex items-center justify-between gap-8 p-6 rounded-[24px] hover:bg-zinc-200 dark:hover:bg-zinc-700/50 transition-all", className)}>
@@ -57,5 +55,5 @@ export default function SelectCard({ title, description, options, value, onValue
         </SelectContent>
       </Select>
     </div>
-  );
+  )
 }

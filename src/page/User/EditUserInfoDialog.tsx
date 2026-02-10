@@ -1,40 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { motion } from 'framer-motion';
-import { X, Camera, Link as LinkIcon, Image as ImageIcon, Sparkles, UserIcon } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
+import { motion } from 'framer-motion'
+import { X, Camera, Link as LinkIcon, Image as ImageIcon, Sparkles, UserIcon } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
 import { t } from "@lingui/core/macro"
-import { Trans } from '@lingui/react/macro';
+import { Trans } from '@lingui/react/macro'
 
 // Tauri API
-import { open } from '@tauri-apps/plugin-dialog';
-import { convertFileSrc, invoke } from '@tauri-apps/api/core';
+import { open } from '@tauri-apps/plugin-dialog'
+import { convertFileSrc, invoke } from '@tauri-apps/api/core'
 
 // 导入默认头像
-import defaultAvatar from "@/assets/runasama😍😍😍😍.jpg";
+import defaultAvatar from "@/assets/runasama😍😍😍😍.jpg"
 
-import useUserStore from "@/store/userStore";
-import { User } from "@/types/user";
-import { Cmds } from '@/lib/enum';
+import useUserStore from "@/store/userStore"
+import { User } from "@/types/user"
+import { Cmds } from '@/lib/enum'
 
 interface EditUserInfoDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }
 
 const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose }) => {
-  const { user, setUser } = useUserStore();
-  const [formData, setFormData] = useState<User | null>(null);
+  const { user, setUser } = useUserStore()
+  const [formData, setFormData] = useState<User | null>(null)
 
   useEffect(() => {
     console.log("用户信息：", user)
     if (isOpen && user) {
-      setFormData({ ...user });
+      setFormData({ ...user })
     }
-  }, [isOpen, user]);
+  }, [isOpen, user])
 
   // 处理本地图片选择
   const handleSelectLocalFile = async () => {
@@ -42,42 +42,42 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
       const selected = await open({
         multiple: false,
         filters: [{ name: 'Image', extensions: ['png', 'jpg', 'jpeg', 'webp'] }]
-      });
+      })
 
       if (selected && typeof selected === 'string') {
         await invoke(Cmds.AUTHORIZE_PATH_ACCESS, { path: selected })
         setFormData(prev => prev ? ({
           ...prev,
           avatar: selected,      // 存入 avatar 字段用于预览和持久化
-        }) : null);
+        }) : null)
         toast.info(t`已载入本地图片预览`)
       }
     } catch (err) {
       toast.error(t`无法打开文件对话框`)
       console.error(err)
     }
-  };
+  }
 
   // 辅助函数：判断是否为网络链接
-  const isNetworkUrl = (url: string) => url?.startsWith('http');
+  const isNetworkUrl = (url: string) => url?.startsWith('http')
 
   // 获取真实的图片渲染地址
   const getDisplaySrc = (path: string) => {
-    if (!path) return defaultAvatar;
-    if (isNetworkUrl(path)) return path; // 网络链接直接返回
-    return convertFileSrc(path);         // 本地路径需要转换
-  };
+    if (!path) return defaultAvatar
+    if (isNetworkUrl(path)) return path // 网络链接直接返回
+    return convertFileSrc(path)         // 本地路径需要转换
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (formData) {
-      setUser(formData);
-      toast.success(t`用户信息同步成功`);
-      onClose();
+      setUser(formData)
+      toast.success(t`用户信息同步成功`)
+      onClose()
     }
-  };
+  }
 
-  if (!isOpen || !formData) return null;
+  if (!isOpen || !formData) return null
 
   return createPortal(
     <div className="fixed inset-0 z-1000 flex items-center justify-center p-4">
@@ -183,7 +183,7 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
       </motion.div>
     </div>,
     document.body
-  );
-};
+  )
+}
 
 export default EditUserInfoDialog

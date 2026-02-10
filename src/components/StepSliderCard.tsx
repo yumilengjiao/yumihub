@@ -1,6 +1,6 @@
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { Slider } from "@/components/ui/slider"
+import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
 
 export default function StepSliderCard({ title, description, value, min = 1, max = 100, step = 1, unit = "", onChange, className }: any) {
   return (
@@ -21,5 +21,5 @@ export default function StepSliderCard({ title, description, value, min = 1, max
         />
       </div>
     </div>
-  );
+  )
 }

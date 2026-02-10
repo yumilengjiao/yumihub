@@ -1,8 +1,8 @@
-import GameList from "@/page/Home/GameList";
+import GameList from "@/page/Home/GameList"
 import './index.css'
-import useGameStore from "@/store/gameStore";
-import { cn } from "@/lib/utils";
-import { convertFileSrc } from "@tauri-apps/api/core";
+import useGameStore from "@/store/gameStore"
+import { cn } from "@/lib/utils"
+import { convertFileSrc } from "@tauri-apps/api/core"
 
 
 export default function Home() {

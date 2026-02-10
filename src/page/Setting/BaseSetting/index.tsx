@@ -21,9 +21,9 @@ export default function BaseSetting() {
 
   const updateBasic = (key: keyof typeof basic, val: any) => {
     updateConfig((draft) => {
-      (draft.basic as any)[key] = val;
-    });
-  };
+      (draft.basic as any)[key] = val
+    })
+  }
 
   const updateLanguage = (lang: string) => {
     updateBasic('language', lang)
@@ -35,7 +35,7 @@ export default function BaseSetting() {
     { label: "English", value: "en" },
     { label: "日本語", value: "ja" },
     { label: "한국인", value: "ko" }
-  ];
+  ]
 
   return (
     <CommonCard title={t`基础设置`} icon="🛠️" className="dark:bg-zinc-800">
@@ -101,5 +101,5 @@ export default function BaseSetting() {
         <ShortcutManager onClose={() => setIsShortcutManagerOpen(false)} />
       )}
     </CommonCard>
-  );
+  )
 }

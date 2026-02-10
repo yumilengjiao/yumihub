@@ -1,4 +1,4 @@
-import { BangumiReq, BangumiResponse, Datum, GameMeta, VNDBReq, VNDBResult, YmgalReq } from "@/types/game"
+import { BangumiReq, Datum, GameMeta, VNDBReq, VNDBResult, YmgalReq } from "@/types/game"
 
 
 /**
@@ -100,14 +100,14 @@ export const transBangumiToGameMeta = (
     description: bangumiRes.summary || "",
     // 增加对“开发”、“制作”等不同 Key 的兼容
     developer: (bangumiRes.infobox?.find(g => ['开发', '制作', '开发商'].includes(g.key))?.value as string) || "",
-  };
+  }
 
-  // 2. 返回完整的 GameMeta
+  // 返回完整的 GameMeta
   return {
     ...partial,
     ...syncedData,
-  };
-};
+  }
+}
 
 /**
  * 将 VNDB 数据转化并合并。
@@ -133,5 +133,5 @@ export const transVNDBToGameMeta = (
   return {
     ...partial,
     ...syncedData,
-  };
-};
+  }
+}

@@ -112,42 +112,72 @@
 }
 
 @layer base {
+
+  /* ==============================
+      全局基础重置 & 变量
+     ============================== */
   * {
     @apply border-border outline-ring/50;
+
+    /* 禁止用户选择文本 (App常用) */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    /* 禁止图片、元素被拖拽出残影 (App常用) */
+    -webkit-user-drag: none;
   }
 
   body {
     @apply bg-background text-foreground;
   }
-}
 
-* {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
+  /* ==============================
+     滚动条隐藏逻辑
+     ============================== */
+  /* 针对 Firefox */
+  * {
+    scrollbar-width: none;
+  }
 
-/* 禁止图片、链接、元素拖拽 */
-* {
-  -webkit-user-drag: none;
-  scrollbar-width: none;
-}
+  /* 针对 Chrome/Safari/Webkit */
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
 
-::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
+  /* ==============================
+     输入框样式修正 
+     ============================== */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 
-:root,
-body,
-#root,
-.layout,
-.home,
-.user,
-.setting {
-  height: 100%;
-  overflow: hidden;
-  font-size: 9px;
-  background: transparent !important;
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  /* ==============================
+     布局与视口高度控制
+     ============================== */
+  :root,
+  html,
+  body,
+  #root,
+  .layout,
+  .home,
+  .user,
+  .setting {
+    height: 100%;
+    width: 100%;
+    /* 建议加上宽度 */
+    overflow: hidden;
+    font-size: 9px;
+    background: transparent !important;
+    /* 保持透明，可能是为了圆角窗口 */
+  }
 }

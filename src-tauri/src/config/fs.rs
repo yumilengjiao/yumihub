@@ -1,3 +1,4 @@
+use sqlx::SqlitePool;
 use tauri::{AppHandle, Manager};
 use tauri_plugin_log::log::{debug, error, info};
 
@@ -48,7 +49,7 @@ pub fn load_config(app_handle: AppHandle) -> Result<(), AppError> {
     }
     if !config_path.exists() {
         // 创建配置文件并写入默认配置
-        save_config()?
+        save_config(&app_handle)?
     }
 
     // 如果资源目录不存在则创建一个资源目录
@@ -89,20 +90,48 @@ pub fn load_config(app_handle: AppHandle) -> Result<(), AppError> {
 /// 配置保存到磁盘上,一般会在程序退出时调用,而对于每种数据类型自己也有实现一
 /// 个update方法，update方法用于更新本模块的GLOBAL_CONFIG(全局配置信息变量)内
 /// 的数据
-pub fn save_config() -> Result<(), AppError> {
-    info!("保存配置文件更改");
-    let config_path_buf = CONFIG_PATH.get().unwrap();
-    let config_file_abs_name = config_path_buf.to_str().unwrap();
+pub fn save_config(app_handle: &AppHandle) -> Result<(), AppError> {
+    info!("程序退出：开始最后一次持久化配置");
 
-    //进行一些初始化操作
-    let config = GLOBAL_CONFIG.read().expect("获取读锁失败");
-    debug!("配置信息:{:?}", config);
+    let pool = app_handle.state::<SqlitePool>();
 
-    let json_data = serde_json::to_string_pretty(&*config).unwrap();
+    let latest_game_id = tauri::async_runtime::block_on(async {
+        sqlx::query_scalar("SELECT id FROM games WHERE last_played_at IS NOT NULL ORDER BY last_played_at DESC LIMIT 1")
+            .fetch_optional(pool.inner())
+            .await
+    }).map_err(|e| AppError::DB(format!("退出时查询失败: {}", e)))?;
+
+    // 修改内存配置 (GLOBAL_CONFIG)
+    {
+        let mut config = GLOBAL_CONFIG.write().expect("获取写锁失败");
+        // 这里解开 Option<String>
+        if let Some(id) = latest_game_id {
+            let order = &mut config.basic.game_display_order;
+            if order.get(0) != Some(&id) {
+                order.retain(|x| x != &id);
+                order.insert(0, id);
+                debug!("退出前已修正顺序");
+            }
+        }
+    }
+
+    // 同步写入文件
+    let config_path_buf = CONFIG_PATH.get().ok_or_else(|| AppError::Config {
+        action: FileAction::Write,
+        path: "UNKNOWN".into(),
+        message: "CONFIG_PATH未初始化".into(),
+    })?;
+
+    let json_data = {
+        let config = GLOBAL_CONFIG.read().expect("获取读锁失败");
+        serde_json::to_string_pretty(&*config).unwrap()
+    };
+
     fs::write(config_path_buf, json_data).map_err(|e| AppError::Config {
         action: FileAction::Write,
-        path: config_file_abs_name.into(),
-        message: format!("{},具体错误:{}", "写入config文件失败", e),
+        path: config_path_buf.to_string_lossy().into(),
+        message: format!("退出保存失败: {}", e),
     })?;
+
     Ok(())
 }

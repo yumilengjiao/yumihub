@@ -76,9 +76,9 @@ pub fn run() {
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
-        .run(|_app_handle, event| match event {
-            RunEvent::Exit => life_cycle::exit(),
-            RunEvent::ExitRequested { .. } => life_cycle::exit(),
+        .run(|app_handle, event| match event {
+            RunEvent::Exit => life_cycle::exit(app_handle),
+            RunEvent::ExitRequested { .. } => life_cycle::exit(app_handle),
             _ => {}
         })
 }

@@ -7,50 +7,50 @@ import { t } from '@lingui/core/macro'
 const Radar = () => {
   const { gameMetaList } = useGameStore()
 
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(false)
   useEffect(() => {
-    setIsDark(document.documentElement.classList.contains("dark"));
+    setIsDark(document.documentElement.classList.contains("dark"))
     const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains("dark"));
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => observer.disconnect();
-  }, []);
+      setIsDark(document.documentElement.classList.contains("dark"))
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
+    return () => observer.disconnect()
+  }, [])
 
   const radarData = useMemo(() => {
-    const passedGames = gameMetaList.filter(game => game.isPassed && game.developer?.trim());
+    const passedGames = gameMetaList.filter(game => game.isPassed && game.developer?.trim())
     const normalizeDeveloper = (name: string): string => {
-      const cleanName = name.trim();
-      const lowerName = cleanName.toLowerCase();
-      if (lowerName.includes('key') || lowerName.includes('visual arts')) return 'Key';
-      if (lowerName.includes('yuzusoft') || lowerName.includes('柚子')) return 'Yuzusoft';
-      if (lowerName.includes('alicesoft')) return 'AliceSoft';
-      if (lowerName.includes('august')) return 'August';
-      if (lowerName.includes('smee')) return 'SMEE';
-      if (lowerName.includes('hooksoft')) return 'Hooksoft';
-      if (lowerName.includes('nitroplus')) return 'Nitroplus';
-      const separators = /[/／、,，&|+]/;
-      return cleanName.split(separators).map(s => s.trim())[0] || t`未知制作商`;
-    };
+      const cleanName = name.trim()
+      const lowerName = cleanName.toLowerCase()
+      if (lowerName.includes('key') || lowerName.includes('visual arts')) return 'Key'
+      if (lowerName.includes('yuzusoft') || lowerName.includes('柚子')) return 'Yuzusoft'
+      if (lowerName.includes('alicesoft')) return 'AliceSoft'
+      if (lowerName.includes('august')) return 'August'
+      if (lowerName.includes('smee')) return 'SMEE'
+      if (lowerName.includes('hooksoft')) return 'Hooksoft'
+      if (lowerName.includes('nitroplus')) return 'Nitroplus'
+      const separators = /[/／、,，&|+]/
+      return cleanName.split(separators).map(s => s.trim())[0] || t`未知制作商`
+    }
 
-    const stats: Record<string, number> = {};
+    const stats: Record<string, number> = {}
     passedGames.forEach(game => {
-      const normalizedDev = normalizeDeveloper(game.developer!);
-      stats[normalizedDev] = (stats[normalizedDev] || 0) + 1;
-    });
+      const normalizedDev = normalizeDeveloper(game.developer!)
+      stats[normalizedDev] = (stats[normalizedDev] || 0) + 1
+    })
 
     return Object.entries(stats)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
-      .map(([name, count]) => ({ tag: name, value: count }));
-  }, [gameMetaList]);
+      .map(([name, count]) => ({ tag: name, value: count }))
+  }, [gameMetaList])
 
   if (radarData.length === 0) {
     return (
       <div className="w-full h-full flex items-center justify-center text-foreground/30 font-black">
         <Trans>暂无通关制作商数据</Trans>
       </div>
-    );
+    )
   }
 
   return (

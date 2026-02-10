@@ -1,8 +1,8 @@
-import { Cmds } from "@/lib/enum";
-import { Config, SideBarMode, ThemeMode } from "@/types/config";
-import { invoke } from "@tauri-apps/api/core";
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
+import { Cmds } from "@/lib/enum"
+import { Config, SideBarMode, ThemeMode } from "@/types/config"
+import { invoke } from "@tauri-apps/api/core"
+import { create } from "zustand"
+import { immer } from "zustand/middleware/immer"
 
 interface ConfigStore {
   config: Config
@@ -35,8 +35,13 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
       backupSavePath: "",
       metaSavePath: "",
       screenshotPath: "",
+      allowDownloadingResources: true,
+      galRootDir: "",
       autoBackup: false,
     },
+    auth: {
+      bangumiToken: ""
+    }
   },
   updateConfig(fn: (config: Config) => void) {
     console.log("开始更新配置信息")

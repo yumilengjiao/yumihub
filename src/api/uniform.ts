@@ -1,8 +1,8 @@
-import { createBangumiParamsFromBootFile, createVNDBParamsFromBootFile, createYmgalQueryFromBootFile } from "@/lib/resolve";
-import { requestVNDB } from "./vndbApi";
-import { requestBangumi } from "./bangumiApi";
-import { requestYml } from "./ymGalApi";
-import { PendingGameInfo } from "@/store/pendingGamesStore";
+import { createBangumiParamsFromBootFile, createVNDBParamsFromBootFile, createYmgalQueryFromBootFile } from "@/lib/resolve"
+import { requestVNDB } from "./vndbApi"
+import { requestBangumi } from "./bangumiApi"
+import { requestYml } from "./ymGalApi"
+import { PendingGameInfo } from "@/store/pendingGamesStore"
 
 /**
  * 用于发送网络请求识别游戏并加结果放入仓库
@@ -11,21 +11,21 @@ import { PendingGameInfo } from "@/store/pendingGamesStore";
  */
 export async function recognizeGame(absPath: string): Promise<PendingGameInfo> {
   // 兼容不同系统的路径分隔符
-  const separator = absPath.includes("\\") ? "\\" : "/";
-  const arr = absPath.split(separator).filter(Boolean);
+  const separator = absPath.includes("\\") ? "\\" : "/"
+  const arr = absPath.split(separator).filter(Boolean)
   //拿名字
-  let name: string | undefined = "";
+  let name: string | undefined = ""
 
   // 父目录就是默认名字
-  name = arr[arr.length - 2];
+  name = arr[arr.length - 2]
 
   if (!name) {
     // 如果路径层级只有一级，拿不到倒数第二个，则回退到最后一个
-    name = arr[arr.length - 1];
+    name = arr[arr.length - 1]
   }
 
   if (!name) {
-    throw new Error(`无法从路径解析游戏名称: ${absPath}`);
+    throw new Error(`无法从路径解析游戏名称: ${absPath}`)
   }
 
   const vndbParam = createVNDBParamsFromBootFile(name)

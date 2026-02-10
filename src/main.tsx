@@ -11,6 +11,7 @@ import { messages as jaMessages } from "./locales/ja/messages";
 import { messages as koMessages } from "./locales/ko/messages";
 import './index.css'
 import './style/custom.css'
+import 'sonner/dist/styles.css'
 
 i18n.load({
   zh: zhMessages,

@@ -99,8 +99,8 @@ export function CompanionManager({ onClose }: { onClose: () => void }) {
           div::-webkit-scrollbar { display: none }
           input[type=number]::-webkit-inner-spin-button, 
           input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none;
-            margin: 0;
+            -webkit-appearance: none
+            margin: 0
           }
           input[type=number] { -moz-appearance: textfield }
         `}</style>

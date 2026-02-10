@@ -60,17 +60,17 @@ export interface VNDBResponse {
 
 //vndb返回的结果
 export interface VNDBResult {
-  alttitle: string;
-  average: number;
-  description: string;
+  alttitle: string
+  average: number
+  description: string
   developers: Developer[]
-  id: string;
-  image: Image;
-  length: number;
-  olang: string;
-  screenshots: Image[];
-  title: string;
-  titles: Title[];
+  id: string
+  image: Image
+  length: number
+  olang: string
+  screenshots: Image[]
+  title: string
+  titles: Title[]
 }
 
 // 开发商
@@ -86,9 +86,9 @@ export interface Image {
 
 //别名(其他)标题
 export interface Title {
-  lang: string;
-  official: boolean;
-  title: string;
+  lang: string
+  official: boolean
+  title: string
 }
 
 

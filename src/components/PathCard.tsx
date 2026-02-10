@@ -1,26 +1,26 @@
-import { Search, Edit3 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Label } from "@/components/ui/label";
-import { open } from "@tauri-apps/plugin-dialog";
-import { Trans } from "@lingui/react/macro";
-import { t } from "@lingui/core/macro";
+import { Search, Edit3 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import { Label } from "@/components/ui/label"
+import { open } from "@tauri-apps/plugin-dialog"
+import { Trans } from "@lingui/react/macro"
+import { t } from "@lingui/core/macro"
 
 interface PathCardProps {
-  title: string;
-  path?: string;
+  title: string
+  path?: string
   /** * onSelect 现在是可选的。
    * 如果不传 onSelect，组件会自动进入“只读浏览”模式。
    */
-  onSelect?: (selectedPath: string) => void;
+  onSelect?: (selectedPath: string) => void
   /** 强制开启只读模式，即便传了 onSelect 也不允许修改 */
-  readOnly?: boolean;
-  className?: string;
+  readOnly?: boolean
+  className?: string
 }
 
 export function PathCard({ title, path, onSelect, readOnly = false, className }: PathCardProps) {
   // 判断当前是否为“只读”状态
-  const isViewOnly = readOnly || !onSelect;
+  const isViewOnly = readOnly || !onSelect
 
   const handleAction = async () => {
     try {
@@ -31,24 +31,24 @@ export function PathCard({ title, path, onSelect, readOnly = false, className }:
           multiple: false,
           title: isViewOnly ? t`查看${title}` : t`选择${title}`,
           defaultPath: path
-        });
+        })
       } else {
         open({
           directory: false,
           multiple: false,
           title: isViewOnly ? t`查看${title}` : t`选择${title}`,
           defaultPath: path
-        });
+        })
 
       }
       // 只有在非只读模式且有回调时，才执行修改
       if (selected && typeof selected === 'string' && !isViewOnly) {
-        onSelect?.(selected);
+        onSelect?.(selected)
       }
     } catch (err) {
-      console.error("无法打开路径选择框:", err);
+      console.error("无法打开路径选择框:", err)
     }
-  };
+  }
 
   return (
     <div className={cn(
@@ -97,5 +97,5 @@ export function PathCard({ title, path, onSelect, readOnly = false, className }:
         )}
       </Button>
     </div>
-  );
+  )
 }

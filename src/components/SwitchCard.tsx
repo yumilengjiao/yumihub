@@ -1,13 +1,13 @@
 import { cn } from "@/lib/utils"
-import { Label } from "@/components/ui/label";
-import SuperSwitch from "@/components/SuperSwitch";
+import { Label } from "@/components/ui/label"
+import SuperSwitch from "@/components/SuperSwitch"
 
 interface SettingSwitchItemProps {
-  title: string;
-  description?: string;
-  checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
-  className?: string;
+  title: string
+  description?: string
+  checked: boolean
+  onCheckedChange: (checked: boolean) => void
+  className?: string
 }
 export function SwitchCard({
   title,
@@ -35,12 +35,11 @@ export function SwitchCard({
         </div>
       </div>
 
-      {/* 5. 开关变大：使用 scale 属性进行整体缩放是最快且不破坏 shadcn 布局的方法 */}
       <div className="flex items-center justify-center h-full">
         <SuperSwitch checked={checked} onChange={onCheckedChange} />
       </div>
     </div>
-  );
+  )
 }
 
 export default SwitchCard
