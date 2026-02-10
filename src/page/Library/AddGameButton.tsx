@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
-import { Plus, FilePlus, FolderSearch } from 'lucide-react';
+import { Plus, FilePlus, FolderSearch, PackagePlus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from "@/lib/utils";
 import BigPendingCard from './BigPendingCard';
 import { open } from '@tauri-apps/plugin-dialog';
 import PendingCard from './PendingCard';
+import useConfigStore from '@/store/configStore';
+import { toast } from 'sonner';
+import ArchivePreviewDialog from './ArchivePreviewDialog';
+import { invoke } from '@tauri-apps/api/core';
+import { Cmds } from '@/lib/enum';
+import { t } from "@lingui/core/macro"
 
 interface AddGameButtonProps {
   className?: string;
@@ -14,38 +20,103 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({
   className
 }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [matchSuccess, setMatchSuccess] = useState<boolean>(false)
-  const [matchMutiSuccess, setMatchMutiSuccess] = useState<boolean>(false)
-  const [singleGameBootPath, setSingleGameBootPath] = useState<string>("")
-  const [mutiGameBootPath, setMutiGameBootPath] = useState<string[]>([])
+  const [matchSuccess, setMatchSuccess] = useState<boolean>(false);
+  const [matchMutiSuccess, setMatchMutiSuccess] = useState<boolean>(false);
+
+  const [singleGameBootPath, setSingleGameBootPath] = useState<string>("");
+  const [mutiGameBootPath, setMutiGameBootPath] = useState<string[]>([]);
+
+  // 配置
+  const { config } = useConfigStore();
+
+  // 压缩包相关
+  const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
+  const [archivePath, setArchivePath] = useState<string>("");
+  const [archiveEntries, setArchiveEntries] = useState<any[]>([]);
+
+  // 这个 customDestPath 是组件内的临时状态，仅用于本次解压预览
+  const [customDestPath, setCustomDestPath] = useState<string>("");
+  const [suggestedFolderName, setSuggestedFolderName] = useState<string>("");
+
+  // 确认解压的函数
+  const handleConfirmExtract = async () => {
+    const finalPath = customDestPath || config.storage.galRootDir || "";
+    if (!finalPath) return toast.error(t`未找到保存路径`);
+
+    setIsPreviewOpen(false);
+
+    // 重点：不要对 toast.promise 本身使用 await，除非你后面还有逻辑要跑
+    toast.promise(
+      // 这里去掉 async 关键字前的 await，让闭包保持纯净
+      (async () => {
+        // 1. 调用后端解压指令
+        const parentDir = await invoke<string>(Cmds.EXTRACT_ARCHIVE, {
+          archivePath: archivePath,
+          destPath: finalPath,
+        });
+
+        // 2. 解压成功后的原有功能逻辑（完全保留）
+        setCustomDestPath("");
+        // 使用后端返回的实际物理路径
+        setMutiGameBootPath([parentDir]);
+        setMatchMutiSuccess(true);
+
+        // 返回给 success 状态显示
+        return parentDir;
+      })(),
+      {
+        loading: '📦 正在后台解压任务，请稍候...',
+        // 解决 'dir' is never read 警告：在消息中使用 dir
+        success: (dir) => `✅ 成功解压至目录: ${dir}`,
+        error: (e) => {
+          console.error("解压异常:", e);
+          return typeof e === 'string' ? e : (e.details || "解压过程出错");
+        },
+      }
+    );
+  }
+  // --- 导入压缩包 ---
+  const onImportArchive = async () => {
+    const selected = await open({
+      title: "选择压缩文件预览",
+      filters: [{ name: 'Archive', extensions: ['zip', 'rar'] }]
+    });
+    if (!selected) return;
+
+    try {
+      const path = selected as string;
+      const entries = await invoke(Cmds.GET_ARCHIVE_LIST, { path }) as any[];
+      const { rootName, cleanedEntries } = analyzeArchiveStructure(entries);
+
+      const fallbackFileName = path.split(/[\\/]/).pop()?.replace(/\.(zip|rar)$/i, "") || "NewGame";
+
+      setSuggestedFolderName(rootName || fallbackFileName);
+      setArchivePath(path);
+      setArchiveEntries(cleanedEntries);
+
+      // 注意：这里重置临时路径，弹窗初始会显示 config 里的路径
+      setCustomDestPath("");
+      setIsPreviewOpen(true);
+    } catch (e) {
+      toast.error(t`压缩包解析失败`);
+    }
+  }
 
   // 单个游戏导入按钮触发
   const onImportSingle = async () => {
-    let selected = await open({
-      title: "请选择单个游戏启动文件(非游戏目录)",
-      multiple: false,
-      directory: false,
-    })
-    if (selected === null)
-      return
-    setSingleGameBootPath(selected)
-    setMatchSuccess(true)
-    console.log(selected)
-  }
+    let selected = await open({ title: t`请选择单个游戏启动文件` });
+    if (!selected) return;
+    setSingleGameBootPath(selected as string);
+    setMatchSuccess(true);
+  };
 
   // 批量游戏导入按钮触发
   const onImportBatch = async () => {
-    let selected = await open({
-      title: "请选择多个游戏的目录(非启动文件)",
-      multiple: true,
-      directory: true,
-    })
-    if (selected === null)
-      return
-    setMatchMutiSuccess(true)
-    setMutiGameBootPath(selected)
-    console.log(selected)
-  }
+    let selected = await open({ title: t`请选择多个游戏的目录`, multiple: true, directory: true });
+    if (!selected) return;
+    setMutiGameBootPath(selected as string[]);
+    setMatchMutiSuccess(true);
+  };
 
   // 处理点击并收起
   const handleAction = async (action: () => void | Promise<void>) => {

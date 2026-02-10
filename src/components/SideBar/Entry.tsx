@@ -3,10 +3,11 @@ import { ReactNode } from "react"
 import { useLocation } from "react-router"
 
 interface EntryProps {
-  location?: string;
-  children: ReactNode,
-  secondTitle: string,
-  onClick: () => void | null
+  children: ReactNode
+  title: string
+  isExpanded: boolean
+  isActive?: boolean
+  onClick: () => void
 }
 
 export default function Entry({ location, children, secondTitle, onClick }: EntryProps) {

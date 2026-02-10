@@ -1,7 +1,9 @@
-import React, { useState, useRef, ChangeEvent } from 'react';
+import React, { useState, useRef, ChangeEvent, memo } from 'react';
 import { SortAsc, SortDesc, Search, ArrowUpDown, Trash2, X, Clock, Type, CalendarDays } from 'lucide-react'; // 引入新图标
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { GameMeta } from '@/types/game';
+import { convertFileSrc } from '@tauri-apps/api/core';
 
 interface TopToolbarProps {
   isAsc: boolean
@@ -12,6 +14,32 @@ interface TopToolbarProps {
   onDeleteModeToggle: (isDeleteMode: boolean) => void
   onOrderToggle: () => void
 }
+
+// --- 右侧海报单项 ---
+const GameGridItem = memo(({ game, isActive, onClick }: { game: GameMeta; isActive: boolean; onClick: () => void }) => {
+  const coverUrl = game.localCover ? convertFileSrc(game.localCover) : game.cover;
+  return (
+    <div
+      onClick={onClick}
+      className={cn(
+        "group relative w-full h-[210px] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 border-[3px]",
+        // 修正：使用 bg-muted 代替 bg-zinc-100，使用 border-border
+        "bg-muted border-transparent",
+        isActive ? "border-custom-500 shadow-md scale-95" : "hover:border-primary/20 shadow-sm"
+      )}
+    >
+      <img src={coverUrl} alt={game.name} className={cn("w-full h-full object-cover transition-all duration-500", isActive && "opacity-30 grayscale blur-[1px]")} />
+      {isActive && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <CheckCircle2 size={32} className="text-custom-500" strokeWidth={3} />
+        </div>
+      )}
+      <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+        <p className="text-white font-bold text-[10px] truncate leading-tight">{game.name}</p>
+      </div>
+    </div>
+  );
+});
 
 export const TopToolbar: React.FC<TopToolbarProps> = ({
   isAsc,

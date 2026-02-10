@@ -7,21 +7,21 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import useDialogStore from "@/store/dialogStore";
+} from "@/components/ui/alert-dialog"
+import useDialogStore from "@/store/dialogStore"
 
 export function GlobalConfirm() {
-  const { isOpen, options, close } = useDialogStore();
+  const { isOpen, options, close } = useDialogStore()
 
   const handleConfirm = () => {
-    options.onConfirm?.();
-    close();
-  };
+    options.onConfirm?.()
+    close()
+  }
 
   const handleCancel = () => {
-    options.onCancel?.();
-    close();
-  };
+    options.onCancel?.()
+    close()
+  }
 
   return (
     <AlertDialog open={isOpen} onOpenChange={close}>
@@ -47,5 +47,5 @@ export function GlobalConfirm() {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }

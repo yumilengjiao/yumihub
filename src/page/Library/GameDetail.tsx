@@ -1,40 +1,165 @@
-import useGameStore from '@/store/gameStore';
-import { GameMeta } from '@/types/game';
-import { useNavigate, useParams } from 'react-router';
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import useGameStore from '@/store/gameStore'
+import useConfigStore from '@/store/configStore'
+import { GameMeta } from '@/types/game'
+import { useNavigate, useParams } from 'react-router'
+import { motion, Variants } from 'framer-motion'
 import {
-  Play, Save, FolderOpen, ArrowLeft,
-  HardDrive, Clock, Info, Image as ImageIcon
-} from 'lucide-react';
-import { invoke, convertFileSrc } from '@tauri-apps/api/core';
-import { open } from '@tauri-apps/plugin-dialog';
+  Play, ArrowLeft, Image as ImageIcon,
+  CheckCircle2, Building2, RefreshCw, FolderOpen,
+  DatabaseBackup, ArchiveRestore, Monitor, HardDrive, Save
+} from 'lucide-react'
+import { invoke, convertFileSrc } from '@tauri-apps/api/core'
+import { open } from '@tauri-apps/plugin-dialog'
+import { useEffect, useState } from 'react'
+import { Cmds } from '@/lib/enum'
+import { Trans } from '@lingui/react/macro'
+import { t } from "@lingui/core/macro"
+import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
+import { requestBangumiById } from '@/api/bangumiApi'
+import { requestVNDBById } from '@/api/vndbApi'
+import { transBangumiToGameMeta, transVNDBToGameMeta } from '@/lib/resolve'
+
+// --- 动画配置 ---
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.05 } }
+}
+
+const itemVariants: Variants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
+}
 
 export default function GameDetail() {
-  const { id } = useParams<{ id: string }>();
-  const { getGameMetaById, setGameMeta } = useGameStore();
-  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>()
+  const { getGameMetaById, setGameMeta } = useGameStore()
+  const { updateConfig } = useConfigStore()
+  const navigate = useNavigate()
 
   const game = getGameMetaById(id!)!;
   const [description, setDescription] = useState("暂无游戏介绍。点击此处添加描述，记录你的冒险点滴...");
 
-  const CARD_STYLE = "bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-10 flex flex-col w-full h-full";
-  const INPUT_STYLE = "flex items-center justify-between bg-slate-50 border border-slate-100 p-6 rounded-2xl hover:bg-white hover:border-emerald-400 hover:shadow-lg transition-all cursor-pointer group";
+  const [game, setGame] = useState<GameMeta>(getGameMetaById(id!)!)
+  const [syncMode, setSyncMode] = useState<'bangumi' | 'vndb'>('bangumi')
+  const [inputId, setInputId] = useState('')
+
+  useEffect(() => {
+    async function getGame() {
+      try {
+        const gameInfo = await invoke<GameMeta>(Cmds.GET_GAME_META, { id: id })
+        setGame(gameInfo)
+      } catch (error) { console.error(error) }
+    }
+    getGame()
+  }, [id])
+
+  const backupArchive = async () => {
+    const promise = invoke(Cmds.BACKUP_ARCHIVE_BY_ID, { id: game.id })
+    toast.promise(promise, {
+      loading: t`正在备份存档...`,
+      success: t`存档备份完毕`,
+      error: (err: any) => t`备份失败: ` + (err.details || '未知错误')
+    })
+  }
+
+  const restoreGameArchive = () => {
+    const promise = invoke(Cmds.RESTORE_ARCHIVE_BY_ID, { id: game.id })
+    toast.promise(promise, {
+      loading: t`正在恢复存档...`,
+      success: t`存档恢复完毕`,
+      error: (err: any) => t`恢复失败: ` + (err.details || '未知错误')
+    })
+  }
+
+  const handleSync = async () => {
+    if (!inputId) return toast.error(t`请输入 ID`)
+    const currentMode = syncMode
+    const token = config.auth.bangumiToken
+    const promise = currentMode === 'bangumi' ? requestBangumiById(inputId, token) : requestVNDBById(inputId)
+
+    toast.promise(promise, {
+      loading: t`正在同步...`,
+      success: (newData: any) => { // 先用 any 接收
+        // 校验是否为空
+        if (!newData) {
+          throw new Error("未找到对应数据")
+        }
+
+        let updatedData: GameMeta
+
+        // 直接判断发起请求时用的模式
+        if (currentMode === 'bangumi') {
+          console.log("处理 Bangumi 数据")
+          updatedData = transBangumiToGameMeta(game, newData)
+        } else {
+          console.log("处理 VNDB 数据")
+          updatedData = transVNDBToGameMeta(game, newData)
+        }
+        updatedData.localBackground = ""
+        updatedData.localCover = ""
+
+        setGame(updatedData)
+        setGameMeta(updatedData)
+
+        return t`同步成功`
+      },
+      error: (err: any) => t`同步失败: ` + (err?.message || err)
+    })
+  }
 
   const pickPath = async (field: keyof GameMeta) => {
-    const isImage = field === 'background' || field === 'cover';
+    const isFile = field === 'localBackground' || field === 'localCover' || field === 'absPath'
     const selected = await open({
       directory: !isImage,
       multiple: false,
-      filters: isImage ? [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] }] : undefined,
-    });
-    if (selected && typeof selected === 'string') {
-      setGameMeta({ ...game, [field]: selected });
+      defaultPath: game[field] as string,
+    })
+    if (field === 'localBackground' || field === 'localCover') {
+      await invoke(Cmds.AUTHORIZE_PATH_ACCESS, { path: selected })
     }
-  };
+    if (selected && typeof selected === 'string') {
+      updateField(field, selected)
+    }
+  }
+
+  const updateField = <K extends keyof GameMeta>(field: K, value: GameMeta[K]) => {
+    const updatedGame = { ...game, [field]: value }
+    setGame(updatedGame)
+    setGameMeta(updatedGame)
+
+    if (field === 'isDisplayed') {
+      updateConfig((prev) => {
+        const currentOrder = prev.basic.gameDisplayOrder || []
+        if (value === true) {
+          if (!currentOrder.includes(game.id)) {
+            prev.basic.gameDisplayOrder = [...currentOrder, game.id]
+          }
+        } else {
+          prev.basic.gameDisplayOrder = currentOrder.filter(orderId => orderId !== game.id)
+        }
+      })
+    }
+  }
 
   return (
-    <div className="fixed inset-0 bg-[#fcfdfe] text-slate-800 overflow-y-auto z-50">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="fixed inset-0 bg-[#f8f9fa] dark:bg-zinc-950 text-slate-800 dark:text-zinc-200 overflow-y-auto z-50 scroll-smooth"
+    >
+      {/* 全局样式：隐藏数字输入框的箭头 */}
+      <style>{`
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+          -webkit-appearance: none 
+          margin: 0 
+        }
+        input[type=number] {
+          -moz-appearance: textfield
+        }
+      `}</style>
 
       <div className="relative min-h-full pb-60">
 
@@ -154,8 +279,19 @@ export default function GameDetail() {
           </motion.div>
         </AnimatePresence>
       </div>
+    </motion.div>
+  )
+}
+
+// --- 辅助组件 ---
+
+function StatItem({ label, value }: { label: string, value: string }) {
+  return (
+    <div className="flex flex-col">
+      <span className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1">{label}</span>
+      <span className="text-4xl font-[1000] font-mono text-zinc-800 dark:text-zinc-200">{value}</span>
     </div>
-  );
+  )
 }
 
 // 子组件保持不变
@@ -176,5 +312,5 @@ function InfoItem({ label, value, icon }: { label: string, value: string, icon: 
       </div>
       <p className="text-2xl font-[1000] text-slate-800 ml-8 leading-none">{value}</p>
     </div>
-  );
+  )
 }

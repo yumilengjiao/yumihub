@@ -1,14 +1,14 @@
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
 
 interface InputCardProps {
-  title: string;
-  description?: string;
-  value: string;
-  placeholder?: string;
-  onChange: (val: string) => void;
-  className?: string;
+  title: string
+  description?: string
+  value: string
+  placeholder?: string
+  onChange: (val: string) => void
+  className?: string
 }
 
 export default function InputCard({ title, description, value, placeholder, onChange, className }: InputCardProps) {
@@ -35,5 +35,5 @@ export default function InputCard({ title, description, value, placeholder, onCh
         />
       </div>
     </div>
-  );
+  )
 }

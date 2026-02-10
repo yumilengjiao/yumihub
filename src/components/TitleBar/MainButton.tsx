@@ -1,5 +1,5 @@
-import React from "react";
-import { cn } from "@/lib/utils";
+import React from "react"
+import { cn } from "@/lib/utils"
 
 const MainButton = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
   ({ children, className, ...props }, ref) => {
@@ -14,9 +14,9 @@ const MainButton = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttribute
       >
         {children}
       </button>
-    );
+    )
   }
-);
-MainButton.displayName = "MainButton";
+)
+MainButton.displayName = "MainButton"
 
 export default MainButton

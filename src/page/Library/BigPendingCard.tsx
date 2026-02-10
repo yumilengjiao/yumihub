@@ -1,58 +1,104 @@
-import { recognizeGame } from '@/api/uniform';
-import { requestBangumiById } from '@/api/bangumiApi';
-import { requestVNDBById } from '@/api/vndbApi';
-import React, { useState, useRef, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Input } from "@/components/ui/input";
-import { Loader2, Search, X, Check, FileText, WifiOff, RefreshCw } from 'lucide-react';
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
-import { PendingGameInfo } from '@/store/pendingGamesStore';
-import { GameMeta, VNDBResult, YmResult } from '@/types/game';
-import { invoke } from '@tauri-apps/api/core';
-import useGameStore from '@/store/gameStore';
-import { nanoid } from 'nanoid';
+import { recognizeGame } from '@/api/uniform'
+import { requestBangumiById } from '@/api/bangumiApi'
+import { requestVNDBById } from '@/api/vndbApi'
+import React, { useState, useRef, useMemo, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Button } from "@/components/ui/button"
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Input } from "@/components/ui/input"
+import { Loader2, Search, X, Check, FileText, WifiOff, RefreshCw } from 'lucide-react'
+import { cn, getParentDir } from "@/lib/utils"
+import { toast } from "sonner"
+import { PendingGameInfo } from '@/store/pendingGamesStore'
+import { Datum, GameMeta, VNDBResult } from '@/types/game'
+import { invoke } from '@tauri-apps/api/core'
+import useGameStore from '@/store/gameStore'
+import useConfigStore from '@/store/configStore'
+import { SideBarMode } from "@/types/config"
+import { nanoid } from 'nanoid'
+import { Cmds } from '@/lib/enum'
+import { Trans } from '@lingui/react/macro'
+import { t } from '@lingui/core/macro'
+
+// 导入你定义的转换工具
+import { transBangumiToGameMeta, transVNDBToGameMeta } from '@/lib/resolve'
 
 interface BigPendingCardProps {
-  absPath: string;
-  onCancel: () => void;
+  absPath: string
+  onCancel: () => void
 }
 
 const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) => {
-  const [isFetching, setIsFetching] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [resultData, setResultData] = useState<PendingGameInfo | null>(null);
-  const [activeSource, setActiveSource] = useState<'vndb' | 'bangumi' | 'ymgal'>('bangumi');
-  const [searchId, setSearchId] = useState('');
+  const [isFetching, setIsFetching] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [resultData, setResultData] = useState<PendingGameInfo | null>(null)
+  const [activeSource, setActiveSource] = useState<'vndb' | 'bangumi' | 'ymgal'>('bangumi')
+  const [searchId, setSearchId] = useState('')
 
+  const { config } = useConfigStore()
   const { addGameMeta } = useGameStore()
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const isRequestingRef = useRef(false);
+  const sidebarMode = useConfigStore((state) => state.config.interface.sidebarMode)
+  const xOffset = sidebarMode === SideBarMode.NormalFixed ? 75 : 0
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const isRequestingRef = useRef(false)
 
   const extractedName = useMemo(() => {
-    const parts = absPath.split(/[\\/]/).filter(Boolean);
-    return parts.length >= 2 ? parts[parts.length - 2] : parts[0] || "Unknown";
-  }, [absPath]);
+    const parts = absPath.split(/[\\/]/).filter(Boolean)
+    return parts.length >= 1 ? parts[parts.length - 1].replace(/\.exe$/i, '') : "Unknown"
+  }, [absPath])
 
   // --- 数据显示映射逻辑 ---
   const displayInfo = useMemo(() => {
-    if (!resultData) return null;
+    if (!resultData) return null
 
-    // Bangumi 映射
-    if (activeSource === 'bangumi' && resultData.bangumi) {
-      // 兼容两种情况：1. 搜索返回的 data 数组；2. ID查询返回的单体对象
-      const d = (resultData.bangumi as any).data ? (resultData.bangumi as any).data[0] : (resultData.bangumi as any);
-      if (!d) return null;
-      return {
-        id: d.id?.toString(),
-        title: d.name_cn || d.name,
-        desc: d.summary || "暂无描述",
-        cover: d.images?.large || d.image || ""
-      };
+    const partial: Omit<GameMeta, 'cover' | 'background' | 'description' | 'developer'> = {
+      id: '',
+      name: (activeSource === 'bangumi' ? (resultData.bangumi?.name_cn || resultData.bangumi?.name) : resultData.vndb?.alttitle) || extractedName,
+      absPath: absPath,
+      isPassed: false,
+      isDisplayed: false,
+      playTime: 0,
     }
+
+    try {
+      if (activeSource === 'bangumi' && resultData.bangumi) {
+        const bData = Array.isArray((resultData.bangumi as any).data)
+          ? (resultData.bangumi as any).data[0]
+          : resultData.bangumi
+
+        if (!bData) return null
+        const meta = transBangumiToGameMeta(partial, bData as Datum)
+        return {
+          title: meta.name,
+          desc: meta.description,
+          developer: meta.developer,
+          cover: meta.cover,
+          background: meta.background
+        }
+      }
+
+      if (activeSource === 'vndb' && resultData.vndb) {
+        const vData = (resultData.vndb as any).results ? (resultData.vndb as any).results[0] : resultData.vndb
+        if (!vData) return null
+
+        const meta = transVNDBToGameMeta(partial, vData as VNDBResult)
+        return {
+          title: meta.name,
+          desc: meta.description,
+          developer: meta.developer,
+          cover: meta.cover,
+          background: meta.background
+        }
+      }
+
+      // Ymgal 逻辑保持一致...
+    } catch (e) {
+      console.error("解析预览数据失败:", e)
+    }
+    return null
+  }, [resultData, activeSource, extractedName, absPath])
 
     // VNDB 映射
     if (activeSource === 'vndb' && resultData.vndb?.results?.[0]) {
@@ -81,102 +127,119 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
 
   // --- ID 搜索逻辑更新 ---
   const handleIdSearch = async () => {
-    if (!searchId) return;
-    setIsUpdating(true);
+    if (!searchId) return
+    setIsUpdating(true)
     try {
       if (activeSource === 'bangumi') {
-        const res = await requestBangumiById(searchId);
-        if (res) {
-          // 注意：Bangumi ID 查询返回的是单体对象，我们需要更新 resultData
-          setResultData(prev => prev ? ({ ...prev, bangumi: res as any }) : null);
-          toast.success("Bangumi 数据已同步");
-        }
+        const res = await requestBangumiById(searchId, config.auth.bangumiToken)
+        // 注意：这里返回的 res 已经是 Datum 类型
+        if (res) setResultData(prev => prev ? ({ ...prev, bangumi: res as Datum }) : { absPath, bangumi: res as Datum, vndb: null, ymgal: null })
       } else if (activeSource === 'vndb') {
-        const res = await requestVNDBById(searchId);
-        if (res && res.results?.length > 0) {
-          setResultData(prev => prev ? ({ ...prev, vndb: res }) : null);
-          toast.success("VNDB 数据已同步");
-        }
+        const res = await requestVNDBById(searchId)
+        // VNDB 按 ID 查返回的是单条 VNDBResult
+        if (res) setResultData(prev => prev ? ({ ...prev, vndb: res as any }) : { absPath, bangumi: null, vndb: res as any, ymgal: null })
       }
+      toast.success(t`数据已同步`)
     } catch (err) {
-      toast.error("查询失败，请检查 ID 是否正确");
+      toast.error(t`查询失败，请检查 ID 是否正确`)
     } finally {
-      setIsUpdating(false);
-      setSearchId('');
+      setIsUpdating(false)
+      setSearchId('')
     }
-  };
+  }
 
   const handleFetchMetadata = async () => {
-    setIsFetching(true);
-    isRequestingRef.current = true;
-    if (timerRef.current) clearTimeout(timerRef.current);
+    setIsFetching(true)
+    isRequestingRef.current = true
+    if (timerRef.current) clearTimeout(timerRef.current)
 
     timerRef.current = setTimeout(() => {
       if (isRequestingRef.current) {
-        setIsFetching(false);
-        isRequestingRef.current = false;
-        toast.error("匹配超时", { icon: <WifiOff className="text-red-500" size={18} /> });
+        setIsFetching(false)
+        isRequestingRef.current = false
+        toast.error(t`匹配超时`, { icon: <WifiOff className="text-red-500" size={18} /> })
       }
-    }, 60000);
+    }, 60000)
 
     try {
-      const res = await recognizeGame(absPath);
+      const res = await recognizeGame(absPath)
       if (isRequestingRef.current) {
-        setResultData(res);
-        setIsFetching(false);
-        isRequestingRef.current = false;
-        if (timerRef.current) clearTimeout(timerRef.current);
+        setResultData(res)
+        setIsFetching(false)
+        isRequestingRef.current = false
+        if (timerRef.current) clearTimeout(timerRef.current)
+
+        // --- 核心逻辑：自动切换到有数据的源 ---
+        if (res.bangumi) {
+          setActiveSource('bangumi')
+        } else if (res.vndb) {
+          setActiveSource('vndb')
+        } else if (res.ymgal) {
+          setActiveSource('ymgal')
+        }
       }
     } catch (err) {
-      setIsFetching(false);
-      isRequestingRef.current = false;
-      toast.error("请求发生错误");
+      setIsFetching(false)
+      isRequestingRef.current = false
+      toast.error(t`网络请求失败`)
     }
   };
 
   const handleFinalConfirm = async (useAutoData: boolean) => {
-    const finalGame: GameMeta = {
-      id: nanoid(),
-      absPath: absPath,
-      name: useAutoData ? (displayInfo?.title || extractedName) : extractedName,
-      cover: useAutoData ? (displayInfo?.cover || "") : "",
-      background: "",
-      playTime: 0,
-      length: 0,
-    };
-
+    const loadingId = toast.loading(t`正在导入游戏...`)
     try {
-      await invoke("add_new_game", { game: finalGame });
-      toast.success("导入成功", { id: finalGame.id });
+      let dir = getParentDir(absPath)
+      let size = await invoke<number>(Cmds.GET_GAME_SIZE, { dir: dir })
+
+      const finalGame: GameMeta = {
+        id: nanoid(),
+        absPath: absPath,
+        isPassed: false,
+        isDisplayed: false,
+        name: useAutoData ? (displayInfo?.title || extractedName) : extractedName,
+        cover: useAutoData ? (displayInfo?.cover || "") : "",
+        description: useAutoData ? (displayInfo?.desc || "") : "",
+        developer: useAutoData ? (displayInfo?.developer || "") : "",
+        background: useAutoData ? (displayInfo?.background || "") : "",
+        playTime: 0,
+        length: 0,
+        size: size
+      }
+
+      await invoke("add_new_game", { game: finalGame })
       addGameMeta(finalGame)
+
+      toast.success(t`导入成功`, { id: loadingId })
       onCancel()
     } catch (err) {
-      toast.error("导入失败", { id: finalGame.id });
-      console.error(err)
+      toast.error(t`导入失败,id: `, { id: loadingId })
     }
-
-  };
+  }
 
   const handleCancelAll = () => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    isRequestingRef.current = false;
-    setIsFetching(false);
-    setResultData(null);
-    onCancel();
-  };
+    if (timerRef.current) clearTimeout(timerRef.current)
+    isRequestingRef.current = false
+    setIsFetching(false)
+    onCancel()
+  }
 
   useEffect(() => {
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, []);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  }, [])
 
   return (
-    <div className="fixed top-12 left-1/2 -translate-x-1/2 z-100 w-[95%] max-w-6xl pointer-events-none">
-      <motion.div layout className="pointer-events-auto bg-white shadow-2xl rounded-[32px] overflow-hidden border border-zinc-100">
+    <motion.div
+      initial={false}
+      animate={{ x: `calc(-50% + ${xOffset}px)` }}
+      transition={{ type: "spring", stiffness: 400, damping: 40 }}
+      className="fixed top-12 left-1/2 z-100 w-[95%] max-w-6xl pointer-events-none"
+    >
+      <div className="pointer-events-auto bg-zinc-100 dark:bg-zinc-800 shadow-2xl rounded-[32px] overflow-hidden border border-zinc-200/50 dark:border-zinc-700/50 flex flex-col">
 
         {/* --- 状态一：顶部栏 --- */}
         <div className="h-20 px-8 flex items-center justify-between gap-10">
           <div className="flex items-center gap-5 flex-1 min-w-0">
-            <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center text-white shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-zinc-900 dark:bg-zinc-600 flex items-center justify-center text-white shrink-0 shadow-lg">
               <FileText size={28} strokeWidth={2.5} />
             </div>
             <div className="min-w-0">
@@ -248,9 +311,20 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
                     <h3 className="text-4xl font-black text-zinc-900 leading-none tracking-tighter uppercase italic flex-1 pr-4">
                       {displayInfo?.title || "未找到匹配数据"}
                     </h3>
-                    <div className="flex bg-zinc-100 p-1.5 rounded-xl shrink-0">
-                      {['vndb', 'bangumi', 'ymgal'].map(src => (
-                        <button key={src} onClick={() => { setActiveSource(src as any); setSearchId(''); }} className={cn("px-4 py-2 text-[10px] font-black rounded-lg uppercase transition-all", activeSource === src ? "bg-white shadow-sm text-zinc-900" : "text-zinc-400")}>{src}</button>
+                    <div className="flex bg-zinc-200 dark:bg-zinc-700 p-1.5 rounded-xl shrink-0 border border-zinc-300/50 dark:border-zinc-600">
+                      {(['bangumi', 'vndb'] as const).map(src => (
+                        <button
+                          key={src}
+                          onClick={() => { setActiveSource(src); setSearchId('') }}
+                          className={cn(
+                            "px-4 py-2 text-[10px] font-black rounded-lg uppercase transition-all",
+                            activeSource === src
+                              ? "bg-white dark:bg-zinc-200 shadow-md text-zinc-900"
+                              : "text-zinc-400 hover:text-zinc-600"
+                          )}
+                        >
+                          {src}
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -271,9 +345,9 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
-    </div>
-  );
-};
+      </div>
+    </motion.div>
+  )
+}
 
 export default BigPendingCard

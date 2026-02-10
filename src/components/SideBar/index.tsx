@@ -1,10 +1,44 @@
-import { cn } from "@/lib/utils";
-import Trigger from "./Trigger";
-import { useState } from "react";
-import Entry from "./Entry";
-import { Gamepad2, House, Settings2, UserRound } from "lucide-react";
-import { Avatar } from "./Avatar";
-import { useNavigate } from "react-router";
+import { cn } from "@/lib/utils"
+import Trigger from "./Trigger"
+import { useState, useMemo } from "react"
+import Entry from "./Entry"
+import { House, UserRound, Settings2, Gamepad2 } from "lucide-react"
+import { Avatar } from "./Avatar"
+import { useNavigate, useLocation } from "react-router"
+import useConfigStore from "@/store/configStore"
+import { t } from "@lingui/core/macro"
+
+export default function Sidebar() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const sidebarMode = useConfigStore(s => s.config.interface.sidebarMode) || "Trigger"
+  const [isHovered, setIsHovered] = useState(false)
+
+  // 展开逻辑：Fixed 模式锁死状态，Trigger 模式响应 Hover
+  const isExpanded = useMemo(() => {
+    if (sidebarMode === "NormalFixed") return true
+    if (sidebarMode === "ShortFixed") return false
+    return isHovered
+  }, [sidebarMode, isHovered])
+
+  // 容器样式逻辑
+  const containerClass = useMemo(() => {
+    const base = "h-full flex flex-col transition-all duration-300 ease-in-out border-r border-white/10 shadow-xl"
+    switch (sidebarMode) {
+      case "NormalFixed":
+        return cn(base, "relative w-full translate-x-0")
+      case "ShortFixed":
+        return cn(base, "relative w-full translate-x-0")
+      case "Trigger":
+      default:
+        // Trigger 模式必须用 fixed 悬浮在内容之上
+        return cn(
+          base,
+          "fixed left-0 top-0 z-50 w-[160px] bg-black/55",
+          isHovered ? "translate-x-0" : "-translate-x-full shadow-none"
+        )
+    }
+  }, [sidebarMode, isHovered])
 
 export default function index() {
   const [active, setActive] = useState(false)
@@ -48,8 +82,8 @@ export default function index() {
             <Settings2 className="h-full w-auto" />
           </Entry>
         </div>
-      </div>
-    </div >
+      </aside >
+    </>
   )
 }
 

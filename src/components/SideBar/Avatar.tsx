@@ -1,11 +1,11 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 import defaultAvatar from "@/assets/runasama😍😍😍😍.jpg"
-import useUserStore from "@/store/userStore";
-import { convertFileSrc } from "@tauri-apps/api/core";
-import { useEffect, useState } from "react";
+import useUserStore from "@/store/userStore"
+import { convertFileSrc } from "@tauri-apps/api/core"
+import { useEffect, useState } from "react"
 
 interface AvatarProps {
-  className?: string;
+  className?: string
 }
 
 export const Avatar = ({ className }: AvatarProps) => {
@@ -39,5 +39,5 @@ export const Avatar = ({ className }: AvatarProps) => {
       {/* 这是一个非常细微的覆盖层，让图片更有质感 */}
       <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-full" />
     </div>
-  );
-};
+  )
+}
