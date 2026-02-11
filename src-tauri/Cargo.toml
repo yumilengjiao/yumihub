@@ -14,7 +14,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [workspace]
-members = ["crates/database"]
+members = ["crates/database", "crates/theme"]
 resolver = "2"
 
 [workspace.dependencies]
@@ -25,6 +25,7 @@ sqlx = { version = "0.8", features = [
   "chrono",
 ] }
 serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 tokio = "1.49.0"
 chrono = { version = "0.4.43", features = ["serde"] }
 
@@ -33,8 +34,8 @@ sqlx = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true }
 chrono = { workspace = true }
-serde_json = "1"
 database = { path = "./crates/database" }
+custom-theme = {path = "./crates/theme"}
 tauri = { version = "2", features = ["protocol-asset", "tray-icon"] }
 tauri-plugin-opener = "2"
 thiserror = "2.0.17"
