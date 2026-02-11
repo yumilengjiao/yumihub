@@ -20,6 +20,7 @@ export default function Library() {
   const navigate = useNavigate()
 
   const displayGames = useMemo(() => {
+    console.log(isAsc)
     if (sortMode == "passed") {
       return filterGameMetaListByName(keyword).filter(g => g.isPassed)
     }
