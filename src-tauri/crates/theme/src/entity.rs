@@ -56,8 +56,6 @@ pub struct PageConfig {
     pub content: Vec<Node>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
 /// 节点,所有元素都是Node
 ///
 /// * `id`: 节点标识,作为react组件的key,如果没有在配置文件里面写默认用树路径
@@ -66,14 +64,18 @@ pub struct PageConfig {
 /// * `props`: 节点的参数
 /// * `children`: [容器]--子Node
 /// * `actions`: 可以触发的事件
+/// * `hooks`: 给组件注入需要的数据,相当于一个任务,前端看到任务会注入相对应的数据
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Node {
     pub id: Option<String>,
-    #[serde(rename = "type")]
     pub node_type: String,
     pub style: Option<Vec<String>>, // 这里写的是taiwind的类
-    pub props: Option<serde_json::Value>,
+    pub props: Option<Value>,
     pub children: Option<Vec<Node>>,
+    pub consume: Option<Vec<String>>,
     pub actions: Option<HashMap<String, Action>>,
+    pub hooks: Option<Vec<String>>,
 }
 
 /// 事件
