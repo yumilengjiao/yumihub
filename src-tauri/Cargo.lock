@@ -991,6 +991,7 @@ name = "custom-theme"
 version = "0.1.0"
 dependencies = [
  "json5",
+ "lazy_static",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
@@ -7760,6 +7761,7 @@ dependencies = [
  "reqwest 0.13.1",
  "screenshots",
  "serde",
+ "serde_json",
  "sqlx",
  "sysinfo 0.38.0",
  "tauri",
