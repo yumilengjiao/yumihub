@@ -6,8 +6,8 @@ use std::collections::HashMap;
 ///
 /// * `config`: 配置文件元信息
 /// * `layout`: 布局信息
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct ThemeConfig {
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+pub struct ThemeIr {
     pub config: MetaConfig,
     pub layout: Layout,
 }
@@ -17,10 +17,9 @@ pub struct ThemeConfig {
 /// * `version`: 协议版本
 /// * `theme_name`: 主题名称
 /// * `variables`: css变量
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct MetaConfig {
-    pub version: String,
     pub theme_name: String,
     pub variables: Option<HashMap<String, String>>,
 }
@@ -29,7 +28,7 @@ pub struct MetaConfig {
 ///
 /// * `global`: 全局组件的节点树
 /// * `pages`: 各个路由界面的节点树
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Layout {
     pub global: Option<GlobalLayout>,
@@ -38,25 +37,20 @@ pub struct Layout {
 
 /// 全局组件的配置
 ///
-/// * `widget`: Node,节点树
+/// * `widget`: AstNode,节点树
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct GlobalLayout {
     widget: Option<Node>,
 }
-
 /// 每个路由界面的配置信息
 ///
 /// * `name`: 一级路由名称
-/// * `content`: 路由内容(Node,节点树)
+/// * `content`: 路由内容(AstNode,节点树)
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct PageConfig {
-    pub name: String,
-    pub content: Vec<Node>,
-}
-
-/// 节点,所有元素都是Node
+pub struct PageConfig {}
+/// 节点,所有元素都是AstNode
 ///
 /// * `id`: 节点标识,作为react组件的key,如果没有在配置文件里面写默认用树路径
 /// * `node_type`: 节点类型，判定是Container还是Component
@@ -68,12 +62,10 @@ pub struct PageConfig {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Node {
-    pub id: Option<String>,
+    pub id: String,
     pub node_type: String,
-    pub style: Option<Vec<String>>, // 这里写的是taiwind的类
-    pub props: Option<Value>,
+    pub style: Vec<String>, // 这里写的是taiwind的类
     pub children: Option<Vec<Node>>,
-    pub consume: Option<Vec<String>>,
     pub actions: Option<HashMap<String, Action>>,
     pub hooks: Option<Vec<String>>,
 }
@@ -83,7 +75,6 @@ pub struct Node {
 /// * `command`: 事件名称
 /// * `params`:  传递给命令的参数
 #[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
 pub struct Action {
     pub command: String,
     pub params: Option<Value>,
