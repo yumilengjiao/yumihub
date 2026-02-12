@@ -4,12 +4,16 @@ use crate::{
         ast::{AstNode, AstThemeConfig},
         ctx::ThemeContext,
     },
-    transform::normalize::LogicStep,
 };
 
 mod normalize;
+mod resolve;
+
+// 各种normalize阶段处理函数
+pub type LogicStep = fn(&mut AstNode, &mut ThemeContext);
 
 pub fn run(ast_config: &mut AstThemeConfig, ctx: &mut ThemeContext) -> Result<(), Vec<ThemeErr>> {
+    resolve::resolve_variables(ast_config, ctx);
     normalize::run(ast_config, ctx);
     Ok(())
 }

@@ -1,3 +1,5 @@
+//! AST处理的第一阶段,此模块用于抽象语法树的常规化处理，即补全一些默认需要的属性
+
 use serde_json::json;
 
 use crate::{
@@ -5,11 +7,8 @@ use crate::{
         ast::{AstNode, AstThemeConfig, NodeType},
         ctx::ThemeContext,
     },
-    transform::walk_node,
+    transform::{LogicStep, walk_node},
 };
-
-// 各种normalize阶段处理函数
-pub type LogicStep = fn(&mut AstNode, &mut ThemeContext);
 
 /// 对抽象语法树进行常规化处理,补全缺失信息
 ///

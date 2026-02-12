@@ -22,7 +22,7 @@ pub struct AstThemeConfig {
 pub struct AstMetaConfig {
     pub version: String,
     pub theme_name: String,
-    pub variables: Option<HashMap<String, String>>,
+    pub variables: Option<HashMap<String, Value>>,
 }
 
 /// 布局配置信息
