@@ -27,23 +27,15 @@ pub struct AstMetaConfig {
 
 /// 布局配置信息
 ///
-/// * `global`: 全局组件的节点树
-/// * `pages`: 各个路由界面的节点树
+/// * `global`: 全局组件的根节点
+/// * `pages`: 各个路由界面的节点树配置项
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AstLayout {
-    pub global: Option<AstGlobalLayout>,
+    pub global: Option<AstNode>,
     pub pages: HashMap<String, AstPageConfig>,
 }
 
-/// 全局组件的配置
-///
-/// * `widget`: AstNode,节点树
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct AstGlobalLayout {
-    pub widget: AstNode,
-}
 /// 每个路由界面的配置信息
 ///
 /// * `name`: 一级路由名称
@@ -54,10 +46,30 @@ pub struct AstPageConfig {
     pub name: String,
     pub content: AstNode,
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum NodeType {
+    Node,
+    Row,
+    Col,
+    Component,
+}
+
+impl From<&str> for NodeType {
+    fn from(s: &str) -> Self {
+        match s {
+            "row" => NodeType::Row,
+            "col" => NodeType::Col,
+            "component" => NodeType::Component,
+            _ => NodeType::Node,
+        }
+    }
+}
+
 /// 节点,所有元素都是AstNode
 ///
 /// * `id`: 节点标识,作为react组件的key,如果没有在配置文件里面写默认用树路径
-/// * `node_type`: 节点类型，判定是Container还是Component
+/// * `nt`: 节点类型(node_type)，判定是Container还是Component
 /// * `style`: 节点的taiwind属性
 /// * `props`: 节点的参数
 /// * `children`: [容器]--子Node
@@ -67,7 +79,7 @@ pub struct AstPageConfig {
 #[serde(rename_all = "camelCase")]
 pub struct AstNode {
     pub id: Option<u32>,
-    pub node_type: String,
+    pub nt: Option<NodeType>,
     pub style: Option<Vec<String>>, // 这里写的是taiwind的类
     pub props: Option<Value>,
     pub children: Option<Vec<AstNode>>,

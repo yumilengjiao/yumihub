@@ -1,4 +1,7 @@
-use std::{fs::File, io::BufReader, path::PathBuf};
+use std::{
+    fs::{self},
+    path::PathBuf,
+};
 
 use crate::{errors::ThemeErr, schema::ast::AstThemeConfig};
 
@@ -6,9 +9,9 @@ use crate::{errors::ThemeErr, schema::ast::AstThemeConfig};
 ///
 /// * `them_config_path`: 主题配置文件的路径
 pub fn parse_to_ast(theme_config_path: PathBuf) -> Result<AstThemeConfig, ThemeErr> {
-    let config_file = File::open(theme_config_path).map_err(|_| ThemeErr::Io)?;
-    let config_reader = BufReader::new(config_file);
-    let config =
-        serde_json::from_reader::<_, AstThemeConfig>(config_reader).map_err(|_| ThemeErr::Io)?;
+    let config_file =
+        fs::read_to_string(theme_config_path).map_err(|e| ThemeErr::Io(e.to_string()))?;
+    let config = json5::from_str::<AstThemeConfig>(&config_file)
+        .map_err(|e| ThemeErr::Syntax(e.to_string()))?;
     Ok(config)
 }

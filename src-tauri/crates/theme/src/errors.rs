@@ -20,6 +20,6 @@ pub enum ThemeErr {
     #[error("解析失败，存在重复的id: {0}")]
     IdRepeat(String),
 
-    #[error("IO操作时发生错误")]
-    Io,
+    #[error("IO操作时发生错误: {0}")]
+    Io(String),
 }

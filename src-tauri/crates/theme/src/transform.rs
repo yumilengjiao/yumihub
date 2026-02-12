@@ -4,6 +4,7 @@ use crate::{
         ast::{AstNode, AstThemeConfig},
         ctx::ThemeContext,
     },
+    transform::normalize::LogicStep,
 };
 
 mod normalize;
@@ -18,17 +19,16 @@ pub fn run(ast_config: &mut AstThemeConfig, ctx: &mut ThemeContext) -> Result<()
 /// * `node`: 节点
 /// * `ctx`: 上下文
 /// * `f`: 逻辑闭包
-fn walk_node<F>(node: &mut AstNode, ctx: &mut ThemeContext, f: &F)
-where
-    F: Fn(&mut AstNode, &mut ThemeContext),
-{
+fn walk_node(node: &mut AstNode, ctx: &mut ThemeContext, funcs: &[LogicStep]) {
     // 执行当前阶段的逻辑
-    f(node, ctx);
+    for f in funcs {
+        f(node, ctx);
+    }
 
     // 递归子节点
     if let Some(children) = &mut node.children {
         for child in children {
-            walk_node(child, ctx, f);
+            walk_node(child, ctx, funcs);
         }
     }
 }
