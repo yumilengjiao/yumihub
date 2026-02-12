@@ -1,0 +1,69 @@
+{
+  "config": {
+    "version": "1.0",
+    "themeName": "cyberpunk"
+  },
+  "layout": {
+    "global": {
+      "background": {
+        "type": "VideoBG",
+        "props": {
+          "src": "bg.mp4"
+        }
+      },
+      "widgets": [
+        {
+          "id": "global-clock",
+          "type": "ClockWidget",
+          "props": {
+            "format": "HH:mm",
+            "position": {
+              "right": 20,
+              "top": 20
+            }
+          }
+        },
+        {
+          "id": "system-monitor",
+          "type": "StatWidget",
+          "props": {
+            "metrics": [
+              "cpu",
+              "fps"
+            ],
+            "position": {
+              "left": 20,
+              "top": 20
+            }
+          }
+        }
+      ]
+    },
+    "pages": {
+      "/": {
+        "name": "首页",
+        "content": [
+          {
+            "id": "p1-c1",
+            "type": "HeroBanner",
+            "props": {
+              "text": "GO!"
+            }
+          }
+        ]
+      },
+      "/games": {
+        "name": "游戏库",
+        "content": [
+          {
+            "id": "p2-c1",
+            "type": "GameGrid",
+            "props": {
+              "filter": "installed"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

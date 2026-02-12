@@ -16,6 +16,7 @@ mod sys;
 mod tray;
 mod user;
 mod util;
+mod theme;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
