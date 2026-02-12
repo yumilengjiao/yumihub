@@ -47,149 +47,197 @@ fn fill_props(node: &mut AstNode, _ctx: &mut ThemeContext) {
 
     match nt {
         NodeType::Row => {
-            // 获取父容器的总容量 (默认 12 栅格)
-            // 这里假设 rows 代表“总列数/总格数”
-            let total_capacity = obj
+            // 获取总列数
+            let total_cols = obj
                 .entry("cols")
-                .or_insert(json!(12)) // 默认是 12 格
-                .as_u64()
-                .unwrap_or(12) as i64;
+                .or_insert(json!(20))
+                .as_i64()
+                .unwrap_or(20);
 
-            // 如果没有孩子，直接返回
             if node.children.is_none() {
                 return;
             }
             let children = node.children.as_mut().unwrap();
 
             // =====================================================
-            // 第一轮：统计已占用的空间 和 需要自动填充的子节点数量
+            // 第一步：确定所有节点的 start (推算水位线)
             // =====================================================
-            let mut used_span = 0;
-            let mut unset_count = 0;
+            let mut current_waterline = 1;
 
-            for child in children.iter() {
-                // 读取一下孩子的 props
-                if let Some(child_props) = child.props.as_ref().and_then(|p| p.as_object()) {
-                    if let Some(span) = child_props.get("span").and_then(|v| v.as_i64()) {
-                        used_span += span;
-                    } else {
-                        unset_count += 1;
-                    }
+            for child in children.iter_mut() {
+                let p = child
+                    .props
+                    .get_or_insert(json!({}))
+                    .as_object_mut()
+                    .unwrap();
+
+                // 补全 start: 只有在没写的时候才插入
+                if let Some(st) = p.get("start").and_then(|v| v.as_i64()) {
+                    current_waterline = st;
                 } else {
-                    unset_count += 1; // props 都没有，肯定没 span
+                    p.insert("start".to_string(), json!(current_waterline));
+                }
+
+                // 更新下一位的参考水位线:
+                // 如果用户写了 span，水位线直接跳过这段 span；
+                // 如果没写 span，我们先假设它至少占 1 格，给下一个组件留个起步位
+                if let Some(sp) = p.get("span").and_then(|v| v.as_i64()) {
+                    current_waterline += sp;
+                } else {
+                    current_waterline += 1;
                 }
             }
 
             // =====================================================
-            // 计算逻辑
+            // 第二步：根据补全后的 start 重新排序 (确保计算 end_point 的逻辑是有序的)
             // =====================================================
-            let remaining_span = total_capacity - used_span;
+            children.sort_by_key(|c| {
+                c.props
+                    .as_ref()
+                    .and_then(|p| p.get("start"))
+                    .and_then(|v| v.as_i64())
+                    .unwrap_or(0)
+            });
 
-            // 情况 A: 空间已经爆了，或者刚好用完
-            if remaining_span <= 0 {
-                println!("无空间分配");
-            }
-            // 情况 B: 有剩余空间，且有孩子需要分配
-            else if unset_count > 0 {
-                let per_child = remaining_span / unset_count; // 整数除法
-                let mut remainder = remaining_span % unset_count; // 余数，处理除不尽的情况
+            // =====================================================
+            // 第三步：计算每一个没有 span 的节点的跨度 (吃到下一个 start)
+            // =====================================================
+            let count = children.len();
+            for i in 0..count {
+                // 注意：这里需要再次检查 props 是否存在，因为我们要修改它
+                let current_start = children[i]
+                    .props
+                    .as_ref()
+                    .unwrap()
+                    .get("start")
+                    .unwrap()
+                    .as_i64()
+                    .unwrap();
 
-                // =====================================================
-                // 第二轮：填补空缺
-                // =====================================================
-                for child in children.iter_mut() {
-                    let child_props = child.props.get_or_insert(json!({}));
-
-                    // 只有当没有 "span" 字段时才插入
-                    if child_props.get("span").is_none() {
-                        // 基础分配量
-                        let mut my_span = per_child;
-
-                        // 如果有余数（比如剩 5 格给 2 人分，第一人拿 3，第二人拿 2）
-                        if remainder > 0 {
-                            my_span += 1;
-                            remainder -= 1;
-                        }
-
-                        // 写入 JSON
-                        if let Some(p_obj) = child_props.as_object_mut() {
-                            p_obj.insert("span".to_string(), json!(my_span));
-                        }
-                    }
+                // 如果当前节点已经有了 span (不管是配置带的还是第一步带的)，就跳过计算
+                // 这样就不会把用户写的 span: 2 覆盖成 1 了
+                if children[i].props.as_ref().unwrap().get("span").is_some() {
+                    continue;
                 }
+
+                // 寻找下一个边界
+                let end_point = if i + 1 < count {
+                    // 下一个节点的 start 是当前节点的物理边界
+                    children[i + 1]
+                        .props
+                        .as_ref()
+                        .unwrap()
+                        .get("start")
+                        .unwrap()
+                        .as_i64()
+                        .unwrap()
+                } else {
+                    // 最后一个节点直接吃到容器边缘 (total_cols + 1)
+                    total_cols + 1
+                };
+
+                let computed_span = (end_point - current_start).max(1);
+
+                // 补全缺失的 span
+                let p = children[i].props.as_mut().unwrap().as_object_mut().unwrap();
+                p.insert("span".to_string(), json!(computed_span));
             }
         }
         NodeType::Col => {
-            // 获取父容器的总容量 (默认 12 栅格)
-            // 这里假设 rows 代表“总列数/总格数”
-            let total_capacity = obj
+            // 获取总行数
+            let total_rows = obj
                 .entry("rows")
-                .or_insert(json!(12)) // 默认是 12 格
-                .as_u64()
-                .unwrap_or(12) as i64;
+                .or_insert(json!(20))
+                .as_i64()
+                .unwrap_or(20);
 
-            // 如果没有孩子，直接返回
             if node.children.is_none() {
                 return;
             }
             let children = node.children.as_mut().unwrap();
 
             // =====================================================
-            // 第一轮：统计已占用的空间 和 需要自动填充的子节点数量
+            // 第一步：确定所有节点的 start (推算水位线)
             // =====================================================
-            let mut used_span = 0;
-            let mut unset_count = 0;
+            let mut current_waterline = 1;
 
-            for child in children.iter() {
-                // 读取一下孩子的 props
-                if let Some(child_props) = child.props.as_ref().and_then(|p| p.as_object()) {
-                    if let Some(span) = child_props.get("span").and_then(|v| v.as_i64()) {
-                        used_span += span;
-                    } else {
-                        unset_count += 1;
-                    }
+            for child in children.iter_mut() {
+                let p = child
+                    .props
+                    .get_or_insert(json!({}))
+                    .as_object_mut()
+                    .unwrap();
+
+                // 补全 start: 只有在没写的时候才插入
+                if let Some(st) = p.get("start").and_then(|v| v.as_i64()) {
+                    current_waterline = st;
                 } else {
-                    unset_count += 1; // props 都没有，肯定没 span
+                    p.insert("start".to_string(), json!(current_waterline));
+                }
+
+                // 更新下一位的参考水位线:
+                // 如果用户写了 span，水位线直接跳过这段 span；
+                // 如果没写 span，我们先假设它至少占 1 格，给下一个组件留个起步位
+                if let Some(sp) = p.get("span").and_then(|v| v.as_i64()) {
+                    current_waterline += sp;
+                } else {
+                    current_waterline += 1;
                 }
             }
 
             // =====================================================
-            // 计算逻辑
+            // 第二步：根据补全后的 start 重新排序 (确保计算 end_point 的逻辑是有序的)
             // =====================================================
-            let remaining_span = total_capacity - used_span;
+            children.sort_by_key(|c| {
+                c.props
+                    .as_ref()
+                    .and_then(|p| p.get("start"))
+                    .and_then(|v| v.as_i64())
+                    .unwrap_or(0)
+            });
 
-            // 情况 A: 空间已经爆了，或者刚好用完
-            if remaining_span <= 0 {
-                println!("无空间分配");
-            }
-            // 情况 B: 有剩余空间，且有孩子需要分配
-            else if unset_count > 0 {
-                let per_child = remaining_span / unset_count; // 整数除法
-                let mut remainder = remaining_span % unset_count; // 余数，处理除不尽的情况
+            // =====================================================
+            // 第三步：计算每一个没有 span 的节点的跨度 (吃到下一个 start)
+            // =====================================================
+            let count = children.len();
+            for i in 0..count {
+                // 注意：这里需要再次检查 props 是否存在，因为我们要修改它
+                let current_start = children[i]
+                    .props
+                    .as_ref()
+                    .unwrap()
+                    .get("start")
+                    .unwrap()
+                    .as_i64()
+                    .unwrap();
 
-                // =====================================================
-                // 第二轮：填补空缺
-                // =====================================================
-                for child in children.iter_mut() {
-                    let child_props = child.props.get_or_insert(json!({}));
-
-                    // 只有当没有 "span" 字段时才插入
-                    if child_props.get("span").is_none() {
-                        // 基础分配量
-                        let mut my_span = per_child;
-
-                        // 如果有余数（比如剩 5 格给 2 人分，第一人拿 3，第二人拿 2）
-                        if remainder > 0 {
-                            my_span += 1;
-                            remainder -= 1;
-                        }
-
-                        // 写入 JSON
-                        if let Some(p_obj) = child_props.as_object_mut() {
-                            p_obj.insert("span".to_string(), json!(my_span));
-                        }
-                    }
+                // 如果当前节点已经有了 span (不管是配置带的还是第一步带的)，就跳过计算
+                // 这样就不会把用户写的 span: 2 覆盖成 1 了
+                if children[i].props.as_ref().unwrap().get("span").is_some() {
+                    continue;
                 }
+
+                // 寻找下一个边界
+                let end_point = if i + 1 < count {
+                    // 下一个节点的 start 是当前节点的物理边界
+                    children[i + 1]
+                        .props
+                        .as_ref()
+                        .unwrap()
+                        .get("start")
+                        .unwrap()
+                        .as_i64()
+                        .unwrap()
+                } else {
+                    // 最后一个节点直接吃到容器边缘 (total_rows + 1)
+                    total_rows + 1
+                };
+
+                let computed_span = (end_point - current_start).max(1);
+
+                // 补全缺失的 span
+                let p = children[i].props.as_mut().unwrap().as_object_mut().unwrap();
+                p.insert("span".to_string(), json!(computed_span));
             }
         }
         _ => {}
