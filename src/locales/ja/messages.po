@@ -63,8 +63,8 @@ msgstr "\"セーブデータは Gal ゲーマーの生命線です。バック�
 
 #. placeholder {0}: keyword ? "尝试调整搜索关键词" : "点击上方按钮开始收藏游戏"
 #. placeholder {0}: keyword ? "无匹配项" : "库中无数据"
-#: src/page/Library/index.tsx:124
-#: src/page/Library/index.tsx:129
+#: src/page/Library/index.tsx:125
+#: src/page/Library/index.tsx:130
 msgid "{0}"
 msgstr "{0}"
 
@@ -73,7 +73,7 @@ msgstr "{0}"
 #~ msgstr "{0} - 詳細な紹介はありません。"
 
 #. placeholder {0}: items.length
-#: src/page/Library/PendingCard.tsx:276
+#: src/page/Library/PendingCard.tsx:299
 msgid "{0} 个项目就绪"
 msgstr "{0} 個の項目が準備完了"
 
@@ -93,7 +93,7 @@ msgstr "{0} 個の項目が準備完了"
 msgid "一键拉起最后一次关闭的游戏及连携程序"
 msgstr "最後に終了したゲームと連繋プログラムをワンクリックで起動"
 
-#: src/page/Library/PendingCard.tsx:453
+#: src/page/Library/PendingCard.tsx:477
 msgid "一键智能匹配"
 msgstr "スマート照合"
 
@@ -125,7 +125,7 @@ msgstr "ホーム"
 msgid "主题颜色"
 msgstr "テーマカラー"
 
-#: src/page/Library/TopBar.tsx:117
+#: src/page/Library/TopBar.tsx:112
 msgid "仅看已通关"
 msgstr "クリア済みのみ"
 
@@ -153,11 +153,11 @@ msgstr "保存して適用"
 msgid "保存连携配置"
 msgstr "連繋設定を保存"
 
-#: src/page/User/index.tsx:151
+#: src/page/User/index.tsx:154
 msgid "信息和工具"
 msgstr "情報とツール"
 
-#: src/page/User/index.tsx:145
+#: src/page/User/index.tsx:148
 msgid "修改信息"
 msgstr "情報の変更"
 
@@ -169,7 +169,7 @@ msgstr "ユーザー情報の変更"
 msgid "允许资源下载到本地"
 msgstr "リソースのローカルダウンロードを許可"
 
-#: src/page/Library/PendingCard.tsx:186
+#: src/page/Library/PendingCard.tsx:198
 msgid "全局匹配完成"
 msgstr "一括照合が完了しました"
 
@@ -201,7 +201,7 @@ msgstr "最終プレイ"
 msgid "最小化至托盘"
 msgstr "タスクトレイに最小化"
 
-#: src/page/User/index.tsx:189
+#: src/page/User/index.tsx:192
 msgid "切换日期"
 msgstr "日付を切り替え"
 
@@ -237,19 +237,24 @@ msgstr "適度に休憩しましょう。目も休ませてあげてください
 #~ msgid "匹配中断"
 #~ msgstr "照合が中断されました"
 
-#: src/page/Library/PendingCard.tsx:170
+#: src/page/Library/BigPendingCard.tsx:139
+#: src/page/Library/PendingCard.tsx:205
 msgid "匹配任务超时，请检查网络"
 msgstr "照合タスクがタイムアウトしました。ネットワークを確認してください"
 
-#: src/page/Library/BigPendingCard.tsx:245
+#: src/page/Library/BigPendingCard.tsx:264
 msgid "匹配元数据"
 msgstr "メタデータを照合"
 
 #: src/page/Library/BigPendingCard.tsx:137
-msgid "匹配超时"
-msgstr "照合タイムアウト"
+#~ msgid "匹配超时"
+#~ msgstr "照合タイムアウト"
 
-#: src/page/Library/PendingCard.tsx:188
+#: src/page/Library/BigPendingCard.tsx:139
+#~ msgid "匹配超时，请检查网络"
+#~ msgstr "照合がタイムアウトしました。ネットワークを確認してください"
+
+#: src/page/Library/PendingCard.tsx:209
 msgid "匹配过程中断"
 msgstr "照合プロセスが中断されました"
 
@@ -262,7 +267,7 @@ msgstr "お昼ごはんは食べましたか？ゆっくり休んでください
 #~ msgstr "使用容量"
 
 #. placeholder {0}: journeyMonth.toString().padStart(2, '0')
-#: src/page/User/index.tsx:186
+#: src/page/User/index.tsx:189
 msgid "历程 ({journeyYear}-{0})"
 msgstr "履歴 ({journeyYear}-{0})"
 
@@ -274,10 +279,10 @@ msgstr "アーカイブが空です"
 msgid "压缩包解析失败"
 msgstr "アーカイブの解析に失敗しました"
 
-#: src/page/Library/BigPendingCard.tsx:243
+#: src/page/Library/BigPendingCard.tsx:262
 #: src/page/User/EditUserInfoDialog.tsx:173
-#: src/page/User/index.tsx:232
-#: src/page/User/index.tsx:293
+#: src/page/User/index.tsx:238
+#: src/page/User/index.tsx:302
 msgid "取消"
 msgstr "キャンセル"
 
@@ -387,12 +392,12 @@ msgstr "セーブデータディレクトリ"
 #~ msgid "导入失败"
 #~ msgstr "インポート失敗"
 
-#: src/page/Library/BigPendingCard.tsx:193
-#: src/page/Library/PendingCard.tsx:252
+#: src/page/Library/BigPendingCard.tsx:212
+#: src/page/Library/PendingCard.tsx:275
 msgid "导入失败,id: "
 msgstr "インポート失敗、ID: "
 
-#: src/page/Library/BigPendingCard.tsx:190
+#: src/page/Library/BigPendingCard.tsx:209
 msgid "导入成功"
 msgstr "インポート成功"
 
@@ -436,11 +441,11 @@ msgstr "無効"
 msgid "已载入本地图片预览"
 msgstr "ローカル画像のプレビューを読み込みました"
 
-#: src/page/User/index.tsx:285
+#: src/page/User/index.tsx:294
 msgid "年"
 msgstr "年"
 
-#: src/page/User/Tool.tsx:61
+#: src/page/User/Tool.tsx:64
 msgid "开启热键"
 msgstr "ホットキーを有効化"
 
@@ -474,7 +479,7 @@ msgid "恢复成功"
 msgstr "復元成功"
 
 #. placeholder {0}: finalGames.length
-#: src/page/Library/PendingCard.tsx:249
+#: src/page/Library/PendingCard.tsx:272
 msgid "成功导入 {0} 个游戏"
 msgstr "{0} 本のゲームをインポートしました"
 
@@ -482,19 +487,19 @@ msgstr "{0} 本のゲームをインポートしました"
 msgid "执行路径"
 msgstr "実行パス"
 
-#: src/page/Library/PendingCard.tsx:273
+#: src/page/Library/PendingCard.tsx:296
 msgid "批量导入确认"
 msgstr "一括インポートの確認"
 
-#: src/page/Library/TopBar.tsx:116
+#: src/page/Library/TopBar.tsx:111
 msgid "按最后游玩"
 msgstr "最終プレイ順"
 
-#: src/page/Library/TopBar.tsx:115
+#: src/page/Library/TopBar.tsx:110
 msgid "按名称排序"
 msgstr "名前順"
 
-#: src/page/Library/TopBar.tsx:114
+#: src/page/Library/TopBar.tsx:109
 msgid "按游玩时长"
 msgstr "プレイ時間順"
 
@@ -515,7 +520,7 @@ msgstr "変更を破棄"
 msgid "数据已同步"
 msgstr "データを同期しました"
 
-#: src/page/Library/PendingCard.tsx:216
+#: src/page/Library/PendingCard.tsx:239
 msgid "数据更新成功"
 msgstr "データの更新に成功しました"
 
@@ -556,15 +561,15 @@ msgstr "こんばんは"
 msgid "暂无描述..."
 msgstr "説明がありません..."
 
-#: src/page/User/GameJourney.tsx:60
+#: src/page/User/GameJourney.tsx:63
 msgid "暂无记录"
 msgstr "記録なし"
 
-#: src/page/Library/BigPendingCard.tsx:320
+#: src/page/Library/BigPendingCard.tsx:339
 msgid "暂无详细介绍"
 msgstr "詳細な紹介はありません"
 
-#: src/page/Library/PendingCard.tsx:420
+#: src/page/Library/PendingCard.tsx:444
 msgid "暂无详细介绍。"
 msgstr "詳細な紹介はありません。"
 
@@ -592,7 +597,7 @@ msgstr "未照合データ"
 msgid "未找到保存路径"
 msgstr "保存先が見つかりません"
 
-#: src/page/Library/BigPendingCard.tsx:292
+#: src/page/Library/BigPendingCard.tsx:311
 msgid "未找到匹配数据"
 msgstr "一致するデータが見つかりません"
 
@@ -653,7 +658,7 @@ msgstr "クリア済みとしてマーク"
 #~ msgid "检索失败"
 #~ msgstr "検索失敗"
 
-#: src/page/Library/PendingCard.tsx:218
+#: src/page/Library/PendingCard.tsx:241
 msgid "检索失败，请检查 ID 或网络"
 msgstr "検索に失敗しました。IDまたはネットワークを確認してください"
 
@@ -669,7 +674,7 @@ msgstr "同期中..."
 msgid "正在备份存档..."
 msgstr "セーブデータをバックアップ中..."
 
-#: src/page/Library/BigPendingCard.tsx:167
+#: src/page/Library/BigPendingCard.tsx:186
 msgid "正在导入游戏..."
 msgstr "ゲームをインポート中..."
 
@@ -685,7 +690,7 @@ msgstr "フルバックアップを実行中..."
 msgid "正在执行全量恢复..."
 msgstr "一括復元を実行中..."
 
-#: src/page/Library/PendingCard.tsx:226
+#: src/page/Library/PendingCard.tsx:249
 msgid "正在计算资源并导入..."
 msgstr "リソースを計算してインポート中..."
 
@@ -745,7 +750,7 @@ msgstr "ゲームリソースディレクトリ"
 msgid "点击关闭按钮时"
 msgstr "閉じるボタンのアクション"
 
-#: src/page/User/GameJourney.tsx:130
+#: src/page/User/GameJourney.tsx:133
 msgid "点击记录感想..."
 msgstr "感想を記入..."
 
@@ -773,7 +778,7 @@ msgstr "ユーザー情報の同期に成功しました"
 msgid "皇家蓝 (Royal Blue)"
 msgstr "ロイヤルブルー (Royal Blue)"
 
-#: src/page/Library/BigPendingCard.tsx:248
+#: src/page/Library/BigPendingCard.tsx:267
 msgid "直接确认"
 msgstr "直接確定"
 
@@ -781,7 +786,7 @@ msgstr "直接確定"
 msgid "直接退出程序"
 msgstr "プログラムを終了"
 
-#: src/page/User/GameJourney.tsx:87
+#: src/page/User/GameJourney.tsx:90
 msgid "确认删除?"
 msgstr "削除しますか？"
 
@@ -797,11 +802,11 @@ msgstr "確認して展開を開始"
 msgid "确认执行备份？"
 msgstr "バックアップを実行しますか？"
 
-#: src/page/Library/BigPendingCard.tsx:331
+#: src/page/Library/BigPendingCard.tsx:350
 msgid "确认添加"
 msgstr "追加を確定"
 
-#: src/page/Library/PendingCard.tsx:467
+#: src/page/Library/PendingCard.tsx:491
 msgid "确认添加项目"
 msgstr "項目の追加を確定"
 
@@ -861,7 +866,7 @@ msgstr "システムデフォルト"
 msgid "紧急停止"
 msgstr "緊急停止"
 
-#: src/page/Library/BigPendingCard.tsx:161
+#: src/page/Library/BigPendingCard.tsx:169
 msgid "网络请求失败"
 msgstr "ネットワークリクエスト失敗"
 
@@ -885,7 +890,7 @@ msgstr "背景画像"
 msgid "能量橙 (Orange)"
 msgstr "エナジーオレンジ (Orange)"
 
-#: src/page/User/Tool.tsx:75
+#: src/page/User/Tool.tsx:78
 msgid "自动备份"
 msgstr "自動バックアップ"
 
@@ -937,7 +942,7 @@ msgstr "この操作は現在の全バックアップを上書きし、取り消
 msgid "语言设置 / Language"
 msgstr "言語設定 / Language"
 
-#: src/page/Home/GameList.tsx:67
+#: src/page/Home/GameList.tsx:59
 msgid "请在库设置中添加首页展示项目"
 msgstr "ライブラリ設定でホームに表示する項目を追加してください"
 
@@ -1010,11 +1015,11 @@ msgstr "連繋プログラム管理"
 msgid "选择{title}"
 msgstr "{title}を選択"
 
-#: src/page/User/index.tsx:308
+#: src/page/User/index.tsx:317
 msgid "选择历程日期"
 msgstr "履歴の日付を選択"
 
-#: src/page/User/index.tsx:165
+#: src/page/User/index.tsx:168
 msgid "选择年份"
 msgstr "年を選択"
 
@@ -1022,15 +1027,15 @@ msgstr "年を選択"
 msgid "选择应用字体"
 msgstr "フォントを選択"
 
-#: src/page/User/index.tsx:214
+#: src/page/User/index.tsx:217
 msgid "选择监控磁盘"
 msgstr "監視ディスクを選択"
 
-#: src/page/User/index.tsx:181
+#: src/page/User/index.tsx:184
 msgid "选择磁盘"
 msgstr "ディスクを選択"
 
-#: src/page/User/index.tsx:270
+#: src/page/User/index.tsx:276
 msgid "选择统计年份"
 msgstr "統計する年を選択"
 
@@ -1042,7 +1047,7 @@ msgstr "操作設定をカスタマイズして効率を向上させます"
 msgid "配置随游戏或程序自动启动的辅助工具"
 msgstr "ゲーム等と同時に起動する補助ツールを設定します"
 
-#: src/page/User/Tool.tsx:47
+#: src/page/User/Tool.tsx:50
 msgid "链式启动"
 msgstr "連鎖起動"
 

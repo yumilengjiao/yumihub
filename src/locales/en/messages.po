@@ -63,8 +63,8 @@ msgstr "\"Saves are the lifeline of Galgame players, remember to back them up.\"
 
 #. placeholder {0}: keyword ? "尝试调整搜索关键词" : "点击上方按钮开始收藏游戏"
 #. placeholder {0}: keyword ? "无匹配项" : "库中无数据"
-#: src/page/Library/index.tsx:124
-#: src/page/Library/index.tsx:129
+#: src/page/Library/index.tsx:125
+#: src/page/Library/index.tsx:130
 msgid "{0}"
 msgstr "{0}"
 
@@ -73,7 +73,7 @@ msgstr "{0}"
 #~ msgstr "{0} - No detailed description available."
 
 #. placeholder {0}: items.length
-#: src/page/Library/PendingCard.tsx:276
+#: src/page/Library/PendingCard.tsx:299
 msgid "{0} 个项目就绪"
 msgstr "{0} items ready"
 
@@ -93,7 +93,7 @@ msgstr "{0} items ready"
 msgid "一键拉起最后一次关闭的游戏及连携程序"
 msgstr "One-click launch last closed game and companion apps"
 
-#: src/page/Library/PendingCard.tsx:453
+#: src/page/Library/PendingCard.tsx:477
 msgid "一键智能匹配"
 msgstr "One-click Smart Match"
 
@@ -125,7 +125,7 @@ msgstr "Home"
 msgid "主题颜色"
 msgstr "Theme Color"
 
-#: src/page/Library/TopBar.tsx:117
+#: src/page/Library/TopBar.tsx:112
 msgid "仅看已通关"
 msgstr "Only Completed"
 
@@ -153,11 +153,11 @@ msgstr "Save and Apply"
 msgid "保存连携配置"
 msgstr "Save Companion Config"
 
-#: src/page/User/index.tsx:151
+#: src/page/User/index.tsx:154
 msgid "信息和工具"
 msgstr "Info & Tools"
 
-#: src/page/User/index.tsx:145
+#: src/page/User/index.tsx:148
 msgid "修改信息"
 msgstr "Edit Profile"
 
@@ -169,7 +169,7 @@ msgstr "Edit User Info"
 msgid "允许资源下载到本地"
 msgstr "Allow resource downloads to local"
 
-#: src/page/Library/PendingCard.tsx:186
+#: src/page/Library/PendingCard.tsx:198
 msgid "全局匹配完成"
 msgstr "Global match completed"
 
@@ -201,7 +201,7 @@ msgstr "Last Played"
 msgid "最小化至托盘"
 msgstr "Minimize to System Tray"
 
-#: src/page/User/index.tsx:189
+#: src/page/User/index.tsx:192
 msgid "切换日期"
 msgstr "Switch Date"
 
@@ -237,19 +237,24 @@ msgstr "Balance work and rest, your eyes need a break too."
 #~ msgid "匹配中断"
 #~ msgstr "Match Interrupted"
 
-#: src/page/Library/PendingCard.tsx:170
+#: src/page/Library/BigPendingCard.tsx:139
+#: src/page/Library/PendingCard.tsx:205
 msgid "匹配任务超时，请检查网络"
 msgstr "Matching task timed out, please check your network"
 
-#: src/page/Library/BigPendingCard.tsx:245
+#: src/page/Library/BigPendingCard.tsx:264
 msgid "匹配元数据"
 msgstr "Match Metadata"
 
 #: src/page/Library/BigPendingCard.tsx:137
-msgid "匹配超时"
-msgstr "Matching Timeout"
+#~ msgid "匹配超时"
+#~ msgstr "Matching Timeout"
 
-#: src/page/Library/PendingCard.tsx:188
+#: src/page/Library/BigPendingCard.tsx:139
+#~ msgid "匹配超时，请检查网络"
+#~ msgstr "Match timed out, please check your network"
+
+#: src/page/Library/PendingCard.tsx:209
 msgid "匹配过程中断"
 msgstr "Matching interrupted"
 
@@ -262,7 +267,7 @@ msgstr "Have you had lunch? Remember to take a break."
 #~ msgstr "Storage Used"
 
 #. placeholder {0}: journeyMonth.toString().padStart(2, '0')
-#: src/page/User/index.tsx:186
+#: src/page/User/index.tsx:189
 msgid "历程 ({journeyYear}-{0})"
 msgstr "Journey ({journeyYear}-{0})"
 
@@ -274,10 +279,10 @@ msgstr "Archive is empty"
 msgid "压缩包解析失败"
 msgstr "Failed to parse archive"
 
-#: src/page/Library/BigPendingCard.tsx:243
+#: src/page/Library/BigPendingCard.tsx:262
 #: src/page/User/EditUserInfoDialog.tsx:173
-#: src/page/User/index.tsx:232
-#: src/page/User/index.tsx:293
+#: src/page/User/index.tsx:238
+#: src/page/User/index.tsx:302
 msgid "取消"
 msgstr "Cancel"
 
@@ -387,12 +392,12 @@ msgstr "Save Directory"
 #~ msgid "导入失败"
 #~ msgstr "Import Failed"
 
-#: src/page/Library/BigPendingCard.tsx:193
-#: src/page/Library/PendingCard.tsx:252
+#: src/page/Library/BigPendingCard.tsx:212
+#: src/page/Library/PendingCard.tsx:275
 msgid "导入失败,id: "
 msgstr "Import failed, ID: "
 
-#: src/page/Library/BigPendingCard.tsx:190
+#: src/page/Library/BigPendingCard.tsx:209
 msgid "导入成功"
 msgstr "Import Successful"
 
@@ -436,11 +441,11 @@ msgstr "Disabled"
 msgid "已载入本地图片预览"
 msgstr "Local image preview loaded"
 
-#: src/page/User/index.tsx:285
+#: src/page/User/index.tsx:294
 msgid "年"
 msgstr "Year"
 
-#: src/page/User/Tool.tsx:61
+#: src/page/User/Tool.tsx:64
 msgid "开启热键"
 msgstr "Enable Hotkey"
 
@@ -474,7 +479,7 @@ msgid "恢复成功"
 msgstr "Restore successful"
 
 #. placeholder {0}: finalGames.length
-#: src/page/Library/PendingCard.tsx:249
+#: src/page/Library/PendingCard.tsx:272
 msgid "成功导入 {0} 个游戏"
 msgstr "Successfully imported {0} games"
 
@@ -482,19 +487,19 @@ msgstr "Successfully imported {0} games"
 msgid "执行路径"
 msgstr "Execution Path"
 
-#: src/page/Library/PendingCard.tsx:273
+#: src/page/Library/PendingCard.tsx:296
 msgid "批量导入确认"
 msgstr "Confirm Batch Import"
 
-#: src/page/Library/TopBar.tsx:116
+#: src/page/Library/TopBar.tsx:111
 msgid "按最后游玩"
 msgstr "By Last Played"
 
-#: src/page/Library/TopBar.tsx:115
+#: src/page/Library/TopBar.tsx:110
 msgid "按名称排序"
 msgstr "By Name"
 
-#: src/page/Library/TopBar.tsx:114
+#: src/page/Library/TopBar.tsx:109
 msgid "按游玩时长"
 msgstr "By Playtime"
 
@@ -515,7 +520,7 @@ msgstr "Discard Changes"
 msgid "数据已同步"
 msgstr "Data Synchronized"
 
-#: src/page/Library/PendingCard.tsx:216
+#: src/page/Library/PendingCard.tsx:239
 msgid "数据更新成功"
 msgstr "Data updated successfully"
 
@@ -556,15 +561,15 @@ msgstr "Good evening"
 msgid "暂无描述..."
 msgstr "No description yet..."
 
-#: src/page/User/GameJourney.tsx:60
+#: src/page/User/GameJourney.tsx:63
 msgid "暂无记录"
 msgstr "No records"
 
-#: src/page/Library/BigPendingCard.tsx:320
+#: src/page/Library/BigPendingCard.tsx:339
 msgid "暂无详细介绍"
 msgstr "No detailed info available"
 
-#: src/page/Library/PendingCard.tsx:420
+#: src/page/Library/PendingCard.tsx:444
 msgid "暂无详细介绍。"
 msgstr "No detailed info available."
 
@@ -592,7 +597,7 @@ msgstr "No matching data"
 msgid "未找到保存路径"
 msgstr "Save path not found"
 
-#: src/page/Library/BigPendingCard.tsx:292
+#: src/page/Library/BigPendingCard.tsx:311
 msgid "未找到匹配数据"
 msgstr "No matching data found"
 
@@ -653,7 +658,7 @@ msgstr "Mark as Completed"
 #~ msgid "检索失败"
 #~ msgstr "Search Failed"
 
-#: src/page/Library/PendingCard.tsx:218
+#: src/page/Library/PendingCard.tsx:241
 msgid "检索失败，请检查 ID 或网络"
 msgstr "Search failed, please check ID or network"
 
@@ -669,7 +674,7 @@ msgstr "Synchronizing..."
 msgid "正在备份存档..."
 msgstr "Backing up saves..."
 
-#: src/page/Library/BigPendingCard.tsx:167
+#: src/page/Library/BigPendingCard.tsx:186
 msgid "正在导入游戏..."
 msgstr "Importing games..."
 
@@ -685,7 +690,7 @@ msgstr "Performing full backup..."
 msgid "正在执行全量恢复..."
 msgstr "Performing full restoration..."
 
-#: src/page/Library/PendingCard.tsx:226
+#: src/page/Library/PendingCard.tsx:249
 msgid "正在计算资源并导入..."
 msgstr "Calculating resources and importing..."
 
@@ -745,7 +750,7 @@ msgstr "Game Resource Directory"
 msgid "点击关闭按钮时"
 msgstr "When Closing"
 
-#: src/page/User/GameJourney.tsx:130
+#: src/page/User/GameJourney.tsx:133
 msgid "点击记录感想..."
 msgstr "Click to record your thoughts..."
 
@@ -773,7 +778,7 @@ msgstr "User info synchronized successfully"
 msgid "皇家蓝 (Royal Blue)"
 msgstr "Royal Blue"
 
-#: src/page/Library/BigPendingCard.tsx:248
+#: src/page/Library/BigPendingCard.tsx:267
 msgid "直接确认"
 msgstr "Confirm Directly"
 
@@ -781,7 +786,7 @@ msgstr "Confirm Directly"
 msgid "直接退出程序"
 msgstr "Exit Application"
 
-#: src/page/User/GameJourney.tsx:87
+#: src/page/User/GameJourney.tsx:90
 msgid "确认删除?"
 msgstr "Confirm delete?"
 
@@ -797,11 +802,11 @@ msgstr "Confirm and start unpacking"
 msgid "确认执行备份？"
 msgstr "Confirm backup?"
 
-#: src/page/Library/BigPendingCard.tsx:331
+#: src/page/Library/BigPendingCard.tsx:350
 msgid "确认添加"
 msgstr "Confirm Add"
 
-#: src/page/Library/PendingCard.tsx:467
+#: src/page/Library/PendingCard.tsx:491
 msgid "确认添加项目"
 msgstr "Confirm Adding Items"
 
@@ -861,7 +866,7 @@ msgstr "System Default"
 msgid "紧急停止"
 msgstr "Emergency Stop"
 
-#: src/page/Library/BigPendingCard.tsx:161
+#: src/page/Library/BigPendingCard.tsx:169
 msgid "网络请求失败"
 msgstr "Network request failed"
 
@@ -885,7 +890,7 @@ msgstr "Background Image"
 msgid "能量橙 (Orange)"
 msgstr "Energy Orange"
 
-#: src/page/User/Tool.tsx:75
+#: src/page/User/Tool.tsx:78
 msgid "自动备份"
 msgstr "Auto Backup"
 
@@ -937,7 +942,7 @@ msgstr "This action will overwrite all current game save backups and cannot be u
 msgid "语言设置 / Language"
 msgstr "Language Settings"
 
-#: src/page/Home/GameList.tsx:67
+#: src/page/Home/GameList.tsx:59
 msgid "请在库设置中添加首页展示项目"
 msgstr "Please add home display items in Library settings"
 
@@ -1010,11 +1015,11 @@ msgstr "Companion App Management"
 msgid "选择{title}"
 msgstr "Select {title}"
 
-#: src/page/User/index.tsx:308
+#: src/page/User/index.tsx:317
 msgid "选择历程日期"
 msgstr "Select Journey Date"
 
-#: src/page/User/index.tsx:165
+#: src/page/User/index.tsx:168
 msgid "选择年份"
 msgstr "Select Year"
 
@@ -1022,15 +1027,15 @@ msgstr "Select Year"
 msgid "选择应用字体"
 msgstr "Select App Font"
 
-#: src/page/User/index.tsx:214
+#: src/page/User/index.tsx:217
 msgid "选择监控磁盘"
 msgstr "Select Monitoring Disk"
 
-#: src/page/User/index.tsx:181
+#: src/page/User/index.tsx:184
 msgid "选择磁盘"
 msgstr "Select Disk"
 
-#: src/page/User/index.tsx:270
+#: src/page/User/index.tsx:276
 msgid "选择统计年份"
 msgstr "Select Statistic Year"
 
@@ -1042,7 +1047,7 @@ msgstr "Configure your operation preferences to boost efficiency"
 msgid "配置随游戏或程序自动启动的辅助工具"
 msgstr "Configure helper tools to auto-launch with games or apps"
 
-#: src/page/User/Tool.tsx:47
+#: src/page/User/Tool.tsx:50
 msgid "链式启动"
 msgstr "Chain Launch"
 
