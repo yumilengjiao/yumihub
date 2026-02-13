@@ -55,7 +55,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
   const { addGameMeta } = useGameStore()
 
   const isMatchingRef = useRef(false)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const timerRef = useRef<any | null>(null)
 
   const { config } = useConfigStore()
 
@@ -161,38 +161,62 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
 
   // 全局自动匹配
   const handleGlobalMatch = async () => {
-    if (isGlobalMatching) return
-    setIsGlobalMatching(true)
-    isMatchingRef.current = true
-    setMatchProgress(0)
+    if (isGlobalMatching) return;
+
+    setIsGlobalMatching(true);
+    isMatchingRef.current = true;
+    setMatchProgress(0);
+
+    clearTimer();
+
+    // 用一个局部变量标记是否已经超时，辅助 Ref 双重判定
+    let hasTimedOut = false;
 
     timerRef.current = setTimeout(() => {
       if (isMatchingRef.current) {
-        isMatchingRef.current = false
-        setIsGlobalMatching(false)
-        toast.error(t`匹配任务超时，请检查网络`)
+        console.log("!!! 确定超时 !!!");
+        hasTimedOut = true; // 局部变量立刻变色
+        isMatchingRef.current = false;
+        setIsGlobalMatching(false);
+        toast.error(t`匹配任务超时，请检查网络`);
       }
-    }, 60000)
+    }, 60000);
 
     try {
       for (let i = 0; i < items.length; i++) {
-        if (!isMatchingRef.current) break
+        // 每次循环开始都检查
+        if (!isMatchingRef.current || hasTimedOut) return;
 
-        // recognizeGame 返回的是 PendingGameInfo { bangumi, vndb, ymgal, absPath }
-        const res = await recognizeGame(items[i].absPath) as PendingGameInfo
+        const res = await recognizeGame(items[i].absPath) as PendingGameInfo;
+
+        // 请求回来立刻检查
+        if (!isMatchingRef.current || hasTimedOut) return;
 
         setItems(prev => prev.map((it, idx) =>
           idx === i ? { ...it, gameInfo: res } : it
-        ))
-        setMatchProgress(Math.round(((i + 1) / items.length) * 100))
+        ));
+        setMatchProgress(Math.round(((i + 1) / items.length) * 100));
       }
-      if (isMatchingRef.current) toast.success(t`全局匹配完成`)
+
+      // 【核心修改】这里是导致你弹出 Success 的凶手
+      // 必须加上 hasTimedOut 的严格判定
+      if (isMatchingRef.current && !hasTimedOut) {
+        // 只有真正跑完且没触发超时函数时，才清理计时器并报成功
+        clearTimer();
+        toast.success(t`全局匹配完成`);
+      }
+
     } catch (err) {
-      toast.error(t`匹配过程中断`)
+      if (isMatchingRef.current && !hasTimedOut) {
+        toast.error(t`匹配过程中断`);
+      }
     } finally {
-      clearTimer()
-      setIsGlobalMatching(false)
-      isMatchingRef.current = false
+      // 只有正常完成（非超时）才在这里重置状态
+      if (!hasTimedOut) {
+        setIsGlobalMatching(false);
+        isMatchingRef.current = false;
+        clearTimer();
+      }
     }
   }
 
