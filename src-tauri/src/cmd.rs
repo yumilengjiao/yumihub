@@ -457,17 +457,118 @@ pub async fn delete_game_by_id(pool: State<'_, Pool<Sqlite>>, id: String) -> Res
 
     sqlx::query(
         r#"
-            delete from games where id = ?
+            delete from games where id = ?;
         "#,
     )
-    .bind(id)
+    .bind(&id)
     .execute(&mut *tx)
     .await
     .map_err(|e| {
         error!("删除游戏信息出错: {}", e);
         AppError::DB(e.to_string())
     })?;
+
+    let game_screenshots = sqlx::query(
+        r#"
+            select id from game_screenshots where game_id = ?;
+        "#,
+    )
+    .bind(&id)
+    .fetch_all(&mut *tx)
+    .await
+    .map_err(|e| AppError::DB(e.to_string()))?;
+
+    sqlx::query(
+        r#"
+            delete from game_screenshots where game_id = ?;
+        "#,
+    )
+    .bind(&id)
+    .execute(&mut *tx)
+    .await
+    .map_err(|e| AppError::DB(e.to_string()))?;
+
+    sqlx::query(
+        r#"
+            delete from game_play_sessions where game_id = ?;
+        "#,
+    )
+    .bind(&id)
+    .execute(&mut *tx)
+    .await
+    .map_err(|e| AppError::DB(e.to_string()))?;
+
+    let screenshot_ids: Vec<String> = game_screenshots
+        .into_iter()
+        .map(|row| row.get("id")) // 假设 id 可以转 String
+        .collect();
+
+    println!("screenshot_ids:{:#?}", screenshot_ids);
+
     tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
+
+    // 删除游戏的数据
+    let config = GLOBAL_CONFIG.read().unwrap();
+    let screenshot_dir = config.storage.screenshot_path.clone(); // 单独拎出来处理
+    let target_dirs = vec![
+        config.storage.meta_save_path.clone(),
+        config.storage.backup_save_path.clone(),
+    ];
+    // 释放锁
+    drop(config);
+
+    for s_id in &screenshot_ids {
+        if let Ok(entries) = std::fs::read_dir(&screenshot_dir) {
+            for entry in entries.flatten() {
+                let file_name = entry.file_name().to_string_lossy().into_owned();
+
+                if file_name.contains(s_id) {
+                    let target_path = entry.path();
+                    // 删除单个文件
+                    std::fs::remove_file(&target_path)
+                        .map_err(|e| AppError::File(e.to_string()))?;
+                }
+            }
+        }
+    }
+
+    for dir in target_dirs {
+        let path = Path::new(&dir);
+
+        // 检查路径是否存在且是目录
+        if !path.exists() || !path.is_dir() {
+            continue;
+        }
+
+        // 读取目录下的所有文件/文件夹
+        if let Ok(entries) = std::fs::read_dir(path) {
+            for entry in entries.flatten() {
+                let file_name = entry.file_name().to_string_lossy().into_owned();
+
+                // 匹配逻辑：名字中包含 game.id
+                // 注意：确保 game.id 转换成了字符串，例如 game.id.to_string()
+                if file_name.contains(&id) {
+                    let target_path = entry.path();
+
+                    // 判断是目录还是文件，执行对应删除操作
+                    let result = if target_path.is_dir() {
+                        // 递归删除目录及其内容
+                        std::fs::remove_dir_all(&target_path)
+                    } else {
+                        // 删除单个文件
+                        std::fs::remove_file(&target_path)
+                    };
+
+                    // 打印日志以便追踪
+                    if let Err(e) = result {
+                        eprintln!("无法删除 {:?}: {}", target_path, e);
+                    } else {
+                        println!("成功清理资源: {:?}", target_path);
+                    }
+                }
+            }
+        }
+    }
     Ok(())
 }
 
@@ -476,7 +577,42 @@ pub async fn delete_game_by_id(pool: State<'_, Pool<Sqlite>>, id: String) -> Res
 /// * `pool`: 连接池,tauri自动注入
 #[tauri::command]
 pub async fn delete_game_list(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppError> {
-    sqlx::query("DELETE FROM games").execute(&*pool).await.ok();
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+    sqlx::query("DELETE FROM games")
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+    sqlx::query("DELETE FROM game_screenshots")
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+    sqlx::query("DELETE FROM game_play_sessions")
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    tx.commit();
+
+    let config = GLOBAL_CONFIG.read().unwrap();
+    let target_dirs = vec![
+        config.storage.meta_save_path.clone(),
+        config.storage.backup_save_path.clone(),
+        config.storage.screenshot_path.clone(),
+    ];
+    // 释放锁，避免占用太久
+    drop(config);
+
+    for path in target_dirs {
+        if std::path::Path::new(&path).exists() {
+            // 删除并重建
+            let _ = std::fs::remove_dir_all(&path);
+            let _ = std::fs::create_dir_all(&path);
+        }
+    }
+
     Ok(())
 }
 

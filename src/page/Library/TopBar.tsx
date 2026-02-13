@@ -59,7 +59,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [isLayoutOpen, setIsLayoutOpen] = useState<boolean>(false);
-  const { gameMetaList, setGameMeta } = useGameStore();
+  const { gameMetaList, setGameMeta, discardAllGames } = useGameStore();
   const { config, updateConfig } = useConfigStore();
   const [localDisplayList, setLocalDisplayList] = useState<GameMeta[]>([]);
 
@@ -200,8 +200,34 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
 
       <ToolbarButton onClick={() => setIsLayoutOpen(true)} icon={<Layout size={34} strokeWidth={2} />} active={isLayoutOpen} />
 
-      <ToolbarButton onClick={handleToggleDeleteMode} icon={isDeleteMode ? <X size={34} strokeWidth={2} /> : <Trash2 size={34} strokeWidth={2} />} danger={!isDeleteMode} active={isDeleteMode} className={isDeleteMode ? "!bg-destructive !text-destructive-foreground" : ""} />
+      {/* 容器增加 relative 以包裹绝对定位的子元素 */}
+      <div className="relative flex items-center">
+        <AnimatePresence>
+          {isDeleteMode && (
+            <motion.button
+              initial={{ opacity: 0, x: 20, scale: 0.8 }}
+              animate={{ opacity: 1, x: -110, scale: 1 }} // 向左弹出的位置
+              exit={{ opacity: 0, x: 20, scale: 0.8 }}
+              onClick={discardAllGames}
+              /* 关键修改：使用 absolute，这样它弹出时不占位 */
+              className="absolute whitespace-nowrap z-10 cursor-pointer flex h-14 items-center gap-2 rounded-full bg-destructive px-6 text-white shadow-2xl font-black text-xl border-2 border-white/20"
+            >
+              <Trash2 size={24} />
+              清空全部
+            </motion.button>
+          )}
+        </AnimatePresence>
 
+        {/* 主切换按钮保持不动 */}
+        <ToolbarButton
+          onClick={handleToggleDeleteMode}
+          icon={isDeleteMode ? <X size={34} strokeWidth={2} /> : <Trash2 size={34} strokeWidth={2} />}
+          danger={!isDeleteMode}
+          active={isDeleteMode}
+          /* 增加 z-index 确保它在弹出的按钮上方或者保持层级 */
+          className="relative z-20"
+        />
+      </div>
       {/* --- 首页布局管理弹窗 --- */}
       <AnimatePresence>
         {isLayoutOpen && (

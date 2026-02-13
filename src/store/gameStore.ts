@@ -1,6 +1,7 @@
 import { Cmds } from '@/lib/enum'
 import { GameMeta, GameMetaList } from '@/types/game'
 import { invoke } from '@tauri-apps/api/core'
+import { toast } from 'sonner'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
@@ -13,7 +14,8 @@ interface GameStoreParams {
   discardGame: (id: string) => Promise<void>,
   filterGameMetaListByName: (name: string) => GameMetaList
   getGameMetaById: (id: string) => GameMeta
-  addGameMeta: (game: GameMeta) => void
+  addGameMeta: (game: GameMeta) => void,
+  discardAllGames: () => Promise<void>
 }
 
 // 存储当前存在的所有的游戏元信息
@@ -111,6 +113,18 @@ const useGameStore = create<GameStoreParams>()(
      */
     getGameMetaById(id) {
       return get().gameMetaList.find(g => g.id === id)!
+    },
+
+    async discardAllGames() {
+      try {
+        await invoke(Cmds.DELETE_ALL_GAMES)
+        set((state) => {
+          state.gameMetaList = []
+        })
+        toast.success("成功删除所有游戏信息")
+      } catch (error) {
+        toast.error("删除游戏信息失败")
+      }
     },
   }))
 )
