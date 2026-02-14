@@ -9,8 +9,10 @@ use crate::{
 };
 
 mod normalize;
+mod prune;
 mod resolve;
 mod style;
+mod validate;
 
 // 各种normalize阶段处理函数
 pub type LogicStep = fn(&mut AstNode, &mut ThemeContext);
@@ -26,6 +28,10 @@ pub fn run(ast_config: &mut AstThemeConfig, ctx: &mut ThemeContext) -> Result<()
     normalize::run(ast_config, ctx);
     // 样式解析
     style::run(ast_config, ctx);
+    // 结构格式化
+    prune::run(ast_config, ctx);
+    // 结构校验
+    validate::run(ast_config, ctx);
     Ok(())
 }
 
