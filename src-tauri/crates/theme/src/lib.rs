@@ -11,9 +11,9 @@ mod parse;
 pub mod schema;
 mod transform;
 
-pub fn load(them_cfg_path: PathBuf) -> Result<ThemeIr, Vec<ThemeErr>> {
+pub fn load(theme_cfg_path: PathBuf) -> Result<ThemeIr, Vec<ThemeErr>> {
     let mut ctx = ThemeContext::load();
-    let mut ast = parse::parse_to_ast(them_cfg_path).map_err(|e| vec![e])?;
+    let mut ast = parse::parse_to_ast(theme_cfg_path).map_err(|e| vec![e])?;
     // 注入变量信息到上下文
     if let Some(vars) = ast.config.variables.take() {
         ctx.variables = vars

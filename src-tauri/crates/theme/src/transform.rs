@@ -10,6 +10,7 @@ use crate::{
 
 mod normalize;
 mod resolve;
+mod style;
 
 // 各种normalize阶段处理函数
 pub type LogicStep = fn(&mut AstNode, &mut ThemeContext);
@@ -23,6 +24,8 @@ pub fn run(ast_config: &mut AstThemeConfig, ctx: &mut ThemeContext) -> Result<()
     resolve::resolve_variables(ast_config, ctx);
     // 补全必须值
     normalize::run(ast_config, ctx);
+    // 样式解析
+    style::run(ast_config, ctx);
     Ok(())
 }
 

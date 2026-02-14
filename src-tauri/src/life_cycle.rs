@@ -30,7 +30,7 @@ pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
     screenshot::init(app.handle());
     user::init()?;
     resource::init(app.handle());
-    theme::init(app.handle());
+    theme::init(app.handle())?;
     Ok(())
 }
 
