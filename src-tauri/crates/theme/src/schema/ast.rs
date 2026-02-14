@@ -7,6 +7,7 @@ use std::collections::HashMap;
 /// * `config`: 配置文件元信息
 /// * `layout`: 布局信息
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct AstThemeConfig {
     pub config: AstMetaConfig,
     pub layout: AstLayout,
@@ -94,6 +95,7 @@ pub struct AstNode {
 /// * `command`: 事件名称
 /// * `params`:  传递给命令的参数
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Action {
     pub command: String,
     pub params: Option<Value>,

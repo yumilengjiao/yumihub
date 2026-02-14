@@ -9,7 +9,7 @@ use crate::{
         ast::{AstNode, AstThemeConfig, NodeType},
         ctx::ThemeContext,
     },
-    transform::walk_node,
+    transform::{util, walk_node},
 };
 
 /// 样式参数解析入口
@@ -31,7 +31,7 @@ pub fn resolve_span(ast_node: &mut AstNode, _ctx: &mut ThemeContext) {
     match n_type {
         NodeType::Row => {
             // 设置 Row 自身的 Grid 容器属性
-            let cols = get_prop_as_i64(ast_node, "cols").unwrap_or(12);
+            let cols = util::get_prop_as_i64(ast_node, "cols").unwrap_or(12);
             let style = ast_node.inline_style.get_or_insert_with(Default::default);
             style.insert("display".to_string(), json!("grid"));
             style.insert(
@@ -42,7 +42,7 @@ pub fn resolve_span(ast_node: &mut AstNode, _ctx: &mut ThemeContext) {
             // 遍历直系子节点，注入位置信息
             if let Some(children) = &mut ast_node.children {
                 for child in children {
-                    let (start, span) = extract_grid_props(child);
+                    let (start, span) = util::extract_grid_props(child);
                     let grid_val = format!("{} / span {}", start, span);
 
                     child
@@ -54,7 +54,7 @@ pub fn resolve_span(ast_node: &mut AstNode, _ctx: &mut ThemeContext) {
         }
         NodeType::Col => {
             // 设置 Col 自身的 Grid 容器属性
-            let rows = get_prop_as_i64(ast_node, "rows").unwrap_or(12);
+            let rows = util::get_prop_as_i64(ast_node, "rows").unwrap_or(12);
             let style = ast_node.inline_style.get_or_insert_with(Default::default);
             style.insert("display".to_string(), json!("grid"));
             // 纵向布局
@@ -66,7 +66,7 @@ pub fn resolve_span(ast_node: &mut AstNode, _ctx: &mut ThemeContext) {
             // 遍历直系子节点，注入纵向位置
             if let Some(children) = &mut ast_node.children {
                 for child in children {
-                    let (start, span) = extract_grid_props(child);
+                    let (start, span) = util::extract_grid_props(child);
                     let grid_val = format!("{} / span {}", start, span);
 
                     child
@@ -78,20 +78,4 @@ pub fn resolve_span(ast_node: &mut AstNode, _ctx: &mut ThemeContext) {
         }
         _ => {}
     }
-}
-
-// --- 辅助函数：从 props 中安全提取 start 和 span ---
-fn extract_grid_props(node: &AstNode) -> (i64, i64) {
-    let start = get_prop_as_i64(node, "start").unwrap();
-    let span = get_prop_as_i64(node, "span").unwrap();
-    (start, span)
-}
-
-// --- 辅助函数：获取 i64 类型的 prop ---
-fn get_prop_as_i64(node: &AstNode, key: &str) -> Option<i64> {
-    node.props
-        .as_ref()
-        .and_then(|p| p.as_object())
-        .and_then(|obj| obj.get(key))
-        .and_then(|v| v.as_i64())
 }
