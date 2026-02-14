@@ -1,3 +1,6 @@
+use std::sync::Mutex;
+
+use custom_theme::schema::ir::ThemeIr;
 use tauri::RunEvent;
 
 mod backup;
@@ -13,10 +16,10 @@ mod resource;
 mod screenshot;
 mod shortcut;
 mod sys;
+mod theme;
 mod tray;
 mod user;
 mod util;
-mod theme;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -29,6 +32,7 @@ pub fn run() {
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
+        .manage(Mutex::new(Vec::<ThemeIr>::new()))
         .setup(life_cycle::init)
         .invoke_handler(tauri::generate_handler![
             // 用户
@@ -73,7 +77,8 @@ pub fn run() {
             cmd::get_disks,
             cmd::get_disk_usage,
             cmd::authorize_path_access,
-            cmd::clear_app_data
+            cmd::clear_app_data,
+            cmd::get_themes
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

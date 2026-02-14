@@ -199,5 +199,10 @@ export enum Cmds {
   /**
    * 清理程序的所有数据
    */
-  CLEAR_APP_DATA = "clear_app_data"
+  CLEAR_APP_DATA = "clear_app_data",
+
+  /**
+   * 获取所有主题信息
+   */
+  GET_THEMES = "get_themes"
 }

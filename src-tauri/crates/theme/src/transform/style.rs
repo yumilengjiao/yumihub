@@ -20,6 +20,9 @@ pub fn run(ast: &mut AstThemeConfig, ctx: &mut ThemeContext) {
     if let Some(global_node) = &mut ast.layout.global {
         walk_node(global_node, ctx, &[resolve_span]);
     };
+    for v in &mut ast.layout.pages.values_mut() {
+        walk_node(&mut v.content, ctx, &[resolve_span]);
+    }
 }
 
 pub fn resolve_span(ast_node: &mut AstNode, _ctx: &mut ThemeContext) {

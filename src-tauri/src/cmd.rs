@@ -1,6 +1,8 @@
 //! 前端发送的所有调用请求命令在此定义，get方法只会调用state_system,
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 
+use custom_theme::schema::ir::ThemeIr;
 use font_kit::source::SystemSource;
 use sqlx::{Pool, Sqlite, SqlitePool};
 use sqlx::{Row, Transaction};
@@ -1123,10 +1125,10 @@ pub async fn authorize_path_access<R: Runtime>(
     Ok(())
 }
 
-#[tauri::command]
 /// 清空所有程序相关的数据
 ///
 /// * `pool`: 数据库连接池-自动注入
+#[tauri::command]
 pub async fn clear_app_data(pool: State<'_, SqlitePool>) -> Result<(), String> {
     // 获取所有表名
     let rows = sqlx::query(
@@ -1189,4 +1191,18 @@ pub async fn clear_app_data(pool: State<'_, SqlitePool>) -> Result<(), String> {
     }
 
     Ok(())
+}
+
+/// 获取所有主题
+///
+/// * `state`: tauri的状态管理
+#[tauri::command]
+pub fn get_themes(state: tauri::State<'_, Mutex<Vec<ThemeIr>>>) -> Result<Vec<ThemeIr>, AppError> {
+    // 锁定并读取数据
+    let themes = state
+        .try_lock()
+        .map_err(|e| AppError::Mutex(e.to_string()))?;
+    println!("前端请求的themes是：{:#?}", themes);
+
+    Ok(themes.clone())
 }
