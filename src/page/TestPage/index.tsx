@@ -9,9 +9,18 @@ export default function index() {
   useEffect(() => {
 
   }, [themes])
+  const fakeNode = {
+    id: "88",
+    nt: "Background",
+    style: {
+      itemBasis: "basis-1/6",
+      variant: "scaler"
+    },
+    className: "",
+  }
 
   return (
-    <Surface node={themes[0].layout.pages["/"]!.content}></Surface>
+    <Surface node={fakeNode}></Surface>
   )
 }
 
