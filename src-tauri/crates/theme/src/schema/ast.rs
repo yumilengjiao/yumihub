@@ -53,15 +53,17 @@ pub enum NodeType {
     Node,
     Row,
     Col,
-    Component,
+    Background,
+    GameShelf,
 }
 
 impl From<&str> for NodeType {
     fn from(s: &str) -> Self {
         match s {
-            "row" => NodeType::Row,
-            "col" => NodeType::Col,
-            "component" => NodeType::Component,
+            "Row" => NodeType::Row,
+            "Col" => NodeType::Col,
+            "Background" => NodeType::Background,
+            "GameShelf" => NodeType::GameShelf,
             _ => NodeType::Node,
         }
     }

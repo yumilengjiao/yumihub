@@ -11,8 +11,13 @@ import { GameMeta } from "@/types/game"
 import { Trans } from "@lingui/react/macro"
 import { ThemeComponentProps } from "@/types/node"
 
-// 定义组件私有 Props 接口，用于 UI 渲染
+// 定义组件私有 Props 接口
 interface GameShelfUIProps {
+  // --- 新增：接收通用样式和类名 ---
+  className?: string;
+  style?: React.CSSProperties;
+
+  // --- 原有属性 ---
   height?: string;
   itemBasis?: string;
   gap?: string;
@@ -20,7 +25,11 @@ interface GameShelfUIProps {
 }
 
 const GameShelfUI = ({
-  height = "h-auto",
+  // --- 新增解构 ---
+  className,
+  style,
+
+  // --- 原有解构 ---
   itemBasis = "sm:basis-1/6",
   gap = "pl-4",
   variant = "scale"
@@ -31,7 +40,7 @@ const GameShelfUI = ({
   const { selectedGame, gameMetaList, updateSelectedGame } = useGameStore()
   const { config } = useConfigStore()
 
-  // --- 完全保留你的原版逻辑 ---
+  // --- 逻辑完全保持不变 ---
   const displayGames = useMemo(() => {
     const orderIds = config.basic.gameDisplayOrder || []
     return orderIds
@@ -60,7 +69,6 @@ const GameShelfUI = ({
     invoke(Cmds.START_GAME, { game: game })
   }
 
-  // --- 样式计算：根据 variant 决定类名 ---
   const getCardStyles = (index: number) => {
     const isSelected = currentIndex === index;
 
@@ -70,25 +78,29 @@ const GameShelfUI = ({
           "transition-all duration-300 bg-zinc-900",
           isSelected
             ? "z-10 ring-2 ring-purple-500 ring-offset-4 ring-offset-zinc-900"
-            : "opacity-50"
+            : "opacity-95"
         );
-      case 'glow': // 变体：等大 + 霓虹光晕
+      case 'glow':
         return cn(
           "scale-100 transition-all duration-500",
           isSelected ? "shadow-[0_0_50px_rgba(139,92,246,0.6)] border-2 border-purple-400 z-10" : "opacity-40 blur-[1px]"
         );
-      case 'scale': // 变体：原版缩放
+      case 'scale':
       default:
         return cn(
           "origin-bottom transition-all duration-300",
-          isSelected ? "scale-100 shadow-2xl shadow-custom-500/20" : "scale-80"
+          isSelected ? "scale-100 shadow-2xl shadow-custom-500/20" : "scale-85"
         );
     }
   }
 
   if (displayGames.length === 0) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
+      <div
+        // 这里的 Empty 状态也加上 className 和 style，确保布局一致
+        className={cn("fixed inset-0 flex flex-col items-center justify-center pointer-events-none select-none", className)}
+        style={style}
+      >
         <div className="flex flex-col items-center animate-in fade-in zoom-in duration-1000">
           <Ghost size={120} className="text-white/5 mb-8" />
           <h2 className="text-5xl font-black text-white/10 tracking-[0.4em] uppercase"
@@ -104,8 +116,13 @@ const GameShelfUI = ({
   }
 
   return (
-    <div className={cn("overflow-hidden w-full")}>
-      {/* 标题：保留原版样式 */}
+    <div
+      // --- 关键修改：应用 node 传入的 className 和 style ---
+      // cn 会自动处理 merging，保留了原本的 overflow-hidden w-full
+      className={cn("overflow-hidden w-full", className)}
+      style={style}
+    >
+      {/* 标题 */}
       <div className="pl-8 pb-2 text-6xl text-white font-bold transition-all duration-500"
         style={{
           WebkitTextStroke: '2px black',
@@ -116,9 +133,9 @@ const GameShelfUI = ({
 
       <Carousel
         opts={{
-          dragFree: true,   // 保留拖拽自由
-          align: "start",   // 保留对齐
-          duration: 30,     // 保留动画时间
+          dragFree: true,
+          align: "start",
+          duration: 30,
           containScroll: false,
         }}
         className="ml-2"
@@ -127,14 +144,14 @@ const GameShelfUI = ({
         <CarouselContent
           className={cn(
             "w-screen",
-            variant === 'scale' ? "items-end" : "items-center py-10" // 非缩放模式给点上下间距留给边框/光晕
+            variant === 'scale' ? "items-end" : "items-center py-10"
           )}
         >
           {displayGames.map((g, index) => (
             <CarouselItem
               key={g.id}
               className={cn(
-                "duration-300 aspect-165/230", // 强制比例锁定
+                "duration-300 aspect-165/230",
                 itemBasis,
                 gap,
                 "cursor-pointer"
@@ -148,14 +165,14 @@ const GameShelfUI = ({
               <Card className={cn(
                 "relative group overflow-hidden border-none",
                 "aspect-165/225 min-w-41.25 min-h-56.25",
-                getCardStyles(index) // 根据变体应用样式
+                getCardStyles(index)
               )}>
-                {/* 遮罩：保留原版 */}
+                {/* 遮罩 */}
                 {currentIndex !== index && (
                   <div className="absolute inset-0 bg-black opacity-45 z-10 transition-opacity duration-300" />
                 )}
 
-                {/* 播放按钮：保留原版 */}
+                {/* 播放按钮 */}
                 {currentIndex === index && (
                   <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button
@@ -167,7 +184,7 @@ const GameShelfUI = ({
                   </div>
                 )}
 
-                {/* 图片：强制铺满，防止比例不一导致的高矮问题 */}
+                {/* 图片 */}
                 <img
                   src={g.localCover ? convertFileSrc(g.localCover) : g.cover}
                   alt={g.name}
@@ -182,12 +199,19 @@ const GameShelfUI = ({
   )
 }
 
-// --- 适配器组件：对接低代码引擎 ---
+// --- 适配器组件 ---
 export const GameShelf: React.FC<ThemeComponentProps> = ({ node }) => {
   const style = node.style || {};
 
   return (
     <GameShelfUI
+      // --- 关键修改：透传 node 的 className 和 style ---
+      className={node.className}
+      // 将 node.style 强制转换为 CSSProperties 传递给最外层 div
+      // 这样你在 JSON 里配置的 height, margin, padding, position 等都会生效
+      style={style as React.CSSProperties}
+
+      // 原有逻辑：提取特定字段用于组件内部逻辑
       height={style.height as string}
       gap={style.gap as string}
       itemBasis={style.itemBasis as string}

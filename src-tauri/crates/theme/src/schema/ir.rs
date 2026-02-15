@@ -101,7 +101,7 @@ pub struct Action {
 #[serde(rename_all = "camelCase")]
 pub struct Node {
     pub id: u32,
-    pub node_type: String,
+    pub nt: String,
     pub class_name: String,
     pub style: HashMap<String, Value>, // 这里写的是taiwind的类
     pub children: Option<Vec<Node>>,
@@ -115,7 +115,7 @@ impl From<AstNode> for Node {
         let id = ast.id.unwrap();
 
         // 处理 NodeType: Option<NodeType> -> String
-        let node_type = match ast.nt {
+        let nt = match ast.nt {
             Some(nt) => format!("{:?}", nt).to_lowercase(),
             None => "node".to_string(),
         };
@@ -148,7 +148,7 @@ impl From<AstNode> for Node {
 
         Node {
             id,
-            node_type,
+            nt,
             class_name,
             style,
             children,

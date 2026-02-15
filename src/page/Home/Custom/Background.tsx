@@ -1,90 +1,100 @@
-import { useMemo } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { convertFileSrc } from '@tauri-apps/api/core'
 import useGameStore from "@/store/gameStore"
-import { ThemeComponentProps } from "@/types/node"
-import Surface from "@/layout/Surface"
+import { ThemeNode } from "@/types/node"
 
+export const Background = ({ node, children }: { node: ThemeNode; children?: React.ReactNode }) => {
+  const style = (node.style || {}) as any;
 
-export const Background: React.FC<ThemeComponentProps> = ({ node }) => {
-  // 1. 获取 style 和 children
-  // 既然没有 props，我们假设所有业务配置都放在 style 里，或者 node 本身的字段里
-  const { style = {}, children } = node;
+  // 1. 严格解构：提取控制参数，rest 剩下的是要注入到 style 的 CSS
+  const {
+    sourceType = 'selectedGame',
+    sourceValue,
+    overlayColor = "bg-transparent",
+    blur = "0px",
+    opacity = 1,
+    variant = 'none',
+    ...restStyles
+  } = style;
 
-  // 2. 从 style 中提取配置 (全部强制转换为对应类型)
-  // 业务逻辑参数
-  const sourceType = (style.sourceType as 'selectedGame' | 'static' | 'specifiedGame') || 'selectedGame';
-  const sourceValue = style.sourceValue as string;
-  const overlayColor = (style.overlayColor as string) || "bg-transparent";
+  const selectedGame = useGameStore((state) => state.selectedGame);
+  const gameMetaList = useGameStore((state) => state.gameMetaList);
 
-  // 视觉参数
-  const blur = (style.blur as string) || "0px";
-  const opacity = style.opacity !== undefined ? Number(style.opacity) : 1;
-
-  const { selectedGame, gameMetaList } = useGameStore()
-
-  // 3. 计算背景列表 (逻辑保持不变)
-  const backgrounds = useMemo(() => {
-    if (sourceType === 'selectedGame') {
-      return gameMetaList.map(g => ({
-        id: g.id,
-        url: g.localBackground ? convertFileSrc(g.localBackground) : g.background,
-        active: selectedGame?.id === g.id
-      }))
+  const variantPresets: Record<string, { overlay?: React.CSSProperties; bgClass?: string; containerClass?: string }> = {
+    'bottom-blur': {
+      overlay: {
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        maskImage: 'linear-gradient(to top, black 0%, transparent 40%)',
+        WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 40%)',
+      }
+    },
+    'vignette': {
+      containerClass: "after:content-[''] after:absolute after:inset-0 after:shadow-[inset_0_0_150px_rgba(0,0,0,0.8)]"
     }
+  };
 
-    if (sourceType === 'static' && sourceValue) {
-      return [{ id: 'static', url: sourceValue, active: true }]
+  // 2. 这里的优先级：手动传入的 restStyles 必须能干掉 preset
+  const finalOverlayStyle = useMemo(() => {
+    const preset = variantPresets[variant]?.overlay || {};
+    const manual: any = { ...restStyles };
+
+    // 强制补全前缀，防止 Tauri 渲染失败
+    if (manual.backdropFilter) manual.WebkitBackdropFilter = manual.backdropFilter;
+    if (manual.maskImage) manual.WebkitMaskImage = manual.maskImage;
+
+    return { ...preset, ...manual };
+  }, [variant, restStyles]);
+
+  // 图片处理
+  const currentBgUrl = useMemo(() => {
+    if (sourceType === 'selectedGame' && selectedGame) {
+      return selectedGame.localBackground ? convertFileSrc(selectedGame.localBackground) : selectedGame.background;
     }
-
+    if (sourceType === 'static' && sourceValue) return sourceValue;
     if (sourceType === 'specifiedGame' && sourceValue) {
-      const game = gameMetaList.find(g => g.id === sourceValue)
-      return [{
-        id: 'spec',
-        url: game?.localBackground ? convertFileSrc(game.localBackground) : game?.background,
-        active: true
-      }]
+      const game = gameMetaList.find(g => g.id === sourceValue);
+      return game?.localBackground ? convertFileSrc(game.localBackground) : game?.background;
     }
+    return "";
+  }, [sourceType, sourceValue, selectedGame, gameMetaList]);
 
-    return []
-  }, [sourceType, sourceValue, gameMetaList, selectedGame?.id])
+  const [displayBgs, setDisplayBgs] = useState<{ url: string, key: number }[]>([]);
+  useEffect(() => {
+    if (currentBgUrl) setDisplayBgs([{ url: currentBgUrl, key: Date.now() }]);
+  }, [currentBgUrl]);
 
   return (
     <div
-      // 继承 node.className 确保它在 Grid/Flex 中的位置正确
-      className={cn("relative w-full h-full overflow-hidden", node.className)}
-      // 这里的 style 只保留布局相关的（比如 width/height/flex），过滤掉我们自定义的逻辑属性
-      // 或者简单点直接全传，浏览器会自动忽略不认识的 style 属性
-      style={{ ...style }}
+      className={cn("relative w-full h-full overflow-hidden bg-black", variantPresets[variant]?.containerClass, node.className)}
+      style={{ width: "100%", height: "100%" }} // 基础宽高，具体的 style 给各层分发
     >
-      {/* --- 背景层 --- */}
-      {backgrounds.map((bg) => (
-        <img
-          key={bg.id}
-          src={bg.url}
-          alt=""
-          decoding="async"
-          className={cn(
-            "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 pointer-events-none",
-            bg.active ? "opacity-100" : "opacity-0"
-          )}
+      {/* 背景图层 (Z-0) - 永远全屏显示，不加 mask */}
+      {displayBgs.map((bg) => (
+        <div
+          key={bg.key}
+          className="absolute inset-0 transition-opacity duration-1000"
           style={{
-            // 这里的样式是给 img 元素的，不要混入外层的 style
+            backgroundImage: `url(${bg.url})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
             filter: `blur(${blur})`,
-            opacity: bg.active ? opacity : 0,
+            opacity: opacity,
             zIndex: 0
           }}
         />
       ))}
 
-      {/* --- 遮罩层 --- */}
-      <div className={cn("absolute inset-0 z-[1] pointer-events-none", overlayColor)} />
+      {/* 遮罩/模糊层 (Z-1) - 只在这一层玩 mask */}
+      <div
+        className={cn("absolute inset-0 z-[1] pointer-events-none", overlayColor)}
+        style={finalOverlayStyle}
+      />
 
-      {/* --- 内容容器 (关键) --- */}
-      <div className="relative z-[2] w-full h-full">
-        {children?.map((child) => (
-          <Surface key={child.id} node={child} />
-        ))}
+      {/* 内容层 (Z-10) - 绝对高于模糊层，文字和海报永远清晰 */}
+      <div className="relative z-[10] w-full h-full">
+        {children}
       </div>
     </div>
   )

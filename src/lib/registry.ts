@@ -10,16 +10,16 @@ import { ThemeComponentProps } from "@/types/node";
 
 export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
   // 基础形态
-  'Node': SurfaceBase,
+  'node': SurfaceBase,
 
   // 容器形态
-  'Row': SurfaceBase,
-  'Col': SurfaceBase,
-  'Background': Background,
+  'row': SurfaceBase,
+  'col': SurfaceBase,
+  'background': Background,
 
 
   // 业务形态
-  'Button': SurfaceBase,
-  'Chart': SurfaceBase,
-  'GameShelf': GameShelf,
+  'button': SurfaceBase,
+  'chart': SurfaceBase,
+  'gameshelf': GameShelf,
 };
