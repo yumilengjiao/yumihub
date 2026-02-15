@@ -23,16 +23,17 @@ export interface PageConfig {
 
 
 export interface ThemeNode {
-  id: string;
-  nt: string;
-  style: CSSProperties & Record<string, any>;
-  className: string;
-  children?: ThemeNode[];
-  actions?: any;
-  hooks?: any;
+  id: string
+  nt: string
+  style: CSSProperties & Record<string, any>
+  className: string
+  children?: ThemeNode[]
+  props: Record<string, any>
+  actions?: any
+  hooks?: any
 }
 
 export interface Action {
-  command: string;
-  params?: any;
+  command: string
+  params?: any
 }

@@ -105,6 +105,7 @@ pub struct Node {
     pub class_name: String,
     pub style: HashMap<String, Value>, // 这里写的是taiwind的类
     pub children: Option<Vec<Node>>,
+    pub props: Value,
     pub actions: Option<HashMap<String, Action>>,
     pub hooks: Option<Vec<String>>,
 }
@@ -125,6 +126,9 @@ impl From<AstNode> for Node {
 
         // 处理 Style (对应 AST 的 inline_style)
         let style = ast.inline_style.unwrap_or_default();
+
+        // 处理props
+        let props = ast.props.unwrap_or_default();
 
         // 递归处理 Children
         let children = ast
@@ -152,6 +156,7 @@ impl From<AstNode> for Node {
             class_name,
             style,
             children,
+            props,
             actions,
             hooks: ast.hooks,
         }

@@ -19,7 +19,7 @@ interface GameShelfUIProps {
 
   // --- 原有属性 ---
   height?: string;
-  itemBasis?: string;
+  itemBasis: string;
   gap?: string;
   variant?: 'scale' | 'border' | 'glow';
 }
@@ -28,9 +28,8 @@ const GameShelfUI = ({
   // --- 新增解构 ---
   className,
   style,
-
   // --- 原有解构 ---
-  itemBasis = "sm:basis-1/6",
+  itemBasis = "sm:basis-1/7",
   gap = "pl-4",
   variant = "scale"
 }: GameShelfUIProps) => {
@@ -39,7 +38,10 @@ const GameShelfUI = ({
 
   const { selectedGame, gameMetaList, updateSelectedGame } = useGameStore()
   const { config } = useConfigStore()
-
+  // 由于taiwind的懒加载机制导致这几种可能不会动态生成css，所以在这里加上，即使不用taiwind也会扫描到
+  const TAILWIND_GENERATOR_HACK = [
+    "sm:basis-1/4", "sm:basis-1/5", "sm:basis-1/6", "sm:basis-1/7", "sm:basis-1/8", "sm:basis-1/9", "sm:basis-1/10", "sm:basis-1/11", "sm:basis-1/12"
+  ];
   // --- 逻辑完全保持不变 ---
   const displayGames = useMemo(() => {
     const orderIds = config.basic.gameDisplayOrder || []
@@ -203,19 +205,14 @@ const GameShelfUI = ({
 export const GameShelf: React.FC<ThemeComponentProps> = ({ node }) => {
   const style = node.style || {};
 
+  console.log(node.props['basis'])
+
   return (
     <GameShelfUI
-      // --- 关键修改：透传 node 的 className 和 style ---
       className={node.className}
-      // 将 node.style 强制转换为 CSSProperties 传递给最外层 div
-      // 这样你在 JSON 里配置的 height, margin, padding, position 等都会生效
       style={style as React.CSSProperties}
-
-      // 原有逻辑：提取特定字段用于组件内部逻辑
-      height={style.height as string}
-      gap={style.gap as string}
-      itemBasis={style.itemBasis as string}
       variant={style.variant as any}
+      itemBasis={node.props['basis']}
     />
   );
 };
