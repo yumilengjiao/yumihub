@@ -8,6 +8,8 @@ import { Background } from "@/page/Home/Custom/Background";
 import { ThemeComponentProps } from "@/types/node";
 import AppButton from "@/page/Home/Custom/AppButton";
 import AppIcon from "@/page/Home/Custom/AppIcon";
+import MainContentSlot from "@/layout/MainContnetSlot";
+import SideBar from "@/layout/Sidebar";
 
 
 export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
@@ -17,7 +19,9 @@ export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
   // 容器形态
   'row': SurfaceBase,
   'col': SurfaceBase,
+  'sidebar': SideBar,
   'background': Background,
+  'page': MainContentSlot,
 
 
   // 业务形态

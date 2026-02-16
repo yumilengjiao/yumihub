@@ -3,14 +3,15 @@ import Home from "@/page/Home"
 import Library from "@/page/Library"
 import User from "@/page/User"
 import Setting from "@/page/Setting"
-import Layout from "@/layout/index"
+// import Layout from "@/layout/index"
+import LayoutTest from "@/layout/layoutTest"
 import GameDetail from "@/page/Library/GameDetail"
 import TestPage from "@/page/TestPage"
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Layout />,
+    element: <LayoutTest />,
     children: [
       {
         index: true,

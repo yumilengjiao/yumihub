@@ -1,29 +1,41 @@
-import { Outlet } from "react-router"
-import TitleBar from '@/components/TitleBar'
-import SideBar from '@/components/SideBar' // 确保这里的路径指向你的 SideBar 文件夹
 import { Toaster } from "sonner"
 import useUserStore from "@/store/userStore"
+import useGameStore from "@/store/gameStore"
+import useConfigStore from "@/store/configStore"
+import { useShortcutHandler } from "@/hooks/useShortcuter"
 import { invoke } from "@tauri-apps/api/core"
 import { useEffect } from "react"
-import { User } from "@/types/user"
-import useGameStore from "@/store/gameStore"
-import { GameMetaList } from "@/types/game"
-import { Cmds } from "@/lib/enum"
-import { debug } from "@tauri-apps/plugin-log"
-import useConfigStore from "@/store/configStore"
-import { Config } from "@/types/config"
-import { cn } from "@/lib/utils"
 import { i18n } from "@lingui/core"
-import { useShortcutHandler } from "@/hooks/useShortcuter"
+import { debug } from "@tauri-apps/plugin-log"
+import { Cmds } from "@/lib/enum"
+
+// 类型定义
+import { User } from "@/types/user"
+import { GameMetaList } from "@/types/game"
+import { Config } from "@/types/config"
+import { useThemeStore } from "@/store/themeStore"
+import { Surface } from "./Surface"
 
 export default function Layout() {
+  // === Store ===
   const { setUser } = useUserStore()
   const { updateSelectedGame, setGameMetaList } = useGameStore()
   const { updateConfig } = useConfigStore()
-  const fontFamily = useConfigStore(c => c.config.interface.fontFamily)
-  const sidebarMode = useConfigStore(c => c.config.interface.sidebarMode) || "Trigger"
 
+  // 获取动态字体配置
+  const fontFamily = useConfigStore(c => c.config.interface.fontFamily)
+
+  // 🔥 获取全动态布局树 (原本的 SidebarMode 逻辑现在应该由 JSON 里的 SideBar 组件自己处理)
+  const layoutTree = useThemeStore(t => t.themes[1]?.layout?.global)
+
+  console.log("layoutTree", layoutTree)
+
+  // === Hooks ===
+  // 注册全局快捷键
   useShortcutHandler()
+
+  // === 逻辑保持不变：初始化数据 ===
+
   /**
    * 获取所有的游戏信息
    */
@@ -55,24 +67,28 @@ export default function Layout() {
     try {
       debug("程序启动,开始向后端获取配置信息")
       const config = await invoke<Config>(Cmds.GET_CONFIG)
+
       // 设置语言
       i18n.activate(config.basic.language)
+
       updateConfig((oldConfig) => Object.assign(oldConfig, config))
-      // 这里应用主题色
+
+      // 应用主题色 (Color Theme)
       const html = document.documentElement
-      // 添加选中的主题类
       html.classList.add(config.interface.themeColor)
 
     } catch (err) { console.error("无法获取config", err) }
   }
 
+  // 初始化请求
   useEffect(() => {
+    // 使用 Promise.all 并行请求可能更快，但为了完全保留你原本的逻辑顺序，分开调用
     getGamelist()
     getConfig()
     getUserInfo()
   }, [])
 
-  // 动态字体注入
+  // === 逻辑保持不变：动态字体注入 ===
   useEffect(() => {
     const fontValue = fontFamily === "sys"
       ? '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
@@ -90,32 +106,24 @@ export default function Layout() {
     `
   }, [fontFamily])
 
+  // === 渲染层 ===
   return (
-    <div className="h-screen w-full flex flex-col bg-transparent overflow-hidden font-main">
+    <div className="h-screen w-full flex flex-col bg-transparent overflow-hidden font-main select-none">
+      {/* 全局消息提示 */}
       <Toaster position="top-center" richColors />
-      <TitleBar />
 
-      {/* 栅格布局容器 */}
-      <div className={cn(
-        "flex-1 relative overflow-hidden",
-        // 只有固定模式才使用栅格占位
-        sidebarMode !== "Trigger" ? "grid" : "block"
+      {/* 不再写死 TitleBar / SideBar / Grid。
+         整个界面的结构完全由 JSON 树 (layoutTree) 决定。
+         SideBar 和 MainContent (Outlet) 的位置关系由 layoutTree 的 Row/Col 嵌套关系决定。
+      */}
+      {layoutTree ? (
+        <Surface node={layoutTree} />
+      ) : (
+        // 防止数据未加载时的白屏，给一个简单的 Loading 状态
+        <div className="flex h-full w-full items-center justify-center text-zinc-500">
+          Loading Theme Configuration...
+        </div>
       )}
-        style={sidebarMode !== "Trigger" ? {
-          gridTemplateColumns: sidebarMode === "NormalFixed" ? "140px 1fr" : "66px 1fr"
-        } : {}}>
-
-        <SideBar />
-
-        {/* 主内容区 */}
-        <main className={cn(
-          "h-full overflow-auto transition-all duration-300",
-          "bg-zinc-900/50 relative z-0"
-        )}>
-          <Outlet />
-        </main>
-      </div>
     </div >
   )
 }
-

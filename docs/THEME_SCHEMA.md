@@ -162,24 +162,57 @@
 
   - 说明: 该属性中可以填入点击事件执行的函数
 
-        用法: 
+      用法:
+
+       ```jsonc
+        actions: [
+          {
+            command: "navigate",
+            props: {
+              destination: "/"
+            }
+          },
+          {
+            command: "alert",
+            props: {
+              style: "success",
+              content: "你好"
+            }
+          },
+        ]
         ```
-          actions: [
-            {
-              command: "navigate",
-              props: {
-                destination: "/"
-              }
-            },
-            {
-              command: "alert",
-              props: {
-                style: "success",
-                content: "你好"
-              }
-            },
-          ]
-        ```
+
+  - 支持的actions:
+
+    ```jsonc
+      // 导航到特性页面
+      {
+        command: "navigate",
+        props: {
+          destination: "/" || "library" || "game" || "user" || "setting"
+        }
+      }
+    ```
+
+    ```jsonc
+      // 提示信息
+      {
+        command: "alert",
+        props: {
+          message: "你好"
+        }
+      }
+    ```
+
+    ```jsonc
+      // 打开外部链接
+      {
+        command: "open_link",
+        props: {
+          url: "https://github.com/yumilengjiao/yumihub"
+        }
+      }
+    ```
 
 - className <string | string[]>
 

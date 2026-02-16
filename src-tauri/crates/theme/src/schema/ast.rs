@@ -54,6 +54,8 @@ pub enum NodeType {
     Row,
     Col,
     Background,
+    SideBar,
+    Page,
     GameShelf,
     #[serde(alias = "Button")]
     AppButton,
