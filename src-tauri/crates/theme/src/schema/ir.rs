@@ -106,7 +106,7 @@ pub struct Node {
     pub style: HashMap<String, Value>, // 这里写的是taiwind的类
     pub children: Option<Vec<Node>>,
     pub props: Value,
-    pub actions: Option<HashMap<String, Action>>,
+    pub actions: Option<Vec<Action>>,
     pub hooks: Option<Vec<String>>,
 }
 
@@ -136,19 +136,16 @@ impl From<AstNode> for Node {
             .map(|children_vec| children_vec.into_iter().map(Node::from).collect());
 
         // 转移 Action 和 Hook (完全匹配，直接 map 即可)
-        let actions = ast.actions.map(|a| {
-            a.into_iter()
-                .map(|(k, v)| {
-                    (
-                        k,
-                        Action {
-                            command: v.command,
-                            params: v.params,
-                        },
-                    )
+        let actions = Some(
+            ast.actions
+                .unwrap_or_default() // 获取 Vec<AstAction>
+                .into_iter() // 转换为消耗所有权的迭代器
+                .map(|action| Action {
+                    command: action.command,
+                    params: action.params,
                 })
-                .collect()
-        });
+                .collect::<Vec<Action>>(),
+        );
 
         Node {
             id,

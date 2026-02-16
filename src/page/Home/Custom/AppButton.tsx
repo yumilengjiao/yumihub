@@ -11,7 +11,7 @@ export default function AppButton({
   const { runActions } = useAppActions();
 
   // 解构 props，设置 variant 默认为 scale
-  const { actions, variant = "scale" } = node.props || {};
+  const { variant = "scale" } = node.props || {};
 
   // 定义变体样式映射表
   const variantStyles: Record<string, string> = {
@@ -27,6 +27,7 @@ export default function AppButton({
 
   // 获取当前变体对应的类名
   const activeVariantClass = variantStyles[variant as string] || variantStyles.scale;
+
 
   return (
     <button
@@ -52,8 +53,8 @@ export default function AppButton({
         e.stopPropagation();
 
         // 将配置的 actions 数组丢给执行器
-        if (actions) {
-          runActions(actions);
+        if (node.actions) {
+          runActions(node.actions);
         }
       }}
     >

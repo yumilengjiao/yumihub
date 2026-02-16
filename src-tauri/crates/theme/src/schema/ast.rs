@@ -80,7 +80,7 @@ pub struct AstNode {
     pub props: Option<Value>,
     pub children: Option<Vec<AstNode>>,
     pub consume: Option<Vec<String>>,
-    pub actions: Option<HashMap<String, Action>>,
+    pub actions: Option<Vec<Action>>,
     pub hooks: Option<Vec<String>>,
 }
 

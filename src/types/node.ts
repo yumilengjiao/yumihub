@@ -29,7 +29,7 @@ export interface ThemeNode {
   className: string
   children?: ThemeNode[]
   props: Record<string, any>
-  action?: any
+  actions?: Action[]
   hooks?: any
 }
 
