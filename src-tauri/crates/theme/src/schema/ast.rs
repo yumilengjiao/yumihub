@@ -55,18 +55,10 @@ pub enum NodeType {
     Col,
     Background,
     GameShelf,
-}
-
-impl From<&str> for NodeType {
-    fn from(s: &str) -> Self {
-        match s {
-            "Row" => NodeType::Row,
-            "Col" => NodeType::Col,
-            "Background" => NodeType::Background,
-            "GameShelf" => NodeType::GameShelf,
-            _ => NodeType::Node,
-        }
-    }
+    #[serde(alias = "Button")]
+    AppButton,
+    #[serde(alias = "Icon")]
+    AppIcon,
 }
 
 /// 节点,所有元素都是AstNode

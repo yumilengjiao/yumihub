@@ -20,7 +20,7 @@ export default function index() {
   }
   console.log("----------", themes[0].layout.pages["/"].content)
   return (
-    <Surface node={themes[0].layout.pages["/"].content}></Surface>
+    <Surface node={themes[1].layout.pages["/"].content}></Surface>
   )
 }
 

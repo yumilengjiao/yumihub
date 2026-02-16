@@ -2,7 +2,7 @@ import { CSSProperties } from "react";
 
 export interface ThemeComponentProps {
   node: ThemeNode;               // 必须接收 node
-  children?: React.ReactNode; // 可选接收子节点
+  children?: React.ReactNode;    // 可选接收子节点
 }
 
 export interface ThemeIr {
@@ -29,7 +29,7 @@ export interface ThemeNode {
   className: string
   children?: ThemeNode[]
   props: Record<string, any>
-  actions?: any
+  action?: any
   hooks?: any
 }
 

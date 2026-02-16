@@ -6,6 +6,8 @@ import SurfaceBase from "@/layout/Surface";
 import GameShelf from "@/page/Home/Custom/GameShelf";
 import { Background } from "@/page/Home/Custom/Background";
 import { ThemeComponentProps } from "@/types/node";
+import AppButton from "@/page/Home/Custom/AppButton";
+import AppIcon from "@/page/Home/Custom/AppIcon";
 
 
 export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
@@ -19,7 +21,8 @@ export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
 
 
   // 业务形态
-  'button': SurfaceBase,
+  'appbutton': AppButton,
+  'appicon': AppIcon,
   'chart': SurfaceBase,
   'gameshelf': GameShelf,
 };

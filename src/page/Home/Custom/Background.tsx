@@ -7,7 +7,7 @@ import { ThemeNode } from "@/types/node"
 export const Background = ({ node, children }: { node: ThemeNode; children?: React.ReactNode }) => {
   const style = (node.style || {}) as any;
 
-  // 1. 严格解构：提取控制参数，rest 剩下的是要注入到 style 的 CSS
+  // 严格解构：提取控制参数，rest 剩下的是要注入到 style 的 CSS
   const {
     sourceType = 'selectedGame',
     sourceValue,
@@ -88,12 +88,12 @@ export const Background = ({ node, children }: { node: ThemeNode; children?: Rea
 
       {/* 遮罩/模糊层 (Z-1) - 只在这一层玩 mask */}
       <div
-        className={cn("absolute inset-0 z-[1] pointer-events-none", overlayColor)}
+        className={cn("absolute inset-0 z-1 pointer-events-none", overlayColor)}
         style={finalOverlayStyle}
       />
 
       {/* 内容层 (Z-10) - 绝对高于模糊层，文字和海报永远清晰 */}
-      <div className="relative z-[10] w-full h-full">
+      <div className="relative z-10 w-full h-full">
         {children}
       </div>
     </div>

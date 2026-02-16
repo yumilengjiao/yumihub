@@ -19,7 +19,7 @@
 
 - className <string | string[]>
 
-  - 说明: Tailwind 实用类注入。通过 cn() 与内部样式合并。
+  - 说明: Tailwind 实用类注入。与内部样式合并。
 
         用法: 可以使用所有taiwind中的实用类,如：className: ["bg-pink","text-xl"] 或 ["bg-pink text-xl"]
 
@@ -121,6 +121,65 @@
     - 说明: 控制游戏列表的大小(一行展示多少个游戏)
 
         用法: basis: 7(页面一面展示7个游戏, 最低不超过4，最大不超过12)
+
+- className <string | string[]>
+
+  - 说明: 注入 Tailwind 类名到组件的最外层容器。
+
+        用法: 可以使用所有taiwind中的实用类,如：className: ["bg-pink","text-xl"] 或 ["bg-pink text-xl"]
+
+- inlineStyle <Object>
+
+  - 说明: 注入原生 CSS 样式。
+
+        用法: 适用于变体不能达到想要的效果时，如 inlineStyle: {"box-sizing": "border-box"}。
+
+---
+
+## Button [叶子节点]
+
+用于通过action属性调用提供的点击事件
+允许子节点：✅是
+
+属性定义 (Properties)
+
+- variant <string>
+
+  - 说明: 封面卡片的交互与视觉预设。
+  
+        可选值:
+
+        // scale: 经典的缩放效果
+        scale: "transition-transform hover:scale-105 active:scale-95",
+
+        // border: 预留透明边框防止抖动，Hover时变色
+        border: "border-2 border-transparent hover:border-purple-500 transition-colors box-border",
+
+        // glow: 霓虹发光效果 (利用 drop-shadow 或 box-shadow)
+        glow: "transition-shadow hover:shadow-[0_0_15px_rgba(168,85,247,0.6)]",
+
+- actions <Object>
+
+  - 说明: 该属性中可以填入点击事件执行的函数
+
+        用法: 
+        ```
+          actions: [
+            {
+              command: "navigate",
+              props: {
+                destination: "/"
+              }
+            },
+            {
+              command: "alert",
+              props: {
+                style: "success",
+                content: "你好"
+              }
+            },
+          ]
+        ```
 
 - className <string | string[]>
 
