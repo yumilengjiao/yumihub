@@ -124,15 +124,6 @@ const GameShelfUI = ({
       className={cn("overflow-hidden w-full", className)}
       style={style}
     >
-      {/* 标题 */}
-      <div className="pl-8 pb-2 text-6xl text-white font-bold transition-all duration-500"
-        style={{
-          WebkitTextStroke: '2px black',
-          paintOrder: 'stroke fill',
-        }}>
-        {selectedGame?.name}
-      </div>
-
       <Carousel
         opts={{
           dragFree: true,
@@ -146,7 +137,7 @@ const GameShelfUI = ({
         <CarouselContent
           className={cn(
             "w-screen",
-            variant === 'scale' ? "items-end" : "items-center py-10"
+            variant === 'scale' ? "items-end" : "items-center py-4"
           )}
         >
           {displayGames.map((g, index) => (

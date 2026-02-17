@@ -36,7 +36,6 @@ export default function AppButton({
       style={node.style as React.CSSProperties}
       className={cn(
         // === 基础样式 (Base) ===
-        // 去除默认样式，设置弹性居中，鼠标手型
         "bg-transparent p-0 m-0 cursor-pointer outline-none flex items-center justify-center select-none",
         // 禁用状态样式
         "disabled:opacity-50 disabled:cursor-not-allowed",

@@ -1,3 +1,5 @@
+//! [TODO:description]
+
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
@@ -50,17 +52,35 @@ pub struct AstPageConfig {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum NodeType {
+    // 普通节点
     Node,
+    // 控制列数
     Row,
+    // 控制行数
     Col,
+    // 展示背景,可展示游戏背景
     Background,
+    // 侧边栏
     SideBar,
+    // 顶部操作栏
+    TitleBar,
+    // 路由的插槽，所有路由页面的展示由此组件控制，原则上这个组件只出现一次
     Page,
+
+    // 游戏展示架
     GameShelf,
+    // 就是一个展示问题加图标的按钮，只不过有些特殊功能
+    Entry,
+    // 按钮可以用来触发所有支持的行为，本身没有样式
     #[serde(alias = "Button")]
     AppButton,
+    // 图标组件，可使用所有Lucide的所有图标
     #[serde(alias = "Icon")]
     AppIcon,
+    #[serde(alias = "WTIcon")]
+    WindowToggleIcon,
+    // 用于展示用户头像
+    Avatar,
 }
 
 /// 节点,所有元素都是AstNode

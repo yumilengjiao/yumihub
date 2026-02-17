@@ -25,7 +25,6 @@ export default function Layout() {
   // 获取动态字体配置
   const fontFamily = useConfigStore(c => c.config.interface.fontFamily)
 
-  // 🔥 获取全动态布局树 (原本的 SidebarMode 逻辑现在应该由 JSON 里的 SideBar 组件自己处理)
   const layoutTree = useThemeStore(t => t.themes[1]?.layout?.global)
 
   console.log("layoutTree", layoutTree)
@@ -112,10 +111,6 @@ export default function Layout() {
       {/* 全局消息提示 */}
       <Toaster position="top-center" richColors />
 
-      {/* 不再写死 TitleBar / SideBar / Grid。
-         整个界面的结构完全由 JSON 树 (layoutTree) 决定。
-         SideBar 和 MainContent (Outlet) 的位置关系由 layoutTree 的 Row/Col 嵌套关系决定。
-      */}
       {layoutTree ? (
         <Surface node={layoutTree} />
       ) : (

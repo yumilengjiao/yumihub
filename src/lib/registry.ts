@@ -10,6 +10,10 @@ import AppButton from "@/page/Home/Custom/AppButton";
 import AppIcon from "@/page/Home/Custom/AppIcon";
 import MainContentSlot from "@/layout/MainContnetSlot";
 import SideBar from "@/layout/Sidebar";
+import TitleBar from "@/layout/TitleBar";
+import Entry from "@/layout/Entry";
+import { Avatar } from "@/page/Home/Custom/Avatar";
+import WindowToggleIcon from "@/page/Home/Custom/WindowToogleButton";
 
 
 export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
@@ -22,11 +26,14 @@ export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
   'sidebar': SideBar,
   'background': Background,
   'page': MainContentSlot,
-
+  'titlebar': TitleBar,
 
   // 业务形态
   'appbutton': AppButton,
   'appicon': AppIcon,
+  'windowtoggleicon': WindowToggleIcon,
+  'entry': Entry,
   'chart': SurfaceBase,
   'gameshelf': GameShelf,
+  'avatar': Avatar
 };
