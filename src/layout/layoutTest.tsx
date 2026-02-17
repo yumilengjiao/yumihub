@@ -14,7 +14,7 @@ import { User } from "@/types/user"
 import { GameMetaList } from "@/types/game"
 import { Config } from "@/types/config"
 import { useThemeStore } from "@/store/themeStore"
-import { Surface } from "./Surface"
+import { Surface } from "../components/custom/Surface"
 
 export default function Layout() {
   // === Store ===

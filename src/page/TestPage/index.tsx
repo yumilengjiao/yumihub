@@ -1,7 +1,7 @@
 import { useThemeStore } from '@/store/themeStore'
 import './index.css'
 import { useEffect } from 'react';
-import { Surface } from '@/layout/Surface';
+import { Surface } from '@/components/custom/Surface';
 
 export default function index() {
   const { themes } = useThemeStore()

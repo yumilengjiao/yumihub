@@ -1,6 +1,6 @@
 import { useThemeStore } from '@/store/themeStore'
 import './index.css'
-import { Surface } from "@/layout/Surface"
+import { Surface } from "@/components/custom/Surface"
 
 
 export default function Home() {
