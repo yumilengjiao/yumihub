@@ -9,16 +9,42 @@ import { Play, Ghost } from "lucide-react"
 import { Cmds } from "@/lib/enum"
 import { GameMeta } from "@/types/game"
 import { Trans } from "@lingui/react/macro"
+import { ThemeComponentProps } from "@/types/node"
 
-const GameList = () => {
+// 定义组件私有 Props 接口
+interface GameShelfUIProps {
+  // --- 新增：接收通用样式和类名 ---
+  className?: string;
+  style?: React.CSSProperties;
+
+  // --- 原有属性 ---
+  height?: string;
+  itemBasis: string;
+  gap?: string;
+  variant?: 'scale' | 'border' | 'glow';
+}
+
+const GameShelfUI = ({
+  // --- 新增解构 ---
+  className,
+  style,
+  // --- 原有解构 ---
+  itemBasis = "sm:basis-1/7",
+  gap = "pl-4",
+  variant = "scale"
+}: GameShelfUIProps) => {
   const [api, setApi] = useState<CarouselApi>()
   const [currentIndex, setCurrentIndex] = useState<number>(0)
 
   const { selectedGame, gameMetaList, updateSelectedGame } = useGameStore()
   const { config } = useConfigStore()
+  // 由于taiwind的懒加载机制导致这几种可能不会动态生成css，所以在这里加上，即使不用taiwind也会扫描到
+  const TAILWIND_GENERATOR_HACK = [
+    "sm:basis-1/4", "sm:basis-1/5", "sm:basis-1/6", "sm:basis-1/7", "sm:basis-1/8", "sm:basis-1/9", "sm:basis-1/10", "sm:basis-1/11", "sm:basis-1/12"
+  ];
+  // --- 逻辑完全保持不变 ---
   const displayGames = useMemo(() => {
     const orderIds = config.basic.gameDisplayOrder || []
-
     return orderIds
       .map(id => gameMetaList.find(game => game.id === id))
       .filter((game): game is GameMeta => !!game && game.isDisplayed)
@@ -27,7 +53,6 @@ const GameList = () => {
   useEffect(() => {
     if (displayGames.length > 0) {
       const isSelectedValid = selectedGame && displayGames.some(g => g.id === selectedGame.id)
-
       if (!isSelectedValid) {
         updateSelectedGame(displayGames[0])
         setCurrentIndex(0)
@@ -39,16 +64,45 @@ const GameList = () => {
     } else {
       updateSelectedGame(null)
     }
-  }, [displayGames, api])
+  }, [displayGames, api, selectedGame?.id])
 
   const handleStartGame = (game: GameMeta, e: React.MouseEvent) => {
     e.stopPropagation()
     invoke(Cmds.START_GAME, { game: game })
   }
 
+  const getCardStyles = (index: number) => {
+    const isSelected = currentIndex === index;
+
+    switch (variant) {
+      case 'border':
+        return cn(
+          "transition-all duration-300 bg-zinc-900",
+          isSelected
+            ? "z-10 ring-2 ring-purple-500 ring-offset-4 ring-offset-zinc-900"
+            : "opacity-95"
+        );
+      case 'glow':
+        return cn(
+          "scale-100 transition-all duration-500",
+          isSelected ? "shadow-[0_0_50px_rgba(139,92,246,0.6)] border-2 border-purple-400 z-10" : "opacity-40 blur-[1px]"
+        );
+      case 'scale':
+      default:
+        return cn(
+          "origin-bottom transition-all duration-300",
+          isSelected ? "scale-100 shadow-2xl shadow-custom-500/20" : "scale-85"
+        );
+    }
+  }
+
   if (displayGames.length === 0) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
+      <div
+        // 这里的 Empty 状态也加上 className 和 style，确保布局一致
+        className={cn("fixed inset-0 flex flex-col items-center justify-center pointer-events-none select-none", className)}
+        style={style}
+      >
         <div className="flex flex-col items-center animate-in fade-in zoom-in duration-1000">
           <Ghost size={120} className="text-white/5 mb-8" />
           <h2 className="text-5xl font-black text-white/10 tracking-[0.4em] uppercase"
@@ -64,15 +118,12 @@ const GameList = () => {
   }
 
   return (
-    <div className="overflow-hidden">
-      <div className="pl-8 pb-2 text-6xl text-white font-bold transition-all duration-500"
-        style={{
-          WebkitTextStroke: '2px black',
-          paintOrder: 'stroke fill',
-        }}>
-        {selectedGame?.name}
-      </div>
-
+    <div
+      // --- 关键修改：应用 node 传入的 className 和 style ---
+      // cn 会自动处理 merging，保留了原本的 overflow-hidden w-full
+      className={cn("overflow-hidden w-full", className)}
+      style={style}
+    >
       <Carousel
         opts={{
           dragFree: true,
@@ -80,16 +131,23 @@ const GameList = () => {
           duration: 30,
           containScroll: false,
         }}
-        className="pl-4"
+        className="ml-2"
         setApi={setApi}
       >
-        <CarouselContent className="items-end w-screen">
+        <CarouselContent
+          className={cn(
+            "w-screen",
+            variant === 'scale' ? "items-end" : "items-center py-4"
+          )}
+        >
           {displayGames.map((g, index) => (
             <CarouselItem
               key={g.id}
               className={cn(
                 "duration-300 aspect-165/230",
-                "rounded-b-2xl sm:basis-1/6 pl-4 cursor-pointer",
+                itemBasis,
+                gap,
+                "cursor-pointer"
               )}
               onClick={() => {
                 setCurrentIndex(index)
@@ -99,36 +157,55 @@ const GameList = () => {
             >
               <Card className={cn(
                 "relative group overflow-hidden border-none",
-                "aspect-165/225 min-w-41.25 min-h-56.25 origin-bottom transition-all duration-300",
-                currentIndex !== index ? "scale-80" : "scale-100 shadow-2xl shadow-custom-500/20",
+                "aspect-165/225 min-w-41.25 min-h-56.25",
+                getCardStyles(index)
               )}>
+                {/* 遮罩 */}
                 {currentIndex !== index && (
                   <div className="absolute inset-0 bg-black opacity-45 z-10 transition-opacity duration-300" />
                 )}
 
+                {/* 播放按钮 */}
                 {currentIndex === index && (
                   <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button
                       onClick={(e) => handleStartGame(g, e)}
-                      className="w-20 h-20 flex items-center justify-center bg-custom-500 hover:bg-custom-400 text-white rounded-full shadow-[0_0_30px_rgba(16,185,129,0.6)] transition-all active:scale-90"
+                      className="w-20 h-20 flex items-center justify-center bg-custom-500 hover:bg-custom-400 text-white rounded-full shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all active:scale-90"
                     >
                       <Play size={32} fill="white" className="ml-1" />
                     </button>
                   </div>
                 )}
 
+                {/* 图片 */}
                 <img
                   src={g.localCover ? convertFileSrc(g.localCover) : g.cover}
                   alt={g.name}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover select-none"
                 />
               </Card>
             </CarouselItem>
           ))}
         </CarouselContent>
       </Carousel>
-    </div >
+    </div>
   )
 }
 
-export default GameList
+// --- 适配器组件 ---
+export const GameShelf: React.FC<ThemeComponentProps> = ({ node }) => {
+  const style = node.style || {};
+
+  console.log(node.props['basis'])
+
+  return (
+    <GameShelfUI
+      className={node.className}
+      style={style as React.CSSProperties}
+      variant={style.variant as any}
+      itemBasis={node.props['basis']}
+    />
+  );
+};
+
+export default GameShelf;

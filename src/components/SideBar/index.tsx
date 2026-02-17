@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils"
 import Trigger from "./Trigger"
 import { useState, useMemo } from "react"
 import Entry from "./Entry"
-import { House, UserRound, Settings2, Gamepad2 } from "lucide-react"
+import { House, UserRound, Settings2, Gamepad2, TestTube } from "lucide-react"
 import { Avatar } from "./Avatar"
 import { useNavigate, useLocation } from "react-router"
 import useConfigStore from "@/store/configStore"
@@ -76,6 +76,9 @@ export default function Sidebar() {
             </Entry>
             <Entry isActive={location.pathname === "/setting"} isExpanded={isExpanded} title={t`设置`} onClick={() => navigate("/setting")}>
               <Settings2 size={28} strokeWidth={2.5} />
+            </Entry>
+            <Entry isActive={location.pathname === "/testpage"} isExpanded={isExpanded} title={t`测试页`} onClick={() => navigate("/testpage")}>
+              <TestTube size={28} strokeWidth={2.5} />
             </Entry>
           </nav>
 

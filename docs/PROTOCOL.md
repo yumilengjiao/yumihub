@@ -202,6 +202,7 @@ Component 集成 Node 的所有属性，通过 nt 决定行为。Component不像
 }
 ```
 
+
 ### Image
 
 ```jsonc

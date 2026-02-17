@@ -1,17 +1,46 @@
+//! 执行AST——>IR转换的核心模块
+
 use crate::{
     errors::ThemeErr,
     schema::{
         ast::{AstNode, AstThemeConfig},
         ctx::ThemeContext,
+        ir::ThemeIr,
     },
-    transform::normalize::LogicStep,
 };
 
+mod assemble;
 mod normalize;
+mod prune;
+mod resolve;
+mod style;
+mod util;
+mod validate;
 
-pub fn run(ast_config: &mut AstThemeConfig, ctx: &mut ThemeContext) -> Result<(), Vec<ThemeErr>> {
-    normalize::run(ast_config, ctx);
-    Ok(())
+// 各种normalize阶段处理函数
+pub type LogicStep = fn(&mut AstNode, &mut ThemeContext);
+
+/// 解析处理语法树的主要函数,用于将AST—->IR,转换成为前端可以轻松解析的完整的规范化的节点树
+///
+/// * `ast_config`: 磁盘上读取的抽象语法树配置
+/// * `ctx`: 上下文对象
+pub fn run(
+    mut ast_config: AstThemeConfig,
+    ctx: &mut ThemeContext,
+) -> Result<ThemeIr, Vec<ThemeErr>> {
+    // 变量注入
+    resolve::resolve_variables(&mut ast_config, ctx);
+    // 补全必须值
+    normalize::run(&mut ast_config, ctx);
+    // 样式解析
+    style::run(&mut ast_config, ctx);
+    // 结构校验
+    validate::run(&mut ast_config, ctx);
+    // 结构格式化
+    prune::run(&mut ast_config, ctx);
+    // 转换装配
+    let ir = assemble::run(ast_config, ctx);
+    Ok(ir)
 }
 
 /// 遍历递归的基本函数

@@ -52,7 +52,7 @@ export default function Library() {
   }, [])
 
   return (
-    <div className="w-full h-full flex flex-col pt-[5vh] bg-zinc-200 dark:bg-zinc-900 relative min-h-screen">
+    <div className="w-full h-full flex flex-col  bg-zinc-200 dark:bg-zinc-900 relative min-h-0">
       {/* 保持原样：添加游戏按钮 */}
       <AddGameButton />
 

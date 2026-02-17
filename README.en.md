@@ -49,6 +49,7 @@ YumiHub is a local game (Galgame) library management tool built with Tauri. It i
 📥 Installation
 
 Download the latest installer for your platform from the Releases Page.
+[Releases](https://github.com/yumilengjiao/yumihub/releases)
 
 ## 🚀 Quick Start (Development)
 
