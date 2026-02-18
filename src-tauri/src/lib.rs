@@ -42,7 +42,7 @@ pub fn run() {
             cmd::get_game_meta_by_id,
             cmd::get_game_meta_list,
             cmd::delete_game_by_id,
-            cmd::delete_game_list,
+            cmd::delete_all_games,
             cmd::update_game,
             cmd::add_new_game,
             cmd::add_new_game_list,

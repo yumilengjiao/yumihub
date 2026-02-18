@@ -10,7 +10,6 @@ export default function AppButton({
   // 初始化动作执行器
   const { runActions } = useAppActions();
 
-  // 解构 props，设置 variant 默认为 scale
   const { variant = "scale" } = node.props || {};
 
   // 定义变体样式映射表

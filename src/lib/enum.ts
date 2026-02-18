@@ -38,6 +38,11 @@ export enum Cmds {
   DELETE_GAME_BY_ID = "delete_game_by_id",
 
   /**
+   * 删除所有游戏信息
+   */
+  DELETE_ALL_GAMES = "delete_all_games",
+
+  /**
    * 更新后端游戏信息
    */
   UPDATE_GAME = "update_game",

@@ -14,6 +14,7 @@ import TitleBar from "@/components/custom/TitleBar";
 import Entry from "@/components/custom/Entry";
 import { Avatar } from "@/components/custom/Avatar";
 import WindowToggleIcon from "@/components/custom/WindowToogleButton";
+import Title from "@/components/custom/Title";
 
 
 export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
@@ -31,9 +32,10 @@ export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
   // 业务形态
   'appbutton': AppButton,
   'appicon': AppIcon,
-  'windowtoggleicon': WindowToggleIcon,
-  'entry': Entry,
+  'avatar': Avatar,
   'chart': SurfaceBase,
+  'entry': Entry,
   'gameshelf': GameShelf,
-  'avatar': Avatar
-};
+  'title': Title,
+  'windowtoggleicon': WindowToggleIcon,
+}

@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 import { Surface } from "./Surface";
 import { ThemeComponentProps } from "@/types/node";
 
-const SideBar = ({ node }: ThemeComponentProps) => {
-  // 1. 从 Props 提取配置，zIndex 给个 100 起步更稳
+const SideBar = ({ node, children }: ThemeComponentProps) => {
+  // 从 Props 提取配置，zIndex 给个 100 起步更稳
   const {
     mode = "NormalFixed",
     side = "left",
@@ -13,7 +13,7 @@ const SideBar = ({ node }: ThemeComponentProps) => {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  // 2. 计算外层容器样式 (决定占位)
+  // 计算外层容器样式 (决定占位)
   const outerStyle = useMemo(() => {
     // 强制转换为包含字符串索引的类型，解决 styles[side] 报错
     const styles: CSSProperties & Record<string, any> = {
@@ -31,15 +31,11 @@ const SideBar = ({ node }: ThemeComponentProps) => {
       styles.pointerEvents = "none"; // 允许鼠标点击穿透到底层
     } else {
       styles.position = "relative";
-      // 窄边栏占位逻辑
-      if (mode === "ShortFixed" && (side === "left" || side === "right")) {
-        styles.width = styles.width || "72px";
-      }
     }
     return styles;
   }, [node.style, mode, side, zIndex]);
 
-  // 3. 计算内部内容区样式 (决定动画和视觉)
+  // 计算内部内容区样式 (决定动画和视觉)
   const contentStyle = useMemo(() => {
     const isHorizontal = side === "left" || side === "right";
 

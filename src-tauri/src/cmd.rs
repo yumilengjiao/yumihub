@@ -477,8 +477,43 @@ pub async fn delete_game_by_id(pool: State<'_, Pool<Sqlite>>, id: String) -> Res
 ///
 /// * `pool`: 连接池,tauri自动注入
 #[tauri::command]
-pub async fn delete_game_list(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppError> {
-    sqlx::query("DELETE FROM games").execute(&*pool).await.ok();
+pub async fn delete_all_games(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppError> {
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+    sqlx::query("DELETE FROM games")
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+    sqlx::query("DELETE FROM game_screenshots")
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+    sqlx::query("DELETE FROM game_play_sessions")
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::DB(e.to_string()))?;
+
+    tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
+
+    let config = GLOBAL_CONFIG.read().unwrap();
+    let target_dirs = vec![
+        config.storage.meta_save_path.clone(),
+        config.storage.backup_save_path.clone(),
+        config.storage.screenshot_path.clone(),
+    ];
+    // 释放锁，避免占用太久
+    drop(config);
+
+    for path in target_dirs {
+        if std::path::Path::new(&path).exists() {
+            // 删除并重建
+            let _ = std::fs::remove_dir_all(&path);
+            let _ = std::fs::create_dir_all(&path);
+        }
+    }
+
     Ok(())
 }
 

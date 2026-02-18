@@ -23,6 +23,7 @@ export const useAppActions = () => {
       if (params?.destination) navigate(params.destination);
     },
 
+    // 控制窗口的缩放隐藏等
     windowManage: async (params) => {
       // 如果 params 没传或者没传 op(opration)，我们就走“智能切换”逻辑
       const op = params?.op;
@@ -82,8 +83,6 @@ export const useAppActions = () => {
     open_link: (params) => {
       if (params?.url) window.open(params.url, "_blank");
     },
-
-    // 可以在这里继续扩展：播放音效、刷新配置、关闭窗口等
   };
 
   /**

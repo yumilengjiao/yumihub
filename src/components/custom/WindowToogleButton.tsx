@@ -8,7 +8,7 @@ export default function WindowToggleIcon({ node }: ThemeComponentProps) {
   const [isMax, setIsMax] = useState(false);
   const appWindow = getCurrentWindow();
 
-  // 1. 从 props 拿两个状态的 icon name
+  // 从 props 拿两个状态的 icon name
   const {
     normalIcon,     // 比如 "expand"
     maximizedIcon,  // 比如 "minimize-2"

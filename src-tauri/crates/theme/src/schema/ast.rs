@@ -1,4 +1,4 @@
-//! [TODO:description]
+//! 这里定义了json文件读取反序列化后的数据形态
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -77,10 +77,11 @@ pub enum NodeType {
     // 图标组件，可使用所有Lucide的所有图标
     #[serde(alias = "Icon")]
     AppIcon,
+    Avatar,
+    Title,
     #[serde(alias = "WTIcon")]
     WindowToggleIcon,
     // 用于展示用户头像
-    Avatar,
 }
 
 /// 节点,所有元素都是AstNode
