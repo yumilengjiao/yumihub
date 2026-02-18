@@ -6,7 +6,7 @@ export default function TitleBar({ node, children }: ThemeComponentProps & { chi
   const {
     thickness = "50px",
     zIndex = 50,
-    variant = "Full",
+    variant = "full",
     position = "absolute",
     // 位置控制
     align = "end",          // start (左) | center | end (右)
@@ -18,18 +18,16 @@ export default function TitleBar({ node, children }: ThemeComponentProps & { chi
     cornerRadius = "70px",
   } = node.props || {};
 
-  console.log("Titlebar", node)
-
-  const isFull = variant === "Full";
+  const isFull = variant === "full";
   const isVertical = orientation === "vertical";
 
-  // 1. 核心样式计算
+  // 核心样式计算
   const visualClasses = useMemo(() => {
     // 基础磨砂玻璃效果
     const base = "relative flex items-center transition-all duration-500 cursor-default bg-background/40 backdrop-blur-md border-white/5";
 
-    // 如果不是 CornerArc，也不是 Capsule，就是标准直角矩形
-    if (variant === "Full" || variant === "Default") {
+    // 如果不是 cornerArc，也不是 capsule，就是标准直角矩形
+    if (variant === "full" || variant === "default") {
       return cn(
         base,
         isVertical ? "w-full h-full border-r flex-col py-4" : "w-full h-full border-b px-6",
@@ -37,7 +35,7 @@ export default function TitleBar({ node, children }: ThemeComponentProps & { chi
       );
     }
 
-    if (variant === "Capsule") {
+    if (variant === "capsule") {
       return cn(
         "bg-black/80 backdrop-blur-2xl rounded-full border border-white/10 shadow-2xl flex items-center justify-center",
         isVertical ? "w-[85%] py-6 my-2 mx-auto flex-col" : "h-[85%] px-6 mx-4 my-auto",
@@ -45,8 +43,8 @@ export default function TitleBar({ node, children }: ThemeComponentProps & { chi
       );
     }
 
-    // --- CornerArc 专用逻辑 (四个象限判定) ---
-    if (variant === "CornerArc") {
+    // --- cornerArc 专用逻辑 (四个象限判定) ---
+    if (variant === "cornerArc") {
       const isTop = valign === "top";
       const isLeft = align === "start";
 

@@ -14,7 +14,6 @@ import { Datum, GameMeta, VNDBResult } from '@/types/game'
 import { invoke } from '@tauri-apps/api/core'
 import useGameStore from '@/store/gameStore'
 import useConfigStore from '@/store/configStore'
-import { SideBarMode } from "@/types/config"
 import { nanoid } from 'nanoid'
 import { Cmds } from '@/lib/enum'
 import { Trans } from '@lingui/react/macro'
@@ -38,9 +37,6 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
   const { config } = useConfigStore()
   const { addGameMeta } = useGameStore()
 
-  const sidebarMode = useConfigStore((state) => state.config.interface.sidebarMode)
-  const xOffset = sidebarMode === SideBarMode.NormalFixed ? 75 : 0
-
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const isRequestingRef = useRef(false)
 
@@ -50,7 +46,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
     return parts.length >= 1 ? parts[parts.length - 1].replace(/\.exe$/i, '') : "Unknown"
   }, [absPath])
 
-  // --- 核心：数据映射逻辑 (重写部分) ---
+  // --- 核心：数据映射逻辑 ---
   const displayInfo = useMemo(() => {
     if (!resultData) return null
 
@@ -93,8 +89,6 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
           background: meta.background
         }
       }
-
-      // Ymgal 逻辑保持一致...
     } catch (e) {
       console.error("解析预览数据失败:", e)
     }
@@ -108,11 +102,9 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
     try {
       if (activeSource === 'bangumi') {
         const res = await requestBangumiById(searchId, config.auth.bangumiToken)
-        // 注意：这里返回的 res 已经是 Datum 类型
         if (res) setResultData(prev => prev ? ({ ...prev, bangumi: res as Datum }) : { absPath, bangumi: res as Datum, vndb: null, ymgal: null })
       } else if (activeSource === 'vndb') {
         const res = await requestVNDBById(searchId)
-        // VNDB 按 ID 查返回的是单条 VNDBResult
         if (res) setResultData(prev => prev ? ({ ...prev, vndb: res as any }) : { absPath, bangumi: null, vndb: res as any, ymgal: null })
       }
       toast.success(t`数据已同步`)
@@ -146,13 +138,10 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
         isRequestingRef.current = false
         if (timerRef.current) clearTimeout(timerRef.current)
 
-        // --- 核心逻辑：自动切换到有数据的源 ---
         if (res.bangumi) {
           setActiveSource('bangumi')
         } else if (res.vndb) {
           setActiveSource('vndb')
-        } else if (res.ymgal) {
-          setActiveSource('ymgal')
         }
       }
     } catch (err) {
@@ -208,9 +197,9 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
   return (
     <motion.div
       initial={false}
-      animate={{ x: `calc(-50% + ${xOffset}px)` }}
       transition={{ type: "spring", stiffness: 400, damping: 40 }}
-      className="fixed top-12 left-1/2 z-100 w-[95%] max-w-6xl pointer-events-none"
+      // 【关键修复】：添加 -translate-x-1/2 确保水平居中，添加 origin-top 确保缩放中心正确
+      className="fixed top-12 left-1/2 -translate-x-1/2 z-100 w-[95%] max-w-6xl pointer-events-none origin-top"
     >
       <div className="pointer-events-auto bg-zinc-100 dark:bg-zinc-800 shadow-2xl rounded-[32px] overflow-hidden border border-zinc-200/50 dark:border-zinc-700/50 flex flex-col">
 
@@ -260,7 +249,12 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
         {/* --- Content Area --- */}
         <AnimatePresence>
           {resultData && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="px-8 pb-10 pt-4 bg-zinc-100 dark:bg-zinc-800">
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="px-8 pb-10 pt-4 bg-zinc-100 dark:bg-zinc-800"
+            >
               <div className="flex gap-10">
                 {/* Left Side: Cover & ID Input */}
                 <div className="w-64 flex flex-col gap-4 shrink-0">
@@ -341,4 +335,4 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
   )
 }
 
-export default BigPendingCard
+export default BigPendingCard;

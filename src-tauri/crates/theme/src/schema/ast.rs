@@ -98,7 +98,7 @@ pub enum NodeType {
 pub struct AstNode {
     pub id: Option<u32>,
     pub nt: Option<NodeType>,
-    pub class_list: Option<Vec<String>>, // 这里写的是taiwind的类
+    pub class_name: Option<Vec<String>>, // 这里写的是taiwind的类
     pub inline_style: Option<HashMap<String, Value>>,
     pub props: Option<Value>,
     pub children: Option<Vec<AstNode>>,

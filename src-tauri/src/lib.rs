@@ -3,6 +3,8 @@ use std::sync::Mutex;
 use custom_theme::schema::ir::ThemeIr;
 use tauri::RunEvent;
 
+use crate::theme::ThemeState;
+
 mod backup;
 mod cmd;
 mod companion;
@@ -32,7 +34,10 @@ pub fn run() {
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
-        .manage(Mutex::new(Vec::<ThemeIr>::new()))
+        .manage(ThemeState {
+            active: Mutex::new(None),
+            all_names: Mutex::new(Vec::new()),
+        })
         .setup(life_cycle::init)
         .invoke_handler(tauri::generate_handler![
             // 用户
@@ -78,7 +83,8 @@ pub fn run() {
             cmd::get_disk_usage,
             cmd::authorize_path_access,
             cmd::clear_app_data,
-            cmd::get_themes
+            cmd::get_theme,
+            cmd::get_all_theme_names
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

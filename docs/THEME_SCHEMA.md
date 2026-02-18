@@ -137,8 +137,8 @@
 
       可选值:
 
-          NormalFixed: 普通固定形式
-          Trigger: 触发模式，鼠标移动到靠边的位置时侧边栏弹出，注意:此模式时需要手动设置span: 0 
+          normalFixed: 普通固定形式
+          trigger:      触发模式，鼠标移动到靠边的位置时侧边栏弹出，注意:此模式时需要手动设置span: 0 
   - side <string>
 
     - 说明: 指定侧边栏的位置
@@ -172,9 +172,14 @@
 
     可选值:
 
-        Full: 默认显示就是占据一行,背景纯色
-        Capsule: 类似灵动岛,子元素居中排开
-        CornerArc: 在角落有一个圆弧的形状容器，里面的子元素从指定方向(growDirection)排开
+        default: 直角矩形
+        full: 默认显示就是占据一行,背景纯色
+        capsule: 类似灵动岛,子元素居中排开
+        cornerArc: 在角落有一个圆弧的形状容器，里面的子元素从指定方向(growDirection)排开
+
+  - position <string>
+
+    可设置为absolute，在absolute的时候必须确保设置span = 0，且父元素要在inlineStyle设置position: relative
 
   - align
 
@@ -256,6 +261,32 @@
     - 说明: 指定icon图标的线粗
 
 ---
+
+## WTIcon [叶子节点]
+
+特殊的Icon,会自动监听窗口是否最大化来展示不同图标，可指定窗口是否最大化时的图标,一般外面套一层Button使用
+
+- props <Object>
+  
+  - normalIcon
+
+    窗口未最大化时的icon,也是可以直接输入Lucide图标的名字
+
+  - maximizedIcon
+
+    窗口最大化时的图标
+
+  - size <number>
+
+    图标大小
+
+  - color <string>
+
+    图标颜色
+
+  - strokeWidth
+
+    图标线条粗细
 
 ## Avatar [叶子节点]
 
@@ -367,13 +398,13 @@
         actions: [
           {
             command: "navigate",
-            props: {
+            params: {
               destination: "/"
             }
           },
           {
             command: "alert",
-            props: {
+            params: {
               style: "success",
               content: "你好"
             }
@@ -387,7 +418,7 @@
       // 导航到特性页面
       {
         command: "navigate",
-        props: {
+        params: {
           destination: "/" || "library" || "game" || "user" || "setting"
         }
       }
@@ -446,7 +477,7 @@
 
   - path <string>
 
-    - 用于在指定path路由页面时变成亮起状态，可选值有"/" || "/library" || "user" || "setting"
+    - 用于在指定path路由页面时变成亮起状态，可选值有"/" || "/library" || "/user" || "/setting"
 
   - showTitle <boolean>
 
@@ -464,7 +495,54 @@
 
     - 用于直接控制是否激活(autoActive == false时生效)
 
+- actions
+
 ---
+
+## Title [叶子节点]
+
+用于显示文字
+
+属性定义 (Properties)
+
+- props <Object>
+
+  - mode <string>
+
+    - 通过不同模式可以展示不同功能的标题内容
+
+      可选值:
+
+          gameName: 展示当前GameShelf中选择的Game的名称
+          time: 显示当前时间
+          custom: 显示自定义静态内容,显示content属性中的静态内容
+          greeting: 显示问候语
+  - content <string>
+
+    - 在mode == custom时生效，标题内展示的文字即为content的值
+
+  - variant <string>
+
+    - 文字的不同视觉风格
+
+      可选值:
+
+          hero: 描边标题
+          subtle: 优雅副标题
+          neon: 霓虹灯外发光
+          glass: 适合在毛玻璃上的文字展示
+
+  - size <number>
+
+    - 指定文字尺寸
+
+  - color <string>,
+
+    - 文字颜色，默认 #ffffff
+
+  - timeFormat
+
+    - 时间格式（简单实现）,默认"HH:mm:ss"
 
 ## Page
 

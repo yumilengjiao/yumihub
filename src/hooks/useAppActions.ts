@@ -5,6 +5,8 @@
 import { useNavigate } from "react-router";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { ThemeMode } from "@/types/config";
+import useConfigStore from "@/store/configStore";
 
 // 定义 Action 的结构（对应你的文档）
 interface ActionItem {
@@ -15,6 +17,7 @@ interface ActionItem {
 export const useAppActions = () => {
   const navigate = useNavigate();
   const appWindow = getCurrentWindow()
+  const { config, updateConfig } = useConfigStore()
 
   // action“映射表”
   const COMMAND_MAP: Record<string, (params: any) => void> = {
@@ -63,6 +66,25 @@ export const useAppActions = () => {
       }
     },
 
+    // 暗色模式切换按钮点击：在 Night 和 Daytime 之间切换
+    switchTheme: (_) => {
+      let nextMode: ThemeMode
+
+      // 如果当前是 System，点一下根据当前系统状态切到相反模式
+      if (config.interface.themeMode === ThemeMode.System) {
+        const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        nextMode = isSystemDark ? ThemeMode.Daytime : ThemeMode.Night
+      } else {
+        // 否则在白天/黑夜间互切
+        nextMode = config.interface.themeMode === ThemeMode.Night
+          ? ThemeMode.Daytime
+          : ThemeMode.Night
+      }
+
+      updateConfig(d => { d.interface.themeMode = nextMode })
+    },
+
+
     // 弹窗逻辑 
     alert: (params) => {
       // 这里可以根据 params.style (success/error) 调用不同的 UI
@@ -90,7 +112,6 @@ export const useAppActions = () => {
    * 支持传入单个 action 对象或 action 数组
    */
   const runActions = (actions: ActionItem | ActionItem[] | undefined) => {
-    console.log("我请问了")
     if (!actions) return;
 
     const actionList = Array.isArray(actions) ? actions : [actions];

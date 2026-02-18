@@ -34,7 +34,7 @@ export default function SurfaceBase({ node, children }: { node: ThemeNode; child
       id={node.id}
       style={node.style}
       className={cn(
-        "min-h-0",
+        "min-h-0, w-full, h-full, overflow-hidden",
         node.className
       )}
     >

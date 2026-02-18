@@ -20,6 +20,7 @@ use crate::screenshot::commands::delete_game_screenshot;
 use crate::screenshot::entity::Screenshot;
 use crate::shortcut::commands::refresh_shortcuts;
 use crate::shortcut::entity::ShortcutSetting;
+use crate::theme::ThemeState;
 use crate::util::{extract_rar_sync, extract_zip_sync, get_dir_size, parse_rar, parse_zip};
 use crate::{
     config::{
@@ -1228,16 +1229,36 @@ pub async fn clear_app_data(pool: State<'_, SqlitePool>) -> Result<(), String> {
     Ok(())
 }
 
-/// 获取所有主题
+/// 获取当前激活的主 theme
 ///
-/// * `state`: tauri的状态管理
+/// * `state`: 现在的全局 ThemeState
 #[tauri::command]
-pub fn get_themes(state: tauri::State<'_, Mutex<Vec<ThemeIr>>>) -> Result<Vec<ThemeIr>, AppError> {
-    // 锁定并读取数据
-    let themes = state
-        .try_lock()
+pub fn get_theme(state: tauri::State<'_, ThemeState>) -> Result<ThemeIr, AppError> {
+    // 锁定 active 状态
+    let active_lock = state
+        .active
+        .lock()
         .map_err(|e| AppError::Mutex(e.to_string()))?;
-    println!("前端请求的themes是：{:#?}", themes);
 
-    Ok(themes.clone())
+    // 如果初始化成功，这里必然有值；如果为 None，说明初始化没匹配到任何主题
+    match &*active_lock {
+        Some(theme) => {
+            debug!("前端请求当前激活主题: {}", theme.config.theme_name);
+            Ok(theme.clone())
+        }
+        None => Err(AppError::Generic("当前没有已激活的主题".to_string())),
+    }
+}
+
+/// 前端需要的获取所有可用的主题名字列表
+#[tauri::command]
+pub fn get_all_theme_names(state: tauri::State<'_, ThemeState>) -> Result<Vec<String>, AppError> {
+    let names = state
+        .all_names
+        .lock()
+        .map_err(|e| AppError::Mutex(e.to_string()))?;
+
+    println!("{:?}", names);
+
+    Ok(names.clone())
 }

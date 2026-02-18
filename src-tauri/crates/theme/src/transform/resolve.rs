@@ -28,7 +28,7 @@ pub fn resolve_variables(ast: &mut AstThemeConfig, ctx: &mut ThemeContext) {
 /// 节点访问者：由 walk_node 调用
 fn replace_variables(node: &mut AstNode, ctx: &mut ThemeContext) {
     // 处理 class_list (强制转字符串)
-    if let Some(class_list) = node.class_list.as_mut() {
+    if let Some(class_list) = node.class_name.as_mut() {
         for class_item in class_list.iter_mut() {
             *class_item = replace_inline_tokens(class_item, ctx);
         }

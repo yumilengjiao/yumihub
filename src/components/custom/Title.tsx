@@ -14,11 +14,14 @@ export default function Title({ node }: ThemeComponentProps) {
   const {
     mode = "gameName", // 模式：gameName | time | custom | greeting
     content = "",      // custom 模式下的文字内容
-    variant = "Hero",  // 视觉风格：Hero | Subtle | Neon | Glass
-    size = "text-6xl", // Tailwind 尺寸类名
-    color = "text-white",
+    variant = "hero",  // 视觉风格：hero | subtle | neon | glass
+    size = 30,
+    color = "#ffffff",
     timeFormat = "HH:mm:ss", // 时间格式（简单实现）
   } = node.props || {};
+
+  // 字体尺寸
+  const fontSize = size + "px"
 
   // --- 时间更新 (只有在 time 模式下才运行) ---
   useEffect(() => {
@@ -40,8 +43,8 @@ export default function Title({ node }: ThemeComponentProps) {
       case "greeting":
         const hour = new Date().getHours();
         if (hour < 12) return t`早上好`;
-        if (hour < 18) return "下午好";
-        return "晚上好";
+        if (hour < 18) return t`下午好`;
+        return t`晚上好`;
       case "user":
         return username
       case "custom":
@@ -53,14 +56,15 @@ export default function Title({ node }: ThemeComponentProps) {
   // --- 视觉风格切换 ---
   const variantClasses = useMemo(() => {
     switch (variant) {
-      case "Hero": // 描边大标题
+      case "hero": // 描边大标题
         return "font-black tracking-tighter drop-shadow-2xl";
-      case "Subtle": // 优雅的副标题
+      case "subtle": // 优雅的副标题
         return "font-medium opacity-60 text-2xl tracking-wide";
-      case "Neon": // 霓虹灯外发光
+      case "neon": // 霓虹灯外发光
         return "font-bold drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]";
-      case "Glass": // 适合放在毛玻璃背景上的文字
+      case "glass": // 适合放在毛玻璃背景上的文字
         return "font-semibold backdrop-blur-sm bg-white/10 px-4 py-1 rounded-lg border border-white/20";
+      case "none":
       default:
         return "";
     }
@@ -76,12 +80,11 @@ export default function Title({ node }: ThemeComponentProps) {
     <div
       className={cn(
         "transition-all duration-500 select-none",
-        size,
-        color,
         variantClasses,
         node.className
       )}
       style={{
+        fontSize,
         ...strokeStyle,
         ...(node.style as React.CSSProperties)
       }}

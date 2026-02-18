@@ -1,6 +1,3 @@
-import { Outlet } from "react-router"
-import TitleBar from '@/components/TitleBar'
-import SideBar from '@/components/SideBar' // 确保这里的路径指向你的 SideBar 文件夹
 import { Toaster } from "sonner"
 import useUserStore from "@/store/userStore"
 import { invoke } from "@tauri-apps/api/core"
@@ -11,19 +8,51 @@ import { GameMetaList } from "@/types/game"
 import { Cmds } from "@/lib/enum"
 import { debug } from "@tauri-apps/plugin-log"
 import useConfigStore from "@/store/configStore"
-import { Config } from "@/types/config"
-import { cn } from "@/lib/utils"
+import { Config, ThemeMode } from "@/types/config"
 import { i18n } from "@lingui/core"
 import { useShortcutHandler } from "@/hooks/useShortcuter"
+import { Surface } from "@/components/custom/Surface"
+import { useThemeStore } from "@/store/themeStore"
 
 export default function Layout() {
   const { setUser } = useUserStore()
   const { updateSelectedGame, setGameMetaList } = useGameStore()
   const { updateConfig } = useConfigStore()
+  const { config } = useConfigStore()
   const fontFamily = useConfigStore(c => c.config.interface.fontFamily)
-  const sidebarMode = useConfigStore(c => c.config.interface.sidebarMode) || "Trigger"
+  const layoutTree = useThemeStore(t => t.theme?.layout.global)
 
   useShortcutHandler()
+
+  /**
+   * 暗色模式相关
+   */
+  const applyTheme = (mode: ThemeMode) => {
+    const html = document.documentElement
+    if (mode === ThemeMode.Night) {
+      html.classList.add('dark')
+    } else if (mode === ThemeMode.Daytime) {
+      html.classList.remove('dark')
+    } else if (mode === ThemeMode.System) {
+      const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      html.classList.toggle('dark', isSystemDark)
+    }
+  }
+
+  // 响应式监听主题变化
+  useEffect(() => {
+    // 立即执行当前配置的主题
+    applyTheme(config.interface.themeMode)
+
+    // 如果是 System 模式，注册系统监听
+    if (config.interface.themeMode === ThemeMode.System) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      const listener = () => applyTheme(ThemeMode.System)
+      mediaQuery.addEventListener('change', listener)
+      return () => mediaQuery.removeEventListener('change', listener)
+    }
+  }, [config.interface.themeMode])
+
   /**
    * 获取所有的游戏信息
    */
@@ -91,30 +120,18 @@ export default function Layout() {
   }, [fontFamily])
 
   return (
-    <div className="h-screen w-full flex flex-col bg-transparent overflow-hidden font-main">
+    <div className="h-screen w-full flex flex-col bg-transparent overflow-hidden font-main select-none">
+      {/* 全局消息提示 */}
       <Toaster position="top-center" richColors />
-      <TitleBar />
 
-      {/* 栅格布局容器 */}
-      <div className={cn(
-        "flex-1 relative overflow-hidden",
-        // 只有固定模式才使用栅格占位
-        sidebarMode !== "Trigger" ? "grid" : "block"
+      {layoutTree ? (
+        <Surface node={layoutTree} />
+      ) : (
+        // 防止数据未加载时的白屏，给一个简单的 Loading 状态
+        <div className="flex h-full w-full items-center justify-center text-zinc-500">
+          Loading Theme Configuration...
+        </div>
       )}
-        style={sidebarMode !== "Trigger" ? {
-          gridTemplateColumns: sidebarMode === "NormalFixed" ? "140px 1fr" : "66px 1fr"
-        } : {}}>
-
-        <SideBar />
-
-        {/* 主内容区 */}
-        <main className={cn(
-          "h-full overflow-auto transition-all duration-300",
-          "bg-zinc-900/50 relative z-0"
-        )}>
-          <Outlet />
-        </main>
-      </div>
     </div >
   )
 }

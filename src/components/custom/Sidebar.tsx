@@ -1,12 +1,11 @@
 import { useMemo, useState, CSSProperties } from "react";
 import { cn } from "@/lib/utils";
-import { Surface } from "./Surface";
 import { ThemeComponentProps } from "@/types/node";
 
 const SideBar = ({ node, children }: ThemeComponentProps) => {
   // 从 Props 提取配置，zIndex 给个 100 起步更稳
   const {
-    mode = "NormalFixed",
+    mode = "normalFixed",
     side = "left",
     zIndex = 100,
   } = node.props || {};
@@ -21,7 +20,7 @@ const SideBar = ({ node, children }: ThemeComponentProps) => {
       transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     };
 
-    if (mode === "Trigger") {
+    if (mode === "trigger") {
       styles.position = "fixed";
       styles.top = 0;
       styles[side as string] = 0; // 这里的 side 会动态映射为 left: 0 或 right: 0
@@ -46,7 +45,7 @@ const SideBar = ({ node, children }: ThemeComponentProps) => {
       pointerEvents: "auto", // 恢复交互，不被外层的 none 影响
     };
 
-    if (mode === "Trigger") {
+    if (mode === "trigger") {
       const translateDir = isHorizontal ? "X" : "Y";
       // 计算偏移：左/上是负，右/下是正
       const offset = (side === "left" || side === "top") ? "-100%" : "100%";
@@ -73,7 +72,7 @@ const SideBar = ({ node, children }: ThemeComponentProps) => {
   return (
     <>
       {/* 边缘感应区：zIndex 比内容再高 1 层，确保能被鼠标触发 */}
-      {mode === "Trigger" && (
+      {mode === "trigger" && (
         <div
           onMouseEnter={() => setIsHovered(true)}
           style={{ zIndex: zIndex + 10 }}
@@ -91,11 +90,11 @@ const SideBar = ({ node, children }: ThemeComponentProps) => {
       <aside
         id={node.id}
         // 鼠标进入内容区也要保持开启
-        onMouseEnter={() => mode === "Trigger" && setIsHovered(true)}
-        onMouseLeave={() => mode === "Trigger" && setIsHovered(false)}
+        onMouseEnter={() => mode === "trigger" && setIsHovered(true)}
+        onMouseLeave={() => mode === "trigger" && setIsHovered(false)}
         className={cn(
           "overflow-visible",
-          mode !== "Trigger" && (side === "left" ? "border-r" : "border-l"),
+          mode !== "trigger" && (side === "left" ? "border-r" : "border-l"),
           "border-white/10",
           node.className
         )}
@@ -103,9 +102,7 @@ const SideBar = ({ node, children }: ThemeComponentProps) => {
       >
         <div style={contentStyle} className="relative shadow-2xl">
           {/* 这里渲染内部的组件 (比如 Col) */}
-          {node.children?.map((child) => (
-            <Surface key={child.id} node={child} />
-          ))}
+          {children}
         </div>
       </aside>
     </>

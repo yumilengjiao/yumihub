@@ -25,7 +25,7 @@ export default function Layout() {
   // 获取动态字体配置
   const fontFamily = useConfigStore(c => c.config.interface.fontFamily)
 
-  const layoutTree = useThemeStore(t => t.themes[1]?.layout?.global)
+  const layoutTree = useThemeStore(t => t.theme?.layout?.global)
 
   console.log("layoutTree", layoutTree)
 
