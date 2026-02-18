@@ -26,9 +26,9 @@ export interface Basic {
 // -----------------------------------------------------
 
 export interface Interface {
+  theme: string
   themeMode: ThemeMode
   themeColor: string
-  sidebarMode: SideBarMode
   fontFamily: string
 }
 
@@ -36,13 +36,6 @@ export enum ThemeMode {
   System = "System",
   Daytime = "Daytime",
   Night = "Night",
-}
-
-
-export enum SideBarMode {
-  Trigger = "Trigger",
-  NormalFixed = "NormalFixed",
-  ShortFixed = "ShortFixed",
 }
 
 // -----------------------------------------------------

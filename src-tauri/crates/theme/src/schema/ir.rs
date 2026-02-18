@@ -122,7 +122,7 @@ impl From<AstNode> for Node {
         };
 
         // 处理 class_list (对应 AST 的 class_list)
-        let class_name = ast.class_list.unwrap_or_default().join(" ");
+        let class_name = ast.class_name.unwrap_or_default().join(" ");
 
         // 处理 Style (对应 AST 的 inline_style)
         let style = ast.inline_style.unwrap_or_default();

@@ -52,7 +52,7 @@ export default function Library() {
   }, [])
 
   return (
-    <div className="w-full h-full flex flex-col  bg-zinc-200 dark:bg-zinc-900 relative min-h-0">
+    <div className="w-full h-full flex flex-col bg-zinc-200 dark:bg-zinc-900 relative pt-5">
       {/* 保持原样：添加游戏按钮 */}
       <AddGameButton />
 
@@ -68,7 +68,7 @@ export default function Library() {
       </div>
 
       {/* 列表区域 */}
-      <div className="w-full flex-1 overflow-y-auto p-2">
+      <div className="w-full flex-1 overflow-y-auto min-h-0 p-2 h-100">
         {displayGames.length > 0 ? (
           <div className={cn(
             "grid gap-6 px-15 w-full",

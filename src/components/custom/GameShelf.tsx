@@ -194,16 +194,17 @@ const GameShelfUI = ({
 
 // --- 适配器组件 ---
 export const GameShelf: React.FC<ThemeComponentProps> = ({ node }) => {
-  const style = node.style || {};
-
-  console.log(node.props['basis'])
+  const {
+    variant,
+    itemBasis
+  } = node.props
 
   return (
     <GameShelfUI
       className={node.className}
-      style={style as React.CSSProperties}
-      variant={style.variant as any}
-      itemBasis={node.props['basis']}
+      style={node.style}
+      variant={variant}
+      itemBasis={itemBasis}
     />
   );
 };

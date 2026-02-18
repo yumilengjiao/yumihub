@@ -7,7 +7,7 @@ use tauri_plugin_log::log::{debug, error, info, warn};
 use crate::{
     companion::commands::refresh_companions,
     config::{
-        entity::{CloseBehavior, ConfigEvent, LogLevel, SideBarMode, ThemeMode},
+        entity::{CloseBehavior, ConfigEvent, LogLevel, ThemeMode},
         GLOBAL_CONFIG,
     },
     message::{traits::MessageHub, CONFIG_MESSAGE_HUB},
@@ -41,9 +41,9 @@ pub fn listening_loop(app_handler: AppHandle) {
                 }
                 ConfigEvent::Interface { interface } => {
                     debug!("界面设置开始更新");
+                    change_theme(interface.theme);
                     change_interface_mode(interface.theme_mode);
                     change_interface_color(interface.theme_color);
-                    change_sidebar_mode(interface.sidebar_mode);
                     change_font_family(interface.font_family);
                 }
                 ConfigEvent::Storage { stroage } => {
@@ -256,10 +256,10 @@ pub fn change_interface_color(color: String) {
 /// 改变侧边栏模式
 ///
 /// * `mode`: 侧边栏模式
-pub fn change_sidebar_mode(mode: SideBarMode) {
+pub fn change_theme(mode: String) {
     let result = GLOBAL_CONFIG.write();
     match result {
-        Ok(mut config) => config.interface.sidebar_mode = mode,
+        Ok(mut config) => config.interface.theme = mode,
         Err(e) => {
             error!("{}", e);
         }

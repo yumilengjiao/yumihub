@@ -6,70 +6,129 @@ export default function TitleBar({ node, children }: ThemeComponentProps & { chi
   const {
     thickness = "50px",
     zIndex = 50,
-    variant = "Full",
+    variant = "full",
     position = "absolute",
-    align = variant === "Capsule" ? "center" : "end",
-    // growthDirection 控制 children 增长方向 (row, row-reverse, col, col-reverse)
-    growthDirection = "row",
+    // 位置控制
+    align = "end",          // start (左) | center | end (右)
+    valign = "top",         // top (上) | bottom (下)
+    // 布局控制
+    orientation = "horizontal", // horizontal (横条) | vertical (竖条)
+    growthDirection = "row",    // row | row-reverse | col | col-reverse
+    // 样式微调
+    cornerRadius = "70px",
   } = node.props || {};
 
-  const isFull = variant === "Full";
-  const isCapsule = variant === "Capsule";
+  const isFull = variant === "full";
+  const isVertical = orientation === "vertical";
 
+  // 核心样式计算
   const visualClasses = useMemo(() => {
-    const isSide = variant === "RightArc" || align === "start" || align === "end";
+    // 基础磨砂玻璃效果
+    const base = "relative flex items-center transition-all duration-500 cursor-default bg-background/40 backdrop-blur-md border-white/5";
+
+    // 如果不是 cornerArc，也不是 capsule，就是标准直角矩形
+    if (variant === "full" || variant === "default") {
+      return cn(
+        base,
+        isVertical ? "w-full h-full border-r flex-col py-4" : "w-full h-full border-b px-6",
+        node.className
+      );
+    }
+
+    if (variant === "capsule") {
+      return cn(
+        "bg-black/80 backdrop-blur-2xl rounded-full border border-white/10 shadow-2xl flex items-center justify-center",
+        isVertical ? "w-[85%] py-6 my-2 mx-auto flex-col" : "h-[85%] px-6 mx-4 my-auto",
+        node.className
+      );
+    }
+
+    // --- cornerArc 专用逻辑 (四个象限判定) ---
+    if (variant === "cornerArc") {
+      const isTop = valign === "top";
+      const isLeft = align === "start";
+
+      // 1. 决定切哪个角 (反向切角：比如在左上位置，切的是右下角)
+      let radiusClass = "";
+      if (isTop && isLeft) radiusClass = `rounded-br-[${cornerRadius}]`; // 左上位置 -> 切右下
+      if (isTop && !isLeft) radiusClass = `rounded-bl-[${cornerRadius}]`; // 右上位置 -> 切左下
+      if (!isTop && isLeft) radiusClass = `rounded-tr-[${cornerRadius}]`; // 左下位置 -> 切右上
+      if (!isTop && !isLeft) radiusClass = `rounded-tl-[${cornerRadius}]`; // 右下位置 -> 切左上
+
+      // 2. 决定边框在哪边 (贴边的位置不需要边框，靠内的位置需要)
+      let borderClass = "";
+      if (isTop) borderClass += " border-b"; else borderClass += " border-t";
+      if (isLeft) borderClass += " border-r"; else borderClass += " border-l";
+
+      // 3. 决定内边距 (避让圆角)
+      const paddingClass = isVertical
+        ? (isTop ? "pb-12 pt-6" : "pt-12 pb-6") // 竖条时避让上下
+        : (isLeft ? "pr-12 pl-6" : "pl-12 pr-6"); // 横条时避让左右
+
+      return cn(base, radiusClass, borderClass, paddingClass, isVertical && "flex-col", node.className);
+    }
+
+    return cn(base, node.className);
+  }, [variant, align, valign, isVertical, cornerRadius, node.className]);
+
+  // 2. 容器定位逻辑
+  const containerStyle = useMemo(() => {
+    // 处理 Flex 对齐
+    let justifyClass = "";
+    if (align === "start") justifyClass = "justify-start";
+    else if (align === "center") justifyClass = "justify-center";
+    else justifyClass = "justify-end";
 
     return cn(
-      "relative flex items-center transition-all duration-500",
-      // 关键：为了不让拖拽的小手穿透到按钮缝隙，这里设为 default
-      "cursor-default",
+      "flex pointer-events-none", // 外层 pointer-events-none 防止遮挡，但在 visualClasses 里恢复
+      position === "absolute" ? "absolute" : "relative",
 
-      isFull && "w-full h-full bg-background border-b border-white/5 px-6",
-      isCapsule && "bg-black/80 backdrop-blur-2xl rounded-full border border-white/10 shadow-2xl px-6 mx-4 mt-2 h-[85%]",
-      !isCapsule && !isFull && isSide && "bg-background/40 backdrop-blur-md px-4",
-      variant === "RightArc" && "rounded-bl-[70px] pl-10 pr-6 border-l border-b border-white/5 h-full",
+      // 垂直定位
+      valign === "top" ? "top-0" : "bottom-0",
 
-      node.className
+      // 水平定位
+      align === "start" ? "left-0" : align === "center" ? "left-0 right-0" : "right-0",
+
+      // 宽高模式
+      isVertical ? "h-full" : "w-full",
+
+      // 对齐内容
+      justifyClass,
+      valign === "top" ? "items-start" : "items-end"
     );
-  }, [variant, align, isFull, isCapsule, node.className]);
+  }, [position, valign, align, isVertical]);
 
   return (
     <div
       data-tauri-drag-region
-      className={cn(
-        "w-full flex items-start",
-        // 只有这里才是真正想触发“小手”的地方
-        "cursor-grab",
-        position === "absolute" ? "absolute top-0 left-0" : "relative",
-        align === "center" && "justify-center",
-        align === "end" && "justify-end",
-        align === "start" && "justify-start"
-      )}
+      className={cn(containerStyle, "pointer-events-auto cursor-grab")}
       style={{
-        height: thickness,
         zIndex,
+        // 根据方向设定厚度
+        [isVertical ? "width" : "height"]: thickness,
         ...(node.style as React.CSSProperties)
       }}
     >
+      {/* 视觉层 + 交互层 */}
       <div
-        className={visualClasses}
-        style={{ width: isFull ? "100%" : "auto" }}
+        className={cn(visualClasses, "cursor-default")}
+        style={{
+          width: isFull && !isVertical ? "100%" : "auto",
+          height: isFull && isVertical ? "100%" : "auto"
+        }}
       >
-        {/* 内容外壳：设为 pointer-events-none 允许拖拽穿透 */}
-        <div className="relative flex items-center w-full h-full justify-end pointer-events-none">
-          {/* 按钮容器：恢复点击，并根据 growthDirection 决定生长方向 */}
-          <div
-            className={cn(
-              "flex items-center gap-5 pointer-events-auto cursor-pointer",
-              // 动态生长方向映射
-              growthDirection === "row" && "flex-row",
-              growthDirection === "row-reverse" && "flex-row-reverse",
-              growthDirection === "col" && "flex-col",
-              growthDirection === "col-reverse" && "flex-col-reverse"
-            )}
-          >
-            {children}
-          </div>
+        {/* 内容排布层 */}
+        <div
+          className={cn(
+            "flex items-center gap-5 cursor-pointer w-full h-full justify-center", // 居中内容
+            // 核心：growthDirection 决定图标怎么排
+            growthDirection === "row" && "flex-row",
+            growthDirection === "row-reverse" && "flex-row-reverse",
+            growthDirection === "col" && "flex-col",
+            growthDirection === "col-reverse" && "flex-col-reverse"
+          )}
+        >
+          {children}
         </div>
       </div>
     </div>

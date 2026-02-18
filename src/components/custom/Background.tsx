@@ -5,18 +5,15 @@ import useGameStore from "@/store/gameStore"
 import { ThemeNode } from "@/types/node"
 
 export const Background = ({ node, children }: { node: ThemeNode; children?: React.ReactNode }) => {
-  const style = (node.style || {}) as any;
 
-  // 严格解构：提取控制参数，rest 剩下的是要注入到 style 的 CSS
   const {
-    sourceType = 'selectedGame',
+    sourceType = 'static',
     sourceValue,
     overlayColor = "bg-transparent",
-    blur = "0px",
     opacity = 1,
     variant = 'none',
     ...restStyles
-  } = style;
+  } = node.props || {};
 
   const selectedGame = useGameStore((state) => state.selectedGame);
   const gameMetaList = useGameStore((state) => state.gameMetaList);
@@ -35,7 +32,7 @@ export const Background = ({ node, children }: { node: ThemeNode; children?: Rea
     }
   };
 
-  // 2. 这里的优先级：手动传入的 restStyles 必须能干掉 preset
+  // 这里的优先级：手动传入的 restStyles 必须能干掉 preset
   const finalOverlayStyle = useMemo(() => {
     const preset = variantPresets[variant]?.overlay || {};
     const manual: any = { ...restStyles };
@@ -49,25 +46,40 @@ export const Background = ({ node, children }: { node: ThemeNode; children?: Rea
 
   // 图片处理
   const currentBgUrl = useMemo(() => {
-    if (sourceType === 'selectedGame' && selectedGame) {
-      return selectedGame.localBackground ? convertFileSrc(selectedGame.localBackground) : selectedGame.background;
+    switch (sourceType) {
+      case 'selectedGame':
+        if (!selectedGame) return "";
+        return selectedGame.localBackground
+          ? convertFileSrc(selectedGame.localBackground)
+          : selectedGame.background;
+
+      case 'specifiedGame':
+        if (!sourceValue) return "";
+        const game = gameMetaList.find(g => g.id === sourceValue);
+        return game?.localBackground
+          ? convertFileSrc(game.localBackground)
+          : game?.background;
+
+      case 'none':
+      default:
+        return ""; // 什么都不返回
     }
-    if (sourceType === 'static' && sourceValue) return sourceValue;
-    if (sourceType === 'specifiedGame' && sourceValue) {
-      const game = gameMetaList.find(g => g.id === sourceValue);
-      return game?.localBackground ? convertFileSrc(game.localBackground) : game?.background;
-    }
-    return "";
   }, [sourceType, sourceValue, selectedGame, gameMetaList]);
 
   const [displayBgs, setDisplayBgs] = useState<{ url: string, key: number }[]>([]);
   useEffect(() => {
-    if (currentBgUrl) setDisplayBgs([{ url: currentBgUrl, key: Date.now() }]);
+    // 只要 currentBgUrl 变了，就更新数组
+    // 如果是空字符串（none 模式），数组变为空，旧图会触发 transition-opacity 淡出
+    if (currentBgUrl) {
+      setDisplayBgs([{ url: currentBgUrl, key: Date.now() }]);
+    } else {
+      setDisplayBgs([]);
+    }
   }, [currentBgUrl]);
 
   return (
     <div
-      className={cn("relative w-full h-full overflow-hidden bg-black", variantPresets[variant]?.containerClass, node.className)}
+      className={cn("relative w-full h-full overflow-hidden", variantPresets[variant]?.containerClass, node.className)}
       style={{ width: "100%", height: "100%" }} // 基础宽高，具体的 style 给各层分发
     >
       {/* 背景图层 (Z-0) - 永远全屏显示，不加 mask */}
@@ -79,7 +91,6 @@ export const Background = ({ node, children }: { node: ThemeNode; children?: Rea
             backgroundImage: `url(${bg.url})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: `blur(${blur})`,
             opacity: opacity,
             zIndex: 0
           }}

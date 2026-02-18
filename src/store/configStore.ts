@@ -1,5 +1,5 @@
 import { Cmds } from "@/lib/enum"
-import { Config, SideBarMode, ThemeMode } from "@/types/config"
+import { Config, ThemeMode } from "@/types/config"
 import { invoke } from "@tauri-apps/api/core"
 import { create } from "zustand"
 import { immer } from "zustand/middleware/immer"
@@ -19,9 +19,9 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
       language: "zh-cn",
     },
     interface: {
+      theme: "default",
       themeMode: ThemeMode.Daytime,
       themeColor: "Emerald",
-      sidebarMode: SideBarMode.Trigger,
       fontFamily: "sys",
     },
     system: {

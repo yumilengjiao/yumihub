@@ -21,7 +21,7 @@ const transformStyles = (node: ThemeNode) => {
 
 interface ThemeState {
   // 核心数据：当前活跃的主题
-  themes: ThemeIr[];
+  theme?: ThemeIr;
   // UI 状态：当前正在查看哪一页
   currentPageKey: string;
   isLoading: boolean;
@@ -32,28 +32,25 @@ interface ThemeState {
 
 export const useThemeStore = create<ThemeState>()(
   immer((set, get) => ({
-    themes: [],
     currentPageKey: 'index', // 默认首页
     isLoading: false,
 
     // 从 Rust 后端拉取数据
     fetchThemes: async () => {
-      const data = await invoke<ThemeIr[]>(Cmds.GET_THEMES);
+      const data = await invoke<ThemeIr>(Cmds.GET_THEMES);
+      console.log(data)
 
-      set((state) => {
-        // 在这里一次性处理所有样式问题
-        data.forEach((theme) => {
-          // 处理全局节点样式
-          transformStyles(theme.layout.global);
-          // 处理所有页面的内容样式
-          Object.values(theme.layout.pages).forEach((page) => {
-            transformStyles(page.content);
-          });
-        });
-
-        state.themes = data;
-        state.isLoading = false;
+      // 在这里一次性处理所有样式问题
+      // 处理全局节点样式
+      transformStyles(data.layout.global);
+      // 处理所有页面的内容样式
+      Object.values(data.layout.pages).forEach((page) => {
+        transformStyles(page.content);
       });
+      set(state => {
+        state.theme = data;
+        state.isLoading = false;
+      })
     },
   }))
 );

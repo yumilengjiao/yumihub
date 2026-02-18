@@ -1,0 +1,278 @@
+{
+  // ==========================================
+  // 基础元数据配置
+  // ==========================================
+  config: {
+    version: "1.0",           // 配置协议版本，用于后续兼容性升级
+    themeName: "default",   // 主题唯一标识符
+    variables: {
+
+    }
+  },
+
+  // ==========================================
+  // 页面布局与结构定义
+  // ==========================================
+  layout: {
+    // 全局默认配置：应用于所有页面的通用组件
+    global: {
+      nt: "Row",
+      props: {
+        cols: 24,
+      },
+      children: [
+        {
+          nt: "SideBar",
+          props: {
+            span: 0,
+            mode: "trigger",
+            side: "left"
+          },
+          children: [
+            {
+              nt: "Col",
+              props: {
+                rows: 32
+              },
+              children: [
+                {
+                  nt: "Avatar",
+                  props: {
+                    span: 4,
+                  }
+                },
+                {
+                  nt: "Title",
+                  className: ["text-custom-500"],
+                  inlineStyle: {
+                    textAlign: "center"
+                  },
+                  props: {
+                    span: 2,
+                    size: 20,
+                    mode: "custom",
+                    content: "DASHBOARD"
+                  }
+                },
+                {
+                  nt: "Entry",
+                  props: {
+                    span: 2,
+                    title: "首页",
+                    icon: "house",
+                    path: "/"
+                  },
+                  actions: [
+                    {
+                      command: "navigate",
+                      params: {
+                        destination: "/"
+                      }
+                    }
+                  ]
+                },
+                {
+                  nt: "Entry",
+                  props: {
+                    span: 2,
+                    title: "游戏",
+                    icon: "gamepad-2",
+                    path: "/library"
+                  },
+                  actions: [
+                    {
+                      command: "navigate",
+                      params: {
+                        destination: "/library"
+                      }
+                    }
+                  ]
+                },
+                {
+                  nt: "Entry",
+                  props: {
+                    span: 2,
+                    title: "个人",
+                    icon: "user-round",
+                    path: "/user"
+                  },
+                  actions: [
+                    {
+                      command: "navigate",
+                      params: {
+                        destination: "/user"
+                      }
+                    }
+                  ]
+                },
+                {
+                  nt: "Entry",
+                  props: {
+                    span: 2,
+                    title: "设置",
+                    icon: "sliders-vertical",
+                    path: "/setting"
+                  },
+                  actions: [
+                    {
+                      command: "navigate",
+                      params: {
+                        destination: "/setting"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          nt: "Col",
+          inlineStyle: {
+            position: "relative",
+          },
+          props: {
+            start: 1,
+            span: 24,
+            rows: 64
+          },
+          children: [
+            {
+              nt: "TitleBar",
+              props: {
+                span: 0,
+                position: "absolute",
+                variant: "cornerArc",
+                thickness: "5vh"
+              },
+              children: [
+                {
+                  nt: "Button",
+                  actions: [
+                    {
+                      command: "switchTheme",
+                    }
+                  ],
+                  children: [
+                    {
+                      nt: "Icon",
+                      props: {
+                        name: "sun-moon",
+                        size: 32
+                      }
+                    }
+                  ]
+                },
+
+                {
+                  nt: "Button",
+                  actions: [
+                    {
+                      command: "windowManage",
+                      params: {
+                        op: "minimize"
+                      }
+                    }
+                  ],
+                  children: [
+                    {
+                      nt: "Icon",
+                      props: {
+                        name: "minus",
+                        size: 34
+                      }
+                    }
+                  ]
+                },
+                {
+                  nt: "Button",
+                  actions: [
+                    {
+                      command: "windowManage",
+                    }
+                  ],
+                  children: [
+                    {
+                      nt: "WTIcon"
+                    }
+                  ]
+                },
+                {
+                  nt: "Button",
+                  actions: [
+                    {
+                      command: "windowManage",
+                      params: {
+                        op: "close"
+                      }
+                    }
+                  ],
+                  children: [
+                    {
+                      nt: "Icon",
+                      props: {
+                        name: "x",
+                        size: 32
+                      }
+                    }
+                  ]
+                },
+              ]
+            },
+            {
+              nt: "Page",
+            }
+          ]
+        }
+      ]
+    },
+
+    // 路由页面配置
+    pages: {
+      // 首页路由
+      "/": {
+        name: "首页",
+        content: {
+          nt: "Background",
+          props: {
+            sourceType: "selectedGame",
+          },
+          children: [
+            {
+              nt: "Col",
+              props: {
+                rows: 64
+              },
+              children: [
+                {
+                  nt: "Title",
+                  className: ["text-white"],
+                  inlineStyle: {
+                    marginLeft: "12px",
+                  },
+                  props:{
+                    variant: "hero",
+                    start: 39,
+                    span: 4,
+                    size: 40,
+                    mode: "gameName",
+                  }
+                },
+                {
+                  "nt": "GameShelf",
+                  "props": {
+                    start: 44,
+                    basis: 7
+                  },
+                  "inlineStyle": {
+                    variant: "scale" // 对应你组件里的 'scale' 变体
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

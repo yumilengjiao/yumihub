@@ -40,7 +40,7 @@ export enum Cmds {
   /**
    * 删除所有游戏信息
    */
-  DELETE_ALL_GAMES = "delete_game_list",
+  DELETE_ALL_GAMES = "delete_all_games",
 
   /**
    * 更新后端游戏信息
@@ -207,7 +207,12 @@ export enum Cmds {
   CLEAR_APP_DATA = "clear_app_data",
 
   /**
-   * 获取所有主题信息
+   * 获取主题信息
    */
-  GET_THEMES = "get_themes"
+  GET_THEMES = "get_theme",
+
+  /**
+   * 获取所有主题的名字
+   */
+  GET_ALL_THEME_NAMES = "get_all_theme_names"
 }
