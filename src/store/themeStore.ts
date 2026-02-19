@@ -31,7 +31,7 @@ interface ThemeState {
 }
 
 export const useThemeStore = create<ThemeState>()(
-  immer((set, get) => ({
+  immer((set) => ({
     currentPageKey: 'index', // 默认首页
     isLoading: false,
 

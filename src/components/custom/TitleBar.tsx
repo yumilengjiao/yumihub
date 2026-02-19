@@ -48,7 +48,7 @@ export default function TitleBar({ node, children }: ThemeComponentProps & { chi
       const isTop = valign === "top";
       const isLeft = align === "start";
 
-      // 1. 决定切哪个角 (反向切角：比如在左上位置，切的是右下角)
+      // 决定切哪个角 (反向切角：比如在左上位置，切的是右下角)
       let radiusClass = "";
       if (isTop && isLeft) radiusClass = `rounded-br-[${cornerRadius}]`; // 左上位置 -> 切右下
       if (isTop && !isLeft) radiusClass = `rounded-bl-[${cornerRadius}]`; // 右上位置 -> 切左下
@@ -111,7 +111,8 @@ export default function TitleBar({ node, children }: ThemeComponentProps & { chi
     >
       {/* 视觉层 + 交互层 */}
       <div
-        className={cn(visualClasses, "cursor-default")}
+        data-tauri-drag-region
+        className={cn(visualClasses, "cursor-default max-h-full ")}
         style={{
           width: isFull && !isVertical ? "100%" : "auto",
           height: isFull && isVertical ? "100%" : "auto"
@@ -119,6 +120,7 @@ export default function TitleBar({ node, children }: ThemeComponentProps & { chi
       >
         {/* 内容排布层 */}
         <div
+          data-tauri-drag-region
           className={cn(
             "flex items-center gap-5 cursor-pointer w-full h-full justify-center", // 居中内容
             // 核心：growthDirection 决定图标怎么排
