@@ -3,12 +3,13 @@ import SelectCard from "@/components/SelectCard"
 import SwitchCard from "@/components/SwitchCard"
 import { cn } from "@/lib/utils"
 import useConfigStore from "@/store/configStore"
-import { i18n } from "@lingui/core"
 import { t } from "@lingui/core/macro"
 import { Keyboard, Plus, Settings2 } from "lucide-react"
 import { useState } from "react"
 import { CompanionManager } from "./CompanionManager"
 import { ShortcutManager } from "./ShortcutManager"
+import { useLingui } from "@lingui/react"
+import { Trans } from "@lingui/react/macro"
 
 export default function BaseSetting() {
   // 基本设置的信息
@@ -18,6 +19,8 @@ export default function BaseSetting() {
   const [isCompanionManagerOpen, setIsCompanionManagerOpen] = useState(false)
   // 控制快捷键全屏对话框状态
   const [isShortcutManagerOpen, setIsShortcutManagerOpen] = useState(false)
+  // i18n
+  const { i18n } = useLingui()
 
   const updateBasic = (key: keyof typeof basic, val: any) => {
     updateConfig((draft) => {
@@ -73,7 +76,7 @@ export default function BaseSetting() {
         >
           <div className="flex items-center gap-3">
             <Keyboard className="w-6 h-6 text-indigo-600" />
-            <span className="text-2xl font-bold tracking-tight">配置系统快捷键</span>
+            <span className="text-2xl font-bold tracking-tight"><Trans>配置系统快捷键</Trans></span>
           </div>
           <div className="bg-indigo-100 text-indigo-600 text-xs px-2 py-1 rounded-md font-bold">HOTKEY</div>
         </button>

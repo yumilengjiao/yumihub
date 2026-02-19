@@ -62,6 +62,7 @@ windows = { version = "0.62", features = [
 ] }
 tauri-plugin-notification = "2"
 unrar = "0.5.8"
+tauri-plugin-shell = "2"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-autostart = "2"

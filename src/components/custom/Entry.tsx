@@ -1,26 +1,42 @@
-import React from "react";
-import { cn } from "@/lib/utils";
-import { DynamicIcon } from 'lucide-react/dynamic';
-import { useLocation } from "react-router"; // 仅保留路由判定，不负责跳转
-import { ThemeComponentProps } from "@/types/node";
 import { useAppActions } from "@/hooks/useAppActions";
+import { cn } from "@/lib/utils";
+import { ThemeComponentProps } from "@/types/node";
+import { DynamicIcon } from "lucide-react/dynamic";
+import { useMemo } from "react";
+import { useLocation } from "react-router";
+// 1. 引入 Trans 组件，而不是 t 宏
+import { Trans } from "@lingui/react/macro";
 
 export default function Entry({ node }: ThemeComponentProps) {
   const { pathname } = useLocation();
   const { runActions } = useAppActions();
 
-  // 解构 Props
   const {
-    title = "Item",
+    title: rawTitle,
     icon = "house",
-    path = "/", // path 此时仅用于判定 isActive 高亮
+    path = "/",
     showTitle = true,
     activeColor = "bg-custom-500",
     autoActive = true,
     active = false,
   } = node.props || {};
 
-  // 状态判定 (保持你的嵌套路由判定逻辑)
+  // 不需要 i18n 依赖，也不需要 useLingui
+  const titleContent = useMemo(() => {
+    if (rawTitle) return rawTitle;
+
+    // 直接放入 <Trans> 组件。
+    // 这些组件就像是“占位符”，它们自己会监听语言变化并渲染正确的文本。
+    const pathMap: Record<string, React.ReactNode> = {
+      "/": <Trans>首页</Trans>,
+      "/library": <Trans>游戏</Trans>,
+      "/user": <Trans>用户</Trans>,
+      "/setting": <Trans>设置</Trans>,
+    };
+
+    return pathMap[path] || "Item";
+  }, [rawTitle, path]); // 依赖里不需要 i18n 了
+
   const getIsActive = () => {
     if (!autoActive) return active;
     if (pathname === path) return true;
@@ -33,43 +49,30 @@ export default function Entry({ node }: ThemeComponentProps) {
 
   return (
     <div
-      className={cn(
-        "w-full px-2 py-1",
-        node.className
-      )}
+      className={cn("w-full px-2 py-1", node.className)}
       style={node.style as React.CSSProperties}
     >
       <div
         id={node.id}
         onClick={(e) => {
           e.stopPropagation();
-          if (node.actions) {
-            runActions(node.actions);
-          }
+          if (node.actions) runActions(node.actions);
         }}
         className={cn(
           "group relative flex items-center h-16 cursor-pointer rounded-[24px] transition-all duration-300",
           "justify-start select-none w-full",
-
           isActive
             ? cn(activeColor, "text-white shadow-lg shadow-custom-300/50 scale-[1.02]")
             : "text-white hover:bg-zinc-100/10 hover:text-custom-400",
-
         )}
       >
-        {/* 图标区域 */}
         <div className={cn(
           "flex items-center justify-center shrink-0 h-full transition-transform group-active:scale-95",
           showTitle ? "w-23" : "w-full"
         )}>
-          <DynamicIcon
-            name={icon as any}
-            size={28}
-            strokeWidth={2.5}
-          />
+          <DynamicIcon name={icon as any} size={28} strokeWidth={2.5} />
         </div>
 
-        {/* 标题区域 */}
         <div
           className={cn(
             "font-black text-lg tracking-tight transition-all duration-300 whitespace-nowrap",
@@ -82,7 +85,7 @@ export default function Entry({ node }: ThemeComponentProps) {
             marginLeft: showTitle ? '4px' : '0'
           }}
         >
-          {title}
+          {titleContent}
         </div>
       </div>
     </div>

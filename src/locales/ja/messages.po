@@ -101,15 +101,16 @@ msgstr "スマート照合"
 msgid "一键还原存档"
 msgstr "セーブデータを一括復元"
 
+#: src/components/custom/Title.tsx:45
 #: src/page/User/ProfileHeader.tsx:10
 msgid "下午好"
 msgstr "こんにちは"
 
 #: src/components/SideBar/index.tsx:74
-msgid "个人"
-msgstr "プロフィール"
+#~ msgid "个人"
+#~ msgstr "プロフィール"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:52
+#: src/page/Setting/InterfaceSetting/index.tsx:59
 msgid "个性化界面"
 msgstr "インターフェースのカスタマイズ"
 
@@ -118,10 +119,18 @@ msgid "中午好"
 msgstr "こんにちは"
 
 #: src/components/SideBar/index.tsx:68
-msgid "主页"
-msgstr "ホーム"
+#~ msgid "主页"
+#~ msgstr "ホーム"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:60
+#: src/page/Setting/InterfaceSetting/index.tsx:67
+msgid "主题模式"
+msgstr "テーマモード"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:62
+msgid "主题选择"
+msgstr "テーマ選択"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:72
 msgid "主题颜色"
 msgstr "テーマカラー"
 
@@ -138,8 +147,8 @@ msgstr "今日は泣きゲーをプレイしたい気分ですか？"
 #~ msgstr "バックアップから復元"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:65
-msgid "侧边栏显示"
-msgstr "サイドバーの表示"
+#~ msgid "侧边栏显示"
+#~ msgstr "サイドバーの表示"
 
 #: src/page/User/EditUserInfoDialog.tsx:179
 msgid "保存信息"
@@ -237,12 +246,12 @@ msgstr "適度に休憩しましょう。目も休ませてあげてください
 #~ msgid "匹配中断"
 #~ msgstr "照合が中断されました"
 
-#: src/page/Library/BigPendingCard.tsx:139
+#: src/page/Library/BigPendingCard.tsx:131
 #: src/page/Library/PendingCard.tsx:205
 msgid "匹配任务超时，请检查网络"
 msgstr "照合タスクがタイムアウトしました。ネットワークを確認してください"
 
-#: src/page/Library/BigPendingCard.tsx:264
+#: src/page/Library/BigPendingCard.tsx:256
 msgid "匹配元数据"
 msgstr "メタデータを照合"
 
@@ -279,7 +288,7 @@ msgstr "アーカイブが空です"
 msgid "压缩包解析失败"
 msgstr "アーカイブの解析に失敗しました"
 
-#: src/page/Library/BigPendingCard.tsx:262
+#: src/page/Library/BigPendingCard.tsx:254
 #: src/page/User/EditUserInfoDialog.tsx:173
 #: src/page/User/index.tsx:238
 #: src/page/User/index.tsx:302
@@ -323,12 +332,12 @@ msgstr "起動オプション"
 #~ msgstr "起動パス"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:68
-msgid "固定展示(正常)"
-msgstr "固定表示(標準)"
+#~ msgid "固定展示(正常)"
+#~ msgstr "固定表示(標準)"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:69
-msgid "固定展示(短)"
-msgstr "固定表示(小)"
+#~ msgid "固定展示(短)"
+#~ msgstr "固定表示(小)"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:22
 msgid "在任何界面调出程序主窗口"
@@ -346,7 +355,7 @@ msgstr "ここに個人トークンを貼り付けてください..."
 msgid "在界面选中游戏时按回车直接启动"
 msgstr "ゲーム選択中にEnterキーで直接起動"
 
-#: src/page/Setting/BaseSetting/index.tsx:41
+#: src/page/Setting/BaseSetting/index.tsx:44
 msgid "基础设置"
 msgstr "基本設定"
 
@@ -364,14 +373,14 @@ msgid "备份成功"
 msgstr "バックアップ成功"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:55
-msgid "外观主题"
-msgstr "外観テーマ"
+#~ msgid "外观主题"
+#~ msgstr "外観テーマ"
 
 #: src/page/User/ProfileHeader.tsx:12
 msgid "夜深了，推完这节就快去睡觉吧。"
 msgstr "夜も更けてきました。このセクションが終わったら早く寝てくださいね。"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:14
+#: src/page/Setting/InterfaceSetting/index.tsx:15
 msgid "夜间模式"
 msgstr "ダークモード"
 
@@ -392,12 +401,12 @@ msgstr "セーブデータディレクトリ"
 #~ msgid "导入失败"
 #~ msgstr "インポート失敗"
 
-#: src/page/Library/BigPendingCard.tsx:212
+#: src/page/Library/BigPendingCard.tsx:204
 #: src/page/Library/PendingCard.tsx:275
 msgid "导入失败,id: "
 msgstr "インポート失敗、ID: "
 
-#: src/page/Library/BigPendingCard.tsx:209
+#: src/page/Library/BigPendingCard.tsx:201
 msgid "导入成功"
 msgstr "インポート成功"
 
@@ -449,7 +458,7 @@ msgstr "年"
 msgid "开启热键"
 msgstr "ホットキーを有効化"
 
-#: src/page/Setting/BaseSetting/index.tsx:83
+#: src/page/Setting/BaseSetting/index.tsx:86
 msgid "开机自启动"
 msgstr "システム起動時に実行"
 
@@ -516,7 +525,7 @@ msgstr "ソート優先度"
 msgid "放弃修改"
 msgstr "変更を破棄"
 
-#: src/page/Library/BigPendingCard.tsx:118
+#: src/page/Library/BigPendingCard.tsx:110
 msgid "数据已同步"
 msgstr "データを同期しました"
 
@@ -536,10 +545,11 @@ msgstr "ファイルダイアログを開けませんでした"
 msgid "日志追踪等级"
 msgstr "ログレベル"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:14
+#: src/page/Setting/InterfaceSetting/index.tsx:15
 msgid "日间模式"
 msgstr "ライトモード"
 
+#: src/components/custom/Title.tsx:44
 #: src/page/User/ProfileHeader.tsx:8
 msgid "早上好"
 msgstr "おはようございます"
@@ -548,6 +558,7 @@ msgstr "おはようございます"
 msgid "显示"
 msgstr "表示"
 
+#: src/components/custom/Title.tsx:46
 #: src/page/User/ProfileHeader.tsx:11
 msgid "晚上好"
 msgstr "こんばんは"
@@ -565,7 +576,7 @@ msgstr "説明がありません..."
 msgid "暂无记录"
 msgstr "記録なし"
 
-#: src/page/Library/BigPendingCard.tsx:339
+#: src/page/Library/BigPendingCard.tsx:336
 msgid "暂无详细介绍"
 msgstr "詳細な紹介はありません"
 
@@ -597,7 +608,7 @@ msgstr "未照合データ"
 msgid "未找到保存路径"
 msgstr "保存先が見つかりません"
 
-#: src/page/Library/BigPendingCard.tsx:311
+#: src/page/Library/BigPendingCard.tsx:308
 msgid "未找到匹配数据"
 msgstr "一致するデータが見つかりません"
 
@@ -621,11 +632,11 @@ msgstr "権限関連"
 msgid "来杯咖啡吧，又是努力的一天。"
 msgstr "コーヒーでも飲んで、今日も一日頑張りましょう。"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:20
+#: src/page/Setting/InterfaceSetting/index.tsx:21
 msgid "极光紫 (Violet)"
 msgstr "オーロラパープル (Violet)"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:24
+#: src/page/Setting/InterfaceSetting/index.tsx:25
 msgid "极客灰 (Slate)"
 msgstr "ギークスレート (Slate)"
 
@@ -642,7 +653,7 @@ msgstr "{title}を表示"
 #~ msgid "查询失败"
 #~ msgstr "クエリ失敗"
 
-#: src/page/Library/BigPendingCard.tsx:120
+#: src/page/Library/BigPendingCard.tsx:112
 msgid "查询失败，请检查 ID 是否正确"
 msgstr "検索に失敗しました。IDが正しいか確認してください"
 
@@ -674,7 +685,7 @@ msgstr "同期中..."
 msgid "正在备份存档..."
 msgstr "セーブデータをバックアップ中..."
 
-#: src/page/Library/BigPendingCard.tsx:186
+#: src/page/Library/BigPendingCard.tsx:178
 msgid "正在导入游戏..."
 msgstr "ゲームをインポート中..."
 
@@ -698,7 +709,7 @@ msgstr "リソースを計算してインポート中..."
 msgid "浏览"
 msgstr "参照"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:23
+#: src/page/Setting/InterfaceSetting/index.tsx:24
 msgid "深海青 (Cyan)"
 msgstr "オーシャンシアン (Cyan)"
 
@@ -710,7 +721,7 @@ msgstr "新しい連繋プログラムを追加"
 msgid "清除程序所有数据"
 msgstr "全アプリデータを削除"
 
-#: src/components/SideBar/index.tsx:71
+#: src/components/custom/Entry.tsx:33
 msgid "游戏"
 msgstr "ゲーム"
 
@@ -762,7 +773,7 @@ msgstr "実行ファイルを選択..."
 #~ msgid "点击配置路径..."
 #~ msgstr "クリックしてパスを設定..."
 
-#: src/page/Setting/InterfaceSetting/index.tsx:21
+#: src/page/Setting/InterfaceSetting/index.tsx:22
 msgid "琥珀黄 (Amber)"
 msgstr "アンバーイエロー (Amber)"
 
@@ -770,15 +781,19 @@ msgstr "アンバーイエロー (Amber)"
 msgid "用于访问敏感条目。你可以在 Bangumi 设置 - 开发者平台中生成此令牌。"
 msgstr "制限付き項目へのアクセスに使用します。Bangumi設定のデベロッパープラットフォームで生成できます。"
 
+#: src/components/custom/Entry.tsx:34
+msgid "用户"
+msgstr "ユーザー"
+
 #: src/page/User/EditUserInfoDialog.tsx:75
 msgid "用户信息同步成功"
 msgstr "ユーザー情報の同期に成功しました"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:18
+#: src/page/Setting/InterfaceSetting/index.tsx:19
 msgid "皇家蓝 (Royal Blue)"
 msgstr "ロイヤルブルー (Royal Blue)"
 
-#: src/page/Library/BigPendingCard.tsx:267
+#: src/page/Library/BigPendingCard.tsx:259
 msgid "直接确认"
 msgstr "直接確定"
 
@@ -802,7 +817,7 @@ msgstr "確認して展開を開始"
 msgid "确认执行备份？"
 msgstr "バックアップを実行しますか？"
 
-#: src/page/Library/BigPendingCard.tsx:350
+#: src/page/Library/BigPendingCard.tsx:347
 msgid "确认添加"
 msgstr "追加を確定"
 
@@ -850,7 +865,7 @@ msgstr "紹介"
 #~ msgid "管理与状态"
 #~ msgstr "管理とステータス"
 
-#: src/page/Setting/BaseSetting/index.tsx:61
+#: src/page/Setting/BaseSetting/index.tsx:64
 msgid "管理连携启动程序"
 msgstr "連繋起動プログラムの管理"
 
@@ -866,11 +881,11 @@ msgstr "システムデフォルト"
 msgid "紧急停止"
 msgstr "緊急停止"
 
-#: src/page/Library/BigPendingCard.tsx:169
+#: src/page/Library/BigPendingCard.tsx:161
 msgid "网络请求失败"
 msgstr "ネットワークリクエスト失敗"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:17
+#: src/page/Setting/InterfaceSetting/index.tsx:18
 msgid "翡翠绿 (Emerald)"
 msgstr "エメラルドグリーン (Emerald)"
 
@@ -886,7 +901,7 @@ msgstr "検索にフォーカス"
 msgid "背景图片"
 msgstr "背景画像"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:22
+#: src/page/Setting/InterfaceSetting/index.tsx:23
 msgid "能量橙 (Orange)"
 msgstr "エナジーオレンジ (Orange)"
 
@@ -895,14 +910,14 @@ msgid "自动备份"
 msgstr "自動バックアップ"
 
 #: src/page/Setting/InterfaceSetting/index.tsx:67
-msgid "自动触发"
-msgstr "自動トリガー"
+#~ msgid "自动触发"
+#~ msgstr "自動トリガー"
 
 #: src/page/Library/GameDetail.tsx:199
 #~ msgid "自定义背景"
 #~ msgstr "背景をカスタマイズ"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:19
+#: src/page/Setting/InterfaceSetting/index.tsx:20
 msgid "蔷薇粉 (Rose)"
 msgstr "ローズピンク (Rose)"
 
@@ -918,7 +933,7 @@ msgstr "展開先を選択"
 msgid "记得多看几遍喜欢的剧情，会有新发现哦。"
 msgstr "お気に入りのシーンは何度も見返してみてください。新しい発見があるかもしれませんよ。"
 
-#: src/components/SideBar/index.tsx:77
+#: src/components/custom/Entry.tsx:35
 msgid "设置"
 msgstr "設定"
 
@@ -938,11 +953,11 @@ msgstr "この操作は現在の全バックアップを上書きし、取り消
 #~ msgid "详细 (Debug)"
 #~ msgstr "詳細 (Debug)"
 
-#: src/page/Setting/BaseSetting/index.tsx:45
+#: src/page/Setting/BaseSetting/index.tsx:48
 msgid "语言设置 / Language"
 msgstr "言語設定 / Language"
 
-#: src/page/Home/GameList.tsx:59
+#: src/components/custom/GameShelf.tsx:114
 msgid "请在库设置中添加首页展示项目"
 msgstr "ライブラリ設定でホームに表示する項目を追加してください"
 
@@ -1023,7 +1038,7 @@ msgstr "履歴の日付を選択"
 msgid "选择年份"
 msgstr "年を選択"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:73
+#: src/page/Setting/InterfaceSetting/index.tsx:77
 msgid "选择应用字体"
 msgstr "フォントを選択"
 
@@ -1042,6 +1057,10 @@ msgstr "統計する年を選択"
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:76
 msgid "配置您的操作偏好，提升启动效率"
 msgstr "操作設定をカスタマイズして効率を向上させます"
+
+#: src/page/Setting/BaseSetting/index.tsx:79
+msgid "配置系统快捷键"
+msgstr "システムショートカットの設定"
 
 #: src/page/Setting/BaseSetting/CompanionManager.tsx:116
 msgid "配置随游戏或程序自动启动的辅助工具"
@@ -1063,13 +1082,21 @@ msgstr "ゲームに追従"
 msgid "随程序"
 msgstr "プログラムに追従"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:14
+#: src/page/Setting/InterfaceSetting/index.tsx:15
 msgid "随系统"
 msgstr "システムに従う"
 
-#: src/page/Setting/BaseSetting/index.tsx:89
+#: src/page/Setting/BaseSetting/index.tsx:92
 msgid "静默启动"
 msgstr "サイレント起動"
+
+#: src/page/Home/index.tsx:28
+msgid "页面内容未定义：请检查 \"/\" 路径配置"
+msgstr "ページ内容が未定義です：\"/\" パスの設定を確認してください"
+
+#: src/components/custom/Entry.tsx:32
+msgid "首页"
+msgstr "ホーム"
 
 #: src/page/Library/GameDetail.tsx:316
 msgid "首页展示"

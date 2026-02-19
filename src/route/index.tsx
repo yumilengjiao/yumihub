@@ -6,7 +6,6 @@ import Setting from "@/page/Setting"
 import Layout from "@/layout/index"
 // import LayoutTest from "@/layout/layoutTest"
 import GameDetail from "@/page/Library/GameDetail"
-import TestPage from "@/page/TestPage"
 
 const router = createBrowserRouter([
   {
@@ -32,12 +31,7 @@ const router = createBrowserRouter([
       {
         path: 'setting',
         element: <Setting />
-      },
-      {
-        path: 'testpage',
-        element: <TestPage />
       }
-
     ]
   }
 ]);

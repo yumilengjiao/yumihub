@@ -16,7 +16,6 @@ export default function Title({ node }: ThemeComponentProps) {
     content = "",      // custom 模式下的文字内容
     variant = "hero",  // 视觉风格：hero | subtle | neon | glass
     size = 30,
-    color = "#ffffff",
     timeFormat = "HH:mm:ss", // 时间格式（简单实现）
   } = node.props || {};
 

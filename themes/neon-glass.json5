@@ -1,0 +1,115 @@
+{
+  // ==========================================
+  // 基础元数据信息
+  // ==========================================
+  config: {
+    version: "1.0",
+    themeName: "neon-glass",
+    author: "yumilengjiao",
+    variables: {}
+  },
+
+  layout: {
+    global: {
+      // 根节点使用 Row
+      nt: "Row",
+      props: { cols: 24 },
+      children: [
+        {
+          nt: "SideBar",
+          className: ["border-r", "border-white/5"],
+          props: { span: 1, mode: "normalFixed", side: "left", zIndex: 100 },
+          children: [
+            {
+              nt: "Col",
+              props: { rows: 24 },
+              children: [
+                { nt: "Avatar", props: { span: 3, size: 32, paddingY: 20, shape: "rounded-xl" } },
+                {
+                  nt: "Col",
+                  props: { start: 8, span: 8, rows: 8 },
+                  children: [
+                    { nt: "Entry", props: { span: 2, icon: "house", path: "/", showTitle: false, activeColor: "" }, actions: [{ command: "navigate", params: { destination: "/" } }] },
+                    { nt: "Entry", props: { span: 2, icon: "gamepad-2", path: "/library", showTitle: false, activeColor: "" }, actions: [{ command: "navigate", params: { destination: "/library" } }] },
+                    { nt: "Entry", props: { span: 2, icon: "user-round", path: "/user", showTitle: false, activeColor: "" }, actions: [{ command: "navigate", params: { destination: "/user" } }] },
+                    { nt: "Entry", props: { span: 2, icon: "sliders-vertical", path: "/setting", showTitle: false, activeColor: "" }, actions: [{ command: "navigate", params: { destination: "/setting" } }] }
+                  ]
+                },
+                {
+                  nt: "Button",
+                  props: { span: 2, start: 23 },
+                  className: ["opacity-40 hover:opacity-100", "flex", "justify-center"],
+                  actions: [{ command: "openLink", params: { url: "https://github.com/yumilengjiao/yumihub" } }],
+                  children: [{ nt: "Icon", className:["text-white"], props: { name: "github", size: 18 } }]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          nt: "Col",
+          props: { span: 23, rows: 24 },
+          inlineStyle: { position: "relative" },
+          children: [
+            // 悬浮在 Background 之上的 TitleBar
+            {
+              nt: "TitleBar",
+              props: { span: 0, position: "absolute", variant: "capsule", align: "center", thickness: "40px" },
+              className: ["mt-4"], // 胶囊居中
+              children: [
+                { nt: "Button", actions: [{ command: "switchTheme" }], children: [{ nt: "Icon",className:["text-white"], props: { name: "sun-moon", size: 26 } }] },
+                { nt: "Button", actions: [{ command: "windowManage", params: { op: "minimize" } }], children: [{ nt: "Icon",className:["text-white"], props: { name: "minus", size: 26 } }] },
+                { nt: "Button", actions: [{ command: "windowManage" }], children: [{ nt: "WTIcon",className:["text-white"], props: { size: 26 } }] },
+                { nt: "Button", className: ["hover:text-red-500"], actions: [{ command: "windowManage", params: { op: "close" } }], children: [{ nt: "Icon",className:["text-white"], props: { name: "x", size: 28 } }] }
+              ]
+            },
+            {
+              nt: "Background",
+              props: {
+                span: 24,
+                sourceType: "selectedGame",
+                variant: "vignette" 
+              },
+              children: [
+                // 页面具体内容的插槽
+                {
+                  nt: "Page"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    pages: {
+      "/": {
+        name: "Home",
+        content: {
+          nt: "Col",
+          props: { rows: 24 },
+          children: [
+            {
+              nt: "Title",
+              props: { mode: "time",start: 3,variant: "neon", size: 20 },
+              className: ["w-full", "text-center", "mb-6", "text-white"], 
+              inlineStyle: { textShadow: "0 0 20px rgba(0,0,0,0.8)" }
+            },
+
+            {
+              nt: "Title",
+              props: { mode: "gameName",start: 4,span: 2, variant: "neon", size: 48 },
+              className: ["w-full", "text-center", "mb-6", "text-white"], 
+              inlineStyle: { textShadow: "0 0 20px rgba(0,0,0,0.8)" }
+            },
+            {
+              nt: "GameShelf",
+              props: {start:15, basis: 6, variant: "glow" },
+              className: ["px-16"] 
+            }
+          ]
+        }
+      },
+    }
+  }
+}
