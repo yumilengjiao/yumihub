@@ -373,20 +373,22 @@
 
 属性定义 (Properties)
 
-- variant <string>
+- props: <Object>
 
-  - 说明: 封面卡片的交互与视觉预设。
+  - variant <string>
+
+    - 说明: 封面卡片的交互与视觉预设。
   
-        可选值:
+          可选值:
 
-        // scale: 经典的缩放效果
-        scale: "transition-transform hover:scale-105 active:scale-95",
+          // scale: 经典的缩放效果
+          scale: "transition-transform hover:scale-105 active:scale-95",
 
-        // border: 预留透明边框防止抖动，Hover时变色
-        border: "border-2 border-transparent hover:border-purple-500 transition-colors box-border",
+          // border: 预留透明边框防止抖动，Hover时变色
+          border: "border-2 border-transparent hover:border-purple-500 transition-colors box-border",
 
-        // glow: 霓虹发光效果 (利用 drop-shadow 或 box-shadow)
-        glow: "transition-shadow hover:shadow-[0_0_15px_rgba(168,85,247,0.6)]",
+          // glow: 霓虹发光效果 (利用 drop-shadow 或 box-shadow)
+          glow: "transition-shadow hover:shadow-[0_0_15px_rgba(168,85,247,0.6)]",
 
 - actions <Object>
 
@@ -455,6 +457,57 @@
   - 说明: 注入原生 CSS 样式。
 
         用法: 适用于变体不能达到想要的效果时，如 inlineStyle: {"box-sizing": "border-box"}。
+
+---
+
+## Description [叶子节点]
+
+段落组件，显示一串文本
+
+- props <Object>
+
+  - mode <string>
+
+    说明：组件模式,默认"gameDesc"
+
+        可选值:
+        gameDesc: content为当前GameShelf选中游戏的游戏简介内容
+        developer: content为当前GameShelf选中游戏的游戏开发商
+        custom: 直接应用content属性里面的自定义内容
+
+  - variant <string>
+
+    说明：组件风格
+
+        可选值:
+        faded: 减淡消失
+        card: 卡片样式
+
+  - content <string>
+
+    说明：段落内容，仅在mode为custom时生效
+
+  - lineClamp <number>
+
+    说明: 文本截断行数,用于控制文本最多显示多少行
+
+  - fontSize <number>
+
+    说明: 用于指定文字大小信息,默认16
+
+  - textAlign <string>
+
+    说明: 用于指定文字对齐方式
+
+        可选值：
+        left(默认)：左对齐
+        center: 居中
+        right: 右对齐
+        justify：两端对齐
+
+  - width <string>
+
+    说明: 用于控制文本的宽度，默认"100%"
 
 ---
 

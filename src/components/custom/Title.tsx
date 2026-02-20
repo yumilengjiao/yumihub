@@ -69,7 +69,6 @@ export default function Title({ node }: ThemeComponentProps) {
     }
   }, [variant]);
 
-  // 你原本要求的描边样式（通过 style 注入）
   const strokeStyle: React.CSSProperties = variant === "Hero" ? {
     WebkitTextStroke: '2px black',
     paintOrder: 'stroke fill',
