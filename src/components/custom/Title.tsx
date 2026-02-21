@@ -16,7 +16,6 @@ export default function Title({ node }: ThemeComponentProps) {
     content = "",      // custom 模式下的文字内容
     variant = "hero",  // 视觉风格：hero | subtle | neon | glass
     size = 30,
-    color = "#ffffff",
     timeFormat = "HH:mm:ss", // 时间格式（简单实现）
   } = node.props || {};
 
@@ -70,7 +69,6 @@ export default function Title({ node }: ThemeComponentProps) {
     }
   }, [variant]);
 
-  // 你原本要求的描边样式（通过 style 注入）
   const strokeStyle: React.CSSProperties = variant === "Hero" ? {
     WebkitTextStroke: '2px black',
     paintOrder: 'stroke fill',

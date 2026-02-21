@@ -15,6 +15,7 @@ import Entry from "@/components/custom/Entry";
 import { Avatar } from "@/components/custom/Avatar";
 import WindowToggleIcon from "@/components/custom/WindowToogleIcon";
 import Title from "@/components/custom/Title";
+import Description from "@/components/custom/Description";
 
 
 export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
@@ -38,4 +39,5 @@ export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
   'gameshelf': GameShelf,
   'title': Title,
   'windowtoggleicon': WindowToggleIcon,
+  'description': Description
 }

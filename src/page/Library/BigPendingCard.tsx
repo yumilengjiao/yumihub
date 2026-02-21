@@ -118,36 +118,58 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
 
   // --- 元数据自动匹配 ---
   const handleFetchMetadata = async () => {
-    setIsFetching(true)
-    isRequestingRef.current = true
-    if (timerRef.current) clearTimeout(timerRef.current)
+    setIsFetching(true);
+    isRequestingRef.current = true;
 
-    timerRef.current = setTimeout(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    // 定义超时处理函数
+    const handleTimeout = () => {
       if (isRequestingRef.current) {
-        setIsFetching(false)
-        isRequestingRef.current = false
-        toast.error(t`匹配超时`, { icon: <WifiOff className="text-red-500" size={18} /> })
+        isRequestingRef.current = false; // 封死请求回调
+        setIsFetching(false);
+        toast.error(t`匹配任务超时，请检查网络`, {
+          icon: <WifiOff className="text-red-500" size={18} />
+        });
       }
-    }, 60000)
+    };
+
+    timerRef.current = setTimeout(handleTimeout, 60000);
 
     try {
-      const res = await recognizeGame(absPath)
-      if (isRequestingRef.current) {
-        setResultData(res)
-        setIsFetching(false)
-        isRequestingRef.current = false
-        if (timerRef.current) clearTimeout(timerRef.current)
+      const res = await recognizeGame(absPath);
 
-        if (res.bangumi) {
-          setActiveSource('bangumi')
-        } else if (res.vndb) {
-          setActiveSource('vndb')
+      // 检查生命周期：如果已经超时了，直接无视结果
+      if (!isRequestingRef.current) return;
+
+      // 走到这里说明没超时，手动关掉计时器
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+
+      setResultData(res);
+
+      // 自动切换源
+      if (res.bangumi) setActiveSource('bangumi');
+      else if (res.vndb) setActiveSource('vndb');
+      else if (res.ymgal) setActiveSource('ymgal');
+
+    } catch (err) {
+      // 只有在没超时的情况下，才报普通的网络错误
+      if (isRequestingRef.current) {
+        toast.error(t`网络请求失败`);
+      }
+    } finally {
+      // 如果已经超时了，状态已经在 handleTimeout 里清理过了
+      if (isRequestingRef.current) {
+        setIsFetching(false);
+        isRequestingRef.current = false;
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
         }
       }
-    } catch (err) {
-      setIsFetching(false)
-      isRequestingRef.current = false
-      toast.error(t`网络请求失败`)
     }
   }
 

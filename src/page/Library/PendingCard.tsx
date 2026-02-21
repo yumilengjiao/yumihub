@@ -55,7 +55,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
   const { addGameMeta } = useGameStore()
 
   const isMatchingRef = useRef(false)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const timerRef = useRef<any | null>(null)
 
   const { config } = useConfigStore()
 
@@ -161,40 +161,60 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
 
   // 全局自动匹配
   const handleGlobalMatch = async () => {
-    if (isGlobalMatching) return
-    setIsGlobalMatching(true)
-    isMatchingRef.current = true
-    setMatchProgress(0)
+    if (isGlobalMatching) return;
+
+    setIsGlobalMatching(true);
+    isMatchingRef.current = true;
+    setMatchProgress(0);
+    clearTimer();
+
+    // 1. 定义一个用于标识超时的信号
+    let abortByTimeout = false;
 
     timerRef.current = setTimeout(() => {
       if (isMatchingRef.current) {
-        isMatchingRef.current = false
-        setIsGlobalMatching(false)
-        toast.error(t`匹配任务超时，请检查网络`)
+        abortByTimeout = true; // 标记是超时导致的
+        isMatchingRef.current = false; // 停止循环
+        // 这里不要写 toast，让下面的 catch 统一写
       }
-    }, 60000)
+    }, 60000);
 
     try {
       for (let i = 0; i < items.length; i++) {
-        if (!isMatchingRef.current) break
+        if (!isMatchingRef.current) break; // 发现停止信号，跳出循环
 
-        // recognizeGame 返回的是 PendingGameInfo { bangumi, vndb, ymgal, absPath }
-        const res = await recognizeGame(items[i].absPath) as PendingGameInfo
+        const res = await recognizeGame(items[i].absPath) as PendingGameInfo;
+
+        if (!isMatchingRef.current) break; // 请求回来后再次检查
 
         setItems(prev => prev.map((it, idx) =>
           idx === i ? { ...it, gameInfo: res } : it
-        ))
-        setMatchProgress(Math.round(((i + 1) / items.length) * 100))
+        ));
+        setMatchProgress(Math.round(((i + 1) / items.length) * 100));
       }
-      if (isMatchingRef.current) toast.success(t`全局匹配完成`)
+
+      // 只有循环正常结束（未被手动停止，也未超时）才报成功
+      if (isMatchingRef.current && !abortByTimeout) {
+        toast.success(t`全局匹配完成`);
+      }
+
     } catch (err) {
-      toast.error(t`匹配过程中断`)
+      // 2. 统一错误处理逻辑
+      // 如果是因为超时（isMatchingRef 变假且标记位为真），报超时
+      if (abortByTimeout) {
+        toast.error(t`匹配任务超时，请检查网络`);
+      }
+      // 如果是真正的网络报错（isMatchingRef 还是真），报中断
+      else if (isMatchingRef.current) {
+        toast.error(t`匹配过程中断`);
+      }
     } finally {
-      clearTimer()
-      setIsGlobalMatching(false)
-      isMatchingRef.current = false
+      // 3. 无论如何都清理状态
+      clearTimer();
+      setIsGlobalMatching(false);
+      isMatchingRef.current = false;
     }
-  }
+  };
 
   // 单个 ID 检索更新
   const handleSingleIdSearch = async (itemId: string) => {

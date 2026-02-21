@@ -7,6 +7,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ThemeMode } from "@/types/config";
 import useConfigStore from "@/store/configStore";
+import { open } from '@tauri-apps/plugin-shell';
 
 // 定义 Action 的结构（对应你的文档）
 interface ActionItem {
@@ -102,8 +103,9 @@ export const useAppActions = () => {
     },
 
     // 打开外部浏览器
-    open_link: (params) => {
-      if (params?.url) window.open(params.url, "_blank");
+    openLink: (params) => {
+      console.log("调用外部链接")
+      if (params?.url) open(params.url);
     },
   };
 

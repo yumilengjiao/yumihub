@@ -21,7 +21,5 @@ pub fn load(theme_cfg_path: PathBuf) -> Result<ThemeIr, Vec<ThemeErr>> {
     // 处理抽象语法树
     let result = transform::run(ast, &mut ctx)?;
 
-    println!("处理后的抽象语法树:{:#?}", result);
-
     Ok(result)
 }

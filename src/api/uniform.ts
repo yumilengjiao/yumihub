@@ -13,45 +13,22 @@ export async function recognizeGame(absPath: string): Promise<PendingGameInfo> {
   // 兼容不同系统的路径分隔符
   const separator = absPath.includes("\\") ? "\\" : "/"
   const arr = absPath.split(separator).filter(Boolean)
+
   //拿名字
-  let name: string | undefined = ""
+  const name = arr[arr.length - 2] || arr[arr.length - 1];
+  if (!name) throw new Error(`无法从路径解析游戏名称: ${absPath}`);
 
-  // 父目录就是默认名字
-  name = arr[arr.length - 2]
-
-  if (!name) {
-    // 如果路径层级只有一级，拿不到倒数第二个，则回退到最后一个
-    name = arr[arr.length - 1]
-  }
-
-  if (!name) {
-    throw new Error(`无法从路径解析游戏名称: ${absPath}`)
-  }
 
   const vndbParam = createVNDBParamsFromBootFile(name)
-  let vndbData = null
-  try {
-    vndbData = await requestVNDB(vndbParam)
-    console.log(vndbData)
-  } catch (error) {
-    console.error("获取vndb数据失败: ", error)
-  }
-
   const bangumiParam = createBangumiParamsFromBootFile(name)
-  let bangumiData = null
-  try {
-    bangumiData = await requestBangumi(bangumiParam)
-    console.log(bangumiData)
-  } catch (error) {
-    console.error("获取bangumi数据失败: ", error)
-  }
-
   const ymlgalParam = createYmgalQueryFromBootFile(name)
-  let ymlData = null
-  try {
-    ymlData = await requestYml(ymlgalParam)
-  } catch (error) {
-    console.error("获取ymlgal数据失败: ", error)
+
+  const vndbData = await requestVNDB(vndbParam).catch(() => null);
+  const bangumiData = await requestBangumi(bangumiParam).catch(() => null);
+  const ymlData = await requestYml(ymlgalParam).catch(() => null);
+  // 如果三个全是 null，说明彻底没网或没搜到，这时候可以抛个错
+  if (!vndbData && !bangumiData && !ymlData) {
+    throw new Error("ALL_SOURCES_FAILED");
   }
   return {
     absPath: absPath,

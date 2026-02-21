@@ -39,6 +39,7 @@ const GameShelfUI = ({
   const { selectedGame, gameMetaList, updateSelectedGame } = useGameStore()
   const { config } = useConfigStore()
   // 由于taiwind的懒加载机制导致这几种可能不会动态生成css，所以在这里加上，即使不用taiwind也会扫描到
+  // @ts-ignore
   const TAILWIND_GENERATOR_HACK = [
     "sm:basis-1/4", "sm:basis-1/5", "sm:basis-1/6", "sm:basis-1/7", "sm:basis-1/8", "sm:basis-1/9", "sm:basis-1/10", "sm:basis-1/11", "sm:basis-1/12"
   ];
@@ -85,7 +86,7 @@ const GameShelfUI = ({
       case 'glow':
         return cn(
           "scale-100 transition-all duration-500",
-          isSelected ? "shadow-[0_0_50px_rgba(139,92,246,0.6)] border-2 border-purple-400 z-10" : "opacity-40 blur-[1px]"
+          isSelected ? "shadow-[0_0_50px_rgba(139,92,246,0.6)] border-2 border-purple-400 z-10" : "opacity-80 blur-[1px]"
         );
       case 'scale':
       default:
@@ -196,7 +197,7 @@ const GameShelfUI = ({
 export const GameShelf: React.FC<ThemeComponentProps> = ({ node }) => {
   const {
     variant,
-    itemBasis
+    basis
   } = node.props
 
   return (
@@ -204,7 +205,7 @@ export const GameShelf: React.FC<ThemeComponentProps> = ({ node }) => {
       className={node.className}
       style={node.style}
       variant={variant}
-      itemBasis={itemBasis}
+      itemBasis={basis}
     />
   );
 };
