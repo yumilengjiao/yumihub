@@ -119,6 +119,7 @@ fn enable_auto_update(yes: bool) {
 ///
 /// * `new_order`: 新的游戏展示顺序
 fn set_game_display_order(new_order: Vec<String>) {
+    println!("游戏顺序被更新了{:#?}", new_order);
     let result = GLOBAL_CONFIG.write();
     match result {
         Ok(mut config) => config.basic.game_display_order = new_order,

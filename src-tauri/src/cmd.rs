@@ -510,15 +510,19 @@ pub async fn delete_game_by_id(pool: State<'_, Pool<Sqlite>>, id: String) -> Res
     tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
 
     // 删除游戏的数据
-    let config = GLOBAL_CONFIG.read().unwrap();
+    let mut config = GLOBAL_CONFIG.write().unwrap();
     let screenshot_dir = config.storage.screenshot_path.clone(); // 单独拎出来处理
     let target_dirs = vec![
         config.storage.meta_save_path.clone(),
         config.storage.backup_save_path.clone(),
     ];
+
+    // 看游戏是否在config的order下，如果在删除
+    config.basic.game_display_order.retain(|s| s != &id);
     // 释放锁
     drop(config);
 
+    // 删除游戏快照
     for s_id in &screenshot_ids {
         if let Ok(entries) = std::fs::read_dir(&screenshot_dir) {
             for entry in entries.flatten() {
@@ -571,6 +575,7 @@ pub async fn delete_game_by_id(pool: State<'_, Pool<Sqlite>>, id: String) -> Res
             }
         }
     }
+
     Ok(())
 }
 

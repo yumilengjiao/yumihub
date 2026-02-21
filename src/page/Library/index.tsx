@@ -23,7 +23,7 @@ export default function Library() {
   const [keyword, setKeyword] = useState<string>("")
   const navigate = useNavigate()
 
-  // --- 1. 背景配置解析 (逻辑保持，确保稳定) ---
+  // --- 背景配置解析 (逻辑保持，确保稳定) ---
   const bgConfig = useMemo(() => {
     if (typeof globalBackground === "string") {
       return { path: globalBackground, opacity: 1, blur: 0 }
@@ -35,7 +35,7 @@ export default function Library() {
     }
   }, [globalBackground])
 
-  // --- 2. 背景样式生成 ---
+  // --- 背景样式生成 ---
   const bgStyle = useMemo(() => {
     if (!bgConfig.path.trim()) return null;
     return {
@@ -50,7 +50,7 @@ export default function Library() {
     };
   }, [bgConfig]);
 
-  // --- 3. 游戏过滤与排序逻辑 ---
+  // --- 游戏过滤与排序逻辑 ---
   const displayGames = useMemo(() => {
     if (sortMode == "passed") {
       return filterGameMetaListByName(keyword).filter(g => g.isPassed)

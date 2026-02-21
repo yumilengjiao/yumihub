@@ -11,6 +11,7 @@ import { convertFileSrc } from '@tauri-apps/api/core';
 import useGameStore from "@/store/gameStore";
 import useConfigStore from "@/store/configStore";
 import { GameMeta } from '@/types/game';
+import { Trans } from '@lingui/react/macro';
 
 // 扩展 Props 类型，支持 passed 排序/过滤
 interface TopToolbarProps {
@@ -87,15 +88,25 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
   };
 
   const handleToggleDisplay = (gameId: string) => {
-    const game = gameMetaList.find(g => g.id === gameId);
-    if (!game) return;
     const isCurrentlyInOrder = (config.basic.gameDisplayOrder || []).includes(gameId);
+
+    // 更新配置（持久化顺序）
     updateConfig(prev => {
-      const order = prev.basic.gameDisplayOrder || [];
-      prev.basic.gameDisplayOrder = isCurrentlyInOrder ? order.filter(id => id !== gameId) : [...order, gameId];
+      const currentOrder = prev.basic.gameDisplayOrder || [];
+      if (isCurrentlyInOrder) {
+        prev.basic.gameDisplayOrder = currentOrder.filter(id => id !== gameId);
+      } else {
+        // 这里的 [...currentOrder, gameId] 是对的，因为它创建了新引用
+        prev.basic.gameDisplayOrder = [...currentOrder, gameId];
+      }
     });
-    setGameMeta({ ...game, isDisplayed: !isCurrentlyInOrder });
-  };
+
+    // 更新内存中的展示状态
+    const game = gameMetaList.find(g => g.id === gameId);
+    if (game) {
+      setGameMeta({ ...game, isDisplayed: !isCurrentlyInOrder });
+    }
+  }
 
   const handleClearAll = () => {
     (config.basic.gameDisplayOrder || []).forEach(id => {
@@ -241,7 +252,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
             >
               <div className="p-8 border-b border-border flex justify-between items-center bg-muted/50">
                 <h2 className="text-xl font-black text-foreground tracking-tight flex items-center gap-3"><Layout size={24} />首页展示配置</h2>
-                <button onClick={() => setIsLayoutOpen(false)} className="px-8 py-2.5 bg-primary text-primary-foreground rounded-2xl font-bold text-sm hover:opacity-90 transition-all">完成</button>
+                <button onClick={() => setIsLayoutOpen(false)} className="px-8 py-2.5 bg-primary text-primary-foreground rounded-2xl font-bold text-sm hover:opacity-90 transition-all"><Trans>完成</Trans ></button>
               </div>
 
               <div className="flex-1 flex overflow-hidden">
@@ -251,10 +262,23 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
                     {localDisplayList.length > 0 && <button onClick={handleClearAll} className="text-destructive hover:bg-destructive/10 p-1.5 rounded-lg"><Eraser size={16} /></button>}
                   </div>
                   <div className="flex-1 overflow-y-auto px-4 pb-6 no-scrollbar">
-                    <Reorder.Group axis="y" values={localDisplayList} onReorder={(newOrder) => {
-                      setLocalDisplayList(newOrder);
-                      updateConfig(p => { p.basic.gameDisplayOrder = newOrder.map(g => g.id); });
-                    }}>
+                    <Reorder.Group
+                      axis="y"
+                      values={localDisplayList}
+                      onReorder={(newOrder) => {
+                        // 1. 更新本地 UI
+                        setLocalDisplayList(newOrder);
+
+                        // 2. 构造一个全新的 ID 数组
+                        const newIds = newOrder.map(g => g.id);
+
+                        // 3. 强制更新 Zustand（确保它是新引用）
+                        updateConfig(prev => {
+                          // 用 [...newIds] 确保产生了一个新的内存地址
+                          prev.basic.gameDisplayOrder = [...newIds];
+                        });
+                      }}
+                    >
                       <AnimatePresence mode="popLayout">
                         {localDisplayList.map((game) => (
                           <ReorderItem key={game.id} game={game} onRemove={handleToggleDisplay} />

@@ -61,9 +61,6 @@ export default function Layout() {
       debug("程序启动,开始向后端获取游戏数据列表")
       const gameList = await invoke<GameMetaList>(Cmds.GET_GAME_META_LIST)
       setGameMetaList(gameList)
-      if (gameList && gameList.length > 0) {
-        updateSelectedGame(gameList[0])
-      }
     } catch (err) { console.error(err) }
   }
 

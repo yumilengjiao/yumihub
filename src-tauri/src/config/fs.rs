@@ -95,11 +95,21 @@ pub fn save_config(app_handle: &AppHandle) -> Result<(), AppError> {
 
     let pool = app_handle.state::<SqlitePool>();
 
+    // 查找用户最后一次玩的游戏
     let latest_game_id = tauri::async_runtime::block_on(async {
         sqlx::query_scalar("SELECT id FROM games WHERE last_played_at IS NOT NULL ORDER BY last_played_at DESC LIMIT 1")
             .fetch_optional(pool.inner())
             .await
     }).map_err(|e| AppError::DB(format!("退出时查询失败: {}", e)))?;
+
+    // 设置最后一次游玩游戏的展示为true
+    let _ = tauri::async_runtime::block_on(async {
+        sqlx::query("update games set is_displayed = 1 WHERE id = ?")
+            .bind(&latest_game_id)
+            .execute(pool.inner())
+            .await
+    })
+    .map_err(|e| AppError::DB(format!("退出时修改最后一次游玩游戏的display失败: {}", e)))?;
 
     // 修改内存配置 (GLOBAL_CONFIG)
     {
@@ -107,7 +117,7 @@ pub fn save_config(app_handle: &AppHandle) -> Result<(), AppError> {
         // 这里解开 Option<String>
         if let Some(id) = latest_game_id {
             let order = &mut config.basic.game_display_order;
-            if order.get(0) != Some(&id) {
+            if order.first() != Some(&id) {
                 order.retain(|x| x != &id);
                 order.insert(0, id);
                 debug!("退出前已修正顺序");
