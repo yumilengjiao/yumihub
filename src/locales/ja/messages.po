@@ -61,10 +61,8 @@ msgstr " ユーザーニックネーム"
 msgid "\"存档是 Gal 玩家的生命线，记得备份。\""
 msgstr "\"セーブデータは Gal ゲーマーの生命線です。バックアップを忘れずに。\""
 
-#. placeholder {0}: keyword ? "尝试调整搜索关键词" : "点击上方按钮开始收藏游戏"
-#. placeholder {0}: keyword ? "无匹配项" : "库中无数据"
-#: src/page/Library/index.tsx:125
-#: src/page/Library/index.tsx:130
+#. placeholder {0}: keyword ? t`无匹配项` : t`库中无数据`
+#: src/page/Library/index.tsx:162
 msgid "{0}"
 msgstr "{0}"
 
@@ -106,11 +104,15 @@ msgstr "セーブデータを一括復元"
 msgid "下午好"
 msgstr "こんにちは"
 
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:81
+msgid "不透明度"
+msgstr "不透明度"
+
 #: src/components/SideBar/index.tsx:74
 #~ msgid "个人"
 #~ msgstr "プロフィール"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:59
+#: src/page/Setting/InterfaceSetting/index.tsx:58
 msgid "个性化界面"
 msgstr "インターフェースのカスタマイズ"
 
@@ -122,15 +124,15 @@ msgstr "こんにちは"
 #~ msgid "主页"
 #~ msgstr "ホーム"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:67
+#: src/page/Setting/InterfaceSetting/index.tsx:78
 msgid "主题模式"
 msgstr "テーマモード"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:62
+#: src/page/Setting/InterfaceSetting/index.tsx:73
 msgid "主题选择"
 msgstr "テーマ選択"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:72
+#: src/page/Setting/InterfaceSetting/index.tsx:83
 msgid "主题颜色"
 msgstr "テーマカラー"
 
@@ -162,11 +164,11 @@ msgstr "保存して適用"
 msgid "保存连携配置"
 msgstr "連繋設定を保存"
 
-#: src/page/User/index.tsx:154
+#: src/page/User/index.tsx:184
 msgid "信息和工具"
 msgstr "情報とツール"
 
-#: src/page/User/index.tsx:148
+#: src/page/User/index.tsx:178
 msgid "修改信息"
 msgstr "情報の変更"
 
@@ -185,6 +187,10 @@ msgstr "一括照合が完了しました"
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:22
 msgid "全局唤醒"
 msgstr "グローバル呼び出し"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:67
+msgid "全局背景图片"
+msgstr "壁紙の設定"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:21
 msgid "全局隐藏窗口并静音"
@@ -210,7 +216,7 @@ msgstr "最終プレイ"
 msgid "最小化至托盘"
 msgstr "タスクトレイに最小化"
 
-#: src/page/User/index.tsx:192
+#: src/page/User/index.tsx:224
 msgid "切换日期"
 msgstr "日付を切り替え"
 
@@ -275,8 +281,12 @@ msgstr "お昼ごはんは食べましたか？ゆっくり休んでください
 #~ msgid "占用空间"
 #~ msgstr "使用容量"
 
+#: src/page/Setting/InterfaceSetting/index.tsx:95
+msgid "卡片不透明度"
+msgstr "カードの不透明度"
+
 #. placeholder {0}: journeyMonth.toString().padStart(2, '0')
-#: src/page/User/index.tsx:189
+#: src/page/User/index.tsx:222
 msgid "历程 ({journeyYear}-{0})"
 msgstr "履歴 ({journeyYear}-{0})"
 
@@ -290,8 +300,8 @@ msgstr "アーカイブの解析に失敗しました"
 
 #: src/page/Library/BigPendingCard.tsx:254
 #: src/page/User/EditUserInfoDialog.tsx:173
-#: src/page/User/index.tsx:238
-#: src/page/User/index.tsx:302
+#: src/page/User/index.tsx:268
+#: src/page/User/index.tsx:332
 msgid "取消"
 msgstr "キャンセル"
 
@@ -380,7 +390,7 @@ msgstr "バックアップ成功"
 msgid "夜深了，推完这节就快去睡觉吧。"
 msgstr "夜も更けてきました。このセクションが終わったら早く寝てくださいね。"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:15
+#: src/page/Setting/InterfaceSetting/index.tsx:22
 msgid "夜间模式"
 msgstr "ダークモード"
 
@@ -395,6 +405,10 @@ msgstr "セーブデータの復元が完了しました"
 #: src/page/Library/GameDetail.tsx:333
 msgid "存档目录"
 msgstr "セーブデータディレクトリ"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:109
+msgid "完成"
+msgstr "完了"
 
 #: src/page/Library/BigPendingCard.tsx:163
 #: src/page/Library/PendingCard.tsx:235
@@ -446,13 +460,21 @@ msgstr "プレイ時間 (分)"
 msgid "已禁用"
 msgstr "無効"
 
+#: src/page/Setting/InterfaceSetting/index.tsx:69
+msgid "已设置"
+msgstr "設定済み"
+
 #: src/page/User/EditUserInfoDialog.tsx:53
 msgid "已载入本地图片预览"
 msgstr "ローカル画像のプレビューを読み込みました"
 
-#: src/page/User/index.tsx:294
+#: src/page/User/index.tsx:324
 msgid "年"
 msgstr "年"
+
+#: src/page/Library/index.tsx:162
+msgid "库中无数据"
+msgstr "ライブラリにデータがありません"
 
 #: src/page/User/Tool.tsx:64
 msgid "开启热键"
@@ -537,6 +559,10 @@ msgstr "データの更新に成功しました"
 msgid "新的一天，也要充满元气哦！"
 msgstr "新しい一日です。元気にいきましょう！"
 
+#: src/page/Library/index.tsx:162
+msgid "无匹配项"
+msgstr "一致する項目がありません"
+
 #: src/page/User/EditUserInfoDialog.tsx:56
 msgid "无法打开文件对话框"
 msgstr "ファイルダイアログを開けませんでした"
@@ -545,7 +571,7 @@ msgstr "ファイルダイアログを開けませんでした"
 msgid "日志追踪等级"
 msgstr "ログレベル"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:15
+#: src/page/Setting/InterfaceSetting/index.tsx:21
 msgid "日间模式"
 msgstr "ライトモード"
 
@@ -624,6 +650,14 @@ msgstr "未設定"
 msgid "未设定 (点击选择)"
 msgstr "未設定 (クリックして選択)"
 
+#: src/page/Setting/InterfaceSetting/index.tsx:69
+msgid "未设置"
+msgstr "未設定"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:64
+msgid "未选择图片..."
+msgstr "画像が選択されていません..."
+
 #: src/page/Setting/AuthSetting/index.tsx:23
 msgid "权限相关"
 msgstr "権限関連"
@@ -632,11 +666,11 @@ msgstr "権限関連"
 msgid "来杯咖啡吧，又是努力的一天。"
 msgstr "コーヒーでも飲んで、今日も一日頑張りましょう。"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:21
+#: src/page/Setting/InterfaceSetting/index.tsx:29
 msgid "极光紫 (Violet)"
 msgstr "オーロラパープル (Violet)"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:25
+#: src/page/Setting/InterfaceSetting/index.tsx:33
 msgid "极客灰 (Slate)"
 msgstr "ギークスレート (Slate)"
 
@@ -672,6 +706,10 @@ msgstr "クリア済みとしてマーク"
 #: src/page/Library/PendingCard.tsx:241
 msgid "检索失败，请检查 ID 或网络"
 msgstr "検索に失敗しました。IDまたはネットワークを確認してください"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:95
+msgid "模糊程度"
+msgstr "ぼかしの強さ"
 
 #: src/page/Library/GameDetail.tsx:81
 msgid "正在同步..."
@@ -709,7 +747,7 @@ msgstr "リソースを計算してインポート中..."
 msgid "浏览"
 msgstr "参照"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:24
+#: src/page/Setting/InterfaceSetting/index.tsx:32
 msgid "深海青 (Cyan)"
 msgstr "オーシャンシアン (Cyan)"
 
@@ -721,7 +759,7 @@ msgstr "新しい連繋プログラムを追加"
 msgid "清除程序所有数据"
 msgstr "全アプリデータを削除"
 
-#: src/components/custom/Entry.tsx:33
+#: src/components/custom/Entry.tsx:32
 msgid "游戏"
 msgstr "ゲーム"
 
@@ -773,7 +811,7 @@ msgstr "実行ファイルを選択..."
 #~ msgid "点击配置路径..."
 #~ msgstr "クリックしてパスを設定..."
 
-#: src/page/Setting/InterfaceSetting/index.tsx:22
+#: src/page/Setting/InterfaceSetting/index.tsx:30
 msgid "琥珀黄 (Amber)"
 msgstr "アンバーイエロー (Amber)"
 
@@ -781,7 +819,7 @@ msgstr "アンバーイエロー (Amber)"
 msgid "用于访问敏感条目。你可以在 Bangumi 设置 - 开发者平台中生成此令牌。"
 msgstr "制限付き項目へのアクセスに使用します。Bangumi設定のデベロッパープラットフォームで生成できます。"
 
-#: src/components/custom/Entry.tsx:34
+#: src/components/custom/Entry.tsx:33
 msgid "用户"
 msgstr "ユーザー"
 
@@ -789,7 +827,7 @@ msgstr "ユーザー"
 msgid "用户信息同步成功"
 msgstr "ユーザー情報の同期に成功しました"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:19
+#: src/page/Setting/InterfaceSetting/index.tsx:27
 msgid "皇家蓝 (Royal Blue)"
 msgstr "ロイヤルブルー (Royal Blue)"
 
@@ -873,7 +911,7 @@ msgstr "連繋起動プログラムの管理"
 msgid "系统策略"
 msgstr "システムポリシー"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:11
+#: src/page/Setting/InterfaceSetting/index.tsx:15
 msgid "系统默认"
 msgstr "システムデフォルト"
 
@@ -885,7 +923,7 @@ msgstr "緊急停止"
 msgid "网络请求失败"
 msgstr "ネットワークリクエスト失敗"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:18
+#: src/page/Setting/InterfaceSetting/index.tsx:26
 msgid "翡翠绿 (Emerald)"
 msgstr "エメラルドグリーン (Emerald)"
 
@@ -898,10 +936,11 @@ msgid "聚焦搜索"
 msgstr "検索にフォーカス"
 
 #: src/page/Library/GameDetail.tsx:334
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:61
 msgid "背景图片"
 msgstr "背景画像"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:23
+#: src/page/Setting/InterfaceSetting/index.tsx:31
 msgid "能量橙 (Orange)"
 msgstr "エナジーオレンジ (Orange)"
 
@@ -917,7 +956,7 @@ msgstr "自動バックアップ"
 #~ msgid "自定义背景"
 #~ msgstr "背景をカスタマイズ"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:20
+#: src/page/Setting/InterfaceSetting/index.tsx:28
 msgid "蔷薇粉 (Rose)"
 msgstr "ローズピンク (Rose)"
 
@@ -933,9 +972,13 @@ msgstr "展開先を選択"
 msgid "记得多看几遍喜欢的剧情，会有新发现哦。"
 msgstr "お気に入りのシーンは何度も見返してみてください。新しい発見があるかもしれませんよ。"
 
-#: src/components/custom/Entry.tsx:35
+#: src/components/custom/Entry.tsx:34
 msgid "设置"
 msgstr "設定"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:52
+msgid "设置全局背景"
+msgstr "グローバル背景の設定"
 
 #: src/page/Setting/ResourceSetting/index.tsx:130
 msgid "该操作将删除所有程序配置、游戏信息及本地数据，且无法恢复。请谨慎操作。"
@@ -1030,27 +1073,27 @@ msgstr "連繋プログラム管理"
 msgid "选择{title}"
 msgstr "{title}を選択"
 
-#: src/page/User/index.tsx:317
+#: src/page/User/index.tsx:347
 msgid "选择历程日期"
 msgstr "履歴の日付を選択"
 
-#: src/page/User/index.tsx:168
+#: src/page/User/index.tsx:199
 msgid "选择年份"
 msgstr "年を選択"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:77
+#: src/page/Setting/InterfaceSetting/index.tsx:88
 msgid "选择应用字体"
 msgstr "フォントを選択"
 
-#: src/page/User/index.tsx:217
+#: src/page/User/index.tsx:247
 msgid "选择监控磁盘"
 msgstr "監視ディスクを選択"
 
-#: src/page/User/index.tsx:184
+#: src/page/User/index.tsx:215
 msgid "选择磁盘"
 msgstr "ディスクを選択"
 
-#: src/page/User/index.tsx:276
+#: src/page/User/index.tsx:306
 msgid "选择统计年份"
 msgstr "統計する年を選択"
 
@@ -1082,7 +1125,7 @@ msgstr "ゲームに追従"
 msgid "随程序"
 msgstr "プログラムに追従"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:15
+#: src/page/Setting/InterfaceSetting/index.tsx:20
 msgid "随系统"
 msgstr "システムに従う"
 
@@ -1094,7 +1137,7 @@ msgstr "サイレント起動"
 msgid "页面内容未定义：请检查 \"/\" 路径配置"
 msgstr "ページ内容が未定義です：\"/\" パスの設定を確認してください"
 
-#: src/components/custom/Entry.tsx:32
+#: src/components/custom/Entry.tsx:31
 msgid "首页"
 msgstr "ホーム"
 

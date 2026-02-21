@@ -8,9 +8,6 @@ import { useMemo } from "react"
 import { convertFileSrc } from "@tauri-apps/api/core"
 import useConfigStore from "@/store/configStore"
 
-/**
- * 动画配置保持不变，维持原有的灵动感
- */
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -32,7 +29,7 @@ const itemVariants: Variants = {
 export default function Setting() {
   const globalBackground = useConfigStore(state => state.config.interface.globalBackground)
 
-  // 1. 统一解析背景配置 (封装逻辑，易于后期扩展)
+  // 统一解析背景配置
   const bgConfig = useMemo(() => {
     const isStr = typeof globalBackground === "string";
     return {
@@ -42,7 +39,6 @@ export default function Setting() {
     };
   }, [globalBackground]);
 
-  // 2. 核心背景样式 (包含防边缘溢出处理)
   const bgStyle = useMemo(() => {
     if (!bgConfig.path.trim()) return null;
 

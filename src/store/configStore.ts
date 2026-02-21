@@ -23,7 +23,8 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
       themeMode: ThemeMode.Daytime,
       themeColor: "Emerald",
       fontFamily: "sys",
-      globalBackground: { path: "", opacity: 0.8, blur: 0 }
+      globalBackground: { path: "", opacity: 0.8, blur: 0 },
+      commonCardOpacity: 0.9
     },
     system: {
       companion: false,

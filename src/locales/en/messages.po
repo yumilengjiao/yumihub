@@ -61,10 +61,8 @@ msgstr " Nickname"
 msgid "\"存档是 Gal 玩家的生命线，记得备份。\""
 msgstr "\"Saves are the lifeline of Galgame players, remember to back them up.\""
 
-#. placeholder {0}: keyword ? "尝试调整搜索关键词" : "点击上方按钮开始收藏游戏"
-#. placeholder {0}: keyword ? "无匹配项" : "库中无数据"
-#: src/page/Library/index.tsx:125
-#: src/page/Library/index.tsx:130
+#. placeholder {0}: keyword ? t`无匹配项` : t`库中无数据`
+#: src/page/Library/index.tsx:162
 msgid "{0}"
 msgstr "{0}"
 
@@ -106,11 +104,15 @@ msgstr "One-click Restore"
 msgid "下午好"
 msgstr "Good afternoon"
 
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:81
+msgid "不透明度"
+msgstr "Opacity"
+
 #: src/components/SideBar/index.tsx:74
 #~ msgid "个人"
 #~ msgstr "Profile"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:59
+#: src/page/Setting/InterfaceSetting/index.tsx:58
 msgid "个性化界面"
 msgstr "Personalize UI"
 
@@ -122,15 +124,15 @@ msgstr "Good day"
 #~ msgid "主页"
 #~ msgstr "Home"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:67
+#: src/page/Setting/InterfaceSetting/index.tsx:78
 msgid "主题模式"
 msgstr "Theme Mode"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:62
+#: src/page/Setting/InterfaceSetting/index.tsx:73
 msgid "主题选择"
 msgstr "Theme Selection"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:72
+#: src/page/Setting/InterfaceSetting/index.tsx:83
 msgid "主题颜色"
 msgstr "Theme Color"
 
@@ -162,11 +164,11 @@ msgstr "Save and Apply"
 msgid "保存连携配置"
 msgstr "Save Companion Config"
 
-#: src/page/User/index.tsx:154
+#: src/page/User/index.tsx:184
 msgid "信息和工具"
 msgstr "Info & Tools"
 
-#: src/page/User/index.tsx:148
+#: src/page/User/index.tsx:178
 msgid "修改信息"
 msgstr "Edit Profile"
 
@@ -185,6 +187,10 @@ msgstr "Global match completed"
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:22
 msgid "全局唤醒"
 msgstr "Global Wake-up"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:67
+msgid "全局背景图片"
+msgstr "Global Background"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:21
 msgid "全局隐藏窗口并静音"
@@ -210,7 +216,7 @@ msgstr "Last Played"
 msgid "最小化至托盘"
 msgstr "Minimize to System Tray"
 
-#: src/page/User/index.tsx:192
+#: src/page/User/index.tsx:224
 msgid "切换日期"
 msgstr "Switch Date"
 
@@ -275,8 +281,12 @@ msgstr "Have you had lunch? Remember to take a break."
 #~ msgid "占用空间"
 #~ msgstr "Storage Used"
 
+#: src/page/Setting/InterfaceSetting/index.tsx:95
+msgid "卡片不透明度"
+msgstr "Card Opacity"
+
 #. placeholder {0}: journeyMonth.toString().padStart(2, '0')
-#: src/page/User/index.tsx:189
+#: src/page/User/index.tsx:222
 msgid "历程 ({journeyYear}-{0})"
 msgstr "Journey ({journeyYear}-{0})"
 
@@ -290,8 +300,8 @@ msgstr "Failed to parse archive"
 
 #: src/page/Library/BigPendingCard.tsx:254
 #: src/page/User/EditUserInfoDialog.tsx:173
-#: src/page/User/index.tsx:238
-#: src/page/User/index.tsx:302
+#: src/page/User/index.tsx:268
+#: src/page/User/index.tsx:332
 msgid "取消"
 msgstr "Cancel"
 
@@ -380,7 +390,7 @@ msgstr "Backup successful"
 msgid "夜深了，推完这节就快去睡觉吧。"
 msgstr "It's getting late, go to bed after this section."
 
-#: src/page/Setting/InterfaceSetting/index.tsx:15
+#: src/page/Setting/InterfaceSetting/index.tsx:22
 msgid "夜间模式"
 msgstr "Dark Mode"
 
@@ -395,6 +405,10 @@ msgstr "Save restoration completed"
 #: src/page/Library/GameDetail.tsx:333
 msgid "存档目录"
 msgstr "Save Directory"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:109
+msgid "完成"
+msgstr "Done"
 
 #: src/page/Library/BigPendingCard.tsx:163
 #: src/page/Library/PendingCard.tsx:235
@@ -446,13 +460,21 @@ msgstr "Time Played (min)"
 msgid "已禁用"
 msgstr "Disabled"
 
+#: src/page/Setting/InterfaceSetting/index.tsx:69
+msgid "已设置"
+msgstr "Set / Configured"
+
 #: src/page/User/EditUserInfoDialog.tsx:53
 msgid "已载入本地图片预览"
 msgstr "Local image preview loaded"
 
-#: src/page/User/index.tsx:294
+#: src/page/User/index.tsx:324
 msgid "年"
 msgstr "Year"
+
+#: src/page/Library/index.tsx:162
+msgid "库中无数据"
+msgstr "No data in library"
 
 #: src/page/User/Tool.tsx:64
 msgid "开启热键"
@@ -537,6 +559,10 @@ msgstr "Data updated successfully"
 msgid "新的一天，也要充满元气哦！"
 msgstr "It's a new day, stay full of energy!"
 
+#: src/page/Library/index.tsx:162
+msgid "无匹配项"
+msgstr "No matches found"
+
 #: src/page/User/EditUserInfoDialog.tsx:56
 msgid "无法打开文件对话框"
 msgstr "Cannot open file dialog"
@@ -545,7 +571,7 @@ msgstr "Cannot open file dialog"
 msgid "日志追踪等级"
 msgstr "Log Level"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:15
+#: src/page/Setting/InterfaceSetting/index.tsx:21
 msgid "日间模式"
 msgstr "Light Mode"
 
@@ -624,6 +650,14 @@ msgstr "Unbound"
 msgid "未设定 (点击选择)"
 msgstr "Not set (Click to select)"
 
+#: src/page/Setting/InterfaceSetting/index.tsx:69
+msgid "未设置"
+msgstr "Not Set"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:64
+msgid "未选择图片..."
+msgstr "No image selected.."
+
 #: src/page/Setting/AuthSetting/index.tsx:23
 msgid "权限相关"
 msgstr "Permissions"
@@ -632,11 +666,11 @@ msgstr "Permissions"
 msgid "来杯咖啡吧，又是努力的一天。"
 msgstr "Have a cup of coffee, another day of hard work."
 
-#: src/page/Setting/InterfaceSetting/index.tsx:21
+#: src/page/Setting/InterfaceSetting/index.tsx:29
 msgid "极光紫 (Violet)"
 msgstr "Aurora Violet"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:25
+#: src/page/Setting/InterfaceSetting/index.tsx:33
 msgid "极客灰 (Slate)"
 msgstr "Geek Slate"
 
@@ -672,6 +706,10 @@ msgstr "Mark as Completed"
 #: src/page/Library/PendingCard.tsx:241
 msgid "检索失败，请检查 ID 或网络"
 msgstr "Search failed, please check ID or network"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:95
+msgid "模糊程度"
+msgstr "Blur Intensity"
 
 #: src/page/Library/GameDetail.tsx:81
 msgid "正在同步..."
@@ -709,7 +747,7 @@ msgstr "Calculating resources and importing..."
 msgid "浏览"
 msgstr "Browse"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:24
+#: src/page/Setting/InterfaceSetting/index.tsx:32
 msgid "深海青 (Cyan)"
 msgstr "Deep Sea Cyan"
 
@@ -721,7 +759,7 @@ msgstr "Add new companion app"
 msgid "清除程序所有数据"
 msgstr "Clear all app data"
 
-#: src/components/custom/Entry.tsx:33
+#: src/components/custom/Entry.tsx:32
 msgid "游戏"
 msgstr "Games"
 
@@ -773,7 +811,7 @@ msgstr "Click to select executable..."
 #~ msgid "点击配置路径..."
 #~ msgstr "Click to configure path..."
 
-#: src/page/Setting/InterfaceSetting/index.tsx:22
+#: src/page/Setting/InterfaceSetting/index.tsx:30
 msgid "琥珀黄 (Amber)"
 msgstr "Amber Yellow"
 
@@ -781,7 +819,7 @@ msgstr "Amber Yellow"
 msgid "用于访问敏感条目。你可以在 Bangumi 设置 - 开发者平台中生成此令牌。"
 msgstr "Used for accessing sensitive items. You can generate this token in Bangumi Settings - Developer Platform."
 
-#: src/components/custom/Entry.tsx:34
+#: src/components/custom/Entry.tsx:33
 msgid "用户"
 msgstr "user"
 
@@ -789,7 +827,7 @@ msgstr "user"
 msgid "用户信息同步成功"
 msgstr "User info synchronized successfully"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:19
+#: src/page/Setting/InterfaceSetting/index.tsx:27
 msgid "皇家蓝 (Royal Blue)"
 msgstr "Royal Blue"
 
@@ -873,7 +911,7 @@ msgstr "Manage Companion Launchers"
 msgid "系统策略"
 msgstr "System Policy"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:11
+#: src/page/Setting/InterfaceSetting/index.tsx:15
 msgid "系统默认"
 msgstr "System Default"
 
@@ -885,7 +923,7 @@ msgstr "Emergency Stop"
 msgid "网络请求失败"
 msgstr "Network request failed"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:18
+#: src/page/Setting/InterfaceSetting/index.tsx:26
 msgid "翡翠绿 (Emerald)"
 msgstr "Emerald Green"
 
@@ -898,10 +936,11 @@ msgid "聚焦搜索"
 msgstr "Focus Search"
 
 #: src/page/Library/GameDetail.tsx:334
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:61
 msgid "背景图片"
 msgstr "Background Image"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:23
+#: src/page/Setting/InterfaceSetting/index.tsx:31
 msgid "能量橙 (Orange)"
 msgstr "Energy Orange"
 
@@ -917,7 +956,7 @@ msgstr "Auto Backup"
 #~ msgid "自定义背景"
 #~ msgstr "Custom Background"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:20
+#: src/page/Setting/InterfaceSetting/index.tsx:28
 msgid "蔷薇粉 (Rose)"
 msgstr "Rose Pink"
 
@@ -933,9 +972,13 @@ msgstr "Unpack to destination"
 msgid "记得多看几遍喜欢的剧情，会有新发现哦。"
 msgstr "Re-watch your favorite scenes, you might find something new."
 
-#: src/components/custom/Entry.tsx:35
+#: src/components/custom/Entry.tsx:34
 msgid "设置"
 msgstr "Settings"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:52
+msgid "设置全局背景"
+msgstr "Global Background Settings"
 
 #: src/page/Setting/ResourceSetting/index.tsx:130
 msgid "该操作将删除所有程序配置、游戏信息及本地数据，且无法恢复。请谨慎操作。"
@@ -1030,27 +1073,27 @@ msgstr "Companion App Management"
 msgid "选择{title}"
 msgstr "Select {title}"
 
-#: src/page/User/index.tsx:317
+#: src/page/User/index.tsx:347
 msgid "选择历程日期"
 msgstr "Select Journey Date"
 
-#: src/page/User/index.tsx:168
+#: src/page/User/index.tsx:199
 msgid "选择年份"
 msgstr "Select Year"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:77
+#: src/page/Setting/InterfaceSetting/index.tsx:88
 msgid "选择应用字体"
 msgstr "Select App Font"
 
-#: src/page/User/index.tsx:217
+#: src/page/User/index.tsx:247
 msgid "选择监控磁盘"
 msgstr "Select Monitoring Disk"
 
-#: src/page/User/index.tsx:184
+#: src/page/User/index.tsx:215
 msgid "选择磁盘"
 msgstr "Select Disk"
 
-#: src/page/User/index.tsx:276
+#: src/page/User/index.tsx:306
 msgid "选择统计年份"
 msgstr "Select Statistic Year"
 
@@ -1082,7 +1125,7 @@ msgstr "With Game"
 msgid "随程序"
 msgstr "With Program"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:15
+#: src/page/Setting/InterfaceSetting/index.tsx:20
 msgid "随系统"
 msgstr "Sync with System"
 
@@ -1094,7 +1137,7 @@ msgstr "Start Minimized"
 msgid "页面内容未定义：请检查 \"/\" 路径配置"
 msgstr "Page content undefined: please check the \"/\" path configuration"
 
-#: src/components/custom/Entry.tsx:32
+#: src/components/custom/Entry.tsx:31
 msgid "首页"
 msgstr "Home"
 

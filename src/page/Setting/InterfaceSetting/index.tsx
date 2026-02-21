@@ -93,7 +93,7 @@ export default function InterfaceSetting() {
         <div className="px-4 py-2">
           <StepSliderCard
             title={t`卡片不透明度`}
-            min={0} max={1}
+            min={0.3} max={1}
             step={0.01}
             value={config.interface.commonCardOpacity}
             onChange={(n: any) => updateConfig(d => { d.interface.commonCardOpacity = n })}

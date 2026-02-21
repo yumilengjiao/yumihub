@@ -61,10 +61,8 @@ msgstr " 사용자 닉네임"
 msgid "\"存档是 Gal 玩家的生命线，记得备份。\""
 msgstr "\"세이브 데이터는 미연시 플레이어의 생명선입니다. 백업을 잊지 마세요.\""
 
-#. placeholder {0}: keyword ? "尝试调整搜索关键词" : "点击上方按钮开始收藏游戏"
-#. placeholder {0}: keyword ? "无匹配项" : "库中无数据"
-#: src/page/Library/index.tsx:125
-#: src/page/Library/index.tsx:130
+#. placeholder {0}: keyword ? t`无匹配项` : t`库中无数据`
+#: src/page/Library/index.tsx:162
 msgid "{0}"
 msgstr "{0}"
 
@@ -106,11 +104,15 @@ msgstr "세이브 데이터 일괄 복원"
 msgid "下午好"
 msgstr "좋은 오후입니다"
 
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:81
+msgid "不透明度"
+msgstr "불투명도"
+
 #: src/components/SideBar/index.tsx:74
 #~ msgid "个人"
 #~ msgstr "프로필"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:59
+#: src/page/Setting/InterfaceSetting/index.tsx:58
 msgid "个性化界面"
 msgstr "인터페이스 개인화"
 
@@ -122,15 +124,15 @@ msgstr "좋은 낮입니다"
 #~ msgid "主页"
 #~ msgstr "홈"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:67
+#: src/page/Setting/InterfaceSetting/index.tsx:78
 msgid "主题模式"
 msgstr "테마 모드"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:62
+#: src/page/Setting/InterfaceSetting/index.tsx:73
 msgid "主题选择"
 msgstr "테마 선택"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:72
+#: src/page/Setting/InterfaceSetting/index.tsx:83
 msgid "主题颜色"
 msgstr "테마 색상"
 
@@ -162,11 +164,11 @@ msgstr "저장 및 적용"
 msgid "保存连携配置"
 msgstr "연동 설정 저장"
 
-#: src/page/User/index.tsx:154
+#: src/page/User/index.tsx:184
 msgid "信息和工具"
 msgstr "정보 및 도구"
 
-#: src/page/User/index.tsx:148
+#: src/page/User/index.tsx:178
 msgid "修改信息"
 msgstr "정보 수정"
 
@@ -185,6 +187,10 @@ msgstr "전체 매칭 완료"
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:22
 msgid "全局唤醒"
 msgstr "전역 불러오기"
+
+#: src/page/Setting/InterfaceSetting/index.tsx:67
+msgid "全局背景图片"
+msgstr "배경화면 설정"
 
 #: src/page/Setting/BaseSetting/ShortcutManager.tsx:21
 msgid "全局隐藏窗口并静音"
@@ -210,7 +216,7 @@ msgstr "마지막 실행"
 msgid "最小化至托盘"
 msgstr "트레이로 최소화"
 
-#: src/page/User/index.tsx:192
+#: src/page/User/index.tsx:224
 msgid "切换日期"
 msgstr "날짜 변경"
 
@@ -275,8 +281,12 @@ msgstr "점심은 드셨나요? 잠시 휴식을 취해 보세요."
 #~ msgid "占用空间"
 #~ msgstr "차지하는 공간"
 
+#: src/page/Setting/InterfaceSetting/index.tsx:95
+msgid "卡片不透明度"
+msgstr "카드 불투명도"
+
 #. placeholder {0}: journeyMonth.toString().padStart(2, '0')
-#: src/page/User/index.tsx:189
+#: src/page/User/index.tsx:222
 msgid "历程 ({journeyYear}-{0})"
 msgstr "여정 ({journeyYear}-{0})"
 
@@ -290,8 +300,8 @@ msgstr "압축 파일 분석 실패"
 
 #: src/page/Library/BigPendingCard.tsx:254
 #: src/page/User/EditUserInfoDialog.tsx:173
-#: src/page/User/index.tsx:238
-#: src/page/User/index.tsx:302
+#: src/page/User/index.tsx:268
+#: src/page/User/index.tsx:332
 msgid "取消"
 msgstr "취소"
 
@@ -380,7 +390,7 @@ msgstr "백업 성공"
 msgid "夜深了，推完这节就快去睡觉吧。"
 msgstr "밤이 깊었네요. 여기까지만 하고 얼른 주무세요."
 
-#: src/page/Setting/InterfaceSetting/index.tsx:15
+#: src/page/Setting/InterfaceSetting/index.tsx:22
 msgid "夜间模式"
 msgstr "다크 모드"
 
@@ -395,6 +405,10 @@ msgstr "세이브 복구 완료"
 #: src/page/Library/GameDetail.tsx:333
 msgid "存档目录"
 msgstr "세이브 디렉토리"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:109
+msgid "完成"
+msgstr "완료"
 
 #: src/page/Library/BigPendingCard.tsx:163
 #: src/page/Library/PendingCard.tsx:235
@@ -446,13 +460,21 @@ msgstr "플레이 시간 (분)"
 msgid "已禁用"
 msgstr "비활성화됨"
 
+#: src/page/Setting/InterfaceSetting/index.tsx:69
+msgid "已设置"
+msgstr "설정됨"
+
 #: src/page/User/EditUserInfoDialog.tsx:53
 msgid "已载入本地图片预览"
 msgstr "로컬 이미지 미리보기를 불러왔습니다"
 
-#: src/page/User/index.tsx:294
+#: src/page/User/index.tsx:324
 msgid "年"
 msgstr "년"
+
+#: src/page/Library/index.tsx:162
+msgid "库中无数据"
+msgstr "라이브러리에 데이터가 없습니다"
 
 #: src/page/User/Tool.tsx:64
 msgid "开启热键"
@@ -537,6 +559,10 @@ msgstr "데이터 업데이트 성공"
 msgid "新的一天，也要充满元气哦！"
 msgstr "새로운 하루도 기운차게 보내세요!"
 
+#: src/page/Library/index.tsx:162
+msgid "无匹配项"
+msgstr "일치하는 항목 없음"
+
 #: src/page/User/EditUserInfoDialog.tsx:56
 msgid "无法打开文件对话框"
 msgstr "파일 대화 상자를 열 수 없습니다"
@@ -545,7 +571,7 @@ msgstr "파일 대화 상자를 열 수 없습니다"
 msgid "日志追踪等级"
 msgstr "로그 추적 레벨"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:15
+#: src/page/Setting/InterfaceSetting/index.tsx:21
 msgid "日间模式"
 msgstr "라이트 모드"
 
@@ -624,6 +650,14 @@ msgstr "지정되지 않음"
 msgid "未设定 (点击选择)"
 msgstr "설정되지 않음 (클릭하여 선택)"
 
+#: src/page/Setting/InterfaceSetting/index.tsx:69
+msgid "未设置"
+msgstr "설정되지 않음"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:64
+msgid "未选择图片..."
+msgstr "선택된 이미지 없음..."
+
 #: src/page/Setting/AuthSetting/index.tsx:23
 msgid "权限相关"
 msgstr "권한 관련"
@@ -632,11 +666,11 @@ msgstr "권한 관련"
 msgid "来杯咖啡吧，又是努力的一天。"
 msgstr "커피 한 잔 어때요? 오늘도 화이팅입니다."
 
-#: src/page/Setting/InterfaceSetting/index.tsx:21
+#: src/page/Setting/InterfaceSetting/index.tsx:29
 msgid "极光紫 (Violet)"
 msgstr "오로라 퍼플 (Violet)"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:25
+#: src/page/Setting/InterfaceSetting/index.tsx:33
 msgid "极客灰 (Slate)"
 msgstr "긱 슬레이트 (Slate)"
 
@@ -672,6 +706,10 @@ msgstr "클리어로 표시"
 #: src/page/Library/PendingCard.tsx:241
 msgid "检索失败，请检查 ID 或网络"
 msgstr "검색 실패, ID 또는 네트워크를 확인해 주세요"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:95
+msgid "模糊程度"
+msgstr "흐림 정도"
 
 #: src/page/Library/GameDetail.tsx:81
 msgid "正在同步..."
@@ -709,7 +747,7 @@ msgstr "리소스 계산 및 가져오기 중..."
 msgid "浏览"
 msgstr "찾아보기"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:24
+#: src/page/Setting/InterfaceSetting/index.tsx:32
 msgid "深海青 (Cyan)"
 msgstr "심해 청록 (Cyan)"
 
@@ -721,7 +759,7 @@ msgstr "새 연동 프로그램 추가"
 msgid "清除程序所有数据"
 msgstr "프로그램의 모든 데이터 삭제"
 
-#: src/components/custom/Entry.tsx:33
+#: src/components/custom/Entry.tsx:32
 msgid "游戏"
 msgstr "게임"
 
@@ -773,7 +811,7 @@ msgstr "클릭하여 실행 파일 선택..."
 #~ msgid "点击配置路径..."
 #~ msgstr "경로 설정을 위해 클릭..."
 
-#: src/page/Setting/InterfaceSetting/index.tsx:22
+#: src/page/Setting/InterfaceSetting/index.tsx:30
 msgid "琥珀黄 (Amber)"
 msgstr "호박색 (Amber)"
 
@@ -781,7 +819,7 @@ msgstr "호박색 (Amber)"
 msgid "用于访问敏感条目。你可以在 Bangumi 设置 - 开发者平台中生成此令牌。"
 msgstr "민감한 항목에 액세스하는 데 사용됩니다. Bangumi 설정 - 개발자 플랫폼에서 이 토큰을 생성할 수 있습니다."
 
-#: src/components/custom/Entry.tsx:34
+#: src/components/custom/Entry.tsx:33
 msgid "用户"
 msgstr "사용자"
 
@@ -789,7 +827,7 @@ msgstr "사용자"
 msgid "用户信息同步成功"
 msgstr "사용자 정보 동기화 성공"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:19
+#: src/page/Setting/InterfaceSetting/index.tsx:27
 msgid "皇家蓝 (Royal Blue)"
 msgstr "로열 블루 (Royal Blue)"
 
@@ -873,7 +911,7 @@ msgstr "연동 실행 프로그램 관리"
 msgid "系统策略"
 msgstr "시스템 정책"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:11
+#: src/page/Setting/InterfaceSetting/index.tsx:15
 msgid "系统默认"
 msgstr "시스템 기본값"
 
@@ -885,7 +923,7 @@ msgstr "긴급 정지"
 msgid "网络请求失败"
 msgstr "네트워크 요청 실패"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:18
+#: src/page/Setting/InterfaceSetting/index.tsx:26
 msgid "翡翠绿 (Emerald)"
 msgstr "에메랄드 그린 (Emerald)"
 
@@ -898,10 +936,11 @@ msgid "聚焦搜索"
 msgstr "검색창 포커스"
 
 #: src/page/Library/GameDetail.tsx:334
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:61
 msgid "背景图片"
 msgstr "배경 이미지"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:23
+#: src/page/Setting/InterfaceSetting/index.tsx:31
 msgid "能量橙 (Orange)"
 msgstr "에너지 오렌지 (Orange)"
 
@@ -917,7 +956,7 @@ msgstr "자동 백업"
 #~ msgid "自定义背景"
 #~ msgstr "배경 사용자 지정"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:20
+#: src/page/Setting/InterfaceSetting/index.tsx:28
 msgid "蔷薇粉 (Rose)"
 msgstr "로즈 핑크 (Rose)"
 
@@ -933,9 +972,13 @@ msgstr "대상 폴더에 압축 해제"
 msgid "记得多看几遍喜欢的剧情，会有新发现哦。"
 msgstr "좋아하는 스토리는 여러 번 감상해 보세요. 새로운 발견이 있을지도 몰라요."
 
-#: src/components/custom/Entry.tsx:35
+#: src/components/custom/Entry.tsx:34
 msgid "设置"
 msgstr "설정"
+
+#: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:52
+msgid "设置全局背景"
+msgstr "전체 배경 설정"
 
 #: src/page/Setting/ResourceSetting/index.tsx:130
 msgid "该操作将删除所有程序配置、游戏信息及本地数据，且无法恢复。请谨慎操作。"
@@ -1030,27 +1073,27 @@ msgstr "연동 프로그램 관리"
 msgid "选择{title}"
 msgstr "{title} 선택"
 
-#: src/page/User/index.tsx:317
+#: src/page/User/index.tsx:347
 msgid "选择历程日期"
 msgstr "기록 날짜 선택"
 
-#: src/page/User/index.tsx:168
+#: src/page/User/index.tsx:199
 msgid "选择年份"
 msgstr "연도 선택"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:77
+#: src/page/Setting/InterfaceSetting/index.tsx:88
 msgid "选择应用字体"
 msgstr "글꼴 선택"
 
-#: src/page/User/index.tsx:217
+#: src/page/User/index.tsx:247
 msgid "选择监控磁盘"
 msgstr "모니터링 디스크 선택"
 
-#: src/page/User/index.tsx:184
+#: src/page/User/index.tsx:215
 msgid "选择磁盘"
 msgstr "디스크 선택"
 
-#: src/page/User/index.tsx:276
+#: src/page/User/index.tsx:306
 msgid "选择统计年份"
 msgstr "통계 연도 선택"
 
@@ -1082,7 +1125,7 @@ msgstr "게임과 함께"
 msgid "随程序"
 msgstr "프로그램과 함께"
 
-#: src/page/Setting/InterfaceSetting/index.tsx:15
+#: src/page/Setting/InterfaceSetting/index.tsx:20
 msgid "随系统"
 msgstr "시스템 설정에 따라"
 
@@ -1094,7 +1137,7 @@ msgstr "최소화 상태로 시작"
 msgid "页面内容未定义：请检查 \"/\" 路径配置"
 msgstr "페이지 내용이 정의되지 않았습니다: \"/\" 경로 설정을 확인하십시오"
 
-#: src/components/custom/Entry.tsx:32
+#: src/components/custom/Entry.tsx:31
 msgid "首页"
 msgstr "홈"
 

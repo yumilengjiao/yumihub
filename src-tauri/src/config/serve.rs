@@ -47,6 +47,7 @@ pub fn listening_loop(app_handler: AppHandle) {
                     change_interface_color(interface.theme_color);
                     change_font_family(interface.font_family);
                     change_global_background(app_handler.clone(), interface.global_background);
+                    change_common_card_opacity(interface.common_card_opacity)
                 }
                 ConfigEvent::Storage { stroage } => {
                     debug!("备份设置开始更新");
@@ -288,6 +289,16 @@ pub fn change_global_background(app_handler: AppHandle, background: Background) 
     let result = GLOBAL_CONFIG.write();
     match result {
         Ok(mut config) => config.interface.global_background = background,
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
+
+pub fn change_common_card_opacity(opacity: f32) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.interface.common_card_opacity = opacity,
         Err(e) => {
             error!("{}", e);
         }

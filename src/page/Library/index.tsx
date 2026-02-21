@@ -10,49 +10,47 @@ import { GameMeta } from "@/types/game"
 import { X, SearchX, LibraryBig } from "lucide-react"
 import { useNavigate } from "react-router"
 import { Trans } from "@lingui/react/macro"
+import { t } from "@lingui/core/macro"
 import useConfigStore from "@/store/configStore"
 
 export default function Library() {
   const { gameMetaList, discardGame, filterGameMetaListByName } = useGameStore()
-  // 获取全局背景配置（此时它应该是一个包含 path, opacity, blur 等属性的对象）
   const globalBackground = useConfigStore(state => state.config.interface.globalBackground)
+
   const [discardMode, setDiscardMode] = useState<boolean>(false)
   const [isAsc, setIsAsc] = useState<boolean>(false)
   const [sortMode, setSortMode] = useState<"duration" | "name" | "lastPlayed" | "passed">("lastPlayed")
   const [keyword, setKeyword] = useState<string>("")
   const navigate = useNavigate()
 
-  // --- 解析背景配置属性 ---
-  const { bgPath, bgOpacity, bgBlur } = useMemo(() => {
-    // 兼容处理：如果 globalBackground 还是原来的字符串，就把它当成路径
+  // --- 1. 背景配置解析 (逻辑保持，确保稳定) ---
+  const bgConfig = useMemo(() => {
     if (typeof globalBackground === "string") {
-      return { bgPath: globalBackground, bgOpacity: 1, bgBlur: 0 }
+      return { path: globalBackground, opacity: 1, blur: 0 }
     }
-    // 否则正常解析对象中的属性（提供默认值防崩溃）
     return {
-      bgPath: globalBackground.path || "",
-      bgOpacity: globalBackground.opacity ?? 1, // 默认不透明
-      bgBlur: globalBackground.blur ?? 0        // 默认不模糊
+      path: globalBackground?.path || "",
+      opacity: globalBackground?.opacity ?? 1,
+      blur: globalBackground?.blur ?? 0
     }
   }, [globalBackground])
 
-  // --- 生成独立背景层的样式 ---
+  // --- 2. 背景样式生成 ---
   const bgStyle = useMemo(() => {
-    if (!bgPath || bgPath.trim() === "") return null;
-    console.log("图片的背景地址: ", bgPath)
-
+    if (!bgConfig.path.trim()) return null;
     return {
-      backgroundImage: `url("${convertFileSrc(bgPath)}")`,
+      backgroundImage: `url("${convertFileSrc(bgConfig.path)}")`,
       backgroundSize: "cover",
       backgroundPosition: "center",
       backgroundRepeat: "no-repeat",
-      opacity: bgOpacity,
-      filter: bgBlur > 0 ? `blur(${bgBlur}px)` : "none",
-      // 核心优化：模糊会导致图片边缘往内缩露出底色，使用稍微放大来完美掩盖边缘
-      transform: bgBlur > 0 ? `scale(${1 + bgBlur * 0.02})` : "none",
+      opacity: bgConfig.opacity,
+      filter: bgConfig.blur > 0 ? `blur(${bgConfig.blur}px)` : "none",
+      // 这里的 scale 保证模糊时不缩边
+      transform: bgConfig.blur > 0 ? `scale(${1 + bgConfig.blur * 0.02})` : "none",
     };
-  }, [bgPath, bgOpacity, bgBlur]);
+  }, [bgConfig]);
 
+  // --- 3. 游戏过滤与排序逻辑 ---
   const displayGames = useMemo(() => {
     if (sortMode == "passed") {
       return filterGameMetaListByName(keyword).filter(g => g.isPassed)
@@ -64,56 +62,51 @@ export default function Library() {
           result = (gb.playTime || 0) - (ga.playTime || 0)
           break
         case "name":
-          result = ga.name.localeCompare(gb.name, 'zh-CN')
+          result = ga.name.localeCompare(ga.name, 'zh-CN')
           break
         case "lastPlayed":
           const valA = ga?.lastPlayedAt ? new Date(ga.lastPlayedAt).getTime() : 0
           const valB = gb?.lastPlayedAt ? new Date(gb.lastPlayedAt).getTime() : 0
           result = valB - valA
           break
-        default:
-          return 0
+        default: return 0
       }
       return isAsc ? result : -result
     })
   }, [sortMode, keyword, isAsc, gameMetaList])
 
   useEffect(() => {
-    return () => {
-      setDiscardMode(false)
-    }
+    return () => setDiscardMode(false)
   }, [])
 
   return (
-    <div className="w-full h-full flex flex-col bg-zinc-200 dark:bg-zinc-900 relative pt-5 overflow-hidden">
+    // 根容器：必须是 relative，且 overflow-hidden 挡住背景缩放产生的溢出
+    <div className="w-full h-full flex flex-col bg-zinc-200 dark:bg-zinc-900 relative overflow-hidden">
 
+      {/* 【图层 A】背景层：绝对定位，z-0 垫底，关键是 pointer-events-none 别挡住点击 */}
       {bgStyle && (
         <div
-          className="absolute inset-0 z-0 pointer-events-none"
+          className="absolute inset-0 z-0 pointer-events-none select-none"
           style={bgStyle}
         />
       )}
 
-      {/* 原有内容：给内容层加上 relative 和 z-10，确保它们浮在背景图上面 */}
-      <div className="relative z-10">
+      <div className="relative flex flex-col w-full h-full pt-5">
+
         <AddGameButton />
-      </div>
 
-      {/* 保持原样：顶部工具栏 */}
-      <div className="w-full shrink-0 p-2 relative z-10">
-        <TopBar
-          isAsc={isAsc}
-          onOrderToggle={() => setIsAsc(!isAsc)}
-          onDeleteModeToggle={setDiscardMode}
-          onSearchChange={setKeyword}
-          onSortChange={setSortMode}
-        />
-      </div>
+        <div className="w-full shrink-0 p-2">
+          <TopBar
+            isAsc={isAsc}
+            onOrderToggle={() => setIsAsc(!isAsc)}
+            onDeleteModeToggle={setDiscardMode}
+            onSearchChange={setKeyword}
+            onSortChange={setSortMode}
+          />
+        </div>
 
-      {/* 列表区域 */}
-      <div className="w-full flex-1 overflow-y-auto min-h-0 p-2 h-100 relative z-10">
-        {
-          displayGames.length > 0 ? (
+        <div className="w-full flex-1 overflow-y-auto min-h-0 p-2">
+          {displayGames.length > 0 ? (
             <div className={cn(
               "grid gap-6 px-15 w-full",
               "grid-cols-[repeat(auto-fill,minmax(150px,1fr))]"
@@ -122,7 +115,7 @@ export default function Library() {
                 <Card
                   key={g.id}
                   className="aspect-165/230 relative overflow-hidden cursor-pointer
-                border-3 ring-1 ring-black/5 shadow-xl shadow-blue-500/10"
+                  border-3 ring-1 ring-black/5 shadow-xl shadow-blue-500/10"
                   onClick={() => navigate(`/game/${g.id}`)}
                 >
                   <AnimatePresence>
@@ -148,7 +141,7 @@ export default function Library() {
                   )}>
                     <img
                       src={g.localCover ? convertFileSrc(g.localCover) : g.cover}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover pointer-events-none"
                       alt={g.name}
                     />
                   </div>
@@ -166,19 +159,12 @@ export default function Library() {
                   )}
                 </div>
                 <h3 className="text-3xl font-bold text-black/20 tracking-[0.2em] uppercase">
-                  <Trans>
-                    {keyword ? "无匹配项" : "库中无数据"}
-                  </Trans>
+                  <Trans>{keyword ? t`无匹配项` : t`库中无数据`}</Trans>
                 </h3>
-                <p className="text-black/10 text-base mt-4 tracking-widest font-light">
-                  <Trans>
-                    {keyword ? "尝试调整搜索关键词" : "点击上方按钮开始收藏游戏"}
-                  </Trans>
-                </p>
               </div>
             </div>
-          )
-        }
+          )}
+        </div>
       </div>
     </div>
   )

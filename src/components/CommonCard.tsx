@@ -1,5 +1,6 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import useConfigStore from "@/store/configStore"
 
 interface CommonCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string
@@ -9,6 +10,8 @@ interface CommonCardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const CommonCard = React.forwardRef<HTMLDivElement, CommonCardProps>(
   ({ className, title, icon, children, headerAction, ...props }, ref) => {
+    const opacity = useConfigStore(state => state.config.interface.commonCardOpacity)
+
     return (
       <div
         ref={ref}
@@ -17,6 +20,9 @@ const CommonCard = React.forwardRef<HTMLDivElement, CommonCardProps>(
           "flex flex-col overflow-hidden transition-all duration-300",
           className
         )}
+        style={{
+          opacity
+        }}
         {...props}
       >
         {title && (
