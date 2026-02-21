@@ -1,6 +1,5 @@
 //! 前端发送的所有调用请求命令在此定义，get方法只会调用state_system,
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
 
 use custom_theme::schema::ir::ThemeIr;
 use font_kit::source::SystemSource;

@@ -1,13 +1,14 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use tauri::{async_runtime, AppHandle};
 use tauri_plugin_autostart::ManagerExt;
+use tauri_plugin_fs::FsExt;
 use tauri_plugin_log::log::{debug, error, info, warn};
 
 use crate::{
     companion::commands::refresh_companions,
     config::{
-        entity::{CloseBehavior, ConfigEvent, LogLevel, ThemeMode},
+        entity::{Background, CloseBehavior, ConfigEvent, LogLevel, ThemeMode},
         GLOBAL_CONFIG,
     },
     message::{traits::MessageHub, CONFIG_MESSAGE_HUB},
@@ -45,6 +46,7 @@ pub fn listening_loop(app_handler: AppHandle) {
                     change_interface_mode(interface.theme_mode);
                     change_interface_color(interface.theme_color);
                     change_font_family(interface.font_family);
+                    change_global_background(app_handler.clone(), interface.global_background);
                 }
                 ConfigEvent::Storage { stroage } => {
                     debug!("备份设置开始更新");
@@ -270,6 +272,22 @@ pub fn change_font_family(font: String) {
     let result = GLOBAL_CONFIG.write();
     match result {
         Ok(mut config) => config.interface.font_family = font,
+        Err(e) => {
+            error!("{}", e);
+        }
+    }
+}
+
+pub fn change_global_background(app_handler: AppHandle, background: Background) {
+    // 允许文件访问路径
+    app_handler
+        .fs_scope()
+        .allow_file(Path::new(&background.path))
+        .ok();
+    // 更新全局config对象
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.interface.global_background = background,
         Err(e) => {
             error!("{}", e);
         }

@@ -11,39 +11,62 @@ import { DragScroller } from "./DragScroller"
 import EditUserInfoDialog from "./EditUserInfoDialog"
 import { cn } from "@/lib/utils"
 import SysMonitor from "./SysMonitor"
-import { invoke } from "@tauri-apps/api/core"
+import { convertFileSrc, invoke } from "@tauri-apps/api/core"
 import { Cmds } from "@/lib/enum"
 import useUserStore from "@/store/userStore"
 import { User as Account } from "@/types/user"
 import { Trans } from "@lingui/react/macro"
 import { t } from "@lingui/core/macro"
 import useGameStore from "@/store/gameStore"
+import useConfigStore from "@/store/configStore"
 
 
 
 export default function User() {
+  const { gameMetaList } = useGameStore()
+  const { user, setUser } = useUserStore()
+  const globalBackground = useConfigStore(state => state.config.interface.globalBackground)
+
   const [isEditingUser, setIsEditingUser] = useState(false)
   const [isDiskPickerOpen, setIsDiskPickerOpen] = useState(false)
   const [diskUsage, setDiskUsage] = useState<number>(0.0)
-  const { gameMetaList } = useGameStore()
-  // 热力图的控制
+
+  // 控制状态
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString())
-  // 快照显示的控制
-  const [journeyYear, setJourneyYear] = useState(new Date().getFullYear()) // 历程专用
-  const [journeyMonth, setJourneyMonth] = useState(new Date().getMonth() + 1) // 历程专用
-
-  // 热力图
+  const [journeyYear, setJourneyYear] = useState(new Date().getFullYear())
+  const [journeyMonth, setJourneyMonth] = useState(new Date().getMonth() + 1)
   const [isYearPickerOpen, setIsYearPickerOpen] = useState(false)
-  // 快照
   const [isJourneyPickerOpen, setIsJourneyPickerOpen] = useState(false)
-  const { user, setUser } = useUserStore()
 
-  const handleUserInfo = () => {
-    setIsEditingUser(true)
-  }
-  const selectDisk = () => {
-    setIsDiskPickerOpen(true)
-  }
+  // --- 背景逻辑重构 ---
+  const { bgPath, bgOpacity, bgBlur } = useMemo(() => {
+    if (typeof globalBackground === "string") {
+      return { bgPath: globalBackground, bgOpacity: 1, bgBlur: 0 }
+    }
+    return {
+      bgPath: globalBackground?.path || "",
+      bgOpacity: globalBackground?.opacity ?? 1,
+      bgBlur: globalBackground?.blur ?? 0
+    }
+  }, [globalBackground])
+
+  const bgStyle = useMemo(() => {
+    if (!bgPath || bgPath.trim() === "") return null;
+    return {
+      backgroundImage: `url("${convertFileSrc(bgPath)}")`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      opacity: bgOpacity,
+      filter: bgBlur > 0 ? `blur(${bgBlur}px)` : "none",
+      transform: bgBlur > 0 ? `scale(${1 + bgBlur * 0.02})` : "none",
+    };
+  }, [bgPath, bgOpacity, bgBlur]);
+
+  // --- 原有业务逻辑保持不动 ---
+  const handleUserInfo = () => setIsEditingUser(true)
+  const selectDisk = () => setIsDiskPickerOpen(true)
+
   const handleDiskChange = async (path: string) => {
     try {
       setUser({ ...user, selectedDisk: path } as Account)
@@ -59,12 +82,9 @@ export default function User() {
   }, [])
 
   useEffect(() => {
-    console.log("触发了更新")
     if (!user) return
-
     const count = gameMetaList.filter(g => g.isPassed).length
     const totalMinutes = gameMetaList.reduce((prev, g) => prev + (g.playTime || 0), 0)
-
     const needUpdate = user.gamesCompletedNumber !== count || user.totalPlayTime !== totalMinutes
 
     if (needUpdate) {
@@ -76,8 +96,18 @@ export default function User() {
   }, [gameMetaList])
 
   return (
-    <div className="h-full flex justify-center items-center bg-zinc-200 dark:bg-zinc-900 px-4">
-      {/* ------------各种对话框组件------------- */}
+    // 外层容器：改为 overflow-hidden 确保模糊不溢出
+    <div className="h-full w-full relative flex justify-center items-center bg-zinc-200 dark:bg-zinc-900 px-4 overflow-hidden">
+
+      {/* 独立的背景层 */}
+      {bgStyle && (
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={bgStyle}
+        />
+      )}
+
+      {/* ------------各种对话框组件 (不受背景模糊影响)------------- */}
       <EditUserInfoDialog isOpen={isEditingUser} onClose={() => setIsEditingUser(false)} />
 
       {isDiskPickerOpen && (
@@ -107,10 +137,11 @@ export default function User() {
         />
       )}
 
+      {/* 主内容区：使用 relative z-10 浮于背景之上 */}
+      <div className="relative z-10 flex h-[90vh] w-[93vw] gap-4 mt-3">
 
-      <div className="flex h-[90vh] w-[93vw] gap-4 mt-3">
         {/* 左侧长条卡片 (头像/成就/时间) */}
-        <CommonCard className="w-35 h-full flex flex-col dark:bg-zinc-800">
+        <CommonCard className="w-35 h-full flex flex-col bg-background dark:bg-zinc-800 backdrop-blur-sm">
           <div className="w-full h-full flex flex-col justify-between">
             <div className="w-full flex flex-col gap-6">
               <div className="@container inline-size! w-full pt-10">
@@ -134,32 +165,32 @@ export default function User() {
                 </div>
               </div>
             </div>
-            {/* <div className="cursor-pointer"> */}
-            {/*   <CircleEllipsis className="w-full h-auto" /> */}
-            {/* </div> */}
           </div>
         </CommonCard>
 
-        {/* 右侧主内容区 */}
+        {/* 右侧主内容网格区 */}
         <div className="flex-1 grid grid-cols-9 grid-rows-7 gap-4">
 
-          {/* 顶部个人信息 (占 2 列) */}
-          <CommonCard title="Profile" className="col-span-6 row-span-2 bg-background dark:bg-zinc-800" headerAction={
-            <MoreOptions entries={[{ entryName: t`修改信息`, entryFunc: () => handleUserInfo() }]} />
-          }>
+          {/* 顶部个人信息 */}
+          <CommonCard
+            title="Profile"
+            className="col-span-6 row-span-2 bg-background dark:bg-zinc-800 backdrop-blur-sm"
+            headerAction={<MoreOptions entries={[{ entryName: t`修改信息`, entryFunc: () => handleUserInfo() }]} />}
+          >
             <ProfileHeader username={user?.userName || "user"} />
           </CommonCard>
 
-          {/* 右上角黑色卡片 */}
-          <CommonCard title={t`信息和工具`} className="bg-background dark:bg-zinc-800 col-span-3 row-span-1">
+          {/* 右上角工具箱 */}
+          <CommonCard title={t`信息和工具`} className="bg-background dark:bg-zinc-800 backdrop-blur-sm col-span-3 row-span-1">
             <ToolBox />
           </CommonCard>
-          {/* 右二黑色卡片 */}
-          <CommonCard className="bg-background/80 dark:bg-zinc-800 col-span-3 row-span-3" >
+
+          {/* 雷达图 */}
+          <CommonCard className="bg-background dark:bg-zinc-800 backdrop-blur-sm col-span-3 row-span-3">
             <Radar />
           </CommonCard>
 
-          {/* 中间大块 (可以放热力图) */}
+          {/* 热力图 */}
           <CommonCard
             title={`Activity (${selectedYear})`}
             headerAction={
@@ -170,36 +201,35 @@ export default function User() {
                 }]}
               />
             }
-            className="col-span-4 row-span-5 bg-background dark:bg-zinc-800"
+            className="col-span-4 row-span-5 bg-background dark:bg-zinc-800 backdrop-blur-sm"
           >
             <DragScroller>
-              {/* 传入 selectedYear 给热力图 */}
               <CalendarHeatMap year={selectedYear} />
             </DragScroller>
           </CommonCard>
-          {/* 其他小方块 */}
+
+          {/* 磁盘监控 */}
           <CommonCard
             title="usage"
-            className="bg-background dark:bg-zinc-800 col-span-2 row-span-2"
-            headerAction={<MoreOptions entries={[{ entryName: t`选择磁盘`, entryFunc: () => selectDisk() }]} />}>
+            className="bg-background dark:bg-zinc-800 backdrop-blur-sm col-span-2 row-span-2"
+            headerAction={<MoreOptions entries={[{ entryName: t`选择磁盘`, entryFunc: () => selectDisk() }]} />}
+          >
             <SysMonitor diskUsage={diskUsage} />
           </CommonCard>
 
+          {/* 历程展示 */}
           <CommonCard
             title={t`历程 (${journeyYear}-${journeyMonth.toString().padStart(2, '0')})`}
-            className="col-span-5 row-span-3 flex flex-col overflow-hidden pb-12 bg-background dark:bg-zinc-800"
-            headerAction={
-              <MoreOptions entries={[{ entryName: t`切换日期`, entryFunc: () => setIsJourneyPickerOpen(true) }]} />
-            }
+            className="col-span-5 row-span-3 flex flex-col overflow-hidden pb-12 bg-background dark:bg-zinc-800 backdrop-blur-sm"
+            headerAction={<MoreOptions entries={[{ entryName: t`切换日期`, entryFunc: () => setIsJourneyPickerOpen(true) }]} />}
           >
             <div className="flex-1 h-full w-full overflow-hidden">
               <GameJourney selectedYear={journeyYear} selectedMonth={journeyMonth} />
             </div>
           </CommonCard>
         </div>
-      </div >
-
-    </div >
+      </div>
+    </div>
   )
 }
 

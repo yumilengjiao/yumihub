@@ -6,6 +6,7 @@ use std::{
 
 use lazy_static::lazy_static;
 use tauri::{AppHandle, Manager};
+use tauri_plugin_log::log::error;
 
 use crate::config::{
     entity::{Config, LogLevel},
@@ -38,6 +39,8 @@ pub fn init(app_handle: &AppHandle) -> Result<(), Box<dyn Error>> {
     }
     // 初始化日志等级
     set_log_level(app_handle, config.system.log_level.clone());
+    // 初始化文件访问权限
+    allow_permission(app_handle);
     serve::listening_loop(app_handle.clone());
     Ok(())
 }
@@ -74,4 +77,23 @@ fn set_log_level(app_handle: &AppHandle, level: LogLevel) {
                 .build(),
         )
         .expect("无法初始化日志系统");
+}
+
+/// 允许config中文件路径访问权限
+///
+/// * `app_handler`: app操纵句柄
+fn allow_permission(app_handler: &AppHandle) {
+    println!("允许背景图片资源");
+    let background_path = &GLOBAL_CONFIG
+        .read()
+        .unwrap()
+        .interface
+        .global_background
+        .path;
+    let result = app_handler
+        .asset_protocol_scope()
+        .allow_file(background_path);
+    if let Err(e) = result {
+        error!("授予文件被访问的权限失败，错误: {}", e)
+    }
 }

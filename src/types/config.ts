@@ -1,3 +1,5 @@
+import { Background } from "@/components/custom/Background"
+
 /**
  * 全局配置类型
  */
@@ -30,6 +32,17 @@ export interface Interface {
   themeMode: ThemeMode
   themeColor: string
   fontFamily: string
+  globalBackground: Background
+  commonCardOpacity: number
+}
+
+/**
+ * 全局背景设置参数
+ */
+export interface Background {
+  path: string
+  opacity: number
+  blur: number
 }
 
 export enum ThemeMode {
@@ -62,6 +75,7 @@ export interface Storage {
 // -----------------------------------------------------
 
 export interface System {
+  /** 是否启用连携启动 */
   companion: boolean
   hotkeyActivation: boolean
   /** 关闭按钮行为 */

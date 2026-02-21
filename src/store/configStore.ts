@@ -23,6 +23,7 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
       themeMode: ThemeMode.Daytime,
       themeColor: "Emerald",
       fontFamily: "sys",
+      globalBackground: { path: "", opacity: 0.8, blur: 0 }
     },
     system: {
       companion: false,
@@ -44,13 +45,11 @@ const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
     }
   },
   updateConfig(fn: (config: Config) => void) {
-    console.log("开始更新配置信息")
     set(state => {
       fn(state.config)
     })
     try {
       invoke(Cmds.UPDATE_CONFIG, { config: get().config })
-      console.log("更新完成")
     } catch (error) {
       console.error("更新配置信息失败", error)
     }

@@ -27,6 +27,15 @@ pub struct Interface {
     pub theme_color: String,
     pub theme: String,
     pub font_family: String,
+    pub global_background: Background,
+    pub common_card_opacity: f32,
+}
+
+#[derive(Serialize, Default, Deserialize, Debug, Clone, PartialEq)]
+pub struct Background {
+    pub path: PathBuf,
+    pub opacity: f32,
+    pub blur: u8,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
@@ -44,6 +53,12 @@ impl Default for Interface {
             theme_color: "theme-emerald".into(),
             theme: "default".into(),
             font_family: "sys".into(),
+            global_background: Background {
+                path: PathBuf::new(),
+                opacity: 0.8,
+                blur: 0,
+            },
+            common_card_opacity: 0.9,
         }
     }
 }

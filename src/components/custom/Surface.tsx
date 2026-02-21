@@ -16,8 +16,6 @@ export function Surface({ node }: ThemeComponentProps) {
     <Surface key={child.id} node={child} />
   ));
 
-  console.log(node.id);
-
   return (
     <Component node={node}>
       {children}
