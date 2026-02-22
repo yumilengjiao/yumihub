@@ -80,7 +80,7 @@ export const Background = ({ node, children }: { node: ThemeNode; children?: Rea
   return (
     <div
       className={cn("relative w-full h-full overflow-hidden", variantPresets[variant]?.containerClass, node.className)}
-      style={{ width: "100%", height: "100%", ...node.style }} // 基础宽高，具体的 style 给各层分发
+      style={{ width: "100%", height: "100%", gridColumn: node.style.gridColumn, gridRow: node.style.gridRow }}
     >
       {/* 背景图层 (Z-0) - 永远全屏显示，不加 mask */}
       {displayBgs.map((bg) => (
@@ -100,7 +100,7 @@ export const Background = ({ node, children }: { node: ThemeNode; children?: Rea
       {/* 遮罩/模糊层 (Z-1) - 只在这一层玩 mask */}
       <div
         className={cn("absolute inset-0 z-1 pointer-events-none", overlayColor)}
-        style={finalOverlayStyle}
+        style={{ ...finalOverlayStyle, ...node.style }}
       />
 
       {/* 内容层 (Z-10) - 绝对高于模糊层，文字和海报永远清晰 */}

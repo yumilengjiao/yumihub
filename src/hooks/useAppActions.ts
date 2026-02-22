@@ -106,7 +106,6 @@ export const useAppActions = () => {
 
     // 打开外部浏览器
     openLink: (params) => {
-      console.log("调用外部链接")
       if (params?.url) open(params.url);
     },
 

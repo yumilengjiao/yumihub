@@ -68,6 +68,8 @@ YumiHub 是一个基于 Tauri 开发的本地游戏 (Galgame) 库管理工具，
 
 你可以在[主题样式浏览](./themes/theme_sample)中查看每个主题的样式
 
+你可以通过浏览[PROTOCAL](./docs/PROTOCOL.md)来简单编写自己的自定义主题
+
 ## 🚀 快速开始 (开发)
 
 1. **克隆仓库**:

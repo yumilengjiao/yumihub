@@ -34,6 +34,8 @@ export default function Title({ node }: ThemeComponentProps) {
     switch (mode) {
       case "gameName":
         return selectedGame?.name || "";
+      case "developer":
+        return selectedGame?.developer
       case "time":
         const hours = String(currentTime.getHours()).padStart(2, '0');
         const mins = String(currentTime.getMinutes()).padStart(2, '0');

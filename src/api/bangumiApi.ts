@@ -40,7 +40,6 @@ export const requestBangumi = async (param: BangumiReq): Promise<BangumiResponse
  */
 export const requestBangumiById = async (id: string, token?: string): Promise<Datum | null> => {
   const url = import.meta.env.VITE_API_BANGUMI_VN_SUBJECT_URL + id
-  console.log("url是: ", url)
 
   // 辅助函数：发起请求
   const doFetch = async (authToken?: string) => {
@@ -58,7 +57,6 @@ export const requestBangumiById = async (id: string, token?: string): Promise<Da
 
   try {
     // 第一次尝试：如果传入了 token，优先带 token 请求
-    console.log("token是: ", token)
     let response = await doFetch(token)
 
     // 检查响应：如果是 4xx 或 5xx 错误，且第一次是带了 token 的

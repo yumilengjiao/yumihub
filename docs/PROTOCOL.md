@@ -20,9 +20,9 @@
   // 基础元数据配置
   // ==========================================
   config: {
-    version: "1.0",           // 配置协议版本，用于后续兼容性升级
-    themeName: "default",   // 主题唯一标识符
-    author: "yumilengjiao", // 作者
+    version: "1.0",         // 配置协议版本，用于后续兼容性升级
+    themeName: "default",   // 主题唯一标识符(主题名)
+    author: "user1",        // 作者名
     variables: {
       // 此处可存放全局 CSS 变量或主题色，例如：
       // "primary-color": "#FF00AA" 引用的时候可以直接$primary-color,不要有空格和特殊符号
@@ -84,7 +84,8 @@
 }
 ```
 
-请参阅上方json基本格式的注释编写一个基本的注释文件,下面将针对一些重要的字段进行说明:
+请参阅上方json基本格式的注释编写一个基本的注释文件,目前page中的页面定义仅支持"/"页面,下面将
+针对一些重要的字段进行说明:
 
 `layout.global.widget`
 widget是一个[Node](#node)对象,一般的,这个Node对象的nt(node type)会是一个容器类型的nt,因为这个对象的宽高是

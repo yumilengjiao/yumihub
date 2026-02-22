@@ -86,7 +86,7 @@ You can download theme files from the themes directory. Each file represents a u
 
     Apply: Go to the settings page under Appearance -> Theme Selection to switch your theme.
 
-You can preview the appearance of each theme in the Theme Gallery.
+You can preview the [appearance](./themes/theme_sample) of each theme in the Theme Gallery.
 
 ## 🚀 Quick Start (Development)
 
