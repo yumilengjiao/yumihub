@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react"
+import { useEffect, useState, useMemo  } from "react"
 import { Card } from "@/components/ui/card"
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
@@ -55,7 +55,6 @@ const GameShelfUI = ({
     if (displayGames.length > 0) {
       const isSelectedValid = selectedGame && displayGames.some(g => g.id === selectedGame.id)
       if (!isSelectedValid) {
-        console.log("第一个游戏是", displayGames[0])
         updateSelectedGame(displayGames[0])
         setCurrentIndex(0)
         api?.scrollTo(0, false)

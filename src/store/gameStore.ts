@@ -57,7 +57,6 @@ const useGameStore = create<GameStoreParams>()(
       })
       try {
         await invoke(Cmds.UPDATE_GAME, { game: updatedGame })
-        console.log(`${updatedGame.name} 同步成功`)
       } catch (error) {
         console.error("同步失败:", error)
       }

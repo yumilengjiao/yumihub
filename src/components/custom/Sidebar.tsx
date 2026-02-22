@@ -5,7 +5,7 @@ import { ThemeComponentProps } from "@/types/node";
 const SideBar = ({ node, children }: ThemeComponentProps) => {
   // 从 Props 提取配置，zIndex 给个 100 起步更稳
   const {
-    mode = "normalFixed",
+    mode = "normal",
     side = "left",
     zIndex = 100,
   } = node.props || {};
@@ -20,16 +20,24 @@ const SideBar = ({ node, children }: ThemeComponentProps) => {
       transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     };
 
-    if (mode === "trigger") {
-      styles.position = "fixed";
-      styles.top = 0;
-      styles[side as string] = 0; // 这里的 side 会动态映射为 left: 0 或 right: 0
-      styles.zIndex = zIndex;
-      styles.width = "0px";   // 容器本身不占位
-      styles.height = "100%";
-      styles.pointerEvents = "none"; // 允许鼠标点击穿透到底层
-    } else {
-      styles.position = "relative";
+    switch (mode) {
+      case "trigger":
+        styles.position = "fixed";
+        styles.top = 0;
+        styles[side as string] = 0;
+        styles.zIndex = zIndex;
+        styles.width = "0px";
+        styles.height = "100%";
+        styles.pointerEvents = "none";
+        break;
+
+      case "normalFixed":
+        styles.position = "fixed";
+        break;
+
+      default:
+        styles.position = "relative";
+        break;
     }
     return styles;
   }, [node.style, mode, side, zIndex]);
@@ -94,13 +102,13 @@ const SideBar = ({ node, children }: ThemeComponentProps) => {
         onMouseLeave={() => mode === "trigger" && setIsHovered(false)}
         className={cn(
           "overflow-visible",
-          mode !== "trigger" && (side === "left" ? "border-r" : "border-l"),
+          mode === "normal" && (side === "left" ? "border-r" : "border-l"),
           "border-white/10",
           node.className
         )}
         style={outerStyle}
       >
-        <div style={contentStyle} className="relative shadow-2xl">
+        <div style={contentStyle} className="relative">
           {/* 这里渲染内部的组件 (比如 Col) */}
           {children}
         </div>

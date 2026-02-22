@@ -14,7 +14,6 @@ export function useShortcutHandler() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      console.log("现在: ", config.system.hotkeyActivation)
       // 如果正在打字，或不允许快捷键，不触发快捷键
       const target = e.target as HTMLElement
       if (

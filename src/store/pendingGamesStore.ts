@@ -41,7 +41,6 @@ const usePendingGameStore = create<PendingGameStore>()(
         })
       } else {
         set((state) => {
-          console.log("添加单个游戏")
           state.pendingGames.push(param as PendingGameInfo)
         })
       }

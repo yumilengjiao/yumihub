@@ -89,10 +89,8 @@ export default function GameDetail() {
 
         // 直接判断发起请求时用的模式
         if (currentMode === 'bangumi') {
-          console.log("处理 Bangumi 数据")
           updatedData = transBangumiToGameMeta(game, newData)
         } else {
-          console.log("处理 VNDB 数据")
           updatedData = transVNDBToGameMeta(game, newData)
         }
         updatedData.localBackground = ""

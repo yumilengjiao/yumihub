@@ -63,7 +63,7 @@ export default function Entry({ node }: ThemeComponentProps) {
           "justify-start select-none w-full",
           isActive
             ? cn(activeColor, "text-white shadow-lg shadow-custom-300/50 scale-[1.02]")
-            : "text-white hover:bg-zinc-100/10 hover:text-custom-400",
+            : "text-zinc-500 hover:bg-zinc-100/10 hover:text-custom-400",
         )}
       >
         <div className={cn(

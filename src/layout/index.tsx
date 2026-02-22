@@ -16,7 +16,7 @@ import { useThemeStore } from "@/store/themeStore"
 
 export default function Layout() {
   const { setUser } = useUserStore()
-  const { updateSelectedGame, setGameMetaList } = useGameStore()
+  const {  setGameMetaList } = useGameStore()
   const { updateConfig } = useConfigStore()
   const { config } = useConfigStore()
   const fontFamily = useConfigStore(c => c.config.interface.fontFamily)

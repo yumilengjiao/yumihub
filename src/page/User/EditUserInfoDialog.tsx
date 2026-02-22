@@ -30,7 +30,6 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
   const [formData, setFormData] = useState<User | null>(null)
 
   useEffect(() => {
-    console.log("用户信息：", user)
     if (isOpen && user) {
       setFormData({ ...user })
     }

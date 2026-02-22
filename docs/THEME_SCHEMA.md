@@ -146,7 +146,8 @@
 
       可选值:
 
-          normalFixed: 普通固定形式
+          normal: 不脱离文档流的固定模式
+          normalFixed: 普通固定形式(脱离文档流)
           trigger:      触发模式，鼠标移动到靠边的位置时侧边栏弹出，注意:此模式时需要手动设置span: 0 
   - side <string>
 
@@ -671,6 +672,7 @@
       可选值:
 
           gameName: 展示当前GameShelf中选择的Game的名称
+          developer: 展示开发商名字
           time: 显示当前时间
           custom: 显示自定义静态内容,显示content属性中的静态内容
           greeting: 显示问候语

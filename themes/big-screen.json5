@@ -1,0 +1,201 @@
+{
+  // ==========================================
+  // 基础元数据配置
+  // ==========================================
+  config: {
+    version: "1.0",           // 配置协议版本
+    themeName: "big-screen", // 主题唯一标识符
+    author: "yumilengjiao",
+    variables: {}
+  },
+
+  // ==========================================
+  // 页面布局与结构定义
+  // ==========================================
+  layout: {
+    // 全局默认配置：应用于所有页面的通用组件
+    global: {
+      nt: "Row",
+      props: {
+        cols: 24, // 总共分成 24 列
+      },
+      children: [
+        // 左侧极简导航栏 (对应图片左侧的图标列表)
+        {
+          nt: "SideBar",
+          inlineStyle:{
+            position: "fixed",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: "4vw", // 侧边栏宽度
+            zIndex: 50,    // 确保在最上层
+            backgroundColor: "transparent" // 配合你图片的透明感
+          },
+          props: {
+            start: 0,
+            span: 0,
+            mode: "normalFixed",
+            side: "left"
+          },
+          children: [
+            {
+              nt: "Col",
+              inlineStyle: {
+                backgroundColor: "transparent"
+              },
+              props: {
+                rows: 32
+              },
+              children: [
+                { nt: "Entry", props: { start:14, span: 2, icon: "house", path: "/",autoActive: false, showTitle: false }, actions: [{ command: "navigate", params: { destination: "/" } }] },
+                { nt: "Entry", props: { span: 2, icon: "gamepad-2", path: "/library", autoActive: false, showTitle: false}, actions: [{ command: "navigate", params: { destination: "/library" } }] },
+                { nt: "Entry", props: { span: 2, icon: "user-round", path: "/user", autoActive: false, showTitle: false }, actions: [{ command: "navigate", params: { destination: "/user" } }] },
+                { nt: "Entry", props: { span: 2, icon: "sliders-vertical", path: "/setting", autoActive: false, showTitle: false }, actions: [{ command: "navigate", params: { destination: "/setting" } }] }
+              ]
+            }
+          ]
+        },
+        
+        // 右侧主要内容区域
+        {
+          nt: "Col",
+          inlineStyle: {
+            position: "relative",
+          },
+          props: {
+            start: 1, // 从第 2 列开始，留出左侧侧边栏的空间
+            span: 24, // 占据剩余宽度
+            rows: 64
+          },
+          children: [
+            // 右上角的时间/电量和下载图标 (图片中有，这里简化为顶栏控制)
+            {
+              nt: "TitleBar",
+              props: {
+                span: 0,
+                position: "absolute",
+                variant: "cornerArc", // 改为透明，不要圆角遮挡
+                thickness: "5vh"
+              },
+              children: [
+                  // 为了更贴近原图，右上角的按钮可以适当简化或调整颜色
+                  {
+                  nt: "Button",
+                  actions: [{ command: "switchTheme" }],
+                  className: ["text-white/50", "hover:text-white"],
+                  children: [{ nt: "Icon", props: { name: "sun-moon", size: 24 } }]
+                },
+                {
+                  nt: "Button",
+                  actions: [{ command: "windowManage", params: { op: "minimize" } }],
+                  className: ["text-white/50", "hover:text-white"],
+                  children: [{ nt: "Icon", props: { name: "minus", size: 24 } }]
+                },
+                {
+                  nt: "Button",
+                  actions: [{ command: "windowManage" }],
+                  className: ["text-white/50", "hover:text-white"],
+                  children: [{ nt: "WTIcon" }]
+                },
+                {
+                  nt: "Button",
+                  actions: [{ command: "windowManage", params: { op: "close" } }],
+                  className: ["text-white/50", "hover:text-white"],
+                  children: [{ nt: "Icon", props: { name: "x", size: 24 } }]
+                }
+              ]
+            },
+            // 路由页面容器
+            {
+              nt: "Page",
+            }
+          ]
+        }
+      ]
+    },
+
+    // 路由页面配置
+    pages: {
+      // 首页路由
+      "/": {
+        name: "首页",
+        content: {
+          nt: "Background",
+          props: {
+            sourceType: "selectedGame",
+            // 如果你的 Background 支持模糊或者遮罩，可以在这里配置，让背景图暗一些
+             mask: "rgba(0,0,0,0.3)" 
+          },
+          inlineStyle: {
+            backgroundImage: "linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 50%)",
+            backgroundSize: "cover",
+            backgroundPosition: "center"           
+          },
+          children: [
+            {
+              nt: "Col",
+              props: {
+                rows: 64
+              },
+              children: [
+                {
+                  nt: "Title",
+                  className: ["text-white", "font-bold", "tracking-widest", "drop-shadow-lg"], // 添加阴影
+                  inlineStyle: {
+                    marginLeft: "1vw", // 靠左对齐，但留出一点边距
+                  },
+                  props: {
+                    variant: "hero",
+                    start: 2,
+                    size: 14,  
+                    mode: "time"
+                  }
+                },
+                {
+                  nt: "Title",
+                  className: ["text-white", "font-bold", "tracking-widest", "drop-shadow-lg"], // 添加阴影让白色字体在背景上更清晰
+                  inlineStyle: {
+                    marginLeft: "5vw", // 靠左对齐，但留出一点边距
+                  },
+                  props: {
+                    variant: "hero",
+                    start: 23, 
+                    span: 6,   
+                    size: 34,  
+                    mode: "gameName",
+                  }
+                },
+                {
+                  nt: "Title",
+                  className: ["text-white", "font-bold", "tracking-widest", "drop-shadow-lg"], // 添加阴影让白色字体在背景上更清晰
+                  inlineStyle: {
+                    marginLeft: "6vw", // 靠左对齐，但留出一点边距
+                  },
+                  props: {
+                    variant: "hero",
+                    span: 2,   
+                    size: 16,  
+                    mode: "developer",
+                  }
+                },
+                // 底部水平滚动的游戏列表
+                {
+                  "nt": "GameShelf",
+                  "props": {
+                    variant: "border", 
+                    start: 49, 
+                    basis: 11  
+                  },
+                  "inlineStyle": {
+                    marginLeft: "5vw",
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -13,7 +13,7 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/page/User/EditUserInfoDialog.tsx:155
+#: src/page/User/EditUserInfoDialog.tsx:154
 msgid " 最喜欢的游戏"
 msgstr " お気に入りのゲーム"
 
@@ -29,7 +29,7 @@ msgstr " 最大同時ダウンロード数"
 #~ msgid " 存档目录"
 #~ msgstr " セーブデータディレクトリ"
 
-#: src/page/User/EditUserInfoDialog.tsx:126
+#: src/page/User/EditUserInfoDialog.tsx:125
 msgid " 本地上传"
 msgstr " ローカルアップロード"
 
@@ -37,7 +37,7 @@ msgstr " ローカルアップロード"
 #~ msgid " 游戏简介"
 #~ msgstr " ゲーム紹介"
 
-#: src/page/User/EditUserInfoDialog.tsx:144
+#: src/page/User/EditUserInfoDialog.tsx:143
 msgid " 用户昵称"
 msgstr " ユーザーニックネーム"
 
@@ -99,7 +99,7 @@ msgstr "スマート照合"
 msgid "一键还原存档"
 msgstr "セーブデータを一括復元"
 
-#: src/components/custom/Title.tsx:45
+#: src/components/custom/Title.tsx:47
 #: src/page/User/ProfileHeader.tsx:10
 msgid "下午好"
 msgstr "こんにちは"
@@ -136,7 +136,7 @@ msgstr "テーマ選択"
 msgid "主题颜色"
 msgstr "テーマカラー"
 
-#: src/page/Library/TopBar.tsx:112
+#: src/page/Library/TopBar.tsx:123
 msgid "仅看已通关"
 msgstr "クリア済みのみ"
 
@@ -152,7 +152,7 @@ msgstr "今日は泣きゲーをプレイしたい気分ですか？"
 #~ msgid "侧边栏显示"
 #~ msgstr "サイドバーの表示"
 
-#: src/page/User/EditUserInfoDialog.tsx:179
+#: src/page/User/EditUserInfoDialog.tsx:178
 msgid "保存信息"
 msgstr "情報を保存"
 
@@ -172,7 +172,7 @@ msgstr "情報とツール"
 msgid "修改信息"
 msgstr "情報の変更"
 
-#: src/page/User/EditUserInfoDialog.tsx:97
+#: src/page/User/EditUserInfoDialog.tsx:96
 msgid "修改用户信息"
 msgstr "ユーザー情報の変更"
 
@@ -208,7 +208,7 @@ msgstr "全ルートクリア後の余韻は、青春の証です。"
 msgid "内容预览"
 msgstr "内容プレビュー"
 
-#: src/page/Library/GameDetail.tsx:284
+#: src/page/Library/GameDetail.tsx:282
 msgid "最后运行"
 msgstr "最終プレイ"
 
@@ -236,7 +236,7 @@ msgstr "切り替え：ライブラリ"
 msgid "切换至：设置界面"
 msgstr "切り替え：設定"
 
-#: src/page/Library/GameDetail.tsx:228
+#: src/page/Library/GameDetail.tsx:226
 msgid "制作商"
 msgstr "制作会社"
 
@@ -299,7 +299,7 @@ msgid "压缩包解析失败"
 msgstr "アーカイブの解析に失敗しました"
 
 #: src/page/Library/BigPendingCard.tsx:254
-#: src/page/User/EditUserInfoDialog.tsx:173
+#: src/page/User/EditUserInfoDialog.tsx:172
 #: src/page/User/index.tsx:268
 #: src/page/User/index.tsx:332
 msgid "取消"
@@ -313,15 +313,15 @@ msgstr "読み取り専用"
 msgid "可执行文件路径"
 msgstr "実行ファイルパス"
 
-#: src/page/Library/GameDetail.tsx:106
+#: src/page/Library/GameDetail.tsx:104
 msgid "同步失败: "
 msgstr "同期失敗: "
 
-#: src/page/Library/GameDetail.tsx:104
+#: src/page/Library/GameDetail.tsx:102
 msgid "同步成功"
 msgstr "同期成功"
 
-#: src/page/Library/GameDetail.tsx:249
+#: src/page/Library/GameDetail.tsx:247
 msgid "启动"
 msgstr "起動"
 
@@ -369,7 +369,7 @@ msgstr "ゲーム選択中にEnterキーで直接起動"
 msgid "基础设置"
 msgstr "基本設定"
 
-#: src/page/Library/GameDetail.tsx:236
+#: src/page/Library/GameDetail.tsx:234
 msgid "备份"
 msgstr "バックアップ"
 
@@ -402,10 +402,11 @@ msgstr "セーブデータのバックアップが完了しました"
 msgid "存档恢复完毕"
 msgstr "セーブデータの復元が完了しました"
 
-#: src/page/Library/GameDetail.tsx:333
+#: src/page/Library/GameDetail.tsx:331
 msgid "存档目录"
 msgstr "セーブデータディレクトリ"
 
+#: src/page/Library/TopBar.tsx:255
 #: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:109
 msgid "完成"
 msgstr "完了"
@@ -452,7 +453,7 @@ msgstr "有効"
 #~ msgid "已游玩"
 #~ msgstr "プレイ済み"
 
-#: src/page/Library/GameDetail.tsx:273
+#: src/page/Library/GameDetail.tsx:271
 msgid "已游玩 (分钟)"
 msgstr "プレイ時間 (分)"
 
@@ -464,7 +465,7 @@ msgstr "無効"
 msgid "已设置"
 msgstr "設定済み"
 
-#: src/page/User/EditUserInfoDialog.tsx:53
+#: src/page/User/EditUserInfoDialog.tsx:52
 msgid "已载入本地图片预览"
 msgstr "ローカル画像のプレビューを読み込みました"
 
@@ -496,7 +497,7 @@ msgstr "ショートカット設定"
 msgid "快速定位到搜索框进行过滤"
 msgstr "検索ボックスに素早くフォーカス"
 
-#: src/page/Library/GameDetail.tsx:239
+#: src/page/Library/GameDetail.tsx:237
 msgid "恢复"
 msgstr "復元"
 
@@ -514,7 +515,7 @@ msgstr "復元成功"
 msgid "成功导入 {0} 个游戏"
 msgstr "{0} 本のゲームをインポートしました"
 
-#: src/page/Library/GameDetail.tsx:332
+#: src/page/Library/GameDetail.tsx:330
 msgid "执行路径"
 msgstr "実行パス"
 
@@ -522,15 +523,15 @@ msgstr "実行パス"
 msgid "批量导入确认"
 msgstr "一括インポートの確認"
 
-#: src/page/Library/TopBar.tsx:111
+#: src/page/Library/TopBar.tsx:122
 msgid "按最后游玩"
 msgstr "最終プレイ順"
 
-#: src/page/Library/TopBar.tsx:110
+#: src/page/Library/TopBar.tsx:121
 msgid "按名称排序"
 msgstr "名前順"
 
-#: src/page/Library/TopBar.tsx:109
+#: src/page/Library/TopBar.tsx:120
 msgid "按游玩时长"
 msgstr "プレイ時間順"
 
@@ -563,7 +564,7 @@ msgstr "新しい一日です。元気にいきましょう！"
 msgid "无匹配项"
 msgstr "一致する項目がありません"
 
-#: src/page/User/EditUserInfoDialog.tsx:56
+#: src/page/User/EditUserInfoDialog.tsx:55
 msgid "无法打开文件对话框"
 msgstr "ファイルダイアログを開けませんでした"
 
@@ -575,7 +576,7 @@ msgstr "ログレベル"
 msgid "日间模式"
 msgstr "ライトモード"
 
-#: src/components/custom/Title.tsx:44
+#: src/components/custom/Title.tsx:46
 #: src/page/User/ProfileHeader.tsx:8
 msgid "早上好"
 msgstr "おはようございます"
@@ -584,7 +585,7 @@ msgstr "おはようございます"
 msgid "显示"
 msgstr "表示"
 
-#: src/components/custom/Title.tsx:46
+#: src/components/custom/Title.tsx:48
 #: src/page/User/ProfileHeader.tsx:11
 msgid "晚上好"
 msgstr "こんばんは"
@@ -594,7 +595,7 @@ msgstr "こんばんは"
 #~ msgid "暂无描述"
 #~ msgstr "説明なし"
 
-#: src/page/Library/GameDetail.tsx:306
+#: src/page/Library/GameDetail.tsx:304
 msgid "暂无描述..."
 msgstr "説明がありません..."
 
@@ -614,7 +615,7 @@ msgstr "詳細な紹介はありません。"
 msgid "暂无通关制作商数据"
 msgstr "現在、クリア済みの制作会社データはありません"
 
-#: src/page/Library/GameDetail.tsx:207
+#: src/page/Library/GameDetail.tsx:205
 msgid "更换封面"
 msgstr "カバーを変更"
 
@@ -646,7 +647,7 @@ msgstr "不明な制作会社"
 msgid "未绑定"
 msgstr "未設定"
 
-#: src/page/Library/GameDetail.tsx:363
+#: src/page/Library/GameDetail.tsx:361
 msgid "未设定 (点击选择)"
 msgstr "未設定 (クリックして選択)"
 
@@ -695,7 +696,7 @@ msgstr "検索に失敗しました。IDが正しいか確認してください"
 #~ msgid "标准 (Info)"
 #~ msgstr "標準 (Info)"
 
-#: src/page/Library/GameDetail.tsx:322
+#: src/page/Library/GameDetail.tsx:320
 msgid "标记通关"
 msgstr "クリア済みとしてマーク"
 
@@ -823,7 +824,7 @@ msgstr "制限付き項目へのアクセスに使用します。Bangumi設定�
 msgid "用户"
 msgstr "ユーザー"
 
-#: src/page/User/EditUserInfoDialog.tsx:75
+#: src/page/User/EditUserInfoDialog.tsx:74
 msgid "用户信息同步成功"
 msgstr "ユーザー情報の同期に成功しました"
 
@@ -879,7 +880,7 @@ msgstr "すべてのセーブデータを復元しますか？"
 msgid "程序名称"
 msgstr "プログラム名"
 
-#: src/page/Library/GameDetail.tsx:282
+#: src/page/Library/GameDetail.tsx:280
 msgid "空间占用"
 msgstr "使用容量"
 
@@ -895,7 +896,7 @@ msgstr "ウィンドウ管理"
 msgid "立即执行一键备份"
 msgstr "今すぐ一括バックアップを実行"
 
-#: src/page/Library/GameDetail.tsx:300
+#: src/page/Library/GameDetail.tsx:298
 msgid "简介"
 msgstr "紹介"
 
@@ -935,7 +936,7 @@ msgstr "ボスが来たキー"
 msgid "聚焦搜索"
 msgstr "検索にフォーカス"
 
-#: src/page/Library/GameDetail.tsx:334
+#: src/page/Library/GameDetail.tsx:332
 #: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:61
 msgid "背景图片"
 msgstr "背景画像"
@@ -1056,7 +1057,7 @@ msgstr "ホームへ"
 msgid "辛苦了，开启一段精彩的故事吧。"
 msgstr "お疲れ様でした。素晴らしい物語を始めましょう。"
 
-#: src/page/Library/GameDetail.tsx:184
+#: src/page/Library/GameDetail.tsx:182
 msgid "返回库"
 msgstr "ライブラリに戻る"
 
@@ -1141,7 +1142,7 @@ msgstr "ページ内容が未定義です：\"/\" パスの設定を確認して
 msgid "首页"
 msgstr "ホーム"
 
-#: src/page/Library/GameDetail.tsx:316
+#: src/page/Library/GameDetail.tsx:314
 msgid "首页展示"
 msgstr "ホームに表示"
 

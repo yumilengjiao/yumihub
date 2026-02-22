@@ -38,7 +38,6 @@ export const useThemeStore = create<ThemeState>()(
     // 从 Rust 后端拉取数据
     fetchThemes: async () => {
       const data = await invoke<ThemeIr>(Cmds.GET_THEMES);
-      console.log(data)
 
       // 在这里一次性处理所有样式问题
       // 处理全局节点样式

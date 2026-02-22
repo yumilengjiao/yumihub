@@ -13,7 +13,7 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/page/User/EditUserInfoDialog.tsx:155
+#: src/page/User/EditUserInfoDialog.tsx:154
 msgid " 最喜欢的游戏"
 msgstr " 最喜欢的游戏"
 
@@ -29,7 +29,7 @@ msgstr " 最大下载并发数"
 #~ msgid " 存档目录"
 #~ msgstr " 存档目录"
 
-#: src/page/User/EditUserInfoDialog.tsx:126
+#: src/page/User/EditUserInfoDialog.tsx:125
 msgid " 本地上传"
 msgstr " 本地上传"
 
@@ -37,7 +37,7 @@ msgstr " 本地上传"
 #~ msgid " 游戏简介"
 #~ msgstr " 游戏简介"
 
-#: src/page/User/EditUserInfoDialog.tsx:144
+#: src/page/User/EditUserInfoDialog.tsx:143
 msgid " 用户昵称"
 msgstr " 用户昵称"
 
@@ -99,7 +99,7 @@ msgstr "一键智能匹配"
 msgid "一键还原存档"
 msgstr "一键还原存档"
 
-#: src/components/custom/Title.tsx:45
+#: src/components/custom/Title.tsx:47
 #: src/page/User/ProfileHeader.tsx:10
 msgid "下午好"
 msgstr "下午好"
@@ -136,7 +136,7 @@ msgstr "主题选择"
 msgid "主题颜色"
 msgstr "主题颜色"
 
-#: src/page/Library/TopBar.tsx:112
+#: src/page/Library/TopBar.tsx:123
 msgid "仅看已通关"
 msgstr "仅看已通关"
 
@@ -152,7 +152,7 @@ msgstr "今天的心情适合推一部催泪神作吗？"
 #~ msgid "侧边栏显示"
 #~ msgstr "侧边栏显示"
 
-#: src/page/User/EditUserInfoDialog.tsx:179
+#: src/page/User/EditUserInfoDialog.tsx:178
 msgid "保存信息"
 msgstr "保存信息"
 
@@ -172,7 +172,7 @@ msgstr "信息和工具"
 msgid "修改信息"
 msgstr "修改信息"
 
-#: src/page/User/EditUserInfoDialog.tsx:97
+#: src/page/User/EditUserInfoDialog.tsx:96
 msgid "修改用户信息"
 msgstr "修改用户信息"
 
@@ -208,7 +208,7 @@ msgstr "全线通关后的后劲，是青春的证明。"
 msgid "内容预览"
 msgstr "内容预览"
 
-#: src/page/Library/GameDetail.tsx:284
+#: src/page/Library/GameDetail.tsx:282
 msgid "最后运行"
 msgstr "最后运行"
 
@@ -236,7 +236,7 @@ msgstr "切换至：游戏库"
 msgid "切换至：设置界面"
 msgstr "切换至：设置界面"
 
-#: src/page/Library/GameDetail.tsx:228
+#: src/page/Library/GameDetail.tsx:226
 msgid "制作商"
 msgstr "制作商"
 
@@ -299,7 +299,7 @@ msgid "压缩包解析失败"
 msgstr "压缩包解析失败"
 
 #: src/page/Library/BigPendingCard.tsx:254
-#: src/page/User/EditUserInfoDialog.tsx:173
+#: src/page/User/EditUserInfoDialog.tsx:172
 #: src/page/User/index.tsx:268
 #: src/page/User/index.tsx:332
 msgid "取消"
@@ -313,15 +313,15 @@ msgstr "只读"
 msgid "可执行文件路径"
 msgstr "可执行文件路径"
 
-#: src/page/Library/GameDetail.tsx:106
+#: src/page/Library/GameDetail.tsx:104
 msgid "同步失败: "
 msgstr "同步失败: "
 
-#: src/page/Library/GameDetail.tsx:104
+#: src/page/Library/GameDetail.tsx:102
 msgid "同步成功"
 msgstr "同步成功"
 
-#: src/page/Library/GameDetail.tsx:249
+#: src/page/Library/GameDetail.tsx:247
 msgid "启动"
 msgstr "启动"
 
@@ -369,7 +369,7 @@ msgstr "在界面选中游戏时按回车直接启动"
 msgid "基础设置"
 msgstr "基础设置"
 
-#: src/page/Library/GameDetail.tsx:236
+#: src/page/Library/GameDetail.tsx:234
 msgid "备份"
 msgstr "备份"
 
@@ -402,10 +402,11 @@ msgstr "存档备份完毕"
 msgid "存档恢复完毕"
 msgstr "存档恢复完毕"
 
-#: src/page/Library/GameDetail.tsx:333
+#: src/page/Library/GameDetail.tsx:331
 msgid "存档目录"
 msgstr "存档目录"
 
+#: src/page/Library/TopBar.tsx:255
 #: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:109
 msgid "完成"
 msgstr "完成"
@@ -452,7 +453,7 @@ msgstr "已启用"
 #~ msgid "已游玩"
 #~ msgstr "已游玩"
 
-#: src/page/Library/GameDetail.tsx:273
+#: src/page/Library/GameDetail.tsx:271
 msgid "已游玩 (分钟)"
 msgstr "已游玩 (分钟)"
 
@@ -464,7 +465,7 @@ msgstr "已禁用"
 msgid "已设置"
 msgstr "已设置"
 
-#: src/page/User/EditUserInfoDialog.tsx:53
+#: src/page/User/EditUserInfoDialog.tsx:52
 msgid "已载入本地图片预览"
 msgstr "已载入本地图片预览"
 
@@ -496,7 +497,7 @@ msgstr "快捷键设置"
 msgid "快速定位到搜索框进行过滤"
 msgstr "快速定位到搜索框进行过滤"
 
-#: src/page/Library/GameDetail.tsx:239
+#: src/page/Library/GameDetail.tsx:237
 msgid "恢复"
 msgstr "恢复"
 
@@ -514,7 +515,7 @@ msgstr "恢复成功"
 msgid "成功导入 {0} 个游戏"
 msgstr "成功导入 {0} 个游戏"
 
-#: src/page/Library/GameDetail.tsx:332
+#: src/page/Library/GameDetail.tsx:330
 msgid "执行路径"
 msgstr "执行路径"
 
@@ -522,15 +523,15 @@ msgstr "执行路径"
 msgid "批量导入确认"
 msgstr "批量导入确认"
 
-#: src/page/Library/TopBar.tsx:111
+#: src/page/Library/TopBar.tsx:122
 msgid "按最后游玩"
 msgstr "按最后游玩"
 
-#: src/page/Library/TopBar.tsx:110
+#: src/page/Library/TopBar.tsx:121
 msgid "按名称排序"
 msgstr "按名称排序"
 
-#: src/page/Library/TopBar.tsx:109
+#: src/page/Library/TopBar.tsx:120
 msgid "按游玩时长"
 msgstr "按游玩时长"
 
@@ -563,7 +564,7 @@ msgstr "新的一天，也要充满元气哦！"
 msgid "无匹配项"
 msgstr "无匹配项"
 
-#: src/page/User/EditUserInfoDialog.tsx:56
+#: src/page/User/EditUserInfoDialog.tsx:55
 msgid "无法打开文件对话框"
 msgstr "无法打开文件对话框"
 
@@ -575,7 +576,7 @@ msgstr "日志追踪等级"
 msgid "日间模式"
 msgstr "日间模式"
 
-#: src/components/custom/Title.tsx:44
+#: src/components/custom/Title.tsx:46
 #: src/page/User/ProfileHeader.tsx:8
 msgid "早上好"
 msgstr "早上好"
@@ -584,7 +585,7 @@ msgstr "早上好"
 msgid "显示"
 msgstr "显示"
 
-#: src/components/custom/Title.tsx:46
+#: src/components/custom/Title.tsx:48
 #: src/page/User/ProfileHeader.tsx:11
 msgid "晚上好"
 msgstr "晚上好"
@@ -594,7 +595,7 @@ msgstr "晚上好"
 #~ msgid "暂无描述"
 #~ msgstr "暂无描述"
 
-#: src/page/Library/GameDetail.tsx:306
+#: src/page/Library/GameDetail.tsx:304
 msgid "暂无描述..."
 msgstr "暂无描述..."
 
@@ -614,7 +615,7 @@ msgstr "暂无详细介绍。"
 msgid "暂无通关制作商数据"
 msgstr "暂无通关制作商数据"
 
-#: src/page/Library/GameDetail.tsx:207
+#: src/page/Library/GameDetail.tsx:205
 msgid "更换封面"
 msgstr "更换封面"
 
@@ -646,7 +647,7 @@ msgstr "未知制作商"
 msgid "未绑定"
 msgstr "未绑定"
 
-#: src/page/Library/GameDetail.tsx:363
+#: src/page/Library/GameDetail.tsx:361
 msgid "未设定 (点击选择)"
 msgstr "未设定 (点击选择)"
 
@@ -695,7 +696,7 @@ msgstr "查询失败，请检查 ID 是否正确"
 #~ msgid "标准 (Info)"
 #~ msgstr "标准 (Info)"
 
-#: src/page/Library/GameDetail.tsx:322
+#: src/page/Library/GameDetail.tsx:320
 msgid "标记通关"
 msgstr "标记通关"
 
@@ -823,7 +824,7 @@ msgstr "用于访问敏感条目。你可以在 Bangumi 设置 - 开发者平台
 msgid "用户"
 msgstr "用户"
 
-#: src/page/User/EditUserInfoDialog.tsx:75
+#: src/page/User/EditUserInfoDialog.tsx:74
 msgid "用户信息同步成功"
 msgstr "用户信息同步成功"
 
@@ -879,7 +880,7 @@ msgstr "确认还原所有存档？"
 msgid "程序名称"
 msgstr "程序名称"
 
-#: src/page/Library/GameDetail.tsx:282
+#: src/page/Library/GameDetail.tsx:280
 msgid "空间占用"
 msgstr "空间占用"
 
@@ -895,7 +896,7 @@ msgstr "窗口托管"
 msgid "立即执行一键备份"
 msgstr "立即执行一键备份"
 
-#: src/page/Library/GameDetail.tsx:300
+#: src/page/Library/GameDetail.tsx:298
 msgid "简介"
 msgstr "简介"
 
@@ -935,7 +936,7 @@ msgstr "老板键"
 msgid "聚焦搜索"
 msgstr "聚焦搜索"
 
-#: src/page/Library/GameDetail.tsx:334
+#: src/page/Library/GameDetail.tsx:332
 #: src/page/Setting/InterfaceSetting/BackgroundSettingDialog.tsx:61
 msgid "背景图片"
 msgstr "背景图片"
@@ -1056,7 +1057,7 @@ msgstr "跳转到首页界面"
 msgid "辛苦了，开启一段精彩的故事吧。"
 msgstr "辛苦了，开启一段精彩的故事吧。"
 
-#: src/page/Library/GameDetail.tsx:184
+#: src/page/Library/GameDetail.tsx:182
 msgid "返回库"
 msgstr "返回库"
 
@@ -1145,7 +1146,7 @@ msgstr "页面内容未定义：请检查 \"/\" 路径配置"
 msgid "首页"
 msgstr "首页"
 
-#: src/page/Library/GameDetail.tsx:316
+#: src/page/Library/GameDetail.tsx:314
 msgid "首页展示"
 msgstr "首页展示"
 
