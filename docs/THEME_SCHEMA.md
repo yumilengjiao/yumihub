@@ -1,5 +1,14 @@
 # 所有可用的组件
 
+你应先浏览[PROTOCOL](./PROTOCOL.md)来查看一个自定义主题基本该如何编写
+
+---
+
+## Row [容器组件]
+
+普通容器，一个简单的元素，会自动占满宽度和高度，一般情况下不需要使用该组件,常规样式属性也可以生效
+允许子节点：✅ 是
+
 ---
 
 ## Row [容器组件]
@@ -154,6 +163,18 @@
 
     - 说明: 用于指定层级，默认为100
 
+- inlineStyle <Object>
+
+  - 说明: 原生 CSS 属性注入。具有最高优先级，会覆盖变体中的同名属性。
+
+        用法: 适用于变体不能达到想要的效果时，如 inlineStyle: {"box-sizing": "border-box"}。
+
+- className <string | string[]>
+
+  - 说明: Tailwind 实用类注入。通过 cn() 与内部样式合并。
+
+        用法: 可以使用所有taiwind中的实用类,如：className: ["bg-pink","text-xl"] 或 ["bg-pink text-xl"]
+
 ---
 
 ## TitleBar
@@ -209,7 +230,7 @@
         horizontal (横条)
         vertical (竖条)
 
-- growthDirection <string>
+  - growthDirection <string>
 
     用于控制子元素的排列顺序方向,仅在variant为CornerArc时有用
 
@@ -220,17 +241,29 @@
         col: 从上往下摆放子元素，正常顺序
         col-reverse: 从上往下摆放子元素，相反顺序
 
-- thickness <string>
+  - thickness <string>
 
     用于控制栏的宽度，默认50px, 注意: 并不是指显示出来的栏的宽度，显示栏的宽度只由内容决定，这个属性是值控制拖拽区域的宽度
 
-- cornerRadius <string>,
+  - cornerRadius <string>,
 
     调整CornerArc变体下的圆弧大小，默认70px
 
-- zIndex
+  - zIndex
 
     控制栏的层级
+
+- inlineStyle <Object>
+
+  - 说明: 原生 CSS 属性注入。具有最高优先级，会覆盖变体中的同名属性。
+
+        用法: 适用于变体不能达到想要的效果时，如 inlineStyle: {"box-sizing": "border-box"}。
+
+- className <string | string[]>
+
+  - 说明: Tailwind 实用类注入。通过 cn() 与内部样式合并。
+
+        用法: 可以使用所有taiwind中的实用类,如：className: ["bg-pink","text-xl"] 或 ["bg-pink text-xl"]
 
 ---
 
@@ -260,6 +293,18 @@
 
     - 说明: 指定icon图标的线粗
 
+- inlineStyle <Object>
+
+  - 说明: 原生 CSS 属性注入。具有最高优先级，会覆盖变体中的同名属性。
+
+        用法: 适用于变体不能达到想要的效果时，如 inlineStyle: {"box-sizing": "border-box"}。
+
+- className <string | string[]>
+
+  - 说明: Tailwind 实用类注入。通过 cn() 与内部样式合并。
+
+        用法: 可以使用所有taiwind中的实用类,如：className: ["bg-pink","text-xl"] 或 ["bg-pink text-xl"]
+
 ---
 
 ## WTIcon [叶子节点]
@@ -287,6 +332,19 @@
   - strokeWidth
 
     图标线条粗细
+- inlineStyle <Object>
+
+  - 说明: 原生 CSS 属性注入。具有最高优先级，会覆盖变体中的同名属性。
+
+        用法: 适用于变体不能达到想要的效果时，如 inlineStyle: {"box-sizing": "border-box"}。
+
+- className <string | string[]>
+
+  - 说明: Tailwind 实用类注入。通过 cn() 与内部样式合并。
+
+        用法: 可以使用所有taiwind中的实用类,如：className: ["bg-pink","text-xl"] 或 ["bg-pink text-xl"]
+
+---
 
 ## Avatar [叶子节点]
 
@@ -321,6 +379,18 @@
       rounded-lg: 大圆角正方形
 
       rounded-2xl: 超大圆角
+
+- inlineStyle <Object>
+
+  - 说明: 原生 CSS 属性注入。具有最高优先级，会覆盖变体中的同名属性。
+
+        用法: 适用于变体不能达到想要的效果时，如 inlineStyle: {"box-sizing": "border-box"}。
+
+- className <string | string[]>
+
+  - 说明: Tailwind 实用类注入。通过 cn() 与内部样式合并。
+
+        用法: 可以使用所有taiwind中的实用类,如：className: ["bg-pink","text-xl"] 或 ["bg-pink text-xl"]
 
 ---
 
@@ -360,9 +430,15 @@
 
 - inlineStyle <Object>
 
-  - 说明: 注入原生 CSS 样式。
+  - 说明: 原生 CSS 属性注入。具有最高优先级，会覆盖变体中的同名属性。
 
         用法: 适用于变体不能达到想要的效果时，如 inlineStyle: {"box-sizing": "border-box"}。
+
+- className <string | string[]>
+
+  - 说明: Tailwind 实用类注入。通过 cn() 与内部样式合并。
+
+        用法: 可以使用所有taiwind中的实用类,如：className: ["bg-pink","text-xl"] 或 ["bg-pink text-xl"]
 
 ---
 
@@ -509,6 +585,18 @@
 
     说明: 用于控制文本的宽度，默认"100%"
 
+- className <string | string[]>
+
+  - 说明: 注入 Tailwind 类名到组件的最外层容器。
+
+        用法: 可以使用所有taiwind中的实用类,如：className: ["bg-pink","text-xl"] 或 ["bg-pink text-xl"]
+
+- inlineStyle <Object>
+
+  - 说明: 注入原生 CSS 样式。
+
+        用法: 适用于变体不能达到想要的效果时，如 inlineStyle: {"box-sizing": "border-box"}。
+
 ---
 
 ## Entry [叶子节点]
@@ -549,6 +637,22 @@
     - 用于直接控制是否激活(autoActive == false时生效)
 
 - actions
+
+  - 说明: 该属性中可以填入点击事件执行的函数
+
+  - 用法: 参照按钮
+
+- className <string | string[]>
+
+  - 说明: 注入 Tailwind 类名到组件的最外层容器。
+
+        用法: 可以使用所有taiwind中的实用类,如：className: ["bg-pink","text-xl"] 或 ["bg-pink text-xl"]
+
+- inlineStyle <Object>
+
+  - 说明: 注入原生 CSS 样式。
+
+        用法: 适用于变体不能达到想要的效果时，如 inlineStyle: {"box-sizing": "border-box"}。
 
 ---
 
@@ -596,6 +700,18 @@
   - timeFormat
 
     - 时间格式（简单实现）,默认"HH:mm:ss"
+
+- className <string | string[]>
+
+  - 说明: 注入 Tailwind 类名到组件的最外层容器。
+
+        用法: 可以使用所有taiwind中的实用类,如：className: ["bg-pink","text-xl"] 或 ["bg-pink text-xl"]
+
+- inlineStyle <Object>
+
+  - 说明: 注入原生 CSS 样式。
+
+        用法: 适用于变体不能达到想要的效果时，如 inlineStyle: {"box-sizing": "border-box"}。
 
 ## Page
 

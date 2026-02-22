@@ -8,6 +8,9 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ThemeMode } from "@/types/config";
 import useConfigStore from "@/store/configStore";
 import { open } from '@tauri-apps/plugin-shell';
+import { toast } from "sonner";
+import useGameStore from "@/store/gameStore";
+import { Cmds } from "@/lib/enum";
 
 // 定义 Action 的结构（对应你的文档）
 interface ActionItem {
@@ -19,6 +22,7 @@ export const useAppActions = () => {
   const navigate = useNavigate();
   const appWindow = getCurrentWindow()
   const { config, updateConfig } = useConfigStore()
+  const { gameMetaList } = useGameStore()
 
   // action“映射表”
   const COMMAND_MAP: Record<string, (params: any) => void> = {
@@ -88,9 +92,7 @@ export const useAppActions = () => {
 
     // 弹窗逻辑 
     alert: (params) => {
-      // 这里可以根据 params.style (success/error) 调用不同的 UI
-      console.log(`[${params?.style || 'info'}] ${params?.content}`);
-      alert(params?.content);
+      toast(params?.content);
     },
 
     // 执行 Tauri 后端命令
@@ -107,6 +109,26 @@ export const useAppActions = () => {
       console.log("调用外部链接")
       if (params?.url) open(params.url);
     },
+
+    // 启动上一次运行的游戏
+    startUplastedGame: () => {
+      // 使用 sort 时，需要处理 null/undefined 
+      // 我们通常把没玩过的游戏排在最后面
+      gameMetaList.sort((a, b) => {
+        const timeA = a.lastPlayedAt ? new Date(a.lastPlayedAt).getTime() : 0;
+        const timeB = b.lastPlayedAt ? new Date(b.lastPlayedAt).getTime() : 0;
+
+        return timeB - timeA;
+      });
+
+      // 排序完后，启动第一个
+      if (gameMetaList.length > 0) {
+        // 调用你启动游戏的逻辑
+        invoke(Cmds.START_GAME, {
+          game: gameMetaList[0]
+        });
+      }
+    }
   };
 
   /**

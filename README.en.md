@@ -6,10 +6,26 @@ A local ACG game management tool.
 [简体中文](./README.md) | English
 
 </div>
-📖 Introduction
+
+---
+
+## 📍 Table of Contents
+
+* [📖 Introduction](#-introduction)
+* [🌟 Key Features](#-key-features)
+* [🛠️ Tech Stack](#-tech-stack)
+* [📸 Showcases](#-showcases)
+* [📥 Installation](#-installation)
+* [🎨 Themes](#-themes)
+* [🚀 Quick Start (Development)](#-quick-start-development)
+* [⚖️ Disclaimer](#-disclaimer)
+* [📄 License](#-license)
+
+## 📖 Introduction
 
 YumiHub is a local game (Galgame) library management tool built with Tauri. It is designed to help users consolidate game resources, scrape metadata, and manage companion applications for a seamless gaming experience.
-🌟 Key Features
+
+## 🌟 Key Features
 
     Resource Import: Support for direct importing of ZIP and RAR archives.
 
@@ -19,7 +35,7 @@ YumiHub is a local game (Galgame) library management tool built with Tauri. It i
 
     Modern UI/UX: A fully responsive interface powered by React 19 and Tailwind CSS.
 
-🛠️ Tech Stack
+## 🛠️ Tech Stack
 
     Frontend: React 19
 
@@ -33,7 +49,7 @@ YumiHub is a local game (Galgame) library management tool built with Tauri. It i
 
     Runtime: Bun
 
-📸 Screenshots
+## 📸 Screenshots
 
 <p align="center"> <em>Home Dashboard</em>
 
@@ -46,10 +62,31 @@ YumiHub is a local game (Galgame) library management tool built with Tauri. It i
 <em>Companion App Management</em>
 
 <img src="./assets/companion.png" width="80%" /> </p>
-📥 Installation
+
+## 📥 Installation
 
 Download the latest installer for your platform from the Releases Page.
 [Releases](https://github.com/yumilengjiao/yumihub/releases)
+
+## 🎨 Themes
+
+You can download theme files from the themes directory. Each file represents a unique theme. To apply a theme:
+
+    Download a theme file (e.g., neon-glass.json5).
+
+    Locate the program's theme directory at:
+
+    C:\Users\yourusername\AppData\Local\io.github.yumilengjiao.yumihub\themes
+
+    Place the downloaded .json5 file into this folder.
+
+        Note: You will see a default.json5 file in this directory. Do not delete it, as it is essential for the program to run correctly.
+
+    Restart the application.
+
+    Apply: Go to the settings page under Appearance -> Theme Selection to switch your theme.
+
+You can preview the appearance of each theme in the Theme Gallery.
 
 ## 🚀 Quick Start (Development)
 
