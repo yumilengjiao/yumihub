@@ -10,6 +10,7 @@ import { CompanionManager } from "./CompanionManager"
 import { ShortcutManager } from "./ShortcutManager"
 import { useLingui } from "@lingui/react"
 import { Trans } from "@lingui/react/macro"
+import { createPortal } from "react-dom"
 
 export default function BaseSetting() {
   // 基本设置的信息
@@ -96,12 +97,14 @@ export default function BaseSetting() {
       </div>
 
       {/* 连携程序管理对话框 */}
-      {isCompanionManagerOpen && (
-        <CompanionManager onClose={() => setIsCompanionManagerOpen(false)} />
+      {isCompanionManagerOpen && createPortal(
+        <CompanionManager onClose={() => setIsCompanionManagerOpen(false)} />,
+        document.body
       )}
       {/* 快捷键管理对话框 */}
-      {isShortcutManagerOpen && (
-        <ShortcutManager onClose={() => setIsShortcutManagerOpen(false)} />
+      {isShortcutManagerOpen && createPortal(
+        <ShortcutManager onClose={() => setIsShortcutManagerOpen(false)} />,
+        document.body
       )}
     </CommonCard>
   )
