@@ -76,6 +76,14 @@ pub fn listening_loop(app_handler: AppHandle) {
 /// * `app_handler`: App句柄
 /// * `yes`: true: 自启动，false: 不自启动
 fn enable_auto_start(app_handler: AppHandle, yes: bool) {
+    let result = GLOBAL_CONFIG.write();
+    match result {
+        Ok(mut config) => config.basic.auto_start = yes,
+        Err(_) => {
+            error!("获取config写锁失败");
+        }
+    }
+
     if !yes {
         let result = app_handler.autolaunch().disable();
         if let Err(e) = result {
@@ -119,7 +127,6 @@ fn enable_auto_update(yes: bool) {
 ///
 /// * `new_order`: 新的游戏展示顺序
 fn set_game_display_order(new_order: Vec<String>) {
-    println!("游戏顺序被更新了{:#?}", new_order);
     let result = GLOBAL_CONFIG.write();
     match result {
         Ok(mut config) => config.basic.game_display_order = new_order,
@@ -479,7 +486,6 @@ pub fn set_screenshot_path(path: PathBuf) {
 ///
 /// * `path`: 所有游戏的目录
 pub fn set_gal_root_dir(path: PathBuf) {
-    println!("config内的galroot被更新");
     let result = GLOBAL_CONFIG.write();
     match result {
         Ok(mut config) => config.storage.gal_root_dir = path,

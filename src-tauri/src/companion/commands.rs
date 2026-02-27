@@ -4,7 +4,7 @@ use std::{
     process::{Command, Stdio},
 };
 use tauri::{AppHandle, Manager, Runtime};
-use tauri_plugin_log::log::debug;
+use tauri_plugin_log::log::{debug, error};
 
 use crate::{
     companion::{
@@ -145,7 +145,7 @@ pub fn launch_companion(comp: Companion) {
             });
         }
         Err(e) => {
-            eprintln!("无法启动程序 {}: {} (路径: {})", comp.name, e, comp.path);
+            error!("无法启动程序 {}: {} (路径: {})", comp.name, e, comp.path);
         }
     }
 }

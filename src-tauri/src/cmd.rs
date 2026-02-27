@@ -8,7 +8,7 @@ use sqlx::{Row, Transaction};
 use sysinfo::Disks;
 use tauri::{async_runtime, AppHandle, Manager, Runtime, State};
 use tauri_plugin_fs::FsExt;
-use tauri_plugin_log::log::{debug, error, info};
+use tauri_plugin_log::log::{debug, error, info, warn};
 use uuid::Uuid;
 
 use crate::backup::commands::backup_archive_by_game_id;
@@ -127,7 +127,6 @@ pub async fn update_user_info(
 /// * `pool`: 连接池,tauri自动注入
 #[tauri::command]
 pub async fn get_game_meta_list(pool: State<'_, Pool<Sqlite>>) -> Result<GameMetaList, AppError> {
-    println!("开始查询数据");
     let games = sqlx::query_as(
         "SELECT id,
                 name,
@@ -505,8 +504,6 @@ pub async fn delete_game_by_id(pool: State<'_, Pool<Sqlite>>, id: String) -> Res
         .map(|row| row.get("id")) // 假设 id 可以转 String
         .collect();
 
-    println!("screenshot_ids:{:#?}", screenshot_ids);
-
     tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
 
     // 删除游戏的数据
@@ -567,9 +564,9 @@ pub async fn delete_game_by_id(pool: State<'_, Pool<Sqlite>>, id: String) -> Res
 
                     // 打印日志以便追踪
                     if let Err(e) = result {
-                        eprintln!("无法删除 {:?}: {}", target_path, e);
+                        warn!("无法删除 {:?}: {}", target_path, e);
                     } else {
-                        println!("成功清理资源: {:?}", target_path);
+                        info!("成功清理资源: {:?}", target_path);
                     }
                 }
             }
@@ -1058,7 +1055,7 @@ pub async fn backup_archive(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppErro
         async_runtime::spawn_blocking(move || {
             let zip_file_path = backup_dir.join(format!("game_{}.zip", game_id));
             if let Err(e) = zip_directory_sync(&save_path, &zip_file_path) {
-                eprintln!("备份游戏 {} 失败: {}", game_id, e);
+                error!("备份游戏 {} 失败: {}", game_id, e);
             }
         })
         .await
@@ -1136,7 +1133,7 @@ pub async fn restore_archive_by_id(
 /// * `pool`: 连接池-自动注入
 #[tauri::command]
 pub async fn restore_all_archives(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppError> {
-    println!("开始恢复所有游戏数据");
+    info!("开始恢复所有游戏数据");
     let games = sqlx::query("SELECT id, save_data_path FROM games")
         .fetch_all(&*pool)
         .await
@@ -1163,7 +1160,7 @@ pub async fn restore_all_archives(pool: State<'_, Pool<Sqlite>>) -> Result<(), A
             // 同样使用 spawn_blocking 避免阻塞
             async_runtime::spawn_blocking(move || {
                 if let Err(e) = extract_zip_sync(&zip_file_path, &save_path) {
-                    eprintln!("全量恢复：备份游戏 {} 失败: {}", id, e);
+                    error!("全量恢复：备份游戏 {} 失败: {}", id, e);
                 }
             })
             .await
@@ -1362,8 +1359,6 @@ pub fn get_all_theme_names(state: tauri::State<'_, ThemeState>) -> Result<Vec<St
         .all_names
         .lock()
         .map_err(|e| AppError::Mutex(e.to_string()))?;
-
-    println!("{:?}", names);
 
     Ok(names.clone())
 }
