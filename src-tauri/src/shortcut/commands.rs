@@ -3,7 +3,7 @@ use std::str::FromStr;
 use sqlx::SqlitePool;
 use tauri::{AppHandle, Manager, Runtime};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut};
-use tauri_plugin_log::log::{debug, info, warn};
+use tauri_plugin_log::log::{debug, error, info, warn};
 
 use crate::{
     companion::{self},
@@ -100,11 +100,8 @@ async fn handle_shortcut_action<R: Runtime>(
             .map_err(|e| AppError::DB(e.to_string()))?;
 
             if let Some(game) = last_game {
-                println!("快捷键：正在启动上次游玩的游戏 -> {}", game.name);
                 // 调用start_game 逻辑
                 crate::game::commands::execute_start_game((*pool).clone(), game).await?;
-            } else {
-                println!("快捷键提示：库中还没有游玩记录");
             }
         }
 
@@ -192,12 +189,12 @@ async fn handle_shortcut_action<R: Runtime>(
                             .show();
                     }
                     Err(e) => {
-                        eprintln!("截图失败: {}", e);
+                        error!("截图失败: {}", e);
                     }
                 }
             });
         }
-        _ => println!("警告：触发了未定义逻辑的快捷键 ID: {}", id),
+        _ => warn!("警告：触发了未定义逻辑的快捷键 ID: {}", id),
     }
     Ok(())
 }

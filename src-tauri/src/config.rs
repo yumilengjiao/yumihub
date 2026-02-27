@@ -83,7 +83,6 @@ fn set_log_level(app_handle: &AppHandle, level: LogLevel) {
 ///
 /// * `app_handler`: app操纵句柄
 fn allow_permission(app_handler: &AppHandle) {
-    println!("允许背景图片资源");
     let background_path = &GLOBAL_CONFIG
         .read()
         .unwrap()
