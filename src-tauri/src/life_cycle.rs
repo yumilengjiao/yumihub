@@ -9,6 +9,7 @@ use std::error::Error;
 use tauri::{App, AppHandle, Manager};
 #[cfg(target_os = "windows")]
 use window_vibrancy::apply_acrylic;
+#[cfg(target_os = "macos")]
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 /// 初始化函数

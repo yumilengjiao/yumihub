@@ -179,9 +179,9 @@ async fn update_game_into_db(pool: &Pool<Sqlite>, updated_meta: &GameMeta) -> Re
 async fn update_user_into_db(pool: &Pool<Sqlite>, updated_meta: &User) -> Result<(), AppError> {
     sqlx::query(
         r#"
-    INSERT OR REPLACE INTO user 
-    (id, user_name, avatar,  games_count, favorite_game, total_play_time, games_completed_number, last_play_at, created_at) 
-    VALUES (?, ?,  ?, ?, ?, ?, ?, ?, ? )
+    INSERT OR REPLACE INTO account
+    (id, user_name, avatar, games_count, favorite_game, total_play_time, games_completed_number, last_play_at, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     "#,
     )
     .bind(&updated_meta.id)

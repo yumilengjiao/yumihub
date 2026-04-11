@@ -7,11 +7,10 @@ use std::path::{Path, PathBuf};
 
 use unrar::Archive;
 use walkdir::WalkDir;
-use windows::core::BOOL;
 use zip::write::FileOptions;
 use zip::{ZipArchive, ZipWriter};
 
-use windows::Win32::Foundation::{HWND, LPARAM};
+use windows::Win32::Foundation::{BOOL, HWND, LPARAM};
 use windows::Win32::UI::WindowsAndMessaging::{
     EnumWindows, GetWindowThreadProcessId, ShowWindow, SW_HIDE, SW_SHOW,
 };

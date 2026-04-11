@@ -1,12 +1,11 @@
 use std::sync::Mutex;
 
-use custom_theme::schema::ir::ThemeIr;
 use tauri::RunEvent;
 
 use crate::theme::ThemeState;
 
 mod backup;
-mod cmd;
+mod commands;
 mod companion;
 mod config;
 mod db;
@@ -42,50 +41,50 @@ pub fn run() {
         .setup(life_cycle::init)
         .invoke_handler(tauri::generate_handler![
             // 用户
-            cmd::get_user_info,
-            cmd::update_user_info,
+            commands::get_user_info,
+            commands::update_user_info,
             // 游戏
-            cmd::get_game_meta_by_id,
-            cmd::get_game_meta_list,
-            cmd::delete_game_by_id,
-            cmd::delete_all_games,
-            cmd::update_game,
-            cmd::add_new_game,
-            cmd::add_new_game_list,
-            cmd::start_game,
-            cmd::get_sessions,
-            cmd::get_sessions_by_year,
+            commands::get_game_meta_by_id,
+            commands::get_game_meta_list,
+            commands::delete_game_by_id,
+            commands::delete_all_games,
+            commands::update_game,
+            commands::add_new_game,
+            commands::add_new_game_list,
+            commands::start_game,
+            commands::get_sessions,
+            commands::get_sessions_by_year,
             // 压缩包
-            cmd::get_archive_list,
-            cmd::extract_archive,
-            //游戏快照
-            cmd::get_screenshots_by_year_month,
-            cmd::update_screenshot_by_id,
-            cmd::delete_screenshot_by_id,
+            commands::get_archive_list,
+            commands::extract_archive,
+            // 游戏截图
+            commands::get_screenshots_by_year_month,
+            commands::update_screenshot_by_id,
+            commands::delete_screenshot_by_id,
             // 配置
-            cmd::get_config,
-            cmd::update_config,
+            commands::get_config,
+            commands::update_config,
             // 快捷键
-            cmd::get_shortcuts,
-            cmd::update_shortcuts,
-            // 存档
-            cmd::backup_archive,
-            cmd::backup_archive_by_id,
-            cmd::restore_all_archives,
-            cmd::restore_archive_by_id,
-            // 连携程序相关
-            cmd::update_companions,
-            cmd::get_companions,
-            // 其他
-            cmd::get_start_up_path,
-            cmd::get_system_fonts,
-            cmd::get_game_size,
-            cmd::get_disks,
-            cmd::get_disk_usage,
-            cmd::authorize_path_access,
-            cmd::clear_app_data,
-            cmd::get_theme,
-            cmd::get_all_theme_names
+            commands::get_shortcuts,
+            commands::update_shortcuts,
+            // 存档备份
+            commands::backup_archive,
+            commands::backup_archive_by_id,
+            commands::restore_all_archives,
+            commands::restore_archive_by_id,
+            // 连携程序
+            commands::update_companions,
+            commands::get_companions,
+            // 系统工具
+            commands::get_start_up_path,
+            commands::get_system_fonts,
+            commands::get_game_size,
+            commands::get_disks,
+            commands::get_disk_usage,
+            commands::authorize_path_access,
+            commands::clear_app_data,
+            commands::get_theme,
+            commands::get_all_theme_names,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

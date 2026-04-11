@@ -1,8 +1,12 @@
-//! 自定义系统错误类型,让前端处理
+//! 统一应用错误类型
+//!
+//! 所有 `#[tauri::command]` 函数都应返回 `Result<T, AppError>`，
+//! 不再出现 `Result<T, String>` 的混用。
 
 use serde::Serialize;
 use thiserror::Error;
 
+/// 文件操作动作，用于 Config 错误的上下文描述
 #[derive(Debug, Serialize)]
 pub enum FileAction {
     Read,
@@ -10,16 +14,21 @@ pub enum FileAction {
     Create,
 }
 
+/// 应用统一错误枚举
+///
+/// `serde` 的 `tag + content` 模式让前端收到结构化 JSON：
+/// `{ "type": "DB", "details": "..." }`
 #[derive(Debug, Error, Serialize)]
-#[serde(tag = "type", content = "details")] // 给前端返回更友好的 JSON 结构
+#[serde(tag = "type", content = "details")]
 pub enum AppError {
-    #[error("配置文件操作失败 | 动作: {action:?}, 路径: {path:?}, 原因: {message}")]
+    #[error("配置文件操作失败 | 动作: {action:?}, 路径: {path}, 原因: {message}")]
     Config {
         action: FileAction,
         path: String,
-        message: String, // 将原始错误转为字符串存储，以便序列化
+        message: String,
     },
-    #[error("解析路径失败,路径:{0}---原始错误消息:{1}")]
+
+    #[error("解析路径失败，路径: {0}，原因: {1}")]
     Resolve(String, String),
 
     #[error("数据库错误: {0}")]

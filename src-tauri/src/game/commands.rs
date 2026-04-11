@@ -64,13 +64,6 @@ pub async fn execute_start_game(pool: SqlitePool, game: GameMeta) -> Result<(), 
     cmd.stdout(Stdio::inherit());
     cmd.stderr(Stdio::inherit());
 
-    // Windows 专属优化：DETACHED_PROCESS 或 CREATE_NEW_PROCESS_GROUP
-    #[cfg(target_os = "windows")]
-    {
-        use std::os::windows::process::CommandExt;
-        // 0x00000008 是 DETACHED_PROCESS，防止控制台游戏带起一个黑窗口
-    }
-
     let mut child = cmd
         .spawn()
         .map_err(|e| AppError::Resolve(game.abs_path.clone(), format!("启动失败: {}", e)))?;
