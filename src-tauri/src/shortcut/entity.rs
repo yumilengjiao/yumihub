@@ -1,3 +1,5 @@
+//! 快捷键数据结构
+
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 

@@ -1,3 +1,5 @@
+//! 配置数据结构定义
+
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
@@ -5,7 +7,8 @@ use tokio::sync::broadcast;
 
 use crate::message::traits::{MessageEvent, MessageHub};
 
-/// 全局配置类型
+// ── 顶层配置 ──────────────────────────────────────────────────────────────────
+
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
@@ -16,9 +19,42 @@ pub struct Config {
     pub auth: Authorization,
 }
 
-// -----------------------------------------------------
-// ------------------------界面配置---------------------
-// -----------------------------------------------------
+impl PartialEq for Config {
+    fn eq(&self, other: &Self) -> bool {
+        self.basic == other.basic
+            && self.interface == other.interface
+            && self.system == other.system
+            && self.storage == other.storage
+            && self.auth == other.auth
+    }
+}
+
+// ── 基础设置 ──────────────────────────────────────────────────────────────────
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct Basic {
+    pub auto_start: bool,
+    pub silent_start: bool,
+    pub auto_check_update: bool,
+    pub language: String,
+    /// 首页游戏展示顺序（游戏 ID 列表）
+    pub game_display_order: Vec<String>,
+}
+
+impl Default for Basic {
+    fn default() -> Self {
+        Self {
+            auto_start: false,
+            silent_start: false,
+            auto_check_update: false,
+            language: "zh".into(),
+            game_display_order: Vec::new(),
+        }
+    }
+}
+
+// ── 界面设置 ──────────────────────────────────────────────────────────────────
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -29,21 +65,6 @@ pub struct Interface {
     pub font_family: String,
     pub global_background: Background,
     pub common_card_opacity: f32,
-}
-
-#[derive(Serialize, Default, Deserialize, Debug, Clone, PartialEq)]
-pub struct Background {
-    pub path: PathBuf,
-    pub opacity: f32,
-    pub blur: u8,
-}
-
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
-pub enum ThemeMode {
-    #[default]
-    System,
-    Daytime,
-    Night,
 }
 
 impl Default for Interface {
@@ -63,40 +84,62 @@ impl Default for Interface {
     }
 }
 
-// -----------------------------------------------------
-// ------------------------基础配置---------------------
-// -----------------------------------------------------
+#[derive(Serialize, Default, Deserialize, Debug, Clone, PartialEq)]
+pub struct Background {
+    pub path: PathBuf,
+    pub opacity: f32,
+    pub blur: u8,
+}
+
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+pub enum ThemeMode {
+    #[default]
+    System,
+    Daytime,
+    Night,
+}
+
+// ── 系统设置 ──────────────────────────────────────────────────────────────────
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
-pub struct Basic {
-    pub auto_start: bool,
-    pub silent_start: bool,
-    pub auto_check_update: bool,
-    pub language: String,
-    pub game_display_order: Vec<String>,
+pub struct System {
+    pub companion: bool,
+    pub hotkey_activation: bool,
+    pub close_button_behavior: CloseBehavior,
+    pub log_level: LogLevel,
+    pub download_concurrency: i64,
 }
 
-impl Default for Basic {
+impl Default for System {
     fn default() -> Self {
         Self {
-            auto_start: false,
-            silent_start: false,
-            auto_check_update: false,
-            language: "zh".into(),
-            game_display_order: Vec::new(),
+            companion: true,
+            hotkey_activation: true,
+            close_button_behavior: CloseBehavior::Exit,
+            log_level: LogLevel::Info,
+            download_concurrency: 5,
         }
     }
 }
 
-// -----------------------------------------------------
-// ------------------------存储配置---------------------
-// -----------------------------------------------------
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub enum CloseBehavior {
+    Exit,
+    Hide,
+}
 
-/// 游戏相关资源路径
-///
-/// * `backup_save_path`: 游戏存档备份路径
-/// * `meta_save_path`: 游戏资源下载路径
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub enum LogLevel {
+    Trace,
+    Debug,
+    Info,
+    Warn,
+    Error,
+}
+
+// ── 存储设置 ──────────────────────────────────────────────────────────────────
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Storage {
@@ -121,95 +164,40 @@ impl Default for Storage {
     }
 }
 
-// -----------------------------------------------------
-// ------------------------系统配置---------------------
-// -----------------------------------------------------
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub struct System {
-    pub companion: bool,
-    pub hotkey_activation: bool,
-    pub close_button_behavior: CloseBehavior,
-    pub log_level: LogLevel,
-    pub download_concurrency: i64,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-pub enum CloseBehavior {
-    Exit,
-    Hide,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-pub enum LogLevel {
-    Trace,
-    Debug,
-    Info,
-    Warn,
-    Error,
-}
-
-impl Default for System {
-    fn default() -> Self {
-        Self {
-            companion: true,
-            hotkey_activation: true,
-            close_button_behavior: CloseBehavior::Exit,
-            log_level: LogLevel::Info,
-            download_concurrency: 5,
-        }
-    }
-}
-
-// -----------------------------------------------------
-// ----------------------信息系统相关-------------------
-// -----------------------------------------------------
-
-/// config模块的消息事件
-#[derive(Clone, Debug)]
-pub enum ConfigEvent {
-    // 基本配置任务
-    Basic { base: Basic },
-    // 数据库备份相关消息
-    Storage { stroage: Storage },
-    // 系统状态消息
-    System { sys: System },
-    // 界面任务
-    Interface { interface: Interface },
-    // 权限任务
-    Authorization { auth: Authorization },
-}
-
-impl MessageEvent for ConfigEvent {}
-
-/// config模块集中式消息管理器
-pub struct ConfigMessageHub {
-    pub config_tx: broadcast::Sender<ConfigEvent>,
-}
-
-impl MessageHub<ConfigEvent> for ConfigMessageHub {
-    fn new(capacity: usize) -> Self {
-        let (tx, _) = broadcast::channel(capacity);
-        Self { config_tx: tx }
-    }
-
-    // 提供一个便捷的订阅方法
-    fn subscribe(&self) -> broadcast::Receiver<ConfigEvent> {
-        self.config_tx.subscribe()
-    }
-
-    // 提供一个便捷的发布方法
-    fn publish(&self, event: ConfigEvent) {
-        let _ = self.config_tx.send(event);
-    }
-}
-// -----------------------------------------------------
-// --------------------权限(token)相关------------------
-// -----------------------------------------------------
+// ── 权限设置 ──────────────────────────────────────────────────────────────────
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, PartialOrd)]
 #[serde(rename_all = "camelCase")]
 pub struct Authorization {
     pub bangumi_token: String,
+}
+
+// ── 消息事件 ──────────────────────────────────────────────────────────────────
+
+#[derive(Clone, Debug)]
+pub enum ConfigEvent {
+    Basic { base: Basic },
+    Storage { storage: Storage },
+    System { sys: System },
+    Interface { interface: Interface },
+    Authorization { auth: Authorization },
+}
+
+impl MessageEvent for ConfigEvent {}
+
+pub struct ConfigMessageHub {
+    pub tx: broadcast::Sender<ConfigEvent>,
+}
+
+impl MessageHub<ConfigEvent> for ConfigMessageHub {
+    fn new(capacity: usize) -> Self {
+        let (tx, _) = broadcast::channel(capacity);
+        Self { tx }
+    }
+    fn subscribe(&self) -> broadcast::Receiver<ConfigEvent> {
+        self.tx.subscribe()
+    }
+    fn publish(&self, event: ConfigEvent) {
+        let _ = self.tx.send(event);
+    }
 }

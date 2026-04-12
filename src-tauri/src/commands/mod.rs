@@ -1,7 +1,6 @@
-//! 所有前端调用命令的入口模块
+//! 所有前端可调用命令的入口
 //!
-//! 子模块按业务划分，每个模块只暴露 `#[tauri::command]` 函数。
-//! `lib.rs` 的 `invoke_handler` 直接从此模块引入。
+//! 按业务领域划分子模块，`lib.rs` 的 `invoke_handler` 直接使用 `commands::` 前缀。
 
 pub mod archive;
 pub mod backup;
@@ -13,7 +12,6 @@ pub mod shortcut;
 pub mod system;
 pub mod user;
 
-// 统一重新导出，让 lib.rs 只需 `use crate::commands::*`
 pub use archive::*;
 pub use backup::*;
 pub use companion::*;

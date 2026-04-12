@@ -1,5 +1,3 @@
-//! 快捷键相关命令
-
 use sqlx::{Pool, Sqlite, SqlitePool};
 use tauri::State;
 
@@ -8,43 +6,33 @@ use crate::{
     shortcut::{commands::refresh_shortcuts, entity::ShortcutSetting},
 };
 
-/// 查询所有快捷键
 #[tauri::command]
-pub async fn get_shortcuts(
-    pool: State<'_, Pool<Sqlite>>,
-) -> Result<Vec<ShortcutSetting>, AppError> {
-    sqlx::query_as::<_, ShortcutSetting>(
-        "SELECT id, key_combo, is_global FROM shortcut",
-    )
-    .fetch_all(pool.inner())
-    .await
-    .map_err(|e| AppError::DB(e.to_string()))
+pub async fn get_shortcuts(pool: State<'_, Pool<Sqlite>>) -> Result<Vec<ShortcutSetting>, AppError> {
+    sqlx::query_as::<_, ShortcutSetting>("SELECT id, key_combo, is_global FROM shortcut")
+        .fetch_all(pool.inner())
+        .await
+        .map_err(AppError::from)
 }
 
-/// 更新所有快捷键，更新后立即刷新监听
 #[tauri::command]
 pub async fn update_shortcuts(
     app_handle: tauri::AppHandle,
     pool: State<'_, SqlitePool>,
     shortcuts: Vec<ShortcutSetting>,
 ) -> Result<(), AppError> {
-    let mut tx = pool
-        .begin()
-        .await
-        .map_err(|e| AppError::DB(e.to_string()))?;
+    let mut tx = pool.begin().await.map_err(AppError::from)?;
 
-    for shortcut in shortcuts {
+    for s in shortcuts {
         sqlx::query("UPDATE shortcut SET key_combo = ? WHERE id = ?")
-            .bind(&shortcut.key_combo)
-            .bind(&shortcut.id)
+            .bind(&s.key_combo)
+            .bind(&s.id)
             .execute(&mut *tx)
             .await
-            .map_err(|e| AppError::DB(e.to_string()))?;
+            .map_err(AppError::from)?;
     }
 
-    tx.commit().await.map_err(|e| AppError::DB(e.to_string()))?;
+    tx.commit().await.map_err(AppError::from)?;
 
-    refresh_shortcuts(&app_handle).await?;
-
-    Ok(())
+    // 立即刷新运行中的监听
+    refresh_shortcuts(&app_handle).await
 }

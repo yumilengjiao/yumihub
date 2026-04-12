@@ -1,32 +1,18 @@
-use crate::{
-    message::traits::{MessageEvent, MessageHub},
-    user::entity::User,
-};
+//! 游戏相关数据结构
+
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use tokio::sync::broadcast;
 
-/// 游戏元数据结构体
-///
-/// * `id`: 唯一标识
-/// * `name`: 游戏名
-/// * `abs_path`: 游戏启动程序绝对路径
-/// * `is_passed`: 是否通关
-/// * `is_displayed`: 是否展示到首页
-/// * `cover`: 封面地址(网络)
-/// * `background`: 背景地址(网络)
-/// * `description`: 游戏描述(简介)
-/// * `developer`: 游戏开发商
-/// * `local_cover`: 游戏封面(本地)
-/// * `local_background`: 游戏背景(本地)
-/// * `save_data_path`: 游戏存档路径
-/// * `backup_data_path`: 游戏备份压缩包路径
-/// * `play_time`: 游玩时长
-/// * `length`: 游戏总时长
-/// * `size`: 游戏大小
-/// * `last_played_at`: 上一次游玩时间
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Default, sqlx::FromRow)]
+use crate::{
+    message::traits::{MessageEvent, MessageHub},
+    user::entity::User,
+};
+
+// ── 游戏元数据 ────────────────────────────────────────────────────────────────
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Default, FromRow)]
 #[serde(rename_all = "camelCase")]
 pub struct GameMeta {
     pub id: String,
@@ -48,10 +34,10 @@ pub struct GameMeta {
     pub last_played_at: Option<DateTime<Local>>,
 }
 
-/// 游戏元数据集合
 pub type GameMetaList = Vec<GameMeta>;
 
-// 游戏时长模型
+// ── 游戏会话 ──────────────────────────────────────────────────────────────────
+
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 #[serde(rename_all = "camelCase")]
 pub struct PlaySession {
@@ -62,25 +48,17 @@ pub struct PlaySession {
     pub last_played_at: DateTime<Local>,
 }
 
-// 游戏运行状态模型
-pub struct RunningGameStatus {
-    pub game_pid: u32,
+// ── 压缩包条目（转发 infra 类型） ─────────────────────────────────────────────
+pub use crate::infra::archive::ArchiveEntry;
+
+// ── 运行时状态 ────────────────────────────────────────────────────────────────
+
+/// 正在运行中的游戏进程信息
+pub struct RunningGame {
+    pub pid: u32,
 }
 
-#[derive(Clone, Debug)]
-pub enum GameEvent {
-    // 用户资源任务
-    UserResourceTask {
-        meta: User,
-    },
-    // 游戏资源任务消息
-    GameResourceTask {
-        meta: GameMeta,
-        target: ResourceTarget,
-    },
-}
-
-// 资源任务的标志位，判断要下载哪些资源
+/// 资源下载目标
 #[derive(Clone, Debug)]
 pub enum ResourceTarget {
     All,
@@ -88,40 +66,34 @@ pub enum ResourceTarget {
     BackgroundOnly,
 }
 
+// ── 消息事件 ──────────────────────────────────────────────────────────────────
+
+#[derive(Clone, Debug)]
+pub enum GameEvent {
+    /// 游戏封面 / 背景图片需要下载
+    GameResourceTask {
+        meta: GameMeta,
+        target: ResourceTarget,
+    },
+    /// 用户头像需要下载
+    UserResourceTask { meta: User },
+}
+
 impl MessageEvent for GameEvent {}
 
-// 集中式消息管理器
 pub struct GameMessageHub {
-    pub game_tx: broadcast::Sender<GameEvent>,
+    pub tx: broadcast::Sender<GameEvent>,
 }
 
 impl MessageHub<GameEvent> for GameMessageHub {
     fn new(capacity: usize) -> Self {
         let (tx, _) = broadcast::channel(capacity);
-        Self { game_tx: tx }
+        Self { tx }
     }
-
-    // 提供一个便捷的订阅方法
     fn subscribe(&self) -> broadcast::Receiver<GameEvent> {
-        self.game_tx.subscribe()
+        self.tx.subscribe()
     }
-
-    // 提供一个便捷的发布方法
     fn publish(&self, event: GameEvent) {
-        let _ = self.game_tx.send(event);
+        let _ = self.tx.send(event);
     }
-}
-
-// ----------------------------------------------------------------------------------
-// ----------------------------------游戏压缩包相关----------------------------------
-// ----------------------------------------------------------------------------------
-
-/// 压缩包模型
-#[derive(serde::Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct ArchiveEntry {
-    pub name: String,
-    pub size: u64,
-    pub is_dir: bool,
-    pub encrypted: bool,
 }

@@ -1,106 +1,95 @@
-//! sys模块,用于监视cpu，内存等使用情况
+//! 系统监控模块
+//!
+//! - 每 2 秒向前端推送 CPU / 内存使用率
+//! - 启动时从数据库恢复所有已授权的路径权限
 
-use std::path::Path;
-use std::time::Duration;
+use std::{path::Path, time::Duration};
 
-use sqlx::SqlitePool;
+use serde::{Deserialize, Serialize};
+use sqlx::{FromRow, SqlitePool};
 use sysinfo::System;
-use tauri::Manager;
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_fs::FsExt;
 use tauri_plugin_log::log::{debug, error};
 
-use crate::sys::entity::{AuthScope, SystemStats};
-
-mod entity;
-
-/// sys模块初始化函数
-///
-/// * `app_handle`: app句柄
-pub fn init(app_handle: &AppHandle) {
-    let handle = app_handle.clone();
-    // 启动内存，cpu监视
-    start_hardware_monitor(&handle);
-    add_file_permissions(&handle);
+pub fn init(handle: &AppHandle) {
+    start_monitor(handle);
+    restore_permissions(handle);
 }
 
-/// 监视cpu和内存的使用情况
-///
-/// * `handle`: app句柄
-fn start_hardware_monitor(handle: &AppHandle) {
+// ── 硬件监控 ──────────────────────────────────────────────────────────────────
+
+#[derive(Serialize, Deserialize, Clone, Copy)]
+#[serde(rename_all = "camelCase")]
+pub struct SystemStats {
+    pub cpu_usage: f64,
+    pub memory_usage: f64,
+}
+
+fn start_monitor(handle: &AppHandle) {
     let handle = handle.clone();
     std::thread::spawn(move || {
         let mut sys = System::new_all();
         loop {
-            // 刷新系统信息
             sys.refresh_cpu_usage();
             sys.refresh_memory();
 
-            // 计算数据
-            let cpu_usage = sys.global_cpu_usage() as f64;
-            let used_mem = sys.used_memory() as f64;
-            let total_mem = sys.total_memory() as f64;
-            let memory_usage = (used_mem / total_mem) * 100.0;
+            let stats = SystemStats {
+                cpu_usage: sys.global_cpu_usage() as f64,
+                memory_usage: (sys.used_memory() as f64 / sys.total_memory() as f64) * 100.0,
+            };
 
-            // 推送事件到所有窗口
-            // 事件名称为 "sys-monitor"，载荷为 SystemStats 结构体
-            let _ = handle.emit(
-                "sys-monitor",
-                SystemStats {
-                    cpu_usage,
-                    memory_usage,
-                },
-            );
-
-            // 设置轮询间隔（例如 2 秒）
+            let _ = handle.emit("sys-monitor", stats);
             std::thread::sleep(Duration::from_secs(2));
         }
     });
 }
 
-/// 将数据库中存储的路径全部授权
-///
-/// * `handle`: app句柄
-fn add_file_permissions(handle: &AppHandle) {
+// ── 权限恢复 ──────────────────────────────────────────────────────────────────
+
+#[derive(FromRow, Debug)]
+struct AuthScope {
+    path: String,
+}
+
+fn restore_permissions(handle: &AppHandle) {
     let handle = handle.clone();
 
-    // 从 Tauri State 获取数据库连接池
-    if let Some(pool) = handle.try_state::<SqlitePool>() {
-        let pool_inner = pool.inner().clone();
+    let Some(pool) = handle.try_state::<SqlitePool>() else {
+        error!("未能获取 SqlitePool，跳过权限恢复");
+        return;
+    };
 
-        // 异步执行路径授权
-        tauri::async_runtime::spawn(async move {
-            // 使用 query_as 直接映射到 AuthScope 结构体
-            let rows = sqlx::query_as::<_, AuthScope>(
-                "SELECT id, path, authorized_at FROM authorized_scopes",
-            )
-            .fetch_all(&pool_inner)
-            .await;
+    let pool = pool.inner().clone();
 
-            match rows {
-                Ok(scopes) => {
-                    let scope_manager = handle.fs_scope();
-                    let asset_scope = handle.asset_protocol_scope();
-                    for auth in scopes {
-                        debug!("要授予的路径是: {}", auth.path);
-                        let path_to_auth = auth.path;
-                        let path = Path::new(&path_to_auth);
-                        if let Some(parent_dir) = path.parent() {
-                            if let Err(e) = scope_manager.allow_directory(parent_dir, true) {
-                                error!("无法授权路径 [{}]: {}", path_to_auth, e);
-                            }
-                            if let Err(e) = asset_scope.allow_directory(parent_dir, true) {
-                                error!("无法授权路径 [{}]: {}", path_to_auth, e);
-                            }
-                        }
-                    }
-                }
-                Err(e) => {
-                    error!("从数据库读取授权列表失败: {}", e);
-                }
+    tauri::async_runtime::spawn(async move {
+        let scopes = match sqlx::query_as::<_, AuthScope>(
+            "SELECT path FROM authorized_scopes",
+        )
+        .fetch_all(&pool)
+        .await
+        {
+            Ok(s) => s,
+            Err(e) => {
+                error!("读取授权列表失败: {}", e);
+                return;
             }
-        });
-    } else {
-        error!("警告: 未能从 State 获取 SqlitePool，跳过自动授权。");
-    }
+        };
+
+        let fs_scope = handle.fs_scope();
+        let asset_scope = handle.asset_protocol_scope();
+
+        for scope in scopes {
+            let path = Path::new(&scope.path);
+            let dir = path.parent().unwrap_or(path);
+            debug!("恢复路径权限: {:?}", dir);
+
+            if let Err(e) = fs_scope.allow_directory(dir, true) {
+                error!("FS 权限恢复失败 {:?}: {}", dir, e);
+            }
+            if let Err(e) = asset_scope.allow_directory(dir, true) {
+                error!("Asset 权限恢复失败 {:?}: {}", dir, e);
+            }
+        }
+    });
 }
