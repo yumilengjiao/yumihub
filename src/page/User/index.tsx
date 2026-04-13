@@ -63,10 +63,10 @@ export default function User() {
 
   const greeting = useMemo(() => {
     const h = new Date().getHours()
-    if (h >= 5  && h < 11) return { text: t`早上好`, sub: t`新的一天，也要充满元气哦！`,   icon: <Sunrise size={22} className="text-orange-400" /> }
-    if (h >= 11 && h < 14) return { text: t`中午好`, sub: t`午饭吃了吗？记得休息一下。`,    icon: <Sun     size={22} className="text-yellow-400" /> }
-    if (h >= 14 && h < 18) return { text: t`下午好`, sub: t`来杯咖啡吧，又是努力的一天。`, icon: <Coffee  size={22} className="text-amber-500" /> }
-    if (h >= 18 && h < 22) return { text: t`晚上好`, sub: t`辛苦了，开启一段精彩的故事吧。`,icon: <Sunset  size={22} className="text-rose-400" /> }
+    if (h >= 5 && h < 11) return { text: t`早上好`, sub: t`新的一天，也要充满元气哦！`, icon: <Sunrise size={22} className="text-orange-400" /> }
+    if (h >= 11 && h < 14) return { text: t`中午好`, sub: t`午饭吃了吗？记得休息一下。`, icon: <Sun size={22} className="text-yellow-400" /> }
+    if (h >= 14 && h < 18) return { text: t`下午好`, sub: t`来杯咖啡吧，又是努力的一天。`, icon: <Coffee size={22} className="text-amber-500" /> }
+    if (h >= 18 && h < 22) return { text: t`晚上好`, sub: t`辛苦了，开启一段精彩的故事吧。`, icon: <Sunset size={22} className="text-rose-400" /> }
     return { text: t`晚安`, sub: t`夜深了，推完这节就快去睡觉吧。`, icon: <Moon size={22} className="text-indigo-400" /> }
   }, [])
 
@@ -79,16 +79,16 @@ export default function User() {
   const navMonth = (dir: 1 | -1) => {
     let m = journeyMonth + dir, y = journeyYear
     if (m > 12) { m = 1; y++ }
-    if (m < 1)  { m = 12; y-- }
+    if (m < 1) { m = 12; y-- }
     setJourneyMonth(m); setJourneyYear(y)
   }
 
   return (
-    <div className="relative h-full w-full overflow-y-auto overflow-x-hidden bg-zinc-100 dark:bg-zinc-950">
+    <div className="relative h-full w-full overflow-y-auto overflow-x-hidden bg-zinc-100 dark:bg-zinc-900/95 pt-14">
       {bgStyle && <div className="fixed inset-0 z-0 pointer-events-none" style={bgStyle} />}
       <div className="fixed inset-0 z-0 pointer-events-none bg-white/20 dark:bg-black/40" />
 
-      <div className="relative z-10 px-12 pt-14 pb-20 space-y-10 max-w-7xl mx-auto">
+      <div className="relative z-10 px-12 pt-14 pb-20 space-y-10 max-w-[85vw] mx-auto">
 
         {/* ─── 个人信息头 ─────────────────────────────────────────────────── */}
         <motion.div
@@ -158,7 +158,11 @@ export default function User() {
               <YearNav year={selectedYear} onPrev={() => navYear(-1)} onNext={() => navYear(1)} />
             }
           />
-          <DragScroller height="h-44">
+          <DragScroller height="h-85" className={
+            cn(
+              "border-2 bg-secondary/40"
+            )
+          }>
             <ActivityHeatmap year={selectedYear} />
           </DragScroller>
         </motion.div>
@@ -167,12 +171,14 @@ export default function User() {
         <div className="grid grid-cols-2 gap-10">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
             <SectionTitle label="System" />
-            <SystemMonitor />
+            <div className="h-64 bg-secondary/40 border-2 p-6">
+              <SystemMonitor />
+            </div>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.10 }}>
             <SectionTitle label="Developers" />
-            <div className="h-64">
+            <div className="h-64 bg-secondary/40 border-2">
               <DeveloperRadar />
             </div>
           </motion.div>
@@ -299,13 +305,13 @@ function SystemMonitor() {
 
   useEffect(() => {
     if (user?.selectedDisk)
-      invoke<number>(Cmds.GET_DISK_USAGE, { path: user.selectedDisk }).then(setDiskUsage).catch(() => {})
+      invoke<number>(Cmds.GET_DISK_USAGE, { path: user.selectedDisk }).then(setDiskUsage).catch(() => { })
   }, [user?.selectedDisk])
 
   const bars = [
-    { label: "CPU",  value: stats?.cpuUsage    || 0, icon: <Cpu         size={16} />, color: "#6366f1" },
-    { label: "RAM",  value: stats?.memoryUsage  || 0, icon: <MemoryStick size={16} />, color: "#8b5cf6" },
-    { label: "Disk", value: diskUsage,                icon: <HardDrive   size={16} />, color: "#06b6d4" },
+    { label: "CPU", value: stats?.cpuUsage || 0, icon: <Cpu size={16} />, color: "#6366f1" },
+    { label: "RAM", value: stats?.memoryUsage || 0, icon: <MemoryStick size={16} />, color: "#8b5cf6" },
+    { label: "Disk", value: diskUsage, icon: <HardDrive size={16} />, color: "#06b6d4" },
   ]
 
   return (
@@ -426,7 +432,7 @@ function JourneyPanel({ year, month }: { year: number; month: number }) {
 
   if (!snapshots.length) {
     return (
-      <div className="flex flex-col items-center justify-center h-40 gap-3 text-zinc-300 dark:text-zinc-700">
+      <div className="flex flex-col items-center justify-center h-40 gap-3 text-zinc-300 dark:text-zinc-700 bg-secondary/40 border-2">
         <Camera size={40} strokeWidth={1.5} />
         <p className="text-sm font-semibold"><Trans>本月暂无截图记录</Trans></p>
       </div>

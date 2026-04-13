@@ -33,7 +33,7 @@ export default function Setting() {
   const ActivePanel = PANEL[active]
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-zinc-100 dark:bg-zinc-950">
+    <div className="relative h-full w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900/90">
       {bgStyle && <div className="absolute inset-0 z-0 pointer-events-none" style={bgStyle} />}
       <div className="absolute inset-0 z-0 pointer-events-none bg-white/20 dark:bg-black/40" />
 

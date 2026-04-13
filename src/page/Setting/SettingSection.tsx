@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import useConfigStore from "@/store/configStore"
 
 interface SectionProps {
   title: string
@@ -8,8 +9,9 @@ interface SectionProps {
 }
 
 export function SettingSection({ title, description, children, className }: SectionProps) {
+  const bgOpacity = useConfigStore(config => config.config.interface.commonCardOpacity)
   return (
-    <div className={cn("mb-8", className)}>
+    <div style={{ opacity: bgOpacity }} className={cn("mb-8", className)}>
       <div className="mb-3 px-1">
         <h3 className="text-xs font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">
           {title}

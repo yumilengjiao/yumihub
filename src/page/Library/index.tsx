@@ -81,7 +81,7 @@ export default function Library() {
 
   return (
     // 根容器：必须是 relative，且 overflow-hidden 挡住背景缩放产生的溢出
-    <div className="w-full h-full flex flex-col bg-zinc-200 dark:bg-zinc-900 relative overflow-hidden">
+    <div className="w-full h-full flex flex-col bg-zinc-200 dark:bg-zinc-900/90 relative overflow-hidden">
 
       {/* 【图层 A】背景层：绝对定位，z-0 垫底，关键是 pointer-events-none 别挡住点击 */}
       {bgStyle && (

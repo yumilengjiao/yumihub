@@ -112,7 +112,7 @@ export default function TitleBar({ node, children }: ThemeComponentProps & { chi
       {/* 视觉层 + 交互层 */}
       <div
         data-tauri-drag-region
-        className={cn(visualClasses, "cursor-default max-h-full ")}
+        className={cn(visualClasses, "cursor-default max-h-full bg-zinc-500/60")}
         style={{
           width: isFull && !isVertical ? "100%" : "auto",
           height: isFull && isVertical ? "100%" : "auto"
