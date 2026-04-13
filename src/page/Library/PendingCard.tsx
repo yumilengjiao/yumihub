@@ -40,7 +40,6 @@ interface TemporaryItem {
   originalPath: string   // 原始传入路径（用于文件夹识别）
   folderName: string     // 文件夹名
   idInput: string        // 输入框内的 ID
-  activeSource: 'vndb' | 'bangumi'//  |'ymgal'
   gameInfo: PendingGameInfo | null // 包含三个源的原始数据
   expanded: boolean      // 是否展开
 }
@@ -137,9 +136,6 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
         return { ...meta, name: data.vndb.alttitle || item.folderName }
       }
 
-      // TODO:将来对接ymgal源
-      // if (item.activeSource === 'ymgal' && data.ymgal) {
-      //   const y = data.ymgal as YmResult
       //   return {
       //     ...partial,
       //     name: y.chineseName || y.name || item.folderName, // 优先使用 API 名字
@@ -223,7 +219,6 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
 
     setSingleLoading(itemId)
     try {
-      let updatedGameInfo = { ...(item.gameInfo || { absPath: item.absPath, bangumi: null, vndb: null, ymgal: null }) }
 
       if (item.activeSource === 'bangumi') {
         const res = await requestBangumiById(item.idInput, config.auth.bangumiToken)

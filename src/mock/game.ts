@@ -73,7 +73,6 @@ const gameData = {
   },
 
   // 月幕数据暂时留空
-  ymgal: null
 }
 
 // 雷达图数据

@@ -31,7 +31,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
   const [isFetching, setIsFetching] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const [resultData, setResultData] = useState<PendingGameInfo | null>(null)
-  const [activeSource, setActiveSource] = useState<'vndb' | 'bangumi' | 'ymgal'>('bangumi')
+  const [activeSource, setActiveSource] = useState<'vndb' | 'bangumi'>('bangumi')
   const [searchId, setSearchId] = useState('')
 
   const { config } = useConfigStore()
@@ -102,10 +102,10 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
     try {
       if (activeSource === 'bangumi') {
         const res = await requestBangumiById(searchId, config.auth.bangumiToken)
-        if (res) setResultData(prev => prev ? ({ ...prev, bangumi: res as Datum }) : { absPath, bangumi: res as Datum, vndb: null, ymgal: null })
+        if (res) setResultData(prev => prev ? ({ ...prev, bangumi: res as Datum }) : { absPath, bangumi: res as Datum, vndb: null,  })
       } else if (activeSource === 'vndb') {
         const res = await requestVNDBById(searchId)
-        if (res) setResultData(prev => prev ? ({ ...prev, vndb: res as any }) : { absPath, bangumi: null, vndb: res as any, ymgal: null })
+        if (res) setResultData(prev => prev ? ({ ...prev, vndb: res as any }) : { absPath, bangumi: null, vndb: res as any,  })
       }
       toast.success(t`数据已同步`)
     } catch (err) {
@@ -153,7 +153,6 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
       // 自动切换源
       if (res.bangumi) setActiveSource('bangumi');
       else if (res.vndb) setActiveSource('vndb');
-      else if (res.ymgal) setActiveSource('ymgal');
 
     } catch (err) {
       // 只有在没超时的情况下，才报普通的网络错误

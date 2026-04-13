@@ -1,30 +1,29 @@
 import { Cmds } from "@/lib/enum"
+import { ShortcutSetting } from "@/types/shortcut"
 import { invoke } from "@tauri-apps/api/core"
 import { create } from "zustand"
 import { immer } from "zustand/middleware/immer"
 
-interface shortcutStoreParams {
-  shortcuts: ShortcutSetting[],
-  fetchShortcuts: () => Promise<void>,
-  updateShorts: (shortcuts: ShortcutSetting[]) => Promise<void>,
+interface ShortcutStore {
+  shortcuts: ShortcutSetting[]
+  fetchShortcuts: () => Promise<void>
+  updateShortcuts: (shortcuts: ShortcutSetting[]) => Promise<void>
 }
 
-const useShortcutStore = create<shortcutStoreParams>()(immer((set) => ({
-  shortcuts: [],
-  async fetchShortcuts() {
-    const shortcuts = await invoke<ShortcutSetting[]>(Cmds.GET_SHORTCUTS)
-    set(state => {
-      state.shortcuts = shortcuts
-    })
-  },
-  async updateShorts(shortcuts) {
-    set(state => {
-      state.shortcuts = shortcuts
-    })
-    invoke(Cmds.UPDATE_SHORTCUTS, { shortcuts: shortcuts })
-  },
-})))
+const useShortcutStore = create<ShortcutStore>()(
+  immer((set) => ({
+    shortcuts: [],
 
-useShortcutStore.getState().fetchShortcuts()
+    async fetchShortcuts() {
+      const data = await invoke<ShortcutSetting[]>(Cmds.GET_SHORTCUTS)
+      set(s => { s.shortcuts = data })
+    },
+
+    async updateShortcuts(shortcuts) {
+      set(s => { s.shortcuts = shortcuts })
+      await invoke(Cmds.UPDATE_SHORTCUTS, { shortcuts })
+    },
+  }))
+)
 
 export default useShortcutStore

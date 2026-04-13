@@ -1,98 +1,90 @@
-import { motion, Variants } from "framer-motion"
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { usePageBackground } from "@/hooks/usePageBackground"
+import { cn } from "@/lib/utils"
 import BaseSetting from "./BaseSetting"
 import InterfaceSetting from "./InterfaceSetting"
-import SysSetting from "./SysSetting"
 import ResourceSetting from "./ResourceSetting"
 import AuthSetting from "./AuthSetting"
-import { useMemo } from "react"
-import { convertFileSrc } from "@tauri-apps/api/core"
-import useConfigStore from "@/store/configStore"
+import SysSetting from "./SysSetting"
+import { useLingui } from "@lingui/react"
+import { t } from "@lingui/core/macro"
 
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.12 }
-  }
-}
+const TABS = [
+  { id: "base", label: () => t`基础` },
+  { id: "interface", label: () => t`外观` },
+  { id: "system", label: () => t`系统` },
+  { id: "resource", label: () => t`存储` },
+  { id: "auth", label: () => t`权限` },
+]
 
-const itemVariants: Variants = {
-  hidden: { y: 30, opacity: 0, scale: 0.95 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    scale: 1,
-    transition: { type: "spring", stiffness: 200, damping: 20 }
-  }
+const PANEL: Record<string, React.FC> = {
+  base: BaseSetting,
+  interface: InterfaceSetting,
+  system: SysSetting,
+  resource: ResourceSetting,
+  auth: AuthSetting,
 }
 
 export default function Setting() {
-  const globalBackground = useConfigStore(state => state.config.interface.globalBackground)
-
-  // 统一解析背景配置
-  const bgConfig = useMemo(() => {
-    const isStr = typeof globalBackground === "string";
-    return {
-      path: isStr ? globalBackground : (globalBackground?.path || ""),
-      opacity: isStr ? 1 : (globalBackground?.opacity ?? 1),
-      blur: isStr ? 0 : (globalBackground?.blur ?? 0)
-    };
-  }, [globalBackground]);
-
-  const bgStyle = useMemo(() => {
-    if (!bgConfig.path.trim()) return null;
-
-    const blurAmount = bgConfig.blur;
-    return {
-      backgroundImage: `url("${convertFileSrc(bgConfig.path)}")`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-      opacity: bgConfig.opacity,
-      filter: blurAmount > 0 ? `blur(${blurAmount}px)` : "none",
-      // 这里的 scale 动态计算：模糊越大，放大倍率稍微增加以抵消边缘缩进
-      transform: blurAmount > 0 ? `scale(${1 + (blurAmount * 0.015)})` : "scale(1)",
-      transition: "filter 0.3s ease, opacity 0.3s ease", // 让滑块调节时有平滑过渡感
-    };
-  }, [bgConfig]);
+  const [active, setActive] = useState("base")
+  const bgStyle = usePageBackground()
+  const { i18n } = useLingui()
+  const ActivePanel = PANEL[active]
 
   return (
-    <div className="relative h-full w-full bg-zinc-200 dark:bg-zinc-900 overflow-hidden">
+    <div className="relative h-full w-full overflow-hidden bg-zinc-100 dark:bg-zinc-950">
+      {bgStyle && <div className="absolute inset-0 z-0 pointer-events-none" style={bgStyle} />}
+      <div className="absolute inset-0 z-0 pointer-events-none bg-white/20 dark:bg-black/40" />
 
-      {bgStyle && (
-        <div
-          className="absolute inset-0 z-0 pointer-events-none will-change-[filter,transform]"
-          style={bgStyle}
-        />
-      )}
+      <div className="relative z-10 flex flex-col h-full p-12">
 
-      <div className="absolute inset-0 z-5 pointer-events-none bg-white/5 dark:bg-black/10" />
-
-      <div className="absolute inset-0 z-10 overflow-y-auto scrollbar-none pt-28 pb-20">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="max-w-[1300px] mx-auto px-10 grid grid-cols-12 gap-10"
-        >
-          {/* 左列布局 */}
-          <div className="col-span-6 space-y-10 mt-12">
-            {[BaseSetting, SysSetting, AuthSetting].map((Component, index) => (
-              <motion.div key={index} variants={itemVariants}>
-                <Component />
-              </motion.div>
-            ))}
+        {/* 顶部 Tab 栏 */}
+        <div className="px-12 pt-4 pb-0 shrink-0">
+          <h1 className="text-3xl font-black text-zinc-800 dark:text-zinc-100 tracking-tight mb-6">
+            Settings
+          </h1>
+          <div className="flex items-center gap-1 border-b border-zinc-200 dark:border-zinc-800">
+            {TABS.map(tab => {
+              const isActive = active === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActive(tab.id)}
+                  className={cn(
+                    "relative px-5 py-3 text-sm font-semibold transition-colors",
+                    isActive
+                      ? "text-zinc-900 dark:text-zinc-100"
+                      : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                  )}
+                >
+                  {tab.label()}
+                  {isActive && (
+                    <motion.div
+                      layoutId="setting-tab-indicator"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-custom-500 rounded-full"
+                    />
+                  )}
+                </button>
+              )
+            })}
           </div>
+        </div>
 
-          {/* 右列布局 */}
-          <div className="col-span-6 space-y-10">
-            {[InterfaceSetting, ResourceSetting].map((Component, index) => (
-              <motion.div key={index} variants={itemVariants}>
-                <Component />
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        {/* 内容区 */}
+        <div className="flex-1 overflow-y-auto min-h-0 px-12 pt-8 pb-16">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.15 }}
+            >
+              <ActivePanel key={i18n.locale} />
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   )

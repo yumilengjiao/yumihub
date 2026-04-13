@@ -8,7 +8,7 @@ import { Background } from "@/components/custom/Background";
 import { ThemeComponentProps } from "@/types/node";
 import AppButton from "@/components/custom/AppButton";
 import AppIcon from "@/components/custom/AppIcon";
-import MainContentSlot from "@/components/custom/MainContnetSlot";
+import MainContentSlot from "@/components/custom/MainContentSlot";
 import SideBar from "@/components/custom/SideBar";
 import TitleBar from "@/components/custom/TitleBar";
 import Entry from "@/components/custom/Entry";

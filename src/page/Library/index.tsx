@@ -62,7 +62,7 @@ export default function Library() {
           result = (gb.playTime || 0) - (ga.playTime || 0)
           break
         case "name":
-          result = ga.name.localeCompare(ga.name, 'zh-CN')
+          result = ga.name.localeCompare(gb.name, 'zh-CN')
           break
         case "lastPlayed":
           const valA = ga?.lastPlayedAt ? new Date(ga.lastPlayedAt).getTime() : 0
@@ -90,6 +90,8 @@ export default function Library() {
           style={bgStyle}
         />
       )}
+      {/* 深色遮罩，与 User/Setting 页保持一致 */}
+      <div className="absolute inset-0 z-0 pointer-events-none bg-white/20 dark:bg-black/40" />
 
       <div className="relative flex flex-col w-full h-full pt-5">
 

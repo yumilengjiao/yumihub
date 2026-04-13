@@ -1,11 +1,11 @@
-interface Companion {
+export interface Companion {
   id?: number
   name: string
   path: string
   args: string
   isEnabled: boolean
   isWindowManaged: boolean
-  triggerMode: 'app' | 'game'
+  triggerMode: "app" | "game"
   sortOrder: number
   description: string
 }

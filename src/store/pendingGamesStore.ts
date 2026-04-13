@@ -1,58 +1,52 @@
 /**
- * @module 这个仓库存储了导入游戏信息时所有游戏的可能信息
- * 在网络io后的信息会存到这里
+ * 导入游戏时的临时数据仓库
+ * 存储从各平台 API 获取的候选数据，用户确认后再持久化
  */
 
-import { Datum, GameMetaList, VNDBResult, YmResult } from "@/types/game"
+import { BangumiSubject, VNDBResult } from "@/types/api"
+import { GameMeta, GameMetaList } from "@/types/game"
 import { create } from "zustand"
 import { immer } from "zustand/middleware/immer"
-import { GameMeta } from "@/types/game"
 
-//查询游戏获取的来自三个平台所有的数据
 export interface PendingGameInfo {
   absPath: string | null
   vndb: VNDBResult | null
-  bangumi: Datum | null
-  ymgal: YmResult | null
+  bangumi: BangumiSubject | null
 }
 
 interface PendingGameStore {
-  //获取的所有数据
   pendingGames: PendingGameInfo[]
-  //最终决定要持久化的数据
   readyGames: GameMetaList
   extendPendingGames: (param: PendingGameInfo | PendingGameInfo[]) => void
-  addReadyGames: (game: GameMeta) => void
+  addReadyGame: (game: GameMeta) => void
   updateReadyGame: (game: GameMeta) => void
   reset: () => void
   resetReadyGames: () => void
 }
 
-// 用来存储网络io时获取结果的仓库
 const usePendingGameStore = create<PendingGameStore>()(
   immer((set) => ({
-    pendingGames: [] as PendingGameInfo[],
-    readyGames: [] as GameMetaList,
+    pendingGames: [],
+    readyGames: [],
+
     extendPendingGames(param) {
-      let isArray = Array.isArray(param)
-      if (isArray) {
-        set((state) => {
-          state.pendingGames.push(...(param as PendingGameInfo[]))
-        })
-      } else {
-        set((state) => {
-          state.pendingGames.push(param as PendingGameInfo)
-        })
-      }
+      set((state) => {
+        if (Array.isArray(param)) {
+          state.pendingGames.push(...param)
+        } else {
+          state.pendingGames.push(param)
+        }
+      })
     },
-    addReadyGames(game) {
+
+    addReadyGame(game) {
       set((state) => {
         state.readyGames.push(game)
       })
     },
-    updateReadyGame: (meta: GameMeta) => {
+
+    updateReadyGame(meta) {
       set((state) => {
-        // 寻找是否已经存在，存在则替换，不存在则添加
         const index = state.readyGames.findIndex(g => g.absPath === meta.absPath)
         if (index !== -1) {
           state.readyGames[index] = meta
@@ -61,15 +55,13 @@ const usePendingGameStore = create<PendingGameStore>()(
         }
       })
     },
+
     reset() {
-      set((state) => {
-        state.pendingGames = []
-      })
+      set((state) => { state.pendingGames = [] })
     },
+
     resetReadyGames() {
-      set((state) => {
-        state.readyGames = []
-      })
+      set((state) => { state.readyGames = [] })
     },
   }))
 )

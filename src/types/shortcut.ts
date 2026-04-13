@@ -1,9 +1,5 @@
-/**
- * 快捷键结构
- */
-interface ShortcutSetting {
+export interface ShortcutSetting {
   id: string
-  keyCombo: String | null
+  keyCombo: string | null
   isGlobal: boolean
 }
-

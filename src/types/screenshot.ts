@@ -3,6 +3,6 @@ export interface Screenshot {
   gameId: string
   filePath: string
   createdAt: string
-  thoughts: string
+  thoughts: string | null
 }
 

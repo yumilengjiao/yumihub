@@ -1,57 +1,46 @@
-import { create } from 'zustand';
-import { immer } from 'zustand/middleware/immer';
-import { invoke } from '@tauri-apps/api/core';
-import { ThemeIr, ThemeNode } from '@/types/node';
-import { Cmds } from '@/lib/enum';
+import { create } from "zustand"
+import { immer } from "zustand/middleware/immer"
+import { invoke } from "@tauri-apps/api/core"
+import { ThemeIr, ThemeNode } from "@/types/node"
+import { Cmds } from "@/lib/enum"
 
-// 样式转换辅助函数
-const transformStyles = (node: ThemeNode) => {
+/** 将 kebab-case CSS 属性名转换为 camelCase，供 React style 使用 */
+function toCamelCase(node: ThemeNode) {
   if (node.style) {
-    const newStyle: Record<string, any> = {};
-    Object.keys(node.style).forEach((key) => {
-      // 转换 font-size -> fontSize
-      const camelKey = key.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-      newStyle[camelKey] = node.style[key];
-    });
-    node.style = newStyle;
+    const camel: Record<string, any> = {}
+    for (const key of Object.keys(node.style)) {
+      const camelKey = key.replace(/-([a-z])/g, (_, c) => c.toUpperCase())
+      camel[camelKey] = (node.style as any)[key]
+    }
+    node.style = camel as any
   }
-  // 递归处理子节点
-  node.children?.forEach(transformStyles);
-};
+  node.children?.forEach(toCamelCase)
+}
 
 interface ThemeState {
-  // 核心数据：当前活跃的主题
-  theme?: ThemeIr;
-  // UI 状态：当前正在查看哪一页
-  currentPageKey: string;
-  isLoading: boolean;
-
-  // 操作
-  fetchThemes: () => Promise<void>;
+  theme?: ThemeIr
+  isLoading: boolean
+  fetchTheme: () => Promise<void>
 }
 
 export const useThemeStore = create<ThemeState>()(
   immer((set) => ({
-    currentPageKey: 'index', // 默认首页
     isLoading: false,
 
-    // 从 Rust 后端拉取数据
-    fetchThemes: async () => {
-      const data = await invoke<ThemeIr>(Cmds.GET_THEMES);
-
-      // 在这里一次性处理所有样式问题
-      // 处理全局节点样式
-      transformStyles(data.layout.global);
-      // 处理所有页面的内容样式
-      Object.values(data.layout.pages).forEach((page) => {
-        transformStyles(page.content);
-      });
-      set(state => {
-        state.theme = data;
-        state.isLoading = false;
-      })
+    fetchTheme: async () => {
+      set(s => { s.isLoading = true })
+      try {
+        const data = await invoke<ThemeIr>(Cmds.GET_THEMES)
+        toCamelCase(data.layout.global)
+        Object.values(data.layout.pages).forEach(page => toCamelCase(page.content))
+        set(s => {
+          s.theme = data
+          s.isLoading = false
+        })
+      } catch (e) {
+        console.error("获取主题失败:", e)
+        set(s => { s.isLoading = false })
+      }
     },
   }))
-);
-
-useThemeStore.getState().fetchThemes()
+)

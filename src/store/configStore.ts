@@ -9,52 +9,53 @@ interface ConfigStore {
   updateConfig: (fn: (config: Config) => void) => void
 }
 
-const useConfigStore = create<ConfigStore>()(immer((set, get) => ({
-  config: {
-    basic: {
-      autoStart: false,
-      silentStart: false,
-      autoCheckUpdate: false,
-      gameDisplayOrder: [],
-      language: "zh-cn",
-    },
-    interface: {
-      theme: "default",
-      themeMode: ThemeMode.Daytime,
-      themeColor: "Emerald",
-      fontFamily: "sys",
-      globalBackground: { path: "", opacity: 0.8, blur: 0 },
-      commonCardOpacity: 0.9
-    },
-    system: {
-      companion: false,
-      hotkeyActivation: false,
-      closeButtonBehavior: "quit", // 假设默认行为
-      logLevel: "info",
-      downloadConcurrency: 3,
-    },
-    storage: {
-      backupSavePath: "",
-      metaSavePath: "",
-      screenshotPath: "",
-      allowDownloadingResources: true,
-      galRootDir: "",
-      autoBackup: false,
-    },
-    auth: {
-      bangumiToken: ""
-    }
+const DEFAULT_CONFIG: Config = {
+  basic: {
+    autoStart: false,
+    silentStart: false,
+    autoCheckUpdate: false,
+    gameDisplayOrder: [],
+    language: "zh",
   },
-  updateConfig(fn: (config: Config) => void) {
-    set(state => {
-      fn(state.config)
-    })
-    try {
-      invoke(Cmds.UPDATE_CONFIG, { config: get().config })
-    } catch (error) {
-      console.error("更新配置信息失败", error)
-    }
+  interface: {
+    theme: "default",
+    themeMode: ThemeMode.Daytime,
+    themeColor: "theme-emerald",
+    fontFamily: "sys",
+    globalBackground: { path: "", opacity: 0.8, blur: 0 },
+    commonCardOpacity: 0.9,
   },
-})))
+  system: {
+    companion: false,
+    hotkeyActivation: false,
+    closeButtonBehavior: "Exit",
+    logLevel: "Info",
+    downloadConcurrency: 3,
+  },
+  storage: {
+    backupSavePath: "",
+    metaSavePath: "",
+    screenshotPath: "",
+    allowDownloadingResources: true,
+    galRootDir: "",
+    autoBackup: false,
+  },
+  auth: {
+    bangumiToken: "",
+  },
+}
+
+const useConfigStore = create<ConfigStore>()(
+  immer((set, get) => ({
+    config: DEFAULT_CONFIG,
+
+    updateConfig(fn) {
+      set(state => { fn(state.config) })
+      invoke(Cmds.UPDATE_CONFIG, { config: get().config }).catch(err => {
+        console.error("同步配置到后端失败:", err)
+      })
+    },
+  }))
+)
 
 export default useConfigStore

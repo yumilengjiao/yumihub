@@ -1,7 +1,5 @@
-import { Background } from "@/components/custom/Background"
-
 /**
- * 全局配置类型
+ * 配置
  */
 export interface Config {
   basic: Basic
@@ -11,10 +9,6 @@ export interface Config {
   auth: Authorization
 }
 
-// -----------------------------------------------------
-// ------------------------基础配置---------------------
-// -----------------------------------------------------
-
 export interface Basic {
   autoStart: boolean
   silentStart: boolean
@@ -23,23 +17,17 @@ export interface Basic {
   gameDisplayOrder: string[]
 }
 
-// -----------------------------------------------------
-// ------------------------界面配置---------------------
-// -----------------------------------------------------
-
 export interface Interface {
   theme: string
   themeMode: ThemeMode
   themeColor: string
   fontFamily: string
-  globalBackground: Background
+  globalBackground: GlobalBackground
   commonCardOpacity: number
 }
 
-/**
- * 全局背景设置参数
- */
-export interface Background {
+/** 全局背景图片设置 */
+export interface GlobalBackground {
   path: string
   opacity: number
   blur: number
@@ -51,44 +39,23 @@ export enum ThemeMode {
   Night = "Night",
 }
 
-// -----------------------------------------------------
-// ------------------------存储配置---------------------
-// -----------------------------------------------------
-
 export interface Storage {
-  /** 游戏存档备份路径 */
   backupSavePath: string
-  /** 游戏资源保存路径 */
   metaSavePath: string
-  /** 游戏快照保存路径 */
   screenshotPath: string
-  /** 所有游戏的根目录(用于防止所有游戏压缩后的目录) */
   galRootDir: string
-  /** 是否允许下载游戏资源到本地 */
   allowDownloadingResources: boolean
-  /** 是否自动备份 */
   autoBackup: boolean
 }
 
-// -----------------------------------------------------
-// ------------------------系统配置---------------------
-// -----------------------------------------------------
-
 export interface System {
-  /** 是否启用连携启动 */
   companion: boolean
   hotkeyActivation: boolean
-  /** 关闭按钮行为 */
   closeButtonBehavior: string
   logLevel: string
-  /** 下载并发量上限 */
-  downloadConcurrency: number // Rust 中的 i64 对应 TS 的 number
+  downloadConcurrency: number
 }
 
-// -----------------------------------------------------
-// ------------------------授权配置---------------------
-// -----------------------------------------------------
 export interface Authorization {
   bangumiToken: string
 }
-
