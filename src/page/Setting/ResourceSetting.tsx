@@ -3,7 +3,6 @@ import { invoke } from "@tauri-apps/api/core"
 import { DatabaseBackup, ArchiveRestore, Trash2, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { t } from "@lingui/core/macro"
-import { Trans } from "@lingui/react/macro"
 import useConfigStore from "@/store/configStore"
 import useGameStore from "@/store/gameStore"
 import { Cmds } from "@/lib/enum"
@@ -66,9 +65,9 @@ export default function ResourceSetting() {
           path={config.storage.galRootDir}
           onSelect={v => updateConfig(d => { d.storage.galRootDir = v })}
         />
-        <PathRow label={t`存档备份目录`}  path={config.storage.backupSavePath} readOnly />
-        <PathRow label={t`游戏资源目录`}  path={config.storage.metaSavePath}   readOnly />
-        <PathRow label={t`截图保存目录`}  path={config.storage.screenshotPath} readOnly />
+        <PathRow label={t`存档备份目录`} path={config.storage.backupSavePath} readOnly />
+        <PathRow label={t`游戏资源目录`} path={config.storage.metaSavePath} readOnly />
+        <PathRow label={t`截图保存目录`} path={config.storage.screenshotPath} readOnly />
       </SettingSection>
 
       <SettingSection title={t`数据操作`}>

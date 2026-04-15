@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, useMotionValue, animate } from 'framer-motion'
 import { ReactNode, useRef, useEffect, useState } from 'react'
 
 type HorizontalDragContainerProps = {
@@ -14,24 +14,25 @@ export function DragScroller({
 }: HorizontalDragContainerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+  const x = useMotionValue(0)
   const [constraints, setConstraints] = useState({ left: 0, right: 0 })
 
-  const calculateConstraints = () => {
+  const updateConstraints = () => {
     if (!containerRef.current || !contentRef.current) return
-
     const containerWidth = containerRef.current.offsetWidth
     const contentWidth = contentRef.current.scrollWidth
-
-    setConstraints({
-      left: containerWidth - contentWidth,
-      right: 0,
-    })
+    const left = Math.min(0, containerWidth - contentWidth)
+    setConstraints({ left, right: 0 })
+    // 关键修复：主动夹回 x，防止 Framer Motion 强制弹跳
+    const cur = x.get()
+    if (cur < left) animate(x, left, { duration: 0.15, ease: 'easeOut' })
+    else if (cur > 0) animate(x, 0, { duration: 0.15, ease: 'easeOut' })
   }
 
   useEffect(() => {
-    calculateConstraints()
-    window.addEventListener('resize', calculateConstraints)
-    return () => window.removeEventListener('resize', calculateConstraints)
+    updateConstraints()
+    window.addEventListener('resize', updateConstraints)
+    return () => window.removeEventListener('resize', updateConstraints)
   }, [])
 
   return (
@@ -45,6 +46,7 @@ export function DragScroller({
         dragConstraints={constraints}
         dragElastic={0.08}
         dragMomentum={true}
+        style={{ x }}
         whileTap={{ cursor: 'grabbing' }}
         className="h-full w-max"
       >
@@ -53,4 +55,5 @@ export function DragScroller({
     </div>
   )
 }
+
 export default DragScroller

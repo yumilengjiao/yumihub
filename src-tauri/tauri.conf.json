@@ -39,6 +39,7 @@
         "log",
         "net",
         "notification",
+        "opener",
         "shell",
         "tray",
         "window"

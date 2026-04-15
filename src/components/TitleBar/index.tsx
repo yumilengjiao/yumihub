@@ -6,11 +6,13 @@ import { ButtonGroupSeparator } from "./ButtonGroupSeparator"
 import { useEffect, useState } from "react"
 import useConfigStore from "@/store/configStore"
 import { getNextThemeMode } from "@/hooks/useTheme"
+import { useUpdateChecker } from "@/hooks/useUpdateChecker"
 
 export default function TitleBar() {
   const [isMax, setIsMax] = useState(false)
   const { config, updateConfig } = useConfigStore()
   const appWindow = getCurrentWindow()
+  const { updateInfo } = useUpdateChecker()
 
   const handleSwitchTheme = () => {
     updateConfig(d => {
@@ -45,6 +47,9 @@ export default function TitleBar() {
         <MainButton onClick={handleSwitchTheme}>
           <LampCeiling className="h-full w-auto block" />
         </MainButton>
+        {updateInfo?.hasUpdate && (
+          <div className="absolute top-1 right-1 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+        )}
         <ButtonGroupSeparator />
         <MainButton onClick={() => appWindow.minimize()}>
           <Minus className="h-full w-auto block" />

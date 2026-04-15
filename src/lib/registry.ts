@@ -9,7 +9,7 @@ import { ThemeComponentProps } from "@/types/node";
 import AppButton from "@/components/custom/AppButton";
 import AppIcon from "@/components/custom/AppIcon";
 import MainContentSlot from "@/components/custom/MainContentSlot";
-import SideBar from "@/components/custom/SideBar";
+import Sidebar from "@/components/custom/Sidebar";
 import TitleBar from "@/components/custom/TitleBar";
 import Entry from "@/components/custom/Entry";
 import { Avatar } from "@/components/custom/Avatar";
@@ -25,7 +25,7 @@ export const COMPONENT_MAP: Record<string, React.FC<ThemeComponentProps>> = {
   // 容器形态
   'row': SurfaceBase,
   'col': SurfaceBase,
-  'sidebar': SideBar,
+  'sidebar': Sidebar,
   'background': Background,
   'page': MainContentSlot,
   'titlebar': TitleBar,

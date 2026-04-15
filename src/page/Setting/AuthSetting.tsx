@@ -1,5 +1,4 @@
 import { t } from "@lingui/core/macro"
-import { Trans } from "@lingui/react/macro"
 import useConfigStore from "@/store/configStore"
 import { TokenRow } from "@/components/common/SettingRow"
 import { SettingSection } from "./SettingSection"

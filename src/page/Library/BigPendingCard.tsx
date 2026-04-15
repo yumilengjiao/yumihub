@@ -10,7 +10,7 @@ import { Loader2, Search, X, Check, FileText, WifiOff, RefreshCw } from 'lucide-
 import { cn, getParentDir } from "@/lib/utils"
 import { toast } from "sonner"
 import { PendingGameInfo } from '@/store/pendingGamesStore'
-import { Datum, GameMeta, VNDBResult } from '@/types/game'
+import { GameMeta } from '@/types/game'
 import { invoke } from '@tauri-apps/api/core'
 import useGameStore from '@/store/gameStore'
 import useConfigStore from '@/store/configStore'
@@ -21,6 +21,7 @@ import { t } from '@lingui/core/macro'
 
 // 导入你定义的转换工具
 import { transBangumiToGameMeta, transVNDBToGameMeta } from '@/lib/resolve'
+import { BangumiSubject, VNDBResult } from '@/types/api'
 
 interface BigPendingCardProps {
   absPath: string
@@ -66,7 +67,7 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
           : resultData.bangumi
 
         if (!bData) return null
-        const meta = transBangumiToGameMeta(partial, bData as Datum)
+        const meta = transBangumiToGameMeta(partial, bData as BangumiSubject)
         return {
           title: meta.name,
           desc: meta.description,
@@ -102,10 +103,10 @@ const BigPendingCard: React.FC<BigPendingCardProps> = ({ absPath, onCancel }) =>
     try {
       if (activeSource === 'bangumi') {
         const res = await requestBangumiById(searchId, config.auth.bangumiToken)
-        if (res) setResultData(prev => prev ? ({ ...prev, bangumi: res as Datum }) : { absPath, bangumi: res as Datum, vndb: null,  })
+        if (res) setResultData(prev => prev ? ({ ...prev, bangumi: res as BangumiSubject }) : { absPath, bangumi: res as BangumiSubject, vndb: null, })
       } else if (activeSource === 'vndb') {
         const res = await requestVNDBById(searchId)
-        if (res) setResultData(prev => prev ? ({ ...prev, vndb: res as any }) : { absPath, bangumi: null, vndb: res as any,  })
+        if (res) setResultData(prev => prev ? ({ ...prev, vndb: res as any }) : { absPath, bangumi: null, vndb: res as any, })
       }
       toast.success(t`数据已同步`)
     } catch (err) {

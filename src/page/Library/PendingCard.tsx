@@ -19,7 +19,8 @@ import { recognizeGame } from '@/api/uniform'
 import { transBangumiToGameMeta, transVNDBToGameMeta } from '@/lib/resolve'
 
 // 类型定义
-import { Datum, GameMeta, VNDBResult } from "@/types/game"
+import { GameMeta } from "@/types/game"
+import { BangumiSubject, VNDBResult } from "@/types/api"
 import usePendingGameStore, { PendingGameInfo } from "@/store/pendingGamesStore"
 import useGameStore from '@/store/gameStore'
 import { Cmds } from '@/lib/enum'
@@ -40,6 +41,7 @@ interface TemporaryItem {
   originalPath: string   // 原始传入路径（用于文件夹识别）
   folderName: string     // 文件夹名
   idInput: string        // 输入框内的 ID
+  activeSource: 'bangumi' | 'vndb'  // 当前激活的数据源
   gameInfo: PendingGameInfo | null // 包含三个源的原始数据
   expanded: boolean      // 是否展开
 }
@@ -50,7 +52,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
   const [matchProgress, setMatchProgress] = useState(0)
   const [singleLoading, setSingleLoading] = useState<string | null>(null)
 
-  const { addReadyGames, resetReadyGames } = usePendingGameStore()
+  const { addReadyGame, resetReadyGames } = usePendingGameStore()
   const { addGameMeta } = useGameStore()
 
   const isMatchingRef = useRef(false)
@@ -127,7 +129,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
     // 2. 根据当前激活源调用对应的转换工具
     try {
       if (item.activeSource === 'bangumi' && data.bangumi) {
-        const meta = transBangumiToGameMeta(partial, data.bangumi as Datum)
+        const meta = transBangumiToGameMeta(partial, data.bangumi as BangumiSubject)
         return { ...meta, name: data.bangumi.name_cn || data.bangumi.name || item.folderName }
       }
 
@@ -219,10 +221,11 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
 
     setSingleLoading(itemId)
     try {
+      const updatedGameInfo: PendingGameInfo = { ...(item.gameInfo ?? { absPath: item.absPath, bangumi: null, vndb: null }) }
 
       if (item.activeSource === 'bangumi') {
         const res = await requestBangumiById(item.idInput, config.auth.bangumiToken)
-        if (res) updatedGameInfo.bangumi = res as Datum
+        if (res) updatedGameInfo.bangumi = res as BangumiSubject
       } else if (item.activeSource === 'vndb') {
         const res = await requestVNDBById(item.idInput)
         if (res) updatedGameInfo.vndb = res
@@ -260,7 +263,7 @@ const PendingCard: React.FC<PendingCardProps> = ({ pathList, onCancel }) => {
       // 同步到前端全局 Store
       resetReadyGames()
       finalGames.forEach(g => {
-        addReadyGames(g)
+        addReadyGame(g)
         addGameMeta(g)
       })
 

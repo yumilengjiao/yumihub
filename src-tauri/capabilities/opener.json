@@ -1,0 +1,21 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "opener",
+  "description": "控制对url和文件的访问",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "notification:default",
+    "opener:default",
+    "core:app:allow-version",
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "https://api.github.com"
+        }
+      ]
+    }
+  ]
+}
