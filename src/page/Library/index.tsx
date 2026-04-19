@@ -100,88 +100,85 @@ export default function Library() {
       )}
       <div className="absolute inset-0 z-0 pointer-events-none bg-white/20 dark:bg-black/40" />
 
-      <div className="relative flex w-full h-full pt-5">
+      <div className="relative flex flex-col w-full h-full pt-5">
 
-        {/* 收藏夹侧边栏 */}
+        {/* 收藏夹抽屉（右侧悬浮，不占布局空间） */}
         <CollectionSidebar
           selectedId={selectedCollectionId}
           onSelect={setSelectedCollectionId}
         />
 
-        {/* 主内容区 */}
-        <div className="flex flex-col flex-1 min-w-0">
-          <AddGameButton />
+        <AddGameButton />
 
-          <div className="w-full shrink-0 p-2">
-            <TopBar
-              isAsc={isAsc}
-              onOrderToggle={() => setIsAsc(!isAsc)}
-              onDeleteModeToggle={setDiscardMode}
-              onSearchChange={setKeyword}
-              onSortChange={setSortMode}
-            />
-          </div>
+        <div className="w-full shrink-0 p-2">
+          <TopBar
+            isAsc={isAsc}
+            onOrderToggle={() => setIsAsc(!isAsc)}
+            onDeleteModeToggle={setDiscardMode}
+            onSearchChange={setKeyword}
+            onSortChange={setSortMode}
+          />
+        </div>
 
-          <div className="w-full flex-1 overflow-y-auto min-h-0 p-2">
-            {displayGames.length > 0 ? (
-              <div className={cn(
-                "grid gap-6 px-15 w-full",
-                "grid-cols-[repeat(auto-fill,minmax(150px,1fr))]"
-              )}>
-                {displayGames.map((g: GameMeta) => (
-                  <Card
-                    key={g.id}
-                    className="aspect-165/230 relative overflow-hidden cursor-pointer
+        <div className="w-full flex-1 overflow-y-auto min-h-0 p-2">
+          {displayGames.length > 0 ? (
+            <div className={cn(
+              "grid gap-6 px-15 w-full",
+              "grid-cols-[repeat(auto-fill,minmax(150px,1fr))]"
+            )}>
+              {displayGames.map((g: GameMeta) => (
+                <Card
+                  key={g.id}
+                  className="aspect-165/230 relative overflow-hidden cursor-pointer
                     border-3 ring-1 ring-black/5 shadow-xl shadow-blue-500/10"
-                    onClick={() => navigate(`/game/${g.id}`)}
-                  >
-                    <AnimatePresence>
-                      {discardMode && (
-                        <motion.button
-                          initial={{ scale: 0, opacity: 0, rotate: -45 }}
-                          animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                          exit={{ scale: 0, opacity: 0, rotate: 45 }}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            discardGame(g.id)
-                          }}
-                          className="absolute top-3 right-3 z-30 w-10 h-10 bg-red-500/60 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600"
-                        >
-                          <X size={24} strokeWidth={3} />
-                        </motion.button>
-                      )}
-                    </AnimatePresence>
-
-                    <div className={cn(
-                      "w-full h-full transition-all duration-300",
-                      discardMode ? "scale-95 blur-[1px] grayscale-[0.3]" : ""
-                    )}>
-                      <img
-                        src={g.localCover ? convertFileSrc(g.localCover) : g.cover}
-                        className="w-full h-full object-cover pointer-events-none"
-                        alt={g.name}
-                      />
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <div className="flex flex-col items-center animate-in fade-in zoom-in duration-700">
-                  <div className="p-10 rounded-full bg-black/3 mb-6">
-                    {keyword ? (
-                      <SearchX size={100} className="text-black/10" />
-                    ) : (
-                      <LibraryBig size={100} className="text-black/10" />
+                  onClick={() => navigate(`/game/${g.id}`)}
+                >
+                  <AnimatePresence>
+                    {discardMode && (
+                      <motion.button
+                        initial={{ scale: 0, opacity: 0, rotate: -45 }}
+                        animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                        exit={{ scale: 0, opacity: 0, rotate: 45 }}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          discardGame(g.id)
+                        }}
+                        className="absolute top-3 right-3 z-30 w-10 h-10 bg-red-500/60 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600"
+                      >
+                        <X size={24} strokeWidth={3} />
+                      </motion.button>
                     )}
+                  </AnimatePresence>
+
+                  <div className={cn(
+                    "w-full h-full transition-all duration-300",
+                    discardMode ? "scale-95 blur-[1px] grayscale-[0.3]" : ""
+                  )}>
+                    <img
+                      src={g.localCover ? convertFileSrc(g.localCover) : g.cover}
+                      className="w-full h-full object-cover pointer-events-none"
+                      alt={g.name}
+                    />
                   </div>
-                  <h3 className="text-3xl font-bold text-black/20 tracking-[0.2em] uppercase">
-                    <Trans>{keyword ? t`无匹配项` : t`库中无数据`}</Trans>
-                  </h3>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <div className="flex flex-col items-center animate-in fade-in zoom-in duration-700">
+                <div className="p-10 rounded-full bg-black/3 mb-6">
+                  {keyword ? (
+                    <SearchX size={100} className="text-black/10" />
+                  ) : (
+                    <LibraryBig size={100} className="text-black/10" />
+                  )}
                 </div>
+                <h3 className="text-3xl font-bold text-black/20 tracking-[0.2em] uppercase">
+                  <Trans>{keyword ? t`无匹配项` : t`库中无数据`}</Trans>
+                </h3>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
