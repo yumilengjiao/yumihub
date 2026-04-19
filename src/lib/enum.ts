@@ -41,6 +41,15 @@ export enum Cmds {
   GET_SHORTCUTS = "get_shortcuts",
   UPDATE_SHORTCUTS = "update_shortcuts",
 
+  // 收藏夹
+  GET_COLLECTIONS = "get_collections",
+  GET_COLLECTION_GAME_IDS = "get_collection_game_ids",
+  CREATE_COLLECTION = "create_collection",
+  DELETE_COLLECTION = "delete_collection",
+  RENAME_COLLECTION = "rename_collection",
+  ADD_GAME_TO_COLLECTION = "add_game_to_collection",
+  REMOVE_GAME_FROM_COLLECTION = "remove_game_from_collection",
+
   // 系统工具
   GET_START_UP_PATH = "get_start_up_path",
   GET_SYSTEM_FONTS = "get_system_fonts",

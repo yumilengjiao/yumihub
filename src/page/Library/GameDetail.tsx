@@ -4,7 +4,7 @@ import { GameMeta } from '@/types/game'
 import { useNavigate, useParams } from 'react-router'
 import { motion, Variants } from 'framer-motion'
 import {
-  Play, ArrowLeft, Image as ImageIcon,
+  Play, ArrowLeft, Image as ImageIcon, FolderHeart,
   CheckCircle2, Building2, RefreshCw, FolderOpen,
   DatabaseBackup, ArchiveRestore, Monitor, HardDrive, Save
 } from 'lucide-react'
@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils'
 import { requestBangumiById } from '@/api/bangumiApi'
 import { requestVNDBById } from '@/api/vndbApi'
 import { transBangumiToGameMeta, transVNDBToGameMeta } from '@/lib/resolve'
+import AddToCollectionDialog from './AddToCollectionDialog'
 
 // --- 动画配置 ---
 const containerVariants: Variants = {
@@ -42,6 +43,7 @@ export default function GameDetail() {
   const [game, setGame] = useState<GameMeta>(getGameMetaById(id!)!)
   const [syncMode, setSyncMode] = useState<'bangumi' | 'vndb'>('bangumi')
   const [inputId, setInputId] = useState('')
+  const [collectionOpen, setCollectionOpen] = useState(false)
 
   useEffect(() => {
     async function getGame() {
@@ -247,6 +249,14 @@ export default function GameDetail() {
                 <Play fill="currentColor" size={36} /><Trans>启动</Trans>
               </button>
 
+              {/* 收藏按钮 */}
+              <button
+                onClick={() => setCollectionOpen(true)}
+                className="flex items-center gap-3 px-8 py-8 bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300 rounded-[2.5rem] font-black text-2xl shadow-lg hover:border-custom-400 hover:text-custom-500 transition-all active:scale-95"
+              >
+                <FolderHeart size={28} /><Trans>收藏</Trans>
+              </button>
+
               {/* 同步组件 - 阴影增强 */}
               <div className="flex items-center gap-2 bg-white dark:bg-zinc-900 border-2 border-slate-100 dark:border-zinc-800 rounded-[2.2rem] p-2 pr-4 shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
                 <div className="flex bg-slate-100 dark:bg-zinc-800 rounded-[1.5rem] p-1 shrink-0">
@@ -334,6 +344,12 @@ export default function GameDetail() {
           </div>
         </motion.div>
       </div>
+
+      <AddToCollectionDialog
+        gameId={game?.id ?? ''}
+        open={collectionOpen}
+        onClose={() => setCollectionOpen(false)}
+      />
     </motion.div>
   )
 }
