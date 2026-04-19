@@ -4,6 +4,7 @@
 
 pub mod archive;
 pub mod backup;
+pub mod collection;
 pub mod companion;
 pub mod config;
 pub mod game;
@@ -14,6 +15,7 @@ pub mod user;
 
 pub use archive::*;
 pub use backup::*;
+pub use collection::*;
 pub use companion::*;
 pub use config::*;
 pub use game::*;

@@ -99,6 +99,14 @@ pub fn run() {
             // ── 连携程序 ──────────────────────────────
             commands::get_companions,
             commands::update_companions,
+            // ── 收藏夹 ────────────────────────────────
+            commands::get_collections,
+            commands::get_collection_game_ids,
+            commands::create_collection,
+            commands::delete_collection,
+            commands::rename_collection,
+            commands::add_game_to_collection,
+            commands::remove_game_from_collection,
             // ── 系统工具 ──────────────────────────────
             commands::get_start_up_path,
             commands::get_system_fonts,
