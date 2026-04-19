@@ -4,7 +4,7 @@ import { ThemeComponentProps } from "@/types/node";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { useMemo } from "react";
 import { useLocation } from "react-router";
-// 1. 引入 Trans 组件，而不是 t 宏
+// 引入 Trans 组件，而不是 t 宏
 import { Trans } from "@lingui/react/macro";
 
 export default function Entry({ node }: ThemeComponentProps) {
@@ -31,6 +31,7 @@ export default function Entry({ node }: ThemeComponentProps) {
       "/": <Trans>首页</Trans>,
       "/library": <Trans>游戏</Trans>,
       "/user": <Trans>用户</Trans>,
+      "/log": <Trans>日志</Trans>,
       "/setting": <Trans>设置</Trans>,
     };
 

@@ -58,9 +58,18 @@ pub fn run() {
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .level(tauri_plugin_log::log::LevelFilter::Info)
+                .target(tauri_plugin_log::Target::new(
+                    tauri_plugin_log::TargetKind::Webview,
+                ))
+                .build(),
+        )
         .manage(ThemeState {
             active: Mutex::new(None),
             all_names: Mutex::new(Vec::new()),
+            default_theme_updated: Mutex::new(false),
         })
         .setup(life_cycle::init)
         .invoke_handler(tauri::generate_handler![
@@ -113,10 +122,12 @@ pub fn run() {
             commands::get_game_size,
             commands::get_disks,
             commands::get_disk_usage,
+            commands::get_log_dir,
             commands::authorize_path_access,
             commands::clear_app_data,
             commands::get_theme,
             commands::get_all_theme_names,
+            commands::get_default_theme_updated,
         ])
         .build(tauri::generate_context!())
         .expect("构建 Tauri 应用失败")

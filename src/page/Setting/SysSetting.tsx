@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
 import { RefreshCw, ExternalLink, CheckCircle2 } from "lucide-react"
 import useConfigStore from "@/store/configStore"
-import { SelectRow, SliderRow } from "@/components/common/SettingRow"
+import { SelectRow, SliderRow, SwitchRow } from "@/components/common/SettingRow"
 import { SettingSection } from "./SettingSection"
 import { useUpdateChecker } from "@/hooks/useUpdateChecker"
 import { openUrl } from "@tauri-apps/plugin-opener"
@@ -41,6 +41,12 @@ export default function SysSetting() {
           options={logOpts}
           value={config.system.logLevel}
           onValueChange={v => updateConfig(d => { d.system.logLevel = v })}
+        />
+        <SwitchRow
+          label={t`持久化日志`}
+          description={t`开启后日志将写入文件，可在日志页面查看路径`}
+          checked={config.system.persistLog}
+          onCheckedChange={v => updateConfig(d => { d.system.persistLog = v })}
         />
         <SliderRow
           label={t`最大下载并发数`}

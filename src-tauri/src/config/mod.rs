@@ -46,7 +46,11 @@ pub fn init(app_handle: &AppHandle) -> Result<(), Box<dyn Error>> {
     }
 
     // 日志等级
-    serve::apply_log_level(app_handle, config.system.log_level.clone());
+    serve::apply_log_level(
+        app_handle,
+        config.system.log_level.clone(),
+        config.system.persist_log,
+    );
 
     // 文件权限
     serve::apply_background_permission(app_handle, &config.interface.global_background.path);

@@ -26,6 +26,7 @@ const DEFAULT_CONFIG: Config = {
     commonCardOpacity: 0.9,
   },
   system: {
+    persistLog: false,
     companion: false,
     hotkeyActivation: false,
     closeButtonBehavior: "Exit",

@@ -6,6 +6,7 @@ import Setting from "@/page/Setting"
 import Layout from "@/layout/index"
 // import LayoutTest from "@/layout/layoutTest"
 import GameDetail from "@/page/Library/GameDetail"
+import LogPage from "@/page/Log"
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: 'user',
         element: <User />
+      },
+      {
+        path: 'log',
+        element: <LogPage />
       },
       {
         path: 'setting',

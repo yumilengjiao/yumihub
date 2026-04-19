@@ -1,4 +1,4 @@
-import { Toaster } from "sonner"
+import { toast, Toaster } from "sonner"
 import { useEffect } from "react"
 import { invoke } from "@tauri-apps/api/core"
 import { debug } from "@tauri-apps/plugin-log"
@@ -16,6 +16,7 @@ import { useThemeStore } from "@/store/themeStore"
 import { useThemeSync } from "@/hooks/useTheme"
 import { useShortcutHandler } from "@/hooks/useShortcuter"
 import { Surface } from "@/components/custom/Surface"
+import { useUpdateChecker } from "@/hooks/useUpdateChecker"
 
 export default function Layout() {
   const { setUser } = useUserStore()
@@ -32,6 +33,9 @@ export default function Layout() {
 
   // 前端快捷键
   useShortcutHandler()
+
+  // 自动检查软件更新
+  useUpdateChecker()
 
   // ── 启动时统一初始化 ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -56,6 +60,22 @@ export default function Layout() {
 
         // 并行加载其余数据
         await Promise.all([fetchTheme(), fetchShortcuts(), fetchCompanions()])
+
+        // 检查默认主题是否在本次启动时被自动更新
+        // 用 toast.dismiss 去重，StrictMode 下 useEffect 会执行两次
+        try {
+          const themeUpdated = await invoke<boolean>(Cmds.GET_DEFAULT_THEME_UPDATED)
+          if (themeUpdated) {
+            toast.dismiss("theme-updated")
+            toast.info("默认主题已更新，导航栏新增了功能入口。如使用自定义主题，建议参考默认主题同步更新。", {
+              id: "theme-updated",
+              duration: 8000,
+              dismissible: true,
+            })
+          }
+        } catch (e) {
+          // 非关键逻辑，静默忽略
+        }
       } catch (err) {
         console.error("初始化失败:", err)
       }

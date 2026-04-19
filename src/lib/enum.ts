@@ -56,10 +56,12 @@ export enum Cmds {
   GET_GAME_SIZE = "get_game_size",
   GET_DISKS = "get_disks",
   GET_DISK_USAGE = "get_disk_usage",
+  GET_LOG_DIR = "get_log_dir",
   AUTHORIZE_PATH_ACCESS = "authorize_path_access",
   GET_COMPANIONS = "get_companions",
   UPDATE_COMPANIONS = "update_companions",
   CLEAR_APP_DATA = "clear_app_data",
   GET_THEMES = "get_theme",
   GET_ALL_THEME_NAMES = "get_all_theme_names",
+  GET_DEFAULT_THEME_UPDATED = "get_default_theme_updated",
 }

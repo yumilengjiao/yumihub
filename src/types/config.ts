@@ -49,6 +49,7 @@ export interface Storage {
 }
 
 export interface System {
+  persistLog: boolean
   companion: boolean
   hotkeyActivation: boolean
   closeButtonBehavior: string

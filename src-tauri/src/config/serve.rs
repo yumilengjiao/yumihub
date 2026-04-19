@@ -4,7 +4,7 @@
 
 use std::path::{Path, PathBuf};
 
-use tauri::{async_runtime, AppHandle, Manager};
+use tauri::{AppHandle, Manager, async_runtime};
 use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_fs::FsExt;
 use tauri_plugin_log::log::{error, info, warn};
@@ -12,11 +12,11 @@ use tauri_plugin_log::log::{error, info, warn};
 use crate::{
     companion::commands::refresh_companions,
     config::{
-        entity::{Background, Config, ConfigEvent, LogLevel},
         GLOBAL_CONFIG,
+        entity::{Background, Config, ConfigEvent, LogLevel},
     },
     infra::fs::copy_dir,
-    message::{traits::MessageHub, CONFIG_HUB},
+    message::{CONFIG_HUB, traits::MessageHub},
     shortcut::commands::refresh_shortcuts,
 };
 
@@ -41,8 +41,8 @@ macro_rules! write_config {
 
 // ── 对外暴露的初始化辅助 ──────────────────────────────────────────────────────
 
-/// 设置日志等级（在 config::init 里调用）
-pub fn apply_log_level(app_handle: &AppHandle, level: LogLevel) {
+/// 设置日志等级并决定是否持久化到文件
+pub fn apply_log_level(app_handle: &AppHandle, level: LogLevel, persist: bool) {
     let filter = match level {
         LogLevel::Trace => tauri_plugin_log::log::LevelFilter::Trace,
         LogLevel::Debug => tauri_plugin_log::log::LevelFilter::Debug,
@@ -50,7 +50,26 @@ pub fn apply_log_level(app_handle: &AppHandle, level: LogLevel) {
         LogLevel::Error => tauri_plugin_log::log::LevelFilter::Error,
         _ => tauri_plugin_log::log::LevelFilter::Info,
     };
-    let _ = app_handle.plugin(tauri_plugin_log::Builder::new().level(filter).build());
+
+    let mut builder = tauri_plugin_log::Builder::new().level(filter);
+
+    if persist {
+        builder = builder
+            .target(tauri_plugin_log::Target::new(
+                tauri_plugin_log::TargetKind::LogDir {
+                    file_name: Some("yumihub".into()),
+                },
+            ))
+            .target(tauri_plugin_log::Target::new(
+                tauri_plugin_log::TargetKind::Webview,
+            ));
+    } else {
+        builder = builder.target(tauri_plugin_log::Target::new(
+            tauri_plugin_log::TargetKind::Webview,
+        ));
+    }
+
+    let _ = app_handle.plugin(builder.build());
 }
 
 /// 给背景图片路径授权（在 config::init 里调用）
@@ -80,8 +99,21 @@ pub fn start_listener(app: AppHandle) {
                     set_companion(app.clone(), sys.companion);
                     set_hotkey(app.clone(), sys.hotkey_activation);
                     write_config!(|c| c.system.close_button_behavior = sys.close_button_behavior);
-                    write_config!(|c| c.system.log_level = sys.log_level);
                     write_config!(|c| c.system.download_concurrency = sys.download_concurrency);
+                    // 日志等级或持久化设置变更时重新应用
+                    let level_changed = GLOBAL_CONFIG
+                        .read()
+                        .map(|c| c.system.log_level != sys.log_level)
+                        .unwrap_or(false);
+                    let persist_changed = GLOBAL_CONFIG
+                        .read()
+                        .map(|c| c.system.persist_log != sys.persist_log)
+                        .unwrap_or(false);
+                    write_config!(|c| c.system.log_level = sys.log_level.clone());
+                    write_config!(|c| c.system.persist_log = sys.persist_log);
+                    if level_changed || persist_changed {
+                        apply_log_level(&app, sys.log_level, sys.persist_log);
+                    }
                 }
                 ConfigEvent::Interface { interface } => {
                     write_config!(|c| c.interface.theme = interface.theme);

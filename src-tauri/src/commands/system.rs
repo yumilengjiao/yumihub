@@ -112,9 +112,14 @@ pub async fn clear_app_data(pool: State<'_, SqlitePool>) -> Result<(), AppError>
     }
 
     // 重置自增序列
-    let _ = sqlx::query("DELETE FROM sqlite_sequence").execute(&*pool).await;
+    let _ = sqlx::query("DELETE FROM sqlite_sequence")
+        .execute(&*pool)
+        .await;
 
-    sqlx::query("PRAGMA foreign_keys = ON").execute(&*pool).await.map_err(AppError::from)?;
+    sqlx::query("PRAGMA foreign_keys = ON")
+        .execute(&*pool)
+        .await
+        .map_err(AppError::from)?;
 
     // 回收物理空间
     let _ = sqlx::query("VACUUM").execute(&*pool).await;
@@ -157,4 +162,24 @@ pub fn get_all_theme_names(state: State<'_, ThemeState>) -> Result<Vec<String>, 
         .lock()
         .map(|n| n.clone())
         .map_err(|e| AppError::Lock(e.to_string()))
+}
+
+/// 查询本次启动时默认主题是否被自动更新（用于前端提示用户重载）
+#[tauri::command]
+pub fn get_default_theme_updated(state: State<'_, ThemeState>) -> Result<bool, AppError> {
+    state
+        .default_theme_updated
+        .lock()
+        .map(|v| *v)
+        .map_err(|e| AppError::Lock(e.to_string()))
+}
+
+/// 获取日志文件目录路径（仅在持久化日志开启时有意义）
+#[tauri::command]
+pub async fn get_log_dir(app: tauri::AppHandle) -> Result<String, crate::error::AppError> {
+    let path = app
+        .path()
+        .app_log_dir()
+        .map_err(|e| crate::error::AppError::Fs(e.to_string()))?;
+    Ok(path.to_string_lossy().into_owned())
 }

@@ -109,6 +109,9 @@ pub struct System {
     pub close_button_behavior: CloseBehavior,
     pub log_level: LogLevel,
     pub download_concurrency: i64,
+    /// 是否将日志持久化写入文件
+    #[serde(default)]
+    pub persist_log: bool,
 }
 
 impl Default for System {
@@ -119,6 +122,7 @@ impl Default for System {
             close_button_behavior: CloseBehavior::Exit,
             log_level: LogLevel::Info,
             download_concurrency: 5,
+            persist_log: false,
         }
     }
 }
@@ -201,3 +205,4 @@ impl MessageHub<ConfigEvent> for ConfigMessageHub {
         let _ = self.tx.send(event);
     }
 }
+

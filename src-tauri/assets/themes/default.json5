@@ -3,7 +3,7 @@
   // 基础元数据配置
   // ==========================================
   config: {
-    version: "1.0",           // 配置协议版本，用于后续兼容性升级
+    version: "1.1",           // 配置协议版本，用于后续兼容性升级
     themeName: "default",   // 主题唯一标识符
     author: "yumilengjiao",
     variables: {
@@ -99,6 +99,22 @@
                       command: "navigate",
                       params: {
                         destination: "/user"
+                      }
+                    }
+                  ]
+                },
+                {
+                  nt: "Entry",
+                  props: {
+                    span: 2,
+                    icon: "scroll",
+                    path: "/log"
+                  },
+                  actions: [
+                    {
+                      command: "navigate",
+                      params: {
+                        destination: "/log"
                       }
                     }
                   ]
