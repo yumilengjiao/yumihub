@@ -1,7 +1,7 @@
 import { toast, Toaster } from "sonner"
 import { useEffect } from "react"
 import { invoke } from "@tauri-apps/api/core"
-import { debug } from "@tauri-apps/plugin-log"
+import { debug, attachLogger } from "@tauri-apps/plugin-log"
 import { i18n } from "@lingui/core"
 import { User } from "@/types/user"
 import { GameMetaList } from "@/types/game"
@@ -17,6 +17,11 @@ import { useThemeSync } from "@/hooks/useTheme"
 import { useShortcutHandler } from "@/hooks/useShortcuter"
 import { Surface } from "@/components/custom/Surface"
 import { useUpdateChecker } from "@/hooks/useUpdateChecker"
+import { useLogStore, nextLogId, LogLevel } from "@/store/logStore"
+
+const LEVEL_MAP: Record<number, LogLevel> = {
+  1: 'trace', 2: 'debug', 3: 'info', 4: 'warn', 5: 'error',
+}
 
 export default function Layout() {
   const { setUser } = useUserStore()
@@ -25,17 +30,34 @@ export default function Layout() {
   const { fetchShortcuts } = useShortcutStore()
   const { fetchCompanions } = useCompanionStore()
   const { fetchTheme } = useThemeStore()
+  const { addLog } = useLogStore()
   const fontFamily = useConfigStore(s => s.config.interface.fontFamily)
   const layoutTree = useThemeStore(t => t.theme?.layout.global)
 
-  // 主题 dark/light 同步
   useThemeSync()
-
-  // 前端快捷键
   useShortcutHandler()
-
-  // 自动检查软件更新
   useUpdateChecker()
+
+  // ── 启动时就挂载日志收集器，确保全程捕获 ─────────────────────────────────
+  useEffect(() => {
+    let unlisten: (() => void) | undefined
+    attachLogger(entry => {
+      // 过滤 tao 内部噪音日志（Windows 窗口事件循环的已知 warning，与业务无关）
+      if (entry.message.includes('NewEvents emitted without explicit') ||
+          entry.message.includes('RedrawEventsCleared emitted without') ||
+          entry.message.includes('MainEventsCleared')) return
+
+      const level = LEVEL_MAP[entry.level] ?? 'info'
+      const now = new Date()
+      addLog({
+        id: nextLogId(),
+        level,
+        message: entry.message,
+        time: now.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      })
+    }).then(fn => { unlisten = fn })
+    return () => { unlisten?.() }
+  }, [])
 
   // ── 启动时统一初始化 ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -55,14 +77,10 @@ export default function Layout() {
         i18n.activate(config.basic.language)
         updateConfig(draft => Object.assign(draft, config))
 
-        // 应用主题色
         document.documentElement.classList.add(config.interface.themeColor)
 
-        // 并行加载其余数据
         await Promise.all([fetchTheme(), fetchShortcuts(), fetchCompanions()])
 
-        // 检查默认主题是否在本次启动时被自动更新
-        // 用 toast.dismiss 去重，StrictMode 下 useEffect 会执行两次
         try {
           const themeUpdated = await invoke<boolean>(Cmds.GET_DEFAULT_THEME_UPDATED)
           if (themeUpdated) {
