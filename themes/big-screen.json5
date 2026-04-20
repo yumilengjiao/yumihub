@@ -3,7 +3,7 @@
   // 基础元数据配置
   // ==========================================
   config: {
-    version: "1.0",           // 配置协议版本
+    version: "1.1",           // 配置协议版本
     themeName: "big-screen", // 主题唯一标识符
     author: "yumilengjiao",
     variables: {}
@@ -51,6 +51,7 @@
                 { nt: "Entry", props: { start:14, span: 2, icon: "house", path: "/",autoActive: false, showTitle: false }, actions: [{ command: "navigate", params: { destination: "/" } }] },
                 { nt: "Entry", props: { span: 2, icon: "gamepad-2", path: "/library", autoActive: false, showTitle: false}, actions: [{ command: "navigate", params: { destination: "/library" } }] },
                 { nt: "Entry", props: { span: 2, icon: "user-round", path: "/user", autoActive: false, showTitle: false }, actions: [{ command: "navigate", params: { destination: "/user" } }] },
+                { nt: "Entry", props: { span: 2, icon: "scroll", path: "/log", autoActive: false, showTitle: false }, actions: [{ command: "navigate", params: { destination: "/log" } }] },
                 { nt: "Entry", props: { span: 2, icon: "sliders-vertical", path: "/setting", autoActive: false, showTitle: false }, actions: [{ command: "navigate", params: { destination: "/setting" } }] }
               ]
             }
