@@ -33,8 +33,12 @@ msgstr " Local Upload"
 msgid " 用户昵称"
 msgstr " Nickname"
 
+#: src/page/Library/CollectionSidebar.tsx:28
+msgid "\"{name}\" 已创建"
+msgstr "\"{name}\" has been created"
+
 #. placeholder {0}: keyword ? t`无匹配项` : t`库中无数据`
-#: src/page/Library/index.tsx:164
+#: src/page/Library/index.tsx:177
 msgid "{0}"
 msgstr "{0}"
 
@@ -55,7 +59,7 @@ msgstr "One-click smart match"
 msgid "一键还原所有存档"
 msgstr "One-click restore all saves"
 
-#: src/page/Setting/SysSetting.tsx:64
+#: src/page/Setting/SysSetting.tsx:70
 msgid "上次检查"
 msgstr "Last check"
 
@@ -63,6 +67,10 @@ msgstr "Last check"
 #: src/page/User/index.tsx:68
 msgid "下午好"
 msgstr "Good Afternoon"
+
+#: src/page/Library/CollectionSidebar.tsx:146
+msgid "个"
+msgstr " "
 
 #: src/page/User/index.tsx:67
 msgid "中午好"
@@ -109,7 +117,11 @@ msgstr "Global Hotkeys"
 msgid "全局隐藏所有窗口"
 msgstr "Globally Hide All Windows"
 
-#: src/page/Setting/SysSetting.tsx:54
+#: src/page/Library/CollectionSidebar.tsx:219
+msgid "全部游戏"
+msgstr "All Games"
+
+#: src/page/Setting/SysSetting.tsx:60
 msgid "关于与更新"
 msgstr "About & Updates"
 
@@ -125,11 +137,11 @@ msgstr "Other"
 msgid "内容预览"
 msgstr "Content Preview"
 
-#: src/page/Library/GameDetail.tsx:282
+#: src/page/Library/GameDetail.tsx:292
 msgid "最后运行"
 msgstr "Last Run"
 
-#: src/page/Setting/SysSetting.tsx:46
+#: src/page/Setting/SysSetting.tsx:52
 msgid "最大下载并发数"
 msgstr "Max Concurrent Downloads"
 
@@ -153,21 +165,34 @@ msgstr "Switch to Game Library"
 msgid "切换至设置"
 msgstr "Switch to Settings"
 
+#: src/page/Library/AddToCollectionDialog.tsx:42
+#: src/page/Library/CollectionSidebar.tsx:29
+msgid "创建失败"
+msgstr "Creation failed"
+
+#: src/page/Library/CollectionSidebar.tsx:39
+msgid "删除失败"
+msgstr "Deletion failed"
+
 #: src/page/Setting/ResourceSetting.tsx:104
 msgid "删除所有游戏记录、配置和本地资源，此操作不可恢复。"
 msgstr "Delete all game records, configurations, and local resources. This operation is irreversible."
 
-#: src/page/Library/GameDetail.tsx:226
+#: src/page/Library/GameDetail.tsx:228
 msgid "制作商"
 msgstr "Developer"
 
-#: src/page/Setting/SysSetting.tsx:80
+#: src/page/Setting/SysSetting.tsx:86
 msgid "前往下载"
 msgstr "Go to Download"
 
 #: src/page/Setting/BaseSetting.tsx:51
 msgid "功能扩展"
 msgstr "Extensions"
+
+#: src/page/Library/AddToCollectionDialog.tsx:70
+msgid "加入收藏夹"
+msgstr "Add to Collection"
 
 #: src/page/User/index.tsx:428
 msgid "加载中..."
@@ -209,19 +234,23 @@ msgstr "Failed to parse archive"
 msgid "取消"
 msgstr "Cancel"
 
-#: src/page/Setting/SysSetting.tsx:73
+#: src/page/Log/index.tsx:99
+msgid "可开启写入文件。"
+msgstr "You can enable writing to file."
+
+#: src/page/Setting/SysSetting.tsx:79
 msgid "可用"
 msgstr "Available"
 
-#: src/page/Library/GameDetail.tsx:104
+#: src/page/Library/GameDetail.tsx:106
 msgid "同步失败: "
 msgstr "Sync failed: "
 
-#: src/page/Library/GameDetail.tsx:102
+#: src/page/Library/GameDetail.tsx:104
 msgid "同步成功"
 msgstr "Sync succeeded"
 
-#: src/page/Library/GameDetail.tsx:247
+#: src/page/Library/GameDetail.tsx:249
 msgid "启动"
 msgstr "Launch"
 
@@ -249,12 +278,12 @@ msgstr "Paste your personal token here..."
 msgid "基础"
 msgstr "Basic"
 
-#: src/page/Library/GameDetail.tsx:234
+#: src/page/Library/GameDetail.tsx:236
 #: src/page/Setting/ResourceSetting.tsx:82
 msgid "备份"
 msgstr "Backup"
 
-#: src/page/Library/GameDetail.tsx:61
+#: src/page/Library/GameDetail.tsx:63
 msgid "备份失败: "
 msgstr "Backup failed: "
 
@@ -274,7 +303,7 @@ msgstr "Night Mode"
 msgid "存储"
 msgstr "Storage"
 
-#: src/page/Library/GameDetail.tsx:60
+#: src/page/Library/GameDetail.tsx:62
 msgid "存档备份完毕"
 msgstr "Save backup completed"
 
@@ -282,17 +311,21 @@ msgstr "Save backup completed"
 msgid "存档备份目录"
 msgstr "Save Backup Directory"
 
-#: src/page/Library/GameDetail.tsx:69
+#: src/page/Library/GameDetail.tsx:71
 msgid "存档恢复完毕"
 msgstr "Save restore completed"
 
-#: src/page/Library/GameDetail.tsx:331
+#: src/page/Library/GameDetail.tsx:341
 msgid "存档目录"
 msgstr "Save Directory"
 
 #: src/page/Library/TopBar.tsx:255
 msgid "完成"
 msgstr "Done"
+
+#: src/page/Log/index.tsx:83
+msgid "实时"
+msgstr "Realtime"
 
 #: src/page/Library/BigPendingCard.tsx:204
 #: src/page/Library/PendingCard.tsx:273
@@ -303,7 +336,7 @@ msgstr "Import failed, id: "
 msgid "导入成功"
 msgstr "Import succeeded"
 
-#: src/page/Setting/SysSetting.tsx:47
+#: src/page/Setting/SysSetting.tsx:53
 msgid "封面和背景图片的并行下载数量上限"
 msgstr "Max concurrent downloads for cover and background images"
 
@@ -315,11 +348,15 @@ msgstr "Immediately backup all games that have a save path set."
 msgid "将覆盖所有已备份游戏的本地存档，此操作不可撤销。"
 msgstr "Will overwrite local saves for all backed-up games. This operation is irreversible."
 
-#: src/page/Setting/SysSetting.tsx:86
+#: src/page/Library/AddToCollectionDialog.tsx:41
+msgid "已创建收藏夹并添加游戏"
+msgstr "Collection created and game added"
+
+#: src/page/Setting/SysSetting.tsx:92
 msgid "已是最新版本"
 msgstr "Already up to date"
 
-#: src/page/Library/GameDetail.tsx:271
+#: src/page/Library/GameDetail.tsx:281
 msgid "已游玩 (分钟)"
 msgstr "Playtime (minutes)"
 
@@ -327,9 +364,13 @@ msgstr "Playtime (minutes)"
 msgid "已载入本地图片预览"
 msgstr "Loaded local image preview"
 
-#: src/page/Library/index.tsx:164
+#: src/page/Library/index.tsx:177
 msgid "库中无数据"
 msgstr "No data in library"
+
+#: src/page/Setting/SysSetting.tsx:47
+msgid "开启后日志将写入文件，可在日志页面查看路径"
+msgstr "When enabled, logs will be written to file. You can view the path on the log page."
 
 #: src/page/Setting/BaseSetting.tsx:39
 msgid "开机自启动"
@@ -339,7 +380,7 @@ msgstr "Start on Boot"
 msgid "强制关闭游戏及所有连携程序"
 msgstr "Force close game and all companion programs"
 
-#: src/page/Setting/SysSetting.tsx:58
+#: src/page/Setting/SysSetting.tsx:64
 msgid "当前版本"
 msgstr "Current Version"
 
@@ -351,11 +392,11 @@ msgstr "Shortcut Settings"
 msgid "快速拉起最后一次关闭的游戏"
 msgstr "Quickly launch the last closed game"
 
-#: src/page/Library/GameDetail.tsx:237
+#: src/page/Library/GameDetail.tsx:239
 msgid "恢复"
 msgstr "Restore"
 
-#: src/page/Library/GameDetail.tsx:70
+#: src/page/Library/GameDetail.tsx:72
 msgid "恢复失败: "
 msgstr "Restore failed: "
 
@@ -376,13 +417,17 @@ msgstr "Screenshot Save Directory"
 msgid "托管"
 msgstr "Companion"
 
-#: src/page/Library/GameDetail.tsx:330
+#: src/page/Library/GameDetail.tsx:340
 msgid "执行路径"
 msgstr "Executable Path"
 
 #: src/page/Library/PendingCard.tsx:294
 msgid "批量导入确认"
 msgstr "Batch Import Confirmation"
+
+#: src/page/Setting/SysSetting.tsx:46
+msgid "持久化日志"
+msgstr "Persistent Logs"
 
 #: src/page/Setting/ShortcutManager.tsx:113
 msgid "按下按键..."
@@ -404,6 +449,27 @@ msgstr "By Playtime"
 msgid "捕获当前游戏画面"
 msgstr "Capture current game screen"
 
+#: src/page/Log/index.tsx:203
+msgid "搜索"
+msgstr "Search"
+
+#: src/page/Log/index.tsx:115
+msgid "搜索日志内容..."
+msgstr "Search logs..."
+
+#: src/page/Library/AddToCollectionDialog.tsx:29
+msgid "操作失败"
+msgstr "Operation failed"
+
+#: src/page/Library/GameDetail.tsx:257
+msgid "收藏"
+msgstr "Favorite"
+
+#: src/page/Library/CollectionSidebar.tsx:77
+#: src/page/Library/CollectionSidebar.tsx:143
+msgid "收藏夹"
+msgstr "Collections"
+
 #: src/page/Library/BigPendingCard.tsx:111
 msgid "数据已同步"
 msgstr "Data synced"
@@ -416,17 +482,42 @@ msgstr "Data Operations"
 msgid "数据更新成功"
 msgstr "Data updated successfully"
 
+#: src/page/Library/AddToCollectionDialog.tsx:138
+msgid "新建收藏夹"
+msgstr "New Collection"
+
+#: src/page/Library/AddToCollectionDialog.tsx:116
+#: src/page/Library/CollectionSidebar.tsx:184
+msgid "新收藏夹名称..."
+msgstr "New collection name..."
+
 #: src/page/User/index.tsx:66
 msgid "新的一天，也要充满元气哦！"
 msgstr "A new day, stay energetic!"
 
-#: src/page/Library/index.tsx:164
+#: src/page/Log/index.tsx:134
+msgid "无匹配日志"
+msgstr "No matching logs"
+
+#: src/page/Library/index.tsx:177
 msgid "无匹配项"
 msgstr "No matches"
 
 #: src/page/User/EditUserInfoDialog.tsx:55
 msgid "无法打开文件对话框"
 msgstr "Cannot open file dialog"
+
+#: src/components/custom/Entry.tsx:34
+msgid "日志"
+msgstr "Logs"
+
+#: src/page/Log/index.tsx:97
+msgid "日志持久化未开启，重启后记录将清空。前往"
+msgstr "Log persistence is disabled. Records will be cleared after restart. Go to"
+
+#: src/page/Log/index.tsx:215
+msgid "日志目录"
+msgstr "Log Directory"
 
 #: src/page/Setting/SysSetting.tsx:39
 msgid "日志等级"
@@ -458,7 +549,7 @@ msgstr "Good Evening"
 msgid "晚安"
 msgstr "Good Night"
 
-#: src/page/Library/GameDetail.tsx:304
+#: src/page/Library/GameDetail.tsx:314
 msgid "暂无描述..."
 msgstr "No description..."
 
@@ -474,7 +565,7 @@ msgstr "No detailed introduction."
 msgid "暂无通关数据"
 msgstr "No completed data"
 
-#: src/page/Library/GameDetail.tsx:205
+#: src/page/Library/GameDetail.tsx:207
 msgid "更换封面"
 msgstr "Change Cover"
 
@@ -502,7 +593,7 @@ msgstr "Unknown"
 msgid "未绑定"
 msgstr "Not bound"
 
-#: src/page/Library/GameDetail.tsx:361
+#: src/page/Library/GameDetail.tsx:377
 msgid "未设定 (点击选择)"
 msgstr "Not set (click to select)"
 
@@ -521,6 +612,10 @@ msgstr "No image selected"
 #: src/page/User/index.tsx:437
 msgid "本月暂无截图记录"
 msgstr "No screenshot records this month"
+
+#: src/page/Log/index.tsx:88
+msgid "本次运行的所有日志，最多保留 2000 条"
+msgstr "All logs for this session, up to 2000 entries"
 
 #: src/page/Setting/index.tsx:18
 msgid "权限"
@@ -542,15 +637,15 @@ msgstr "Geek Gray"
 msgid "查询失败，请检查 ID 是否正确"
 msgstr "Query failed, please check if the ID is correct"
 
-#: src/page/Library/GameDetail.tsx:320
+#: src/page/Library/GameDetail.tsx:330
 msgid "标记通关"
 msgstr "Mark as Completed"
 
-#: src/page/Setting/SysSetting.tsx:98
+#: src/page/Setting/SysSetting.tsx:104
 msgid "检查中..."
 msgstr "Checking..."
 
-#: src/page/Setting/SysSetting.tsx:98
+#: src/page/Setting/SysSetting.tsx:104
 msgid "检查更新"
 msgstr "Check for Updates"
 
@@ -558,11 +653,11 @@ msgstr "Check for Updates"
 msgid "检索失败，请检查 ID 或网络"
 msgstr "Search failed, please check ID or network"
 
-#: src/page/Library/GameDetail.tsx:81
+#: src/page/Library/GameDetail.tsx:83
 msgid "正在同步..."
 msgstr "Syncing..."
 
-#: src/page/Library/GameDetail.tsx:59
+#: src/page/Library/GameDetail.tsx:61
 msgid "正在备份存档..."
 msgstr "Backing up saves..."
 
@@ -570,7 +665,7 @@ msgstr "Backing up saves..."
 msgid "正在导入游戏..."
 msgstr "Importing game..."
 
-#: src/page/Library/GameDetail.tsx:68
+#: src/page/Library/GameDetail.tsx:70
 msgid "正在恢复存档..."
 msgstr "Restoring saves..."
 
@@ -589,6 +684,10 @@ msgstr "Automatically fetch resources from network when adding/updating games"
 #: src/page/Setting/CompanionManager.tsx:183
 msgid "添加新程序"
 msgstr "Add New Program"
+
+#: src/page/Log/index.tsx:221
+msgid "清空"
+msgstr "Clear"
 
 #: src/page/Setting/ResourceSetting.tsx:99
 msgid "清除全部程序数据"
@@ -609,6 +708,10 @@ msgstr "Unified Game Extraction Directory"
 #: src/page/Setting/ResourceSetting.tsx:69
 msgid "游戏资源目录"
 msgstr "Game Resource Directory"
+
+#: src/page/Library/CollectionSidebar.tsx:297
+msgid "点击 + 创建第一个"
+msgstr "Click + to create the first one"
 
 #: src/page/Setting/ShortcutManager.tsx:64
 msgid "点击绑定区域后按下目标按键组合"
@@ -698,7 +801,7 @@ msgstr "Disable"
 msgid "程序名称"
 msgstr "Program Name"
 
-#: src/page/Library/GameDetail.tsx:280
+#: src/page/Library/GameDetail.tsx:290
 msgid "空间占用"
 msgstr "Space Usage"
 
@@ -706,7 +809,11 @@ msgstr "Space Usage"
 msgid "窗口行为"
 msgstr "Window Behavior"
 
-#: src/page/Library/GameDetail.tsx:298
+#: src/page/Log/index.tsx:134
+msgid "等待日志输出..."
+msgstr "Waiting for logs..."
+
+#: src/page/Library/GameDetail.tsx:308
 msgid "简介"
 msgstr "Description"
 
@@ -739,7 +846,7 @@ msgstr "Boss Key"
 msgid "背景不透明度"
 msgstr "Background Opacity"
 
-#: src/page/Library/GameDetail.tsx:332
+#: src/page/Library/GameDetail.tsx:342
 #: src/page/Setting/InterfaceSetting.tsx:94
 msgid "背景图片"
 msgstr "Background Image"
@@ -756,6 +863,10 @@ msgstr "Energy Orange"
 msgid "自动下载封面与背景"
 msgstr "Auto-download covers and backgrounds"
 
+#: src/page/Log/index.tsx:209
+msgid "自动滚动"
+msgstr "Auto Scroll"
+
 #: src/page/Setting/InterfaceSetting.tsx:31
 msgid "蔷薇粉"
 msgstr "Rose Pink"
@@ -764,7 +875,7 @@ msgstr "Rose Pink"
 msgid "解压至目的地"
 msgstr "Extract to Destination"
 
-#: src/components/custom/Entry.tsx:34
+#: src/components/custom/Entry.tsx:35
 msgid "设置"
 msgstr "Settings"
 
@@ -780,7 +891,7 @@ msgstr "Language & Startup"
 msgid "请在库设置中添加首页展示项目"
 msgstr "Please add home display items in Library Settings"
 
-#: src/page/Library/GameDetail.tsx:75
+#: src/page/Library/GameDetail.tsx:77
 msgid "请输入 ID"
 msgstr "Please enter ID"
 
@@ -828,13 +939,21 @@ msgstr "Jump to Home"
 msgid "辛苦了，开启一段精彩的故事吧。"
 msgstr "Thanks for your hard work. Let's start a wonderful story."
 
-#: src/page/Library/GameDetail.tsx:182
+#: src/page/Library/GameDetail.tsx:184
 msgid "返回库"
 msgstr "Back to Library"
 
 #: src/page/Setting/ResourceSetting.tsx:94
 msgid "还原"
 msgstr "Restore"
+
+#: src/page/Library/CollectionSidebar.tsx:296
+msgid "还没有收藏夹"
+msgstr "No collections yet"
+
+#: src/page/Library/AddToCollectionDialog.tsx:82
+msgid "还没有收藏夹，先新建一个吧"
+msgstr "No collections yet, create one first"
 
 #: src/page/Setting/BaseSetting.tsx:54
 msgid "连携启动程序"
@@ -865,6 +984,10 @@ msgstr "Configure global hotkeys for boss key, screenshot, launch, etc."
 msgid "配置随游戏或程序自动启动的辅助工具"
 msgstr "Configure auxiliary tools that auto-start with games or programs"
 
+#: src/page/Library/CollectionSidebar.tsx:45
+msgid "重命名失败"
+msgstr "Rename failed"
+
 #: src/page/Setting/CompanionManager.tsx:126
 msgid "随游戏"
 msgstr "With Game"
@@ -885,6 +1008,6 @@ msgstr "Page content not defined: please check \"/\" route configuration"
 msgid "首页"
 msgstr "Home"
 
-#: src/page/Library/GameDetail.tsx:314
+#: src/page/Library/GameDetail.tsx:324
 msgid "首页展示"
 msgstr "Show on Home"

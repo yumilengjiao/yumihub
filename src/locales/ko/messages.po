@@ -33,8 +33,12 @@ msgstr " 로컬 업로드"
 msgid " 用户昵称"
 msgstr " 사용자 닉네임"
 
+#: src/page/Library/CollectionSidebar.tsx:28
+msgid "\"{name}\" 已创建"
+msgstr "\"{name}\"이(가) 생성되었습니다"
+
 #. placeholder {0}: keyword ? t`无匹配项` : t`库中无数据`
-#: src/page/Library/index.tsx:164
+#: src/page/Library/index.tsx:177
 msgid "{0}"
 msgstr "{0}"
 
@@ -55,7 +59,7 @@ msgstr "원클릭 스마트 매칭"
 msgid "一键还原所有存档"
 msgstr "원클릭 전체 저장 데이터 복원"
 
-#: src/page/Setting/SysSetting.tsx:64
+#: src/page/Setting/SysSetting.tsx:70
 msgid "上次检查"
 msgstr "마지막 확인"
 
@@ -63,6 +67,10 @@ msgstr "마지막 확인"
 #: src/page/User/index.tsx:68
 msgid "下午好"
 msgstr "안녕하세요"
+
+#: src/page/Library/CollectionSidebar.tsx:146
+msgid "个"
+msgstr "개"
 
 #: src/page/User/index.tsx:67
 msgid "中午好"
@@ -109,7 +117,11 @@ msgstr "전역 단축키"
 msgid "全局隐藏所有窗口"
 msgstr "모든 창 전역 숨기기"
 
-#: src/page/Setting/SysSetting.tsx:54
+#: src/page/Library/CollectionSidebar.tsx:219
+msgid "全部游戏"
+msgstr "모든 게임"
+
+#: src/page/Setting/SysSetting.tsx:60
 msgid "关于与更新"
 msgstr "정보 및 업데이트"
 
@@ -125,11 +137,11 @@ msgstr "기타"
 msgid "内容预览"
 msgstr "내용 미리보기"
 
-#: src/page/Library/GameDetail.tsx:282
+#: src/page/Library/GameDetail.tsx:292
 msgid "最后运行"
 msgstr "마지막 실행"
 
-#: src/page/Setting/SysSetting.tsx:46
+#: src/page/Setting/SysSetting.tsx:52
 msgid "最大下载并发数"
 msgstr "최대 다운로드 동시 실행 수"
 
@@ -153,21 +165,34 @@ msgstr "게임 라이브러리로 전환"
 msgid "切换至设置"
 msgstr "설정으로 전환"
 
+#: src/page/Library/AddToCollectionDialog.tsx:42
+#: src/page/Library/CollectionSidebar.tsx:29
+msgid "创建失败"
+msgstr "생성 실패"
+
+#: src/page/Library/CollectionSidebar.tsx:39
+msgid "删除失败"
+msgstr "삭제 실패"
+
 #: src/page/Setting/ResourceSetting.tsx:104
 msgid "删除所有游戏记录、配置和本地资源，此操作不可恢复。"
 msgstr "모든 게임 기록, 설정 및 로컬 리소스를 삭제합니다. 이 작업은 되돌릴 수 없습니다."
 
-#: src/page/Library/GameDetail.tsx:226
+#: src/page/Library/GameDetail.tsx:228
 msgid "制作商"
 msgstr "제작사"
 
-#: src/page/Setting/SysSetting.tsx:80
+#: src/page/Setting/SysSetting.tsx:86
 msgid "前往下载"
 msgstr "다운로드로 이동"
 
 #: src/page/Setting/BaseSetting.tsx:51
 msgid "功能扩展"
 msgstr "기능 확장"
+
+#: src/page/Library/AddToCollectionDialog.tsx:70
+msgid "加入收藏夹"
+msgstr "컬렉션에 추가"
 
 #: src/page/User/index.tsx:428
 msgid "加载中..."
@@ -209,19 +234,23 @@ msgstr "압축 파일 분석 실패"
 msgid "取消"
 msgstr "취소"
 
-#: src/page/Setting/SysSetting.tsx:73
+#: src/page/Log/index.tsx:99
+msgid "可开启写入文件。"
+msgstr "파일 저장을 활성화할 수 있습니다."
+
+#: src/page/Setting/SysSetting.tsx:79
 msgid "可用"
 msgstr "사용 가능"
 
-#: src/page/Library/GameDetail.tsx:104
+#: src/page/Library/GameDetail.tsx:106
 msgid "同步失败: "
 msgstr "동기화 실패: "
 
-#: src/page/Library/GameDetail.tsx:102
+#: src/page/Library/GameDetail.tsx:104
 msgid "同步成功"
 msgstr "동기화 성공"
 
-#: src/page/Library/GameDetail.tsx:247
+#: src/page/Library/GameDetail.tsx:249
 msgid "启动"
 msgstr "시작"
 
@@ -249,12 +278,12 @@ msgstr "여기에 개인 토큰을 붙여넣으세요..."
 msgid "基础"
 msgstr "기본"
 
-#: src/page/Library/GameDetail.tsx:234
+#: src/page/Library/GameDetail.tsx:236
 #: src/page/Setting/ResourceSetting.tsx:82
 msgid "备份"
 msgstr "백업"
 
-#: src/page/Library/GameDetail.tsx:61
+#: src/page/Library/GameDetail.tsx:63
 msgid "备份失败: "
 msgstr "백업 실패: "
 
@@ -274,7 +303,7 @@ msgstr "야간 모드"
 msgid "存储"
 msgstr "저장소"
 
-#: src/page/Library/GameDetail.tsx:60
+#: src/page/Library/GameDetail.tsx:62
 msgid "存档备份完毕"
 msgstr "세이브 데이터 백업 완료"
 
@@ -282,17 +311,21 @@ msgstr "세이브 데이터 백업 완료"
 msgid "存档备份目录"
 msgstr "세이브 데이터 백업 디렉터리"
 
-#: src/page/Library/GameDetail.tsx:69
+#: src/page/Library/GameDetail.tsx:71
 msgid "存档恢复完毕"
 msgstr "세이브 데이터 복원 완료"
 
-#: src/page/Library/GameDetail.tsx:331
+#: src/page/Library/GameDetail.tsx:341
 msgid "存档目录"
 msgstr "세이브 데이터 디렉터리"
 
 #: src/page/Library/TopBar.tsx:255
 msgid "完成"
 msgstr "완료"
+
+#: src/page/Log/index.tsx:83
+msgid "实时"
+msgstr "실시간"
 
 #: src/page/Library/BigPendingCard.tsx:204
 #: src/page/Library/PendingCard.tsx:273
@@ -303,7 +336,7 @@ msgstr "가져오기 실패, ID: "
 msgid "导入成功"
 msgstr "가져오기 성공"
 
-#: src/page/Setting/SysSetting.tsx:47
+#: src/page/Setting/SysSetting.tsx:53
 msgid "封面和背景图片的并行下载数量上限"
 msgstr "표지 및 배경 이미지의 병렬 다운로드 수 상한"
 
@@ -315,11 +348,15 @@ msgstr "세이브 경로가 설정된 모든 게임을 즉시 백업합니다."
 msgid "将覆盖所有已备份游戏的本地存档，此操作不可撤销。"
 msgstr "백업된 모든 게임의 로컬 세이브 데이터를 덮어씁니다. 이 작업은 취소할 수 없습니다."
 
-#: src/page/Setting/SysSetting.tsx:86
+#: src/page/Library/AddToCollectionDialog.tsx:41
+msgid "已创建收藏夹并添加游戏"
+msgstr "컬렉션이 생성되고 게임이 추가되었습니다"
+
+#: src/page/Setting/SysSetting.tsx:92
 msgid "已是最新版本"
 msgstr "최신 버전입니다"
 
-#: src/page/Library/GameDetail.tsx:271
+#: src/page/Library/GameDetail.tsx:281
 msgid "已游玩 (分钟)"
 msgstr "플레이 시간 (분)"
 
@@ -327,9 +364,13 @@ msgstr "플레이 시간 (분)"
 msgid "已载入本地图片预览"
 msgstr "로컬 이미지 미리보기를 불러왔습니다"
 
-#: src/page/Library/index.tsx:164
+#: src/page/Library/index.tsx:177
 msgid "库中无数据"
 msgstr "라이브러리에 데이터가 없음"
+
+#: src/page/Setting/SysSetting.tsx:47
+msgid "开启后日志将写入文件，可在日志页面查看路径"
+msgstr "활성화하면 로그가 파일에 저장되며 로그 페이지에서 경로를 확인할 수 있습니다"
 
 #: src/page/Setting/BaseSetting.tsx:39
 msgid "开机自启动"
@@ -339,7 +380,7 @@ msgstr "부팅 시 자동 시작"
 msgid "强制关闭游戏及所有连携程序"
 msgstr "게임 및 모든 연동 프로그램 강제 종료"
 
-#: src/page/Setting/SysSetting.tsx:58
+#: src/page/Setting/SysSetting.tsx:64
 msgid "当前版本"
 msgstr "현재 버전"
 
@@ -351,11 +392,11 @@ msgstr "단축키 설정"
 msgid "快速拉起最后一次关闭的游戏"
 msgstr "마지막으로 종료한 게임 빠르게 실행"
 
-#: src/page/Library/GameDetail.tsx:237
+#: src/page/Library/GameDetail.tsx:239
 msgid "恢复"
 msgstr "복원"
 
-#: src/page/Library/GameDetail.tsx:70
+#: src/page/Library/GameDetail.tsx:72
 msgid "恢复失败: "
 msgstr "복원 실패: "
 
@@ -376,13 +417,17 @@ msgstr "스크린샷 저장 디렉터리"
 msgid "托管"
 msgstr "연동"
 
-#: src/page/Library/GameDetail.tsx:330
+#: src/page/Library/GameDetail.tsx:340
 msgid "执行路径"
 msgstr "실행 경로"
 
 #: src/page/Library/PendingCard.tsx:294
 msgid "批量导入确认"
 msgstr "일괄 가져오기 확인"
+
+#: src/page/Setting/SysSetting.tsx:46
+msgid "持久化日志"
+msgstr "로그 저장"
 
 #: src/page/Setting/ShortcutManager.tsx:113
 msgid "按下按键..."
@@ -404,6 +449,27 @@ msgstr "플레이 시간순"
 msgid "捕获当前游戏画面"
 msgstr "현재 게임 화면 캡처"
 
+#: src/page/Log/index.tsx:203
+msgid "搜索"
+msgstr "검색"
+
+#: src/page/Log/index.tsx:115
+msgid "搜索日志内容..."
+msgstr "로그 검색..."
+
+#: src/page/Library/AddToCollectionDialog.tsx:29
+msgid "操作失败"
+msgstr "작업 실패"
+
+#: src/page/Library/GameDetail.tsx:257
+msgid "收藏"
+msgstr "즐겨찾기"
+
+#: src/page/Library/CollectionSidebar.tsx:77
+#: src/page/Library/CollectionSidebar.tsx:143
+msgid "收藏夹"
+msgstr "컬렉션"
+
 #: src/page/Library/BigPendingCard.tsx:111
 msgid "数据已同步"
 msgstr "데이터가 동기화되었습니다"
@@ -416,17 +482,42 @@ msgstr "데이터 작업"
 msgid "数据更新成功"
 msgstr "데이터 업데이트 성공"
 
+#: src/page/Library/AddToCollectionDialog.tsx:138
+msgid "新建收藏夹"
+msgstr "새 컬렉션"
+
+#: src/page/Library/AddToCollectionDialog.tsx:116
+#: src/page/Library/CollectionSidebar.tsx:184
+msgid "新收藏夹名称..."
+msgstr "새 컬렉션 이름..."
+
 #: src/page/User/index.tsx:66
 msgid "新的一天，也要充满元气哦！"
 msgstr "새로운 하루, 힘차게 시작하세요!"
 
-#: src/page/Library/index.tsx:164
+#: src/page/Log/index.tsx:134
+msgid "无匹配日志"
+msgstr "일치하는 로그 없음"
+
+#: src/page/Library/index.tsx:177
 msgid "无匹配项"
 msgstr "일치하는 항목 없음"
 
 #: src/page/User/EditUserInfoDialog.tsx:55
 msgid "无法打开文件对话框"
 msgstr "파일 대화상자를 열 수 없습니다"
+
+#: src/components/custom/Entry.tsx:34
+msgid "日志"
+msgstr "로그"
+
+#: src/page/Log/index.tsx:97
+msgid "日志持久化未开启，重启后记录将清空。前往"
+msgstr "로그 저장이 비활성화되어 있습니다. 재시작 시 기록이 삭제됩니다."
+
+#: src/page/Log/index.tsx:215
+msgid "日志目录"
+msgstr "로그 디렉토리"
 
 #: src/page/Setting/SysSetting.tsx:39
 msgid "日志等级"
@@ -458,7 +549,7 @@ msgstr "좋은 저녁입니다"
 msgid "晚安"
 msgstr "안녕히 주무세요"
 
-#: src/page/Library/GameDetail.tsx:304
+#: src/page/Library/GameDetail.tsx:314
 msgid "暂无描述..."
 msgstr "설명이 없습니다..."
 
@@ -474,7 +565,7 @@ msgstr "자세한 소개가 없습니다."
 msgid "暂无通关数据"
 msgstr "클리어 데이터가 없습니다"
 
-#: src/page/Library/GameDetail.tsx:205
+#: src/page/Library/GameDetail.tsx:207
 msgid "更换封面"
 msgstr "표지 변경"
 
@@ -502,7 +593,7 @@ msgstr "알 수 없음"
 msgid "未绑定"
 msgstr "바인딩되지 않음"
 
-#: src/page/Library/GameDetail.tsx:361
+#: src/page/Library/GameDetail.tsx:377
 msgid "未设定 (点击选择)"
 msgstr "설정되지 않음 (클릭하여 선택)"
 
@@ -521,6 +612,10 @@ msgstr "이미지가 선택되지 않음"
 #: src/page/User/index.tsx:437
 msgid "本月暂无截图记录"
 msgstr "이번 달 스크린샷 기록이 없습니다"
+
+#: src/page/Log/index.tsx:88
+msgid "本次运行的所有日志，最多保留 2000 条"
+msgstr "이번 실행의 모든 로그 (최대 2000개)"
 
 #: src/page/Setting/index.tsx:18
 msgid "权限"
@@ -542,15 +637,15 @@ msgstr "긱 그레이"
 msgid "查询失败，请检查 ID 是否正确"
 msgstr "조회 실패, ID가 올바른지 확인하세요"
 
-#: src/page/Library/GameDetail.tsx:320
+#: src/page/Library/GameDetail.tsx:330
 msgid "标记通关"
 msgstr "클리어로 표시"
 
-#: src/page/Setting/SysSetting.tsx:98
+#: src/page/Setting/SysSetting.tsx:104
 msgid "检查中..."
 msgstr "확인 중..."
 
-#: src/page/Setting/SysSetting.tsx:98
+#: src/page/Setting/SysSetting.tsx:104
 msgid "检查更新"
 msgstr "업데이트 확인"
 
@@ -558,11 +653,11 @@ msgstr "업데이트 확인"
 msgid "检索失败，请检查 ID 或网络"
 msgstr "검색 실패, ID 또는 네트워크를 확인하세요"
 
-#: src/page/Library/GameDetail.tsx:81
+#: src/page/Library/GameDetail.tsx:83
 msgid "正在同步..."
 msgstr "동기화 중..."
 
-#: src/page/Library/GameDetail.tsx:59
+#: src/page/Library/GameDetail.tsx:61
 msgid "正在备份存档..."
 msgstr "세이브 데이터 백업 중..."
 
@@ -570,7 +665,7 @@ msgstr "세이브 데이터 백업 중..."
 msgid "正在导入游戏..."
 msgstr "게임 가져오는 중..."
 
-#: src/page/Library/GameDetail.tsx:68
+#: src/page/Library/GameDetail.tsx:70
 msgid "正在恢复存档..."
 msgstr "세이브 데이터 복원 중..."
 
@@ -589,6 +684,10 @@ msgstr "게임 추가/업데이트 시 자동으로 네트워크에서 리소스
 #: src/page/Setting/CompanionManager.tsx:183
 msgid "添加新程序"
 msgstr "새 프로그램 추가"
+
+#: src/page/Log/index.tsx:221
+msgid "清空"
+msgstr "비우기"
 
 #: src/page/Setting/ResourceSetting.tsx:99
 msgid "清除全部程序数据"
@@ -609,6 +708,10 @@ msgstr "게임 통합 압축 해제 디렉터리"
 #: src/page/Setting/ResourceSetting.tsx:69
 msgid "游戏资源目录"
 msgstr "게임 리소스 디렉터리"
+
+#: src/page/Library/CollectionSidebar.tsx:297
+msgid "点击 + 创建第一个"
+msgstr "+ 버튼을 눌러 첫 번째를 생성하세요"
 
 #: src/page/Setting/ShortcutManager.tsx:64
 msgid "点击绑定区域后按下目标按键组合"
@@ -698,7 +801,7 @@ msgstr "비활성화"
 msgid "程序名称"
 msgstr "프로그램 이름"
 
-#: src/page/Library/GameDetail.tsx:280
+#: src/page/Library/GameDetail.tsx:290
 msgid "空间占用"
 msgstr "공간 점유"
 
@@ -706,7 +809,11 @@ msgstr "공간 점유"
 msgid "窗口行为"
 msgstr "창 동작"
 
-#: src/page/Library/GameDetail.tsx:298
+#: src/page/Log/index.tsx:134
+msgid "等待日志输出..."
+msgstr "로그 출력 대기 중..."
+
+#: src/page/Library/GameDetail.tsx:308
 msgid "简介"
 msgstr "소개"
 
@@ -739,7 +846,7 @@ msgstr "보스 키"
 msgid "背景不透明度"
 msgstr "배경 불투명도"
 
-#: src/page/Library/GameDetail.tsx:332
+#: src/page/Library/GameDetail.tsx:342
 #: src/page/Setting/InterfaceSetting.tsx:94
 msgid "背景图片"
 msgstr "배경 이미지"
@@ -756,6 +863,10 @@ msgstr "에너지 오렌지"
 msgid "自动下载封面与背景"
 msgstr "표지 및 배경 자동 다운로드"
 
+#: src/page/Log/index.tsx:209
+msgid "自动滚动"
+msgstr "자동 스크롤"
+
 #: src/page/Setting/InterfaceSetting.tsx:31
 msgid "蔷薇粉"
 msgstr "로즈 핑크"
@@ -764,7 +875,7 @@ msgstr "로즈 핑크"
 msgid "解压至目的地"
 msgstr "대상 폴더에 압축 해제"
 
-#: src/components/custom/Entry.tsx:34
+#: src/components/custom/Entry.tsx:35
 msgid "设置"
 msgstr "설정"
 
@@ -780,7 +891,7 @@ msgstr "언어 및 시작"
 msgid "请在库设置中添加首页展示项目"
 msgstr "라이브러리 설정에서 홈 화면 표시 항목을 추가하세요"
 
-#: src/page/Library/GameDetail.tsx:75
+#: src/page/Library/GameDetail.tsx:77
 msgid "请输入 ID"
 msgstr "ID를 입력하세요"
 
@@ -828,13 +939,21 @@ msgstr "홈으로 이동"
 msgid "辛苦了，开启一段精彩的故事吧。"
 msgstr "수고하셨습니다. 멋진 이야기를 시작해 보세요."
 
-#: src/page/Library/GameDetail.tsx:182
+#: src/page/Library/GameDetail.tsx:184
 msgid "返回库"
 msgstr "라이브러리로 돌아가기"
 
 #: src/page/Setting/ResourceSetting.tsx:94
 msgid "还原"
 msgstr "복원"
+
+#: src/page/Library/CollectionSidebar.tsx:296
+msgid "还没有收藏夹"
+msgstr "컬렉션이 없습니다"
+
+#: src/page/Library/AddToCollectionDialog.tsx:82
+msgid "还没有收藏夹，先新建一个吧"
+msgstr "컬렉션이 없습니다. 먼저 생성하세요"
 
 #: src/page/Setting/BaseSetting.tsx:54
 msgid "连携启动程序"
@@ -865,6 +984,10 @@ msgstr "보스 키, 스크린샷, 실행 등의 전역 단축키 설정"
 msgid "配置随游戏或程序自动启动的辅助工具"
 msgstr "게임 또는 프로그램과 함께 자동 실행되는 보조 도구 설정"
 
+#: src/page/Library/CollectionSidebar.tsx:45
+msgid "重命名失败"
+msgstr "이름 변경 실패"
+
 #: src/page/Setting/CompanionManager.tsx:126
 msgid "随游戏"
 msgstr "게임 연동"
@@ -885,6 +1008,6 @@ msgstr "페이지 내용이 정의되지 않았습니다: \"/\" 경로 설정을
 msgid "首页"
 msgstr "홈"
 
-#: src/page/Library/GameDetail.tsx:314
+#: src/page/Library/GameDetail.tsx:324
 msgid "首页展示"
 msgstr "홈 화면 표시"
