@@ -24,7 +24,7 @@ interface CollectionStore {
 }
 
 const useCollectionStore = create<CollectionStore>()(
-  immer((set, get) => ({
+  immer((set) => ({
     collections: [],
 
     async fetchCollections() {
