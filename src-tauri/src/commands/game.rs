@@ -46,7 +46,7 @@ pub async fn get_game_meta_by_id(
 
 #[tauri::command]
 pub async fn add_new_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Result<(), AppError> {
-    debug!("添加新游戏: {:?}", game.name);
+    info!("添加新游戏: {:?}", game.name);
     insert_game(&pool, &game).await?;
     trigger_resource_download(&game, ResourceTarget::All)?;
     Ok(())
@@ -101,7 +101,7 @@ pub async fn add_new_game_list(
 
 #[tauri::command]
 pub async fn update_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Result<(), AppError> {
-    debug!("更新游戏: {}", game.id);
+    info!("更新游戏: {}", game.id);
 
     // 检查资源是否变更
     let old = sqlx::query("SELECT cover, background FROM games WHERE id = ?")

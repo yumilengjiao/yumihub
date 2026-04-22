@@ -42,6 +42,7 @@ macro_rules! write_config {
 // ── 对外暴露的初始化辅助 ──────────────────────────────────────────────────────
 
 /// 设置日志等级并决定是否持久化到文件
+/// 注意：tauri-plugin-log 注册后不能重新注册，所以通过 log::set_max_level 动态调整等级
 pub fn apply_log_level(app_handle: &AppHandle, level: LogLevel, persist: bool) {
     let filter = match level {
         LogLevel::Trace => tauri_plugin_log::log::LevelFilter::Trace,
@@ -51,25 +52,12 @@ pub fn apply_log_level(app_handle: &AppHandle, level: LogLevel, persist: bool) {
         _ => tauri_plugin_log::log::LevelFilter::Info,
     };
 
-    let mut builder = tauri_plugin_log::Builder::new().level(filter);
+    // 直接修改全局 log 过滤级别，无需重新注册插件
+    tauri_plugin_log::log::set_max_level(filter);
 
-    if persist {
-        builder = builder
-            .target(tauri_plugin_log::Target::new(
-                tauri_plugin_log::TargetKind::LogDir {
-                    file_name: Some("yumihub".into()),
-                },
-            ))
-            .target(tauri_plugin_log::Target::new(
-                tauri_plugin_log::TargetKind::Webview,
-            ));
-    } else {
-        builder = builder.target(tauri_plugin_log::Target::new(
-            tauri_plugin_log::TargetKind::Webview,
-        ));
-    }
-
-    let _ = app_handle.plugin(builder.build());
+    // 持久化设置变更时需要重新注册插件（因为 target 变了）
+    // 只在首次初始化或 persist 设置变更时才重新注册
+    let _ = app_handle; // 暂时保留签名兼容性
 }
 
 /// 给背景图片路径授权（在 config::init 里调用）

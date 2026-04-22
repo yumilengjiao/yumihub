@@ -85,8 +85,8 @@ export default function User() {
 
   return (
     <div className="relative h-full w-full overflow-y-auto overflow-x-hidden bg-zinc-100 dark:bg-zinc-900/95 pt-14">
-      {bgStyle && <div className="fixed inset-0 z-0 pointer-events-none" style={bgStyle} />}
-      <div className="fixed inset-0 z-0 pointer-events-none bg-white/20 dark:bg-black/40" />
+      {bgStyle && <div className="absolute inset-0 z-0 pointer-events-none" style={bgStyle} />}
+      <div className="absolute inset-0 z-0 pointer-events-none bg-white/20 dark:bg-black/40" />
 
       <div className="relative z-10 px-12 pt-14 pb-20 space-y-10 max-w-[85vw] mx-auto">
 

@@ -50,7 +50,11 @@ export default function Entry({ node }: ThemeComponentProps) {
 
   return (
     <div
-      className={cn("w-full px-2 py-1", node.className)}
+      className={cn(
+        "w-full py-1 overflow-visible",
+        showTitle ? "px-2" : "px-0",
+        node.className
+      )}
       style={node.style as React.CSSProperties}
     >
       <div
@@ -61,7 +65,8 @@ export default function Entry({ node }: ThemeComponentProps) {
         }}
         className={cn(
           "group relative flex items-center h-16 cursor-pointer rounded-[24px] transition-all duration-300",
-          "justify-start select-none w-full",
+          showTitle ? "justify-start" : "justify-center",
+          "select-none w-full overflow-visible",
           isActive
             ? cn(activeColor, "text-white shadow-lg shadow-custom-300/50 scale-[1.02]")
             : "text-zinc-500 hover:bg-zinc-100/10 hover:text-custom-400",

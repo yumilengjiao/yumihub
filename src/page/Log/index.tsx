@@ -67,13 +67,13 @@ export default function LogPage() {
 
   return (
     <div className="relative h-full w-full flex flex-col overflow-hidden bg-zinc-100 dark:bg-zinc-900/95">
-      {bgStyle && <div className="fixed inset-0 z-0 pointer-events-none" style={bgStyle} />}
-      <div className="fixed inset-0 z-0 pointer-events-none bg-white/20 dark:bg-black/40" />
+      {bgStyle && <div className="absolute inset-0 z-0 pointer-events-none" style={bgStyle} />}
+      <div className="absolute inset-0 z-0 pointer-events-none bg-white/20 dark:bg-black/40" />
 
       <div className="relative z-10 flex flex-col h-full pt-14">
 
         {/* 页面标题 */}
-        <div className="px-12 pt-8 pb-4 shrink-0">
+        <div className="px-24 pr-16 pt-8 pb-4 shrink-0">
           <div className="flex items-center gap-3 mb-1">
             <div className="w-1 h-6 rounded-full bg-custom-500" />
             <h1 className="text-3xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight">Log</h1>
@@ -91,7 +91,7 @@ export default function LogPage() {
 
         {/* 持久化提示 */}
         {!config.system.persistLog && (
-          <div className="mx-12 mb-3 shrink-0 flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-amber-500/8 dark:bg-amber-500/6 border border-amber-400/25">
+          <div className="ml-26 mr-16 mb-3 shrink-0 flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-amber-500/8 dark:bg-amber-500/6 border border-amber-400/25">
             <div className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
             <p className="text-xs text-amber-700 dark:text-amber-400 font-medium">
               <Trans>日志持久化未开启，重启后记录将清空。前往</Trans>
@@ -102,7 +102,7 @@ export default function LogPage() {
         )}
 
         {/* 日志列表 */}
-        <div className="flex-1 min-h-0 mx-12 mb-4">
+        <div className="flex-1 min-h-0 ml-26 mr-16 mb-4">
           <div className="h-full bg-white/80 dark:bg-zinc-800/60 backdrop-blur-sm rounded-2xl border border-zinc-200/60 dark:border-zinc-700/40 shadow-sm overflow-hidden flex flex-col">
 
             <AnimatePresence>
@@ -148,7 +148,7 @@ export default function LogPage() {
                         )}
                       >
                         <span className="text-[11px] font-mono text-zinc-400 dark:text-zinc-600 shrink-0 pt-px tabular-nums w-16">{log.time}</span>
-                        <span className={cn('text-[10px] font-black px-1.5 py-0.5 rounded-md shrink-0 uppercase w-12 text-center', meta.badge)}>{meta.label}</span>
+                        <span className={cn('text-[10px] font-black mx-4 px-1.5 py-0.5 rounded-md shrink-0 uppercase w-12 text-center', meta.badge)}>{meta.label}</span>
                         <span className={cn(
                           'flex-1 text-xs font-mono leading-relaxed break-all',
                           log.level === 'error' ? 'text-red-700 dark:text-red-300 font-semibold' :
@@ -168,7 +168,7 @@ export default function LogPage() {
         </div>
 
         {/* 底部工具栏 */}
-        <div className="shrink-0 mx-12 mb-6">
+        <div className="shrink-0 ml-26 mr-16 mb-6">
           <div className="flex items-center gap-2 px-4 py-3 bg-white/80 dark:bg-zinc-800/60 backdrop-blur-sm rounded-2xl border border-zinc-200/60 dark:border-zinc-700/40 shadow-sm">
             <div className="flex items-center gap-1 flex-1">
               <button

@@ -59,8 +59,10 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(
+            // 注册时用 Trace 级别（最低），实际过滤由 set_max_level 控制
+            // 这样 config 初始化后调用 set_max_level 就能立即生效
             tauri_plugin_log::Builder::new()
-                .level(tauri_plugin_log::log::LevelFilter::Info)
+                .level(tauri_plugin_log::log::LevelFilter::Trace)
                 .target(tauri_plugin_log::Target::new(
                     tauri_plugin_log::TargetKind::Webview,
                 ))
@@ -70,6 +72,7 @@ pub fn run() {
             active: Mutex::new(None),
             all_names: Mutex::new(Vec::new()),
             default_theme_updated: Mutex::new(false),
+            non_default_theme_outdated: Mutex::new(false),
         })
         .setup(life_cycle::init)
         .invoke_handler(tauri::generate_handler![
@@ -128,6 +131,7 @@ pub fn run() {
             commands::get_theme,
             commands::get_all_theme_names,
             commands::get_default_theme_updated,
+            commands::get_non_default_theme_outdated,
         ])
         .build(tauri::generate_context!())
         .expect("构建 Tauri 应用失败")

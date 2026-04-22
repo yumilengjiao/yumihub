@@ -23,6 +23,8 @@ pub struct ThemeState {
     pub all_names: Mutex<Vec<String>>,
     /// 默认主题是否在本次启动时被自动更新了
     pub default_theme_updated: Mutex<bool>,
+    /// 用户当前使用的不是 default 主题，且 default 主题有更新（提示用户去下载新版主题）
+    pub non_default_theme_outdated: Mutex<bool>,
 }
 
 /// 内置默认主题（随二进制打包，避免文件丢失导致崩溃）
@@ -129,6 +131,7 @@ pub fn init(handle: &AppHandle) -> Result<(), AppError> {
     // 扫描并加载所有主题
     let mut all_names = Vec::new();
     let mut active: Option<ThemeIr> = None;
+    let mut active_theme_version: Option<String> = None;
 
     for entry in fs::read_dir(&theme_dir).map_err(AppError::from)?.flatten() {
         let path = entry.path();
@@ -142,6 +145,7 @@ pub fn init(handle: &AppHandle) -> Result<(), AppError> {
             Ok(theme) => {
                 let name = theme.config.theme_name.clone();
                 if name == target_name {
+                    active_theme_version = Some(theme.config.version.clone());
                     active = Some(theme);
                 }
                 all_names.push(name);
@@ -163,6 +167,21 @@ pub fn init(handle: &AppHandle) -> Result<(), AppError> {
         .default_theme_updated
         .lock()
         .map_err(|e| AppError::Lock(e.to_string()))? = default_theme_updated;
+
+    // 用户使用的不是 default 主题，且当前主题版本低于内置 default 版本
+    // → 说明有新功能入口等更新，提示去下载新版主题文件
+    let non_default_outdated = if target_name != "default" {
+        match active_theme_version {
+            Some(ref v) => version_gt(&bundled_version, v),
+            None => false,
+        }
+    } else {
+        false
+    };
+    *state
+        .non_default_theme_outdated
+        .lock()
+        .map_err(|e| AppError::Lock(e.to_string()))? = non_default_outdated;
 
     info!("主题模块初始化完成，激活主题: {}", target_name);
     Ok(())

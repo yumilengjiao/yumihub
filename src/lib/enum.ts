@@ -64,4 +64,5 @@ export enum Cmds {
   GET_THEMES = "get_theme",
   GET_ALL_THEME_NAMES = "get_all_theme_names",
   GET_DEFAULT_THEME_UPDATED = "get_default_theme_updated",
+  GET_NON_DEFAULT_THEME_OUTDATED = "get_non_default_theme_outdated",
 }

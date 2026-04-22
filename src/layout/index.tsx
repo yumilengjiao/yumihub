@@ -44,8 +44,8 @@ export default function Layout() {
     attachLogger(entry => {
       // 过滤 tao 内部噪音日志（Windows 窗口事件循环的已知 warning，与业务无关）
       if (entry.message.includes('NewEvents emitted without explicit') ||
-          entry.message.includes('RedrawEventsCleared emitted without') ||
-          entry.message.includes('MainEventsCleared')) return
+        entry.message.includes('RedrawEventsCleared emitted without') ||
+        entry.message.includes('MainEventsCleared')) return
 
       const level = LEVEL_MAP[entry.level] ?? 'info'
       const now = new Date()
@@ -82,12 +82,27 @@ export default function Layout() {
         await Promise.all([fetchTheme(), fetchShortcuts(), fetchCompanions()])
 
         try {
-          const themeUpdated = await invoke<boolean>(Cmds.GET_DEFAULT_THEME_UPDATED)
-          if (themeUpdated) {
+          const [defaultUpdated, nonDefaultOutdated] = await Promise.all([
+            invoke<boolean>(Cmds.GET_DEFAULT_THEME_UPDATED),
+            invoke<boolean>(Cmds.GET_NON_DEFAULT_THEME_OUTDATED),
+          ])
+
+          // 用户使用的是 default 主题且它被更新了 → 提示导航有新入口
+          if (defaultUpdated && !nonDefaultOutdated) {
             toast.dismiss("theme-updated")
-            toast.info("默认主题已更新，导航栏新增了功能入口。如使用自定义主题，建议参考默认主题同步更新。", {
+            toast.info("默认主题已更新，导航栏新增了功能入口。", {
               id: "theme-updated",
               duration: 8000,
+              dismissible: true,
+            })
+          }
+
+          // 用户使用的是非 default 主题，且 default 有更新 → 提示去下载新版主题文件
+          if (nonDefaultOutdated) {
+            toast.dismiss("theme-outdated")
+            toast.warning("你使用的主题有新版本可用，建议前往 GitHub 下载最新主题文件以获得新功能入口。", {
+              id: "theme-outdated",
+              duration: 12000,
               dismissible: true,
             })
           }

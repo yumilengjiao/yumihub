@@ -23,7 +23,7 @@ export default function SurfaceBase({
     <div
       id={String(node.id)}
       style={node.style}
-      className={cn("min-h-0 w-full h-full overflow-hidden", node.className)}
+      className={cn("min-h-0 w-full h-full", node.className)}
     >
       {children}
     </div>

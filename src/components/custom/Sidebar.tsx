@@ -102,8 +102,7 @@ const SideBar = ({ node, children }: ThemeComponentProps) => {
         onMouseLeave={() => mode === "trigger" && setIsHovered(false)}
         className={cn(
           "overflow-visible",
-          mode === "normal" && (side === "left" ? "border-r" : "border-l"),
-          "border-white/10",
+          mode === "normal" && (side === "left" ? "border-r border-white/10" : "border-l border-white/10"),
           node.className
         )}
         style={outerStyle}

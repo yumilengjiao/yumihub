@@ -174,6 +174,16 @@ pub fn get_default_theme_updated(state: State<'_, ThemeState>) -> Result<bool, A
         .map_err(|e| AppError::Lock(e.to_string()))
 }
 
+/// 查询用户是否在使用非 default 主题且 default 有更新（提示去下载新版主题文件）
+#[tauri::command]
+pub fn get_non_default_theme_outdated(state: State<'_, ThemeState>) -> Result<bool, AppError> {
+    state
+        .non_default_theme_outdated
+        .lock()
+        .map(|v| *v)
+        .map_err(|e| AppError::Lock(e.to_string()))
+}
+
 /// 获取日志文件目录路径（仅在持久化日志开启时有意义）
 #[tauri::command]
 pub async fn get_log_dir(app: tauri::AppHandle) -> Result<String, crate::error::AppError> {
