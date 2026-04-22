@@ -296,10 +296,13 @@ function ActivityHeatmap({ year }: { year: string }) {
 function SystemMonitor() {
   const [stats, setStats] = useState<{ cpuUsage: number; memoryUsage: number } | null>(null)
   const [diskUsage, setDiskUsage] = useState(0)
+  const [disks, setDisks] = useState<string[]>([])
   const user = useUserStore(s => s.user)
+  const { setUser } = useUserStore()
 
   useEffect(() => {
     const p = listen<{ cpuUsage: number; memoryUsage: number }>("sys-monitor", e => setStats(e.payload))
+    invoke<string[]>(Cmds.GET_DISKS).then(setDisks).catch(() => {})
     return () => { p.then(f => f()) }
   }, [])
 
@@ -315,7 +318,31 @@ function SystemMonitor() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      {/* 磁盘选择器 */}
+      {disks.length > 0 && (
+        <div className="flex items-center gap-2">
+          <HardDrive size={13} className="text-zinc-400 shrink-0" />
+          <span className="text-xs text-zinc-400 font-semibold shrink-0">监控磁盘</span>
+          <div className="flex flex-wrap gap-1.5 ml-1">
+            {disks.map(disk => (
+              <button
+                key={disk}
+                onClick={() => setUser({ selectedDisk: disk })}
+                className={cn(
+                  "text-[11px] font-bold px-2.5 py-0.5 rounded-lg transition-all",
+                  user?.selectedDisk === disk
+                    ? "bg-cyan-500/20 text-cyan-500 ring-1 ring-cyan-500/30"
+                    : "bg-zinc-200 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-300 dark:hover:bg-zinc-600"
+                )}
+              >
+                {disk}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {bars.map(b => (
         <div key={b.label}>
           <div className="flex items-center justify-between mb-2">
