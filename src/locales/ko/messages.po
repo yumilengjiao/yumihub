@@ -194,7 +194,7 @@ msgstr "기능 확장"
 msgid "加入收藏夹"
 msgstr "컬렉션에 추가"
 
-#: src/page/User/index.tsx:428
+#: src/page/User/index.tsx:455
 msgid "加载中..."
 msgstr "로딩 중..."
 
@@ -561,7 +561,7 @@ msgstr "자세한 소개가 없습니다"
 msgid "暂无详细介绍。"
 msgstr "자세한 소개가 없습니다."
 
-#: src/page/User/index.tsx:374
+#: src/page/User/index.tsx:401
 msgid "暂无通关数据"
 msgstr "클리어 데이터가 없습니다"
 
@@ -585,7 +585,7 @@ msgstr "저장 경로를 찾을 수 없습니다"
 msgid "未找到匹配数据"
 msgstr "일치하는 데이터를 찾을 수 없습니다"
 
-#: src/page/User/index.tsx:362
+#: src/page/User/index.tsx:389
 msgid "未知"
 msgstr "알 수 없음"
 
@@ -609,7 +609,7 @@ msgstr "선택되지 않음"
 msgid "未选择图片"
 msgstr "이미지가 선택되지 않음"
 
-#: src/page/User/index.tsx:437
+#: src/page/User/index.tsx:464
 msgid "本月暂无截图记录"
 msgstr "이번 달 스크린샷 기록이 없습니다"
 
@@ -717,7 +717,7 @@ msgstr "+ 버튼을 눌러 첫 번째를 생성하세요"
 msgid "点击绑定区域后按下目标按键组合"
 msgstr "바인딩 영역 클릭 후 원하는 키 조합을 누르세요"
 
-#: src/page/User/index.tsx:501
+#: src/page/User/index.tsx:528
 msgid "点击记录感想..."
 msgstr "클릭하여 감상 기록..."
 

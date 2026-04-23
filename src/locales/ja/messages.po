@@ -194,7 +194,7 @@ msgstr "機能拡張"
 msgid "加入收藏夹"
 msgstr "コレクションに追加"
 
-#: src/page/User/index.tsx:428
+#: src/page/User/index.tsx:455
 msgid "加载中..."
 msgstr "読み込み中..."
 
@@ -561,7 +561,7 @@ msgstr "詳細な紹介はありません"
 msgid "暂无详细介绍。"
 msgstr "詳細な紹介はありません。"
 
-#: src/page/User/index.tsx:374
+#: src/page/User/index.tsx:401
 msgid "暂无通关数据"
 msgstr "クリアデータはありません"
 
@@ -585,7 +585,7 @@ msgstr "保存パスが見つかりません"
 msgid "未找到匹配数据"
 msgstr "マッチするデータが見つかりません"
 
-#: src/page/User/index.tsx:362
+#: src/page/User/index.tsx:389
 msgid "未知"
 msgstr "不明"
 
@@ -609,7 +609,7 @@ msgstr "未選択"
 msgid "未选择图片"
 msgstr "画像が選択されていません"
 
-#: src/page/User/index.tsx:437
+#: src/page/User/index.tsx:464
 msgid "本月暂无截图记录"
 msgstr "今月のスクリーンショット記録はありません"
 
@@ -717,7 +717,7 @@ msgstr "+ をクリックして最初を作成"
 msgid "点击绑定区域后按下目标按键组合"
 msgstr "バインド領域をクリックした後、目的のキーコンビネーションを押してください"
 
-#: src/page/User/index.tsx:501
+#: src/page/User/index.tsx:528
 msgid "点击记录感想..."
 msgstr "クリックして感想を記録..."
 

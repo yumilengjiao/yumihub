@@ -23,7 +23,6 @@ use crate::{
 // ── 写锁宏 ────────────────────────────────────────────────────────────────────
 //
 // 明确标注 Config 类型，避免闭包类型推断失败（E0282）
-
 macro_rules! write_config {
     (|$cfg:ident| $body:expr) => {
         match GLOBAL_CONFIG.write() {
@@ -41,9 +40,9 @@ macro_rules! write_config {
 
 // ── 对外暴露的初始化辅助 ──────────────────────────────────────────────────────
 
-/// 设置日志等级并决定是否持久化到文件
-/// 注意：tauri-plugin-log 注册后不能重新注册，所以通过 log::set_max_level 动态调整等级
-pub fn apply_log_level(app_handle: &AppHandle, level: LogLevel, persist: bool) {
+/// 设置日志等级（动态调整全局过滤级别）
+/// sqlx/tao 等噪音模块在注册插件时已通过 level_for 固定过滤，不受此影响
+pub fn apply_log_level(_app_handle: &AppHandle, level: LogLevel, _persist: bool) {
     let filter = match level {
         LogLevel::Trace => tauri_plugin_log::log::LevelFilter::Trace,
         LogLevel::Debug => tauri_plugin_log::log::LevelFilter::Debug,
@@ -51,13 +50,8 @@ pub fn apply_log_level(app_handle: &AppHandle, level: LogLevel, persist: bool) {
         LogLevel::Error => tauri_plugin_log::log::LevelFilter::Error,
         _ => tauri_plugin_log::log::LevelFilter::Info,
     };
-
-    // 直接修改全局 log 过滤级别，无需重新注册插件
     tauri_plugin_log::log::set_max_level(filter);
-
-    // 持久化设置变更时需要重新注册插件（因为 target 变了）
-    // 只在首次初始化或 persist 设置变更时才重新注册
-    let _ = app_handle; // 暂时保留签名兼容性
+    info!("日志等级已切换为: {:?}", level);
 }
 
 /// 给背景图片路径授权（在 config::init 里调用）
@@ -145,6 +139,15 @@ pub fn start_listener(app: AppHandle) {
 // ── 需要副作用的设置项 ────────────────────────────────────────────────────────
 
 fn set_auto_start(app: AppHandle, yes: bool) {
+    // 值没有变化则跳过，避免语言切换等无关配置变更触发 OS 调用
+    let already = GLOBAL_CONFIG
+        .read()
+        .map(|c| c.basic.auto_start)
+        .unwrap_or(!yes);
+    if already == yes {
+        write_config!(|c| c.basic.auto_start = yes);
+        return;
+    }
     write_config!(|c| c.basic.auto_start = yes);
     let result = if yes {
         app.autolaunch().enable()
@@ -152,7 +155,12 @@ fn set_auto_start(app: AppHandle, yes: bool) {
         app.autolaunch().disable()
     };
     if let Err(e) = result {
-        error!("{}自启动失败: {}", if yes { "启用" } else { "禁用" }, e);
+        // disable 时找不到注册项是正常情况（从未启用过），只记录 debug
+        if yes {
+            error!("启用自启动失败: {}", e);
+        } else {
+            warn!("禁用自启动时出现警告（可能从未注册过）: {}", e);
+        }
     }
 }
 

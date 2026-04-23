@@ -59,10 +59,13 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(
-            // 注册时用 Trace 级别（最低），实际过滤由 set_max_level 控制
-            // 这样 config 初始化后调用 set_max_level 就能立即生效
             tauri_plugin_log::Builder::new()
-                .level(tauri_plugin_log::log::LevelFilter::Trace)
+                // 初始 Info，config 加载后通过 set_max_level 动态调整
+                .level(tauri_plugin_log::log::LevelFilter::Info)
+                // sqlx 查询日志噪音太多，始终只显示 Warn 以上
+                .level_for("sqlx", tauri_plugin_log::log::LevelFilter::Warn)
+                // tao 内部 Windows 事件循环噪音，只显示 Error
+                .level_for("tao", tauri_plugin_log::log::LevelFilter::Error)
                 .target(tauri_plugin_log::Target::new(
                     tauri_plugin_log::TargetKind::Webview,
                 ))
