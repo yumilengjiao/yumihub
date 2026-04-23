@@ -89,7 +89,6 @@ export default function Layout() {
 
           // 用户使用的是 default 主题且它被更新了 → 提示导航有新入口
           if (defaultUpdated && !nonDefaultOutdated) {
-            toast.dismiss("theme-updated")
             toast.info("默认主题已更新，导航栏新增了功能入口。", {
               id: "theme-updated",
               duration: 8000,
@@ -99,7 +98,6 @@ export default function Layout() {
 
           // 用户使用的是非 default 主题，且 default 有更新 → 提示去下载新版主题文件
           if (nonDefaultOutdated) {
-            toast.dismiss("theme-outdated")
             toast.warning("你使用的主题有新版本可用，建议前往 GitHub 下载最新主题文件以获得新功能入口。", {
               id: "theme-outdated",
               duration: 12000,
@@ -133,15 +131,17 @@ export default function Layout() {
   }, [fontFamily])
 
   return (
-    <div className="h-screen w-full flex flex-col bg-transparent overflow-hidden select-none">
+    <>
       <Toaster position="top-center" richColors />
-      {layoutTree ? (
-        <Surface node={layoutTree} />
-      ) : (
-        <div className="flex h-full w-full items-center justify-center text-zinc-500 text-sm">
-          Loading...
-        </div>
-      )}
-    </div>
+      <div className="h-screen w-full flex flex-col bg-transparent overflow-hidden select-none">
+        {layoutTree ? (
+          <Surface node={layoutTree} />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-zinc-500 text-sm">
+            Loading...
+          </div>
+        )}
+      </div>
+    </>
   )
 }
