@@ -4,7 +4,7 @@
 
 一个二次元本地游戏管理工具
 
-简体中文 | [English](./README.en.md)
+简体中文 | [English](./README_en.md)
 
 </div>
 
@@ -51,6 +51,12 @@ YumiHub 是一个基于 Tauri 开发的本地游戏 (Galgame) 库管理工具，
   <br><br>
   <em>游戏库界面</em><br>
   <img src="./assets/library.png" width="80%" />
+  <br><br>
+  <em>用户界面</em><br>
+  <img src="./assets/user.png" width="80%" />
+  <br><br>
+  <em>设置界面</em><br>
+  <img src="./assets/setting.png" width="80%" />
   <br><br>
   <em>连携程序管理</em><br>
   <img src="./assets/companion.png" width="80%" />
