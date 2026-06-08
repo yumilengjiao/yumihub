@@ -15,6 +15,7 @@ import { Trans } from "@lingui/react/macro"
 import { t } from "@lingui/core/macro"
 import useConfigStore from "@/store/configStore"
 import { sortLibraryGames, type LibrarySortMode } from "./sortGames"
+import { createBackgroundImageStyle } from "@/lib/background"
 
 export default function Library() {
   const { gameMetaList, discardGame, filterGameMetaListByName } = useGameStore()
@@ -33,12 +34,13 @@ export default function Library() {
   // --- 背景配置解析 (逻辑保持，确保稳定) ---
   const bgConfig = useMemo(() => {
     if (typeof globalBackground === "string") {
-      return { path: globalBackground, opacity: 1, blur: 0 }
+      return { path: globalBackground, opacity: 1, blur: 0, crop: undefined }
     }
     return {
       path: globalBackground?.path || "",
       opacity: globalBackground?.opacity ?? 1,
-      blur: globalBackground?.blur ?? 0
+      blur: globalBackground?.blur ?? 0,
+      crop: globalBackground?.crop,
     }
   }, [globalBackground])
 
@@ -46,10 +48,7 @@ export default function Library() {
   const bgStyle = useMemo(() => {
     if (!bgConfig.path.trim()) return null;
     return {
-      backgroundImage: `url("${convertFileSrc(bgConfig.path)}")`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
+      ...createBackgroundImageStyle(bgConfig.path, bgConfig.crop),
       opacity: bgConfig.opacity,
       filter: bgConfig.blur > 0 ? `blur(${bgConfig.blur}px)` : "none",
       // 这里的 scale 保证模糊时不缩边

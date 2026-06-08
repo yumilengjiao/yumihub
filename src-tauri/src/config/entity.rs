@@ -78,6 +78,7 @@ impl Default for Interface {
                 path: PathBuf::new(),
                 opacity: 0.8,
                 blur: 0,
+                crop: None,
             },
             common_card_opacity: 0.9,
         }
@@ -89,6 +90,16 @@ pub struct Background {
     pub path: PathBuf,
     pub opacity: f32,
     pub blur: u8,
+    #[serde(default)]
+    pub crop: Option<BackgroundCrop>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct BackgroundCrop {
+    pub x: f32,
+    pub y: f32,
+    pub width: f32,
+    pub height: f32,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]

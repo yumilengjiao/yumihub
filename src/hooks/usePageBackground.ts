@@ -1,6 +1,6 @@
 import { useMemo } from "react"
-import { convertFileSrc } from "@tauri-apps/api/core"
 import useConfigStore from "@/store/configStore"
+import { createBackgroundImageStyle } from "@/lib/background"
 
 /**
  * 读取全局背景配置，返回可直接用于 style 的对象。
@@ -17,10 +17,7 @@ export function usePageBackground() {
     const opacity = bg?.opacity ?? 1
 
     return {
-      backgroundImage: `url("${convertFileSrc(path)}")`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
+      ...createBackgroundImageStyle(path, bg?.crop),
       opacity,
       filter: blur > 0 ? `blur(${blur}px)` : "none",
       transform: blur > 0 ? `scale(${1 + blur * 0.015})` : "none",

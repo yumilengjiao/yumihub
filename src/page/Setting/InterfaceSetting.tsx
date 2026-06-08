@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import { invoke } from "@tauri-apps/api/core"
 import { open } from "@tauri-apps/plugin-dialog"
 import { convertFileSrc } from "@tauri-apps/api/core"
-import { Upload, Trash2 } from "lucide-react"
+import { Upload, Trash2, Crop as CropIcon } from "lucide-react"
 import { t } from "@lingui/core/macro"
 import useConfigStore from "@/store/configStore"
 import { Cmds } from "@/lib/enum"
@@ -10,11 +11,14 @@ import { SelectRow, SliderRow } from "@/components/common/SettingRow"
 import type { SelectOption } from "@/components/common/SettingRow"
 import { SettingSection } from "./SettingSection"
 import { cn } from "@/lib/utils"
+import type { BackgroundCrop } from "@/types/config"
+import { createBackgroundImageStyle, normalizeBackgroundCrop } from "@/lib/background"
 
 export default function InterfaceSetting() {
   const { config, updateConfig } = useConfigStore()
   const [fonts, setFonts] = useState<SelectOption[]>([{ label: t`系统默认`, value: "sys" }])
   const [themes, setThemes] = useState<SelectOption[]>([])
+  const [cropOpen, setCropOpen] = useState(false)
 
   useEffect(() => {
     invoke<string[]>(Cmds.GET_SYSTEM_FONTS).then(f =>
@@ -56,7 +60,11 @@ export default function InterfaceSetting() {
       filters: [{ name: "Images", extensions: ["png", "jpg", "jpeg", "webp"] }],
     })
     if (selected && typeof selected === "string") {
-      updateConfig(d => { d.interface.globalBackground = { ...bg, path: selected } })
+      await invoke(Cmds.AUTHORIZE_PATH_ACCESS, { path: selected })
+      updateConfig(d => {
+        d.interface.globalBackground.path = selected
+        delete d.interface.globalBackground.crop
+      })
     }
   }
 
@@ -101,9 +109,9 @@ export default function InterfaceSetting() {
               bg.path && "ring-2 ring-custom-400"
             )}>
               {bg.path ? (
-                <img
-                  src={convertFileSrc(bg.path)}
-                  className="w-full h-full object-cover"
+                <div
+                  className="w-full h-full"
+                  style={createBackgroundImageStyle(bg.path, bg.crop)}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-zinc-300 dark:text-zinc-600 text-xs">
@@ -119,6 +127,14 @@ export default function InterfaceSetting() {
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
+              {bg.path && (
+                <button
+                  onClick={() => setCropOpen(true)}
+                  className="flex items-center justify-center p-1.5 text-zinc-400 hover:text-custom-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+                >
+                  <CropIcon size={14} />
+                </button>
+              )}
               <button
                 onClick={handlePickBg}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-custom-500 hover:bg-custom-600 text-white text-xs font-semibold rounded-lg transition-colors"
@@ -127,7 +143,10 @@ export default function InterfaceSetting() {
               </button>
               {bg.path && (
                 <button
-                  onClick={() => updateConfig(d => { d.interface.globalBackground.path = "" })}
+                  onClick={() => updateConfig(d => {
+                    d.interface.globalBackground.path = ""
+                    delete d.interface.globalBackground.crop
+                  })}
                   className="p-1.5 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors"
                 >
                   <Trash2 size={14} />
@@ -161,6 +180,288 @@ export default function InterfaceSetting() {
           onChange={v => updateConfig(d => { d.interface.commonCardOpacity = v })}
         />
       </SettingSection>
+
+      <BackgroundCropDialog
+        open={cropOpen}
+        path={bg.path}
+        crop={bg.crop}
+        onClose={() => setCropOpen(false)}
+        onChange={crop => updateConfig(d => { d.interface.globalBackground.crop = crop })}
+      />
     </>
   )
+}
+
+type DragState =
+  | { type: "move"; startX: number; startY: number; startCrop: BackgroundCrop }
+  | { type: "resize"; handle: "nw" | "ne" | "sw" | "se"; startX: number; startY: number; startCrop: BackgroundCrop }
+
+function BackgroundCropDialog({
+  open,
+  path,
+  crop,
+  onClose,
+  onChange,
+}: {
+  open: boolean
+  path: string
+  crop?: BackgroundCrop
+  onClose: () => void
+  onChange: (crop: BackgroundCrop) => void
+}) {
+  const stageRef = useRef<HTMLDivElement>(null)
+  const imgRef = useRef<HTMLImageElement>(null)
+  const dragRef = useRef<DragState | null>(null)
+  const draftRef = useRef<BackgroundCrop>(normalizeBackgroundCrop(crop))
+  const [imageBox, setImageBox] = useState({ left: 0, top: 0, width: 0, height: 0 })
+  const [draft, setDraft] = useState<BackgroundCrop>(normalizeBackgroundCrop(crop))
+
+  const updateImageBox = () => {
+    const stage = stageRef.current
+    const img = imgRef.current
+    if (!stage || !img) return
+    const stageRect = stage.getBoundingClientRect()
+    const imgRect = img.getBoundingClientRect()
+    setImageBox({
+      left: imgRect.left - stageRect.left,
+      top: imgRect.top - stageRect.top,
+      width: imgRect.width,
+      height: imgRect.height,
+    })
+  }
+
+  useEffect(() => {
+    if (!open) return
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose()
+    }
+    window.addEventListener("keydown", onKeyDown)
+    window.addEventListener("resize", updateImageBox)
+    requestAnimationFrame(updateImageBox)
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown)
+      window.removeEventListener("resize", updateImageBox)
+    }
+  }, [open, onClose])
+
+  useEffect(() => {
+    if (!open || imageBox.width <= 0 || imageBox.height <= 0) return
+
+    const next = crop
+      ? normalizeBackgroundCrop(crop)
+      : createDefaultCrop(imageBox.width / imageBox.height)
+
+    draftRef.current = next
+    setDraft(next)
+  }, [open, crop, imageBox.width, imageBox.height])
+
+  const setDraftCrop = (next: BackgroundCrop) => {
+    const normalized = normalizeBackgroundCrop(next)
+    draftRef.current = normalized
+    setDraft(normalized)
+  }
+
+  useEffect(() => {
+    if (!open) return
+
+    const onPointerMove = (event: PointerEvent) => {
+      const drag = dragRef.current
+      if (!drag || imageBox.width <= 0 || imageBox.height <= 0) return
+
+      const dx = (event.clientX - drag.startX) / imageBox.width
+      const dy = (event.clientY - drag.startY) / imageBox.height
+
+      if (drag.type === "move") {
+        setDraftCrop({
+          ...drag.startCrop,
+          x: clamp(drag.startCrop.x + dx, 0, 1 - drag.startCrop.width),
+          y: clamp(drag.startCrop.y + dy, 0, 1 - drag.startCrop.height),
+        })
+        return
+      }
+
+      setDraftCrop(resizeCrop(drag.startCrop, drag.handle, dx, dy, imageBox.width / imageBox.height))
+    }
+
+    const onPointerUp = () => {
+      if (!dragRef.current) return
+      dragRef.current = null
+      onChange(draftRef.current)
+    }
+
+    window.addEventListener("pointermove", onPointerMove)
+    window.addEventListener("pointerup", onPointerUp)
+
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove)
+      window.removeEventListener("pointerup", onPointerUp)
+    }
+  }, [open, imageBox.width, imageBox.height, onChange])
+
+  if (!open || !path) return null
+
+  const startDrag = (event: React.PointerEvent, drag: DragState["type"], handle?: "nw" | "ne" | "sw" | "se") => {
+    event.preventDefault()
+    event.stopPropagation()
+    dragRef.current = drag === "move"
+      ? { type: "move", startX: event.clientX, startY: event.clientY, startCrop: draftRef.current }
+      : { type: "resize", handle: handle!, startX: event.clientX, startY: event.clientY, startCrop: draftRef.current }
+  }
+
+  return createPortal(
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/70" onClick={onClose}>
+      <div
+        ref={stageRef}
+        className="relative w-[70vw] h-[70vh] overflow-hidden bg-black shadow-2xl"
+        onClick={event => event.stopPropagation()}
+      >
+        <img
+          ref={imgRef}
+          src={convertFileSrc(path)}
+          onLoad={updateImageBox}
+          className="absolute left-1/2 top-1/2 max-w-full max-h-full -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none"
+        />
+
+        {imageBox.width > 0 && imageBox.height > 0 && (
+          <div
+            className="absolute overflow-hidden"
+            style={{
+              left: imageBox.left,
+              top: imageBox.top,
+              width: imageBox.width,
+              height: imageBox.height,
+            }}
+          >
+            <CropMask crop={draft} />
+            <div
+              className="absolute z-20 cursor-move border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.35),0_0_28px_rgba(0,0,0,0.45)]"
+              style={{
+                left: `${draft.x * 100}%`,
+                top: `${draft.y * 100}%`,
+                width: `${draft.width * 100}%`,
+                height: `${draft.height * 100}%`,
+              }}
+              onPointerDown={event => startDrag(event, "move")}
+            >
+              <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none">
+                {Array.from({ length: 9 }).map((_, index) => (
+                  <div key={index} className="border border-white/35" />
+                ))}
+              </div>
+              <CropHandle position="nw" onPointerDown={event => startDrag(event, "resize", "nw")} />
+              <CropHandle position="ne" onPointerDown={event => startDrag(event, "resize", "ne")} />
+              <CropHandle position="sw" onPointerDown={event => startDrag(event, "resize", "sw")} />
+              <CropHandle position="se" onPointerDown={event => startDrag(event, "resize", "se")} />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>,
+    document.body
+  )
+}
+
+function CropMask({ crop }: { crop: BackgroundCrop }) {
+  const left = crop.x * 100
+  const top = crop.y * 100
+  const right = (1 - crop.x - crop.width) * 100
+  const bottom = (1 - crop.y - crop.height) * 100
+
+  return (
+    <>
+      <div className="absolute left-0 top-0 z-10 w-full bg-black/55" style={{ height: `${top}%` }} />
+      <div className="absolute left-0 z-10 bg-black/55" style={{ top: `${top}%`, width: `${left}%`, height: `${crop.height * 100}%` }} />
+      <div className="absolute right-0 z-10 bg-black/55" style={{ top: `${top}%`, width: `${right}%`, height: `${crop.height * 100}%` }} />
+      <div className="absolute left-0 bottom-0 z-10 w-full bg-black/55" style={{ height: `${bottom}%` }} />
+    </>
+  )
+}
+
+function CropHandle({
+  position,
+  onPointerDown,
+}: {
+  position: "nw" | "ne" | "sw" | "se"
+  onPointerDown: (event: React.PointerEvent) => void
+}) {
+  const className = {
+    nw: "-left-2 -top-2 cursor-nwse-resize",
+    ne: "-right-2 -top-2 cursor-nesw-resize",
+    sw: "-left-2 -bottom-2 cursor-nesw-resize",
+    se: "-right-2 -bottom-2 cursor-nwse-resize",
+  }[position]
+
+  return (
+    <div
+      className={cn("absolute z-30 h-4 w-4 rounded-full border-2 border-white bg-custom-500 shadow-lg", className)}
+      onPointerDown={onPointerDown}
+    />
+  )
+}
+
+function createDefaultCrop(imageAspect: number): BackgroundCrop {
+  const targetAspect = Math.max(0.45, Math.min(3.2, window.innerWidth / window.innerHeight))
+  const normalizedRatio = targetAspect / imageAspect
+
+  if (normalizedRatio >= 1) {
+    const height = 1 / normalizedRatio
+    return { x: 0, y: (1 - height) / 2, width: 1, height }
+  }
+
+  const width = normalizedRatio
+  return { x: (1 - width) / 2, y: 0, width, height: 1 }
+}
+
+function resizeCrop(
+  crop: BackgroundCrop,
+  handle: "nw" | "ne" | "sw" | "se",
+  dx: number,
+  dy: number,
+  imageAspect: number,
+): BackgroundCrop {
+  const targetAspect = Math.max(0.45, Math.min(3.2, window.innerWidth / window.innerHeight))
+  const normalizedRatio = targetAspect / imageAspect
+  const minWidth = Math.min(0.12, crop.width)
+  const widthDelta = getResizeWidthDelta(handle, dx, dy, normalizedRatio)
+
+  if (handle === "se") {
+    const maxWidth = Math.min(1 - crop.x, (1 - crop.y) * normalizedRatio)
+    const width = clamp(crop.width + widthDelta, Math.min(minWidth, maxWidth), maxWidth)
+    return { ...crop, width, height: width / normalizedRatio }
+  }
+
+  if (handle === "ne") {
+    const maxWidth = Math.min(1 - crop.x, (crop.y + crop.height) * normalizedRatio)
+    const width = clamp(crop.width + widthDelta, Math.min(minWidth, maxWidth), maxWidth)
+    const height = width / normalizedRatio
+    return { ...crop, y: crop.y + crop.height - height, width, height }
+  }
+
+  if (handle === "sw") {
+    const maxWidth = Math.min(crop.x + crop.width, (1 - crop.y) * normalizedRatio)
+    const width = clamp(crop.width + widthDelta, Math.min(minWidth, maxWidth), maxWidth)
+    return { ...crop, x: crop.x + crop.width - width, width, height: width / normalizedRatio }
+  }
+
+  const maxWidth = Math.min(crop.x + crop.width, (crop.y + crop.height) * normalizedRatio)
+  const width = clamp(crop.width + widthDelta, Math.min(minWidth, maxWidth), maxWidth)
+  const height = width / normalizedRatio
+  return { ...crop, x: crop.x + crop.width - width, y: crop.y + crop.height - height, width, height }
+}
+
+function getResizeWidthDelta(
+  handle: "nw" | "ne" | "sw" | "se",
+  dx: number,
+  dy: number,
+  normalizedRatio: number,
+) {
+  const horizontal = handle.endsWith("e") ? dx : -dx
+  const vertical = handle.startsWith("s") ? dy * normalizedRatio : -dy * normalizedRatio
+  return Math.abs(horizontal) > Math.abs(vertical) ? horizontal : vertical
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value))
 }

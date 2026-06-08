@@ -31,6 +31,15 @@ export interface GlobalBackground {
   path: string
   opacity: number
   blur: number
+  crop?: BackgroundCrop
+}
+
+/** 背景裁剪区域，数值按原图宽高归一化 */
+export interface BackgroundCrop {
+  x: number
+  y: number
+  width: number
+  height: number
 }
 
 export enum ThemeMode {
