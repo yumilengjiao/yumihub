@@ -6,16 +6,7 @@
     "main"
   ],
   "permissions": [
-    "notification:default",
     "opener:default",
-    "core:app:allow-version",
-    {
-      "identifier": "http:default",
-      "allow": [
-        {
-          "url": "https://api.github.com"
-        }
-      ]
-    }
+    "core:app:allow-version"
   ]
 }

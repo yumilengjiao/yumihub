@@ -6,7 +6,7 @@ use screenshots::image::ImageFormat;
 use sqlx::SqlitePool;
 use uuid::Uuid;
 
-use crate::{config::GLOBAL_CONFIG, error::AppError};
+use crate::{config::read_config, error::AppError};
 
 /// 截取主屏幕并存入数据库，返回本地文件路径
 pub async fn capture(pool: &SqlitePool, game_id: Option<String>) -> Result<String, AppError> {
@@ -19,7 +19,7 @@ pub async fn capture(pool: &SqlitePool, game_id: Option<String>) -> Result<Strin
         .capture()
         .map_err(|e| AppError::Generic(e.to_string()))?;
 
-    let save_dir = GLOBAL_CONFIG.read().unwrap().storage.screenshot_path.clone();
+    let save_dir = read_config()?.storage.screenshot_path.clone();
     let id = Uuid::new_v4().to_string();
     let file_path = save_dir.join(format!("{}.png", id));
 

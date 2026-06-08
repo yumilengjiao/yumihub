@@ -8,10 +8,10 @@ use tauri_plugin_log::log::{debug, error};
 
 use crate::{
     companion::{
-        entity::{ActiveProcess, Companion},
         ACTIVE_PROCESSES, PROCESS_NAMES,
+        entity::{ActiveProcess, Companion},
     },
-    config::GLOBAL_CONFIG,
+    config::read_config,
     error::AppError,
     infra::process::kill_by_name,
 };
@@ -70,11 +70,7 @@ pub async fn refresh_companions<R: tauri::Runtime>(
 ) -> Result<(), AppError> {
     kill_all_active();
 
-    let enabled = GLOBAL_CONFIG
-        .read()
-        .map_err(|e| AppError::Lock(e.to_string()))?
-        .system
-        .companion;
+    let enabled = read_config()?.system.companion;
 
     if !enabled {
         debug!("连携功能已关闭");
@@ -101,7 +97,13 @@ pub async fn refresh_companions<R: tauri::Runtime>(
 
 /// 启动单个连携程序并记录句柄
 pub fn launch_one(comp: Companion) {
-    if !GLOBAL_CONFIG.read().unwrap().system.companion || !comp.is_enabled {
+    let companion_enabled = read_config()
+        .map(|cfg| cfg.system.companion)
+        .unwrap_or_else(|e| {
+            error!("读取连携配置失败: {}", e);
+            false
+        });
+    if !companion_enabled || !comp.is_enabled {
         return;
     }
 
@@ -112,7 +114,10 @@ pub fn launch_one(comp: Companion) {
         .file_name()
         .and_then(|n| n.to_str())
     {
-        PROCESS_NAMES.lock().unwrap().push(name.to_string());
+        match PROCESS_NAMES.lock() {
+            Ok(mut names) => names.push(name.to_string()),
+            Err(e) => error!("记录连携进程名失败: {}", e),
+        }
     }
 
     let args: Vec<&str> = comp
@@ -131,10 +136,13 @@ pub fn launch_one(comp: Companion) {
     {
         Ok(child) => {
             debug!("连携程序已启动: {} PID={}", comp.name, child.id());
-            ACTIVE_PROCESSES.lock().unwrap().push(ActiveProcess {
-                child,
-                is_window_managed: is_managed,
-            });
+            match ACTIVE_PROCESSES.lock() {
+                Ok(mut processes) => processes.push(ActiveProcess {
+                    child,
+                    is_window_managed: is_managed,
+                }),
+                Err(e) => error!("记录连携进程失败: {}", e),
+            }
         }
         Err(e) => error!("连携程序启动失败: {} — {}", comp.name, e),
     }
@@ -143,12 +151,22 @@ pub fn launch_one(comp: Companion) {
 /// 停止所有活跃连携进程
 pub fn kill_all_active() {
     // 通过句柄 kill
-    for mut p in ACTIVE_PROCESSES.lock().unwrap().drain(..) {
-        let _ = p.child.kill();
+    match ACTIVE_PROCESSES.lock() {
+        Ok(mut processes) => {
+            for mut p in processes.drain(..) {
+                let _ = p.child.kill();
+            }
+        }
+        Err(e) => error!("获取连携进程列表失败: {}", e),
     }
     // 通过进程名强杀（防止子进程残留）
-    for name in PROCESS_NAMES.lock().unwrap().drain(..) {
-        kill_by_name(&name);
+    match PROCESS_NAMES.lock() {
+        Ok(mut names) => {
+            for name in names.drain(..) {
+                kill_by_name(&name);
+            }
+        }
+        Err(e) => error!("获取连携进程名列表失败: {}", e),
     }
 }
 
@@ -156,9 +174,15 @@ pub fn kill_all_active() {
 pub fn get_managed_pids() -> Vec<u32> {
     ACTIVE_PROCESSES
         .lock()
-        .unwrap()
-        .iter()
-        .filter(|p| p.is_window_managed)
-        .map(|p| p.child.id())
-        .collect()
+        .map(|processes| {
+            processes
+                .iter()
+                .filter(|p| p.is_window_managed)
+                .map(|p| p.child.id())
+                .collect()
+        })
+        .unwrap_or_else(|e| {
+            error!("获取受控连携进程失败: {}", e);
+            Vec::new()
+        })
 }

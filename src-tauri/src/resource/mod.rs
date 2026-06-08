@@ -11,10 +11,10 @@ use tauri_plugin_log::log::{debug, error, info};
 use tokio::sync::Semaphore;
 
 use crate::{
-    config::GLOBAL_CONFIG,
+    config::read_config,
     error::AppError,
     game::entity::{GameEvent, GameMeta, ResourceTarget},
-    message::{traits::MessageHub, GAME_HUB},
+    message::{GAME_HUB, traits::MessageHub},
     user::entity::User,
 };
 
@@ -27,11 +27,12 @@ fn start(handle: &AppHandle) {
     let mut rx = GAME_HUB.subscribe();
     let handle = handle.clone();
 
-    let concurrency = GLOBAL_CONFIG
-        .read()
-        .expect("读取全局配置失败")
-        .system
-        .download_concurrency as usize;
+    let concurrency = read_config()
+        .map(|cfg| cfg.system.download_concurrency.max(1) as usize)
+        .unwrap_or_else(|e| {
+            error!("读取资源下载并发配置失败，使用默认值 3: {}", e);
+            3
+        });
 
     let sem = Arc::new(Semaphore::new(concurrency));
 
@@ -42,9 +43,13 @@ fn start(handle: &AppHandle) {
                     let sem = Arc::clone(&sem);
                     let handle = handle.clone();
                     tauri::async_runtime::spawn(async move {
-                        let _permit = sem.acquire_owned().await.unwrap();
-                        if let Err(e) = download_game_assets(&handle, meta, target).await {
-                            error!("游戏资源下载失败: {}", e);
+                        match sem.acquire_owned().await {
+                            Ok(_permit) => {
+                                if let Err(e) = download_game_assets(&handle, meta, target).await {
+                                    error!("游戏资源下载失败: {}", e);
+                                }
+                            }
+                            Err(e) => error!("资源下载并发控制失败: {}", e),
                         }
                     });
                 }
@@ -70,7 +75,7 @@ async fn download_game_assets(
 ) -> Result<(), AppError> {
     debug!("开始下载游戏资源: {} {:?}", meta.name, target);
 
-    let save_dir = GLOBAL_CONFIG.read().unwrap().storage.meta_save_path.clone();
+    let save_dir = read_config()?.storage.meta_save_path.clone();
 
     // 确定需要下载哪些字段
     let tasks: Vec<(&str, &str)> = match target {
@@ -124,12 +129,7 @@ async fn download_user_avatar(handle: &AppHandle, user: User) -> Result<(), AppE
 
     info!("开始下载用户头像");
 
-    let avatar_dir = GLOBAL_CONFIG
-        .read()
-        .unwrap()
-        .storage
-        .meta_save_path
-        .join("user");
+    let avatar_dir = read_config()?.storage.meta_save_path.join("user");
 
     tokio::fs::create_dir_all(&avatar_dir).await?;
 

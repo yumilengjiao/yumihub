@@ -5,26 +5,25 @@ use sqlx::{Pool, Sqlite};
 use tauri::{AppHandle, Manager};
 use tauri_plugin_log::log::info;
 
-pub fn init(handle: &AppHandle) {
-    tauri::async_runtime::block_on(async {
-        let pool = connect(handle).await;
-        handle.manage(pool);
-    });
+use crate::error::AppError;
+
+pub fn init(handle: &AppHandle) -> Result<(), AppError> {
+    let pool = tauri::async_runtime::block_on(async { connect(handle).await })?;
+    handle.manage(pool);
+    Ok(())
 }
 
-async fn connect(handle: &AppHandle) -> Pool<Sqlite> {
+async fn connect(handle: &AppHandle) -> Result<Pool<Sqlite>, AppError> {
     let app_dir = handle
         .path()
         .app_local_data_dir()
-        .expect("无法获取应用数据目录");
+        .map_err(|e| AppError::Resolve("app_local_data_dir".into(), e.to_string()))?;
 
-    std::fs::create_dir_all(&app_dir).expect("无法创建应用数据目录");
+    std::fs::create_dir_all(&app_dir)?;
 
     let db_path = app_dir.join("app.db");
-    let pool = setup_database(&db_path)
-        .await
-        .expect("数据库初始化失败");
+    let pool = setup_database(&db_path).await?;
 
     info!("数据库就绪: {:?}", db_path);
-    pool
+    Ok(pool)
 }

@@ -8,6 +8,7 @@ import ResourceSetting from "./ResourceSetting"
 import AuthSetting from "./AuthSetting"
 import SysSetting from "./SysSetting"
 import { useLingui } from "@lingui/react"
+import { Trans } from "@lingui/react/macro"
 import { t } from "@lingui/core/macro"
 
 const TABS = [
@@ -42,7 +43,7 @@ export default function Setting() {
         {/* 顶部 Tab 栏 */}
         <div className="px-12 pt-4 pb-0 shrink-0">
           <h1 className="text-3xl font-black text-zinc-800 dark:text-zinc-100 tracking-tight mb-6">
-            Settings
+            <Trans>设置</Trans>
           </h1>
           <div className="flex items-center gap-1 border-b border-zinc-200 dark:border-zinc-800">
             {TABS.map(tab => {

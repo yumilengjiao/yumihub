@@ -7,6 +7,7 @@ import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion
 import { cn } from '@/lib/utils';
 import { t } from '@lingui/core/macro';
 import { convertFileSrc } from '@tauri-apps/api/core';
+import type { LibrarySortMode } from './sortGames';
 
 import useGameStore from "@/store/gameStore";
 import useConfigStore from "@/store/configStore";
@@ -18,7 +19,7 @@ interface TopToolbarProps {
   isAsc: boolean;
   onSearchChange: (value: string) => void;
   // 关键：增加了 'passed'
-  onSortChange: (type: 'duration' | 'name' | 'lastPlayed' | 'passed') => void;
+  onSortChange: (type: LibrarySortMode) => void;
   onDeleteModeToggle: (isDeleteMode: boolean) => void;
   onOrderToggle: () => void;
   activeSort?: string; // 可选：用于高亮当前选中的排序项
@@ -104,14 +105,14 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
     // 更新内存中的展示状态
     const game = gameMetaList.find(g => g.id === gameId);
     if (game) {
-      setGameMeta({ ...game, isDisplayed: !isCurrentlyInOrder });
+      setGameMeta({ ...game, isDisplayed: !isCurrentlyInOrder }).catch(() => {});
     }
   }
 
   const handleClearAll = () => {
     (config.basic.gameDisplayOrder || []).forEach(id => {
       const game = gameMetaList.find(g => g.id === id);
-      if (game) setGameMeta({ ...game, isDisplayed: false });
+      if (game) setGameMeta({ ...game, isDisplayed: false }).catch(() => {});
     });
     updateConfig(prev => { prev.basic.gameDisplayOrder = []; });
   };
@@ -172,7 +173,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
                 type="text"
                 value={query}
                 onChange={(e) => { setQuery(e.target.value); onSearchChange(e.target.value); }}
-                placeholder="SEARCH..."
+                placeholder={t`搜索`}
                 // 统一用 text-3xl
                 className="w-full bg-transparent border-none outline-none font-black text-3xl! text-foreground tracking-tighter placeholder:text-muted-foreground/30"
               />
@@ -193,9 +194,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
               className="absolute right-0 mt-4 w-64 bg-popover rounded-3xl shadow-2xl ring-1 ring-border p-3 z-50 border border-border"
             >
               <button onClick={() => onOrderToggle()} className="w-full mb-2 flex items-center justify-between px-4 py-3 bg-muted hover:bg-accent rounded-2xl transition-all font-bold group">
-                <span className="text-muted-foreground">排序方向</span>
+                <span className="text-muted-foreground"><Trans>排序方向</Trans></span>
                 <div className="flex items-center gap-2 text-primary font-black">
-                  {isAsc ? <><SortAsc size={20} /> 升序</> : <><SortDesc size={20} /> 降序</>}
+                  {isAsc ? <><SortAsc size={20} /> <Trans>升序</Trans></> : <><SortDesc size={20} /> <Trans>降序</Trans></>}
                 </div>
               </button>
               <div className="h-px bg-border my-2" />
@@ -224,7 +225,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
               className="absolute whitespace-nowrap z-10 cursor-pointer flex h-14 items-center gap-2 rounded-full bg-destructive px-6 text-white shadow-2xl font-black text-xl border-2 border-white/20"
             >
               <Trash2 size={24} />
-              清空全部
+              <Trans>清空全部</Trans>
             </motion.button>
           )}
         </AnimatePresence>
@@ -251,14 +252,14 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
               onClick={e => e.stopPropagation()}
             >
               <div className="p-8 border-b border-border flex justify-between items-center bg-muted/50">
-                <h2 className="text-xl font-black text-foreground tracking-tight flex items-center gap-3"><Layout size={24} />首页展示配置</h2>
+                <h2 className="text-xl font-black text-foreground tracking-tight flex items-center gap-3"><Layout size={24} /><Trans>首页展示配置</Trans></h2>
                 <button onClick={() => setIsLayoutOpen(false)} className="px-8 py-2.5 bg-primary text-primary-foreground rounded-2xl font-bold text-sm hover:opacity-90 transition-all"><Trans>完成</Trans ></button>
               </div>
 
               <div className="flex-1 flex overflow-hidden">
                 <div className="w-120 border-r border-border flex flex-col bg-muted/20">
                   <div className="p-6 flex justify-between items-center shrink-0">
-                    <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">展示顺序</span>
+                    <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest"><Trans>展示顺序</Trans></span>
                     {localDisplayList.length > 0 && <button onClick={handleClearAll} className="text-destructive hover:bg-destructive/10 p-1.5 rounded-lg"><Eraser size={16} /></button>}
                   </div>
                   <div className="flex-1 overflow-y-auto px-4 pb-6 no-scrollbar">
@@ -289,7 +290,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
                 </div>
 
                 <div className="flex-1 bg-background flex flex-col">
-                  <div className="p-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-center shrink-0">点击海报添加至首页</div>
+                  <div className="p-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-center shrink-0"><Trans>点击海报添加至首页</Trans></div>
                   <div className="flex-1 overflow-y-auto p-6 pt-0 grid grid-cols-3 gap-y-8 gap-x-4 no-scrollbar align-content-start" style={{ gridAutoRows: 'max-content' }}>
                     {gameMetaList.map(game => (
                       <GameGridItem key={game.id} game={game} isActive={(config.basic.gameDisplayOrder || []).includes(game.id)} onClick={() => handleToggleDisplay(game.id)} />

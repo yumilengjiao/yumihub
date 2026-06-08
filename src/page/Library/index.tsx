@@ -14,6 +14,7 @@ import { useNavigate } from "react-router"
 import { Trans } from "@lingui/react/macro"
 import { t } from "@lingui/core/macro"
 import useConfigStore from "@/store/configStore"
+import { sortLibraryGames, type LibrarySortMode } from "./sortGames"
 
 export default function Library() {
   const { gameMetaList, discardGame, filterGameMetaListByName } = useGameStore()
@@ -22,7 +23,7 @@ export default function Library() {
 
   const [discardMode, setDiscardMode] = useState<boolean>(false)
   const [isAsc, setIsAsc] = useState<boolean>(false)
-  const [sortMode, setSortMode] = useState<"duration" | "name" | "lastPlayed" | "passed">("lastPlayed")
+  const [sortMode, setSortMode] = useState<LibrarySortMode>("lastPlayed")
   const [keyword, setKeyword] = useState<string>("")
   const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null)
   const navigate = useNavigate()
@@ -64,25 +65,7 @@ export default function Library() {
       const ids = new Set(col?.gameIds ?? [])
       base = base.filter(g => ids.has(g.id))
     }
-    if (sortMode === "passed") return base.filter(g => g.isPassed)
-    return [...base].sort((ga, gb) => {
-      let result = 0
-      switch (sortMode) {
-        case "duration":
-          result = (gb.playTime || 0) - (ga.playTime || 0)
-          break
-        case "name":
-          result = ga.name.localeCompare(gb.name, 'zh-CN')
-          break
-        case "lastPlayed":
-          const valA = ga?.lastPlayedAt ? new Date(ga.lastPlayedAt).getTime() : 0
-          const valB = gb?.lastPlayedAt ? new Date(gb.lastPlayedAt).getTime() : 0
-          result = valB - valA
-          break
-        default: return 0
-      }
-      return isAsc ? result : -result
-    })
+    return sortLibraryGames(base, sortMode, isAsc)
   }, [sortMode, keyword, isAsc, gameMetaList, selectedCollectionId, collections])
 
   useEffect(() => {

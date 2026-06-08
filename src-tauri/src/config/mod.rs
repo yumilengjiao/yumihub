@@ -6,11 +6,13 @@
 use std::{
     error::Error,
     path::PathBuf,
-    sync::{OnceLock, RwLock},
+    sync::{OnceLock, RwLock, RwLockReadGuard, RwLockWriteGuard},
 };
 
 use lazy_static::lazy_static;
 use tauri::{AppHandle, Manager};
+
+use crate::error::AppError;
 
 pub mod entity;
 pub mod fs;
@@ -23,20 +25,37 @@ lazy_static! {
     pub static ref GLOBAL_CONFIG: RwLock<Config> = RwLock::new(Config::default());
 
     /// 配置文件的磁盘路径（程序启动后一次性写入，之后只读）
-    pub static ref CONFIG_PATH: OnceLock<PathBuf> = OnceLock::new();
+pub static ref CONFIG_PATH: OnceLock<PathBuf> = OnceLock::new();
+}
+
+pub fn read_config() -> Result<RwLockReadGuard<'static, Config>, AppError> {
+    GLOBAL_CONFIG
+        .read()
+        .map_err(|e| AppError::Lock(e.to_string()))
+}
+
+pub fn write_config() -> Result<RwLockWriteGuard<'static, Config>, AppError> {
+    GLOBAL_CONFIG
+        .write()
+        .map_err(|e| AppError::Lock(e.to_string()))
 }
 
 /// config 模块入口，在 life_cycle::init 中调用
 pub fn init(app_handle: &AppHandle) -> Result<(), Box<dyn Error>> {
     // 设置路径
-    CONFIG_PATH
+    if CONFIG_PATH
         .set(app_handle.path().app_local_data_dir()?.join("config.json"))
-        .expect("CONFIG_PATH 不能重复初始化");
+        .is_err()
+    {
+        return Err(Box::new(AppError::Generic(
+            "CONFIG_PATH 不能重复初始化".into(),
+        )));
+    }
 
     // 从磁盘加载（或写入默认值）
     fs::load(app_handle.clone())?;
 
-    let config = GLOBAL_CONFIG.read().expect("读取配置失败");
+    let config = read_config()?;
 
     // 静默启动
     if config.basic.silent_start {

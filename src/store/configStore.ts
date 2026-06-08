@@ -1,6 +1,8 @@
 import { Cmds } from "@/lib/enum"
 import { Config, ThemeMode } from "@/types/config"
+import { t } from "@lingui/core/macro"
 import { invoke } from "@tauri-apps/api/core"
+import { toast } from "sonner"
 import { create } from "zustand"
 import { immer } from "zustand/middleware/immer"
 
@@ -51,8 +53,11 @@ const useConfigStore = create<ConfigStore>()(
     config: DEFAULT_CONFIG,
 
     updateConfig(fn) {
+      const previous = structuredClone(get().config)
       set(state => { fn(state.config) })
       invoke(Cmds.UPDATE_CONFIG, { config: get().config }).catch(err => {
+        set(state => { state.config = previous })
+        toast.error(t`同步配置到后端失败`)
         console.error("同步配置到后端失败:", err)
       })
     },

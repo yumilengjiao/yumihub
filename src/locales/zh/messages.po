@@ -38,7 +38,7 @@ msgid "\"{name}\" 已创建"
 msgstr "\"{name}\" 已创建"
 
 #. placeholder {0}: keyword ? t`无匹配项` : t`库中无数据`
-#: src/page/Library/index.tsx:177
+#: src/page/Library/index.tsx:160
 msgid "{0}"
 msgstr "{0}"
 
@@ -88,7 +88,7 @@ msgstr "主题文件"
 msgid "主题颜色"
 msgstr "主题颜色"
 
-#: src/page/Library/TopBar.tsx:123
+#: src/page/Library/TopBar.tsx:124
 msgid "仅看已通关"
 msgstr "仅看已通关"
 
@@ -137,7 +137,7 @@ msgstr "其他"
 msgid "内容预览"
 msgstr "内容预览"
 
-#: src/page/Library/GameDetail.tsx:292
+#: src/page/Library/GameDetail.tsx:293
 msgid "最后运行"
 msgstr "最后运行"
 
@@ -178,7 +178,11 @@ msgstr "删除失败"
 msgid "删除所有游戏记录、配置和本地资源，此操作不可恢复。"
 msgstr "删除所有游戏记录、配置和本地资源，此操作不可恢复。"
 
-#: src/page/Library/GameDetail.tsx:228
+#: src/store/gameStore.ts:144
+msgid "删除游戏信息失败"
+msgstr "删除游戏信息失败"
+
+#: src/page/Library/GameDetail.tsx:229
 msgid "制作商"
 msgstr "制作商"
 
@@ -211,19 +215,31 @@ msgstr "匹配元数据"
 msgid "匹配过程中断"
 msgstr "匹配过程中断"
 
+#: src/page/Library/TopBar.tsx:199
+msgid "升序"
+msgstr "升序"
+
 #: src/page/User/index.tsx:67
 msgid "午饭吃了吗？记得休息一下。"
 msgstr "午饭吃了吗？记得休息一下。"
+
+#: src/page/Library/AddGameButton.tsx:174
+msgid "单个"
+msgstr "单个"
 
 #: src/page/Setting/InterfaceSetting.tsx:158
 msgid "卡片不透明度"
 msgstr "卡片不透明度"
 
+#: src/page/Library/AddGameButton.tsx:186
+msgid "压缩包"
+msgstr "压缩包"
+
 #: src/page/Library/ArchivePreviewDialog.tsx:169
 msgid "压缩包内容为空"
 msgstr "压缩包内容为空"
 
-#: src/page/Library/AddGameButton.tsx:99
+#: src/page/Library/AddGameButton.tsx:100
 msgid "压缩包解析失败"
 msgstr "压缩包解析失败"
 
@@ -242,15 +258,20 @@ msgstr "可开启写入文件。"
 msgid "可用"
 msgstr "可用"
 
-#: src/page/Library/GameDetail.tsx:106
+#: src/page/Library/GameDetail.tsx:102
+#: src/store/gameStore.ts:78
 msgid "同步失败: "
 msgstr "同步失败: "
 
-#: src/page/Library/GameDetail.tsx:104
+#: src/page/Library/GameDetail.tsx:100
 msgid "同步成功"
 msgstr "同步成功"
 
-#: src/page/Library/GameDetail.tsx:249
+#: src/store/configStore.ts:60
+msgid "同步配置到后端失败"
+msgstr "同步配置到后端失败"
+
+#: src/page/Library/GameDetail.tsx:250
 msgid "启动"
 msgstr "启动"
 
@@ -274,11 +295,11 @@ msgstr "启用"
 msgid "在此粘贴你的个人令牌..."
 msgstr "在此粘贴你的个人令牌..."
 
-#: src/page/Setting/index.tsx:14
+#: src/page/Setting/index.tsx:15
 msgid "基础"
 msgstr "基础"
 
-#: src/page/Library/GameDetail.tsx:236
+#: src/page/Library/GameDetail.tsx:237
 #: src/page/Setting/ResourceSetting.tsx:82
 msgid "备份"
 msgstr "备份"
@@ -287,7 +308,7 @@ msgstr "备份"
 msgid "备份失败: "
 msgstr "备份失败: "
 
-#: src/page/Setting/index.tsx:15
+#: src/page/Setting/index.tsx:16
 msgid "外观"
 msgstr "外观"
 
@@ -299,7 +320,7 @@ msgstr "夜深了，推完这节就快去睡觉吧。"
 msgid "夜间模式"
 msgstr "夜间模式"
 
-#: src/page/Setting/index.tsx:17
+#: src/page/Setting/index.tsx:18
 msgid "存储"
 msgstr "存储"
 
@@ -315,11 +336,11 @@ msgstr "存档备份目录"
 msgid "存档恢复完毕"
 msgstr "存档恢复完毕"
 
-#: src/page/Library/GameDetail.tsx:341
+#: src/page/Library/GameDetail.tsx:342
 msgid "存档目录"
 msgstr "存档目录"
 
-#: src/page/Library/TopBar.tsx:255
+#: src/page/Library/TopBar.tsx:256
 msgid "完成"
 msgstr "完成"
 
@@ -348,6 +369,10 @@ msgstr "将立即备份所有设置了存档路径的游戏。"
 msgid "将覆盖所有已备份游戏的本地存档，此操作不可撤销。"
 msgstr "将覆盖所有已备份游戏的本地存档，此操作不可撤销。"
 
+#: src/page/Library/TopBar.tsx:262
+msgid "展示顺序"
+msgstr "展示顺序"
+
 #: src/page/Library/AddToCollectionDialog.tsx:41
 msgid "已创建收藏夹并添加游戏"
 msgstr "已创建收藏夹并添加游戏"
@@ -356,7 +381,7 @@ msgstr "已创建收藏夹并添加游戏"
 msgid "已是最新版本"
 msgstr "已是最新版本"
 
-#: src/page/Library/GameDetail.tsx:281
+#: src/page/Library/GameDetail.tsx:282
 msgid "已游玩 (分钟)"
 msgstr "已游玩 (分钟)"
 
@@ -364,7 +389,7 @@ msgstr "已游玩 (分钟)"
 msgid "已载入本地图片预览"
 msgstr "已载入本地图片预览"
 
-#: src/page/Library/index.tsx:177
+#: src/page/Library/index.tsx:160
 msgid "库中无数据"
 msgstr "库中无数据"
 
@@ -392,7 +417,7 @@ msgstr "快捷键设置"
 msgid "快速拉起最后一次关闭的游戏"
 msgstr "快速拉起最后一次关闭的游戏"
 
-#: src/page/Library/GameDetail.tsx:239
+#: src/page/Library/GameDetail.tsx:240
 msgid "恢复"
 msgstr "恢复"
 
@@ -400,10 +425,18 @@ msgstr "恢复"
 msgid "恢复失败: "
 msgstr "恢复失败: "
 
+#: src/store/gameStore.ts:142
+msgid "成功删除所有游戏信息"
+msgstr "成功删除所有游戏信息"
+
 #. placeholder {0}: finalGames.length
 #: src/page/Library/PendingCard.tsx:270
 msgid "成功导入 {0} 个游戏"
 msgstr "成功导入 {0} 个游戏"
+
+#: src/page/Library/AddGameButton.tsx:69
+msgid "成功解压至目录: {dir}"
+msgstr "成功解压至目录: {dir}"
 
 #: src/page/Setting/ShortcutManager.tsx:23
 msgid "截图"
@@ -417,9 +450,13 @@ msgstr "截图保存目录"
 msgid "托管"
 msgstr "托管"
 
-#: src/page/Library/GameDetail.tsx:340
+#: src/page/Library/GameDetail.tsx:341
 msgid "执行路径"
 msgstr "执行路径"
+
+#: src/page/Library/AddGameButton.tsx:180
+msgid "批量"
+msgstr "批量"
 
 #: src/page/Library/PendingCard.tsx:294
 msgid "批量导入确认"
@@ -433,15 +470,15 @@ msgstr "持久化日志"
 msgid "按下按键..."
 msgstr "按下按键..."
 
-#: src/page/Library/TopBar.tsx:122
+#: src/page/Library/TopBar.tsx:123
 msgid "按最后游玩"
 msgstr "按最后游玩"
 
-#: src/page/Library/TopBar.tsx:121
+#: src/page/Library/TopBar.tsx:122
 msgid "按名称排序"
 msgstr "按名称排序"
 
-#: src/page/Library/TopBar.tsx:120
+#: src/page/Library/TopBar.tsx:121
 msgid "按游玩时长"
 msgstr "按游玩时长"
 
@@ -449,6 +486,11 @@ msgstr "按游玩时长"
 msgid "捕获当前游戏画面"
 msgstr "捕获当前游戏画面"
 
+#: src/page/Library/TopBar.tsx:197
+msgid "排序方向"
+msgstr "排序方向"
+
+#: src/page/Library/TopBar.tsx:176
 #: src/page/Log/index.tsx:203
 msgid "搜索"
 msgstr "搜索"
@@ -461,7 +503,7 @@ msgstr "搜索日志内容..."
 msgid "操作失败"
 msgstr "操作失败"
 
-#: src/page/Library/GameDetail.tsx:257
+#: src/page/Library/GameDetail.tsx:258
 msgid "收藏"
 msgstr "收藏"
 
@@ -499,7 +541,7 @@ msgstr "新的一天，也要充满元气哦！"
 msgid "无匹配日志"
 msgstr "无匹配日志"
 
-#: src/page/Library/index.tsx:177
+#: src/page/Library/index.tsx:160
 msgid "无匹配项"
 msgstr "无匹配项"
 
@@ -549,7 +591,7 @@ msgstr "晚上好"
 msgid "晚安"
 msgstr "晚安"
 
-#: src/page/Library/GameDetail.tsx:314
+#: src/page/Library/GameDetail.tsx:315
 msgid "暂无描述..."
 msgstr "暂无描述..."
 
@@ -565,7 +607,7 @@ msgstr "暂无详细介绍。"
 msgid "暂无通关数据"
 msgstr "暂无通关数据"
 
-#: src/page/Library/GameDetail.tsx:207
+#: src/page/Library/GameDetail.tsx:208
 msgid "更换封面"
 msgstr "更换封面"
 
@@ -577,13 +619,17 @@ msgstr "更改目录"
 msgid "未匹配数据"
 msgstr "未匹配数据"
 
-#: src/page/Library/AddGameButton.tsx:42
+#: src/page/Library/AddGameButton.tsx:43
 msgid "未找到保存路径"
 msgstr "未找到保存路径"
 
 #: src/page/Library/BigPendingCard.tsx:308
 msgid "未找到匹配数据"
 msgstr "未找到匹配数据"
+
+#: src/page/Library/GameDetail.tsx:88
+msgid "未找到对应数据"
+msgstr "未找到对应数据"
 
 #: src/page/User/index.tsx:389
 msgid "未知"
@@ -593,7 +639,7 @@ msgstr "未知"
 msgid "未绑定"
 msgstr "未绑定"
 
-#: src/page/Library/GameDetail.tsx:377
+#: src/page/Library/GameDetail.tsx:378
 msgid "未设定 (点击选择)"
 msgstr "未设定 (点击选择)"
 
@@ -617,7 +663,7 @@ msgstr "本月暂无截图记录"
 msgid "本次运行的所有日志，最多保留 2000 条"
 msgstr "本次运行的所有日志，最多保留 2000 条"
 
-#: src/page/Setting/index.tsx:18
+#: src/page/Setting/index.tsx:19
 msgid "权限"
 msgstr "权限"
 
@@ -637,7 +683,7 @@ msgstr "极客灰"
 msgid "查询失败，请检查 ID 是否正确"
 msgstr "查询失败，请检查 ID 是否正确"
 
-#: src/page/Library/GameDetail.tsx:330
+#: src/page/Library/GameDetail.tsx:331
 msgid "标记通关"
 msgstr "标记通关"
 
@@ -653,9 +699,13 @@ msgstr "检查更新"
 msgid "检索失败，请检查 ID 或网络"
 msgstr "检索失败，请检查 ID 或网络"
 
-#: src/page/Library/GameDetail.tsx:83
+#: src/page/Library/GameDetail.tsx:80
 msgid "正在同步..."
 msgstr "正在同步..."
+
+#: src/page/Library/AddGameButton.tsx:67
+msgid "正在后台解压任务，请稍候..."
+msgstr "正在后台解压任务，请稍候..."
 
 #: src/page/Library/GameDetail.tsx:61
 msgid "正在备份存档..."
@@ -689,6 +739,10 @@ msgstr "添加新程序"
 msgid "清空"
 msgstr "清空"
 
+#: src/page/Library/TopBar.tsx:228
+msgid "清空全部"
+msgstr "清空全部"
+
 #: src/page/Setting/ResourceSetting.tsx:99
 msgid "清除全部程序数据"
 msgstr "清除全部程序数据"
@@ -712,6 +766,10 @@ msgstr "游戏资源目录"
 #: src/page/Library/CollectionSidebar.tsx:297
 msgid "点击 + 创建第一个"
 msgstr "点击 + 创建第一个"
+
+#: src/page/Library/TopBar.tsx:293
+msgid "点击海报添加至首页"
+msgstr "点击海报添加至首页"
 
 #: src/page/Setting/ShortcutManager.tsx:64
 msgid "点击绑定区域后按下目标按键组合"
@@ -801,7 +859,7 @@ msgstr "禁用"
 msgid "程序名称"
 msgstr "程序名称"
 
-#: src/page/Library/GameDetail.tsx:290
+#: src/page/Library/GameDetail.tsx:291
 msgid "空间占用"
 msgstr "空间占用"
 
@@ -813,11 +871,15 @@ msgstr "窗口行为"
 msgid "等待日志输出..."
 msgstr "等待日志输出..."
 
-#: src/page/Library/GameDetail.tsx:308
+#: src/page/Library/GameDetail.tsx:309
 msgid "简介"
 msgstr "简介"
 
-#: src/page/Setting/index.tsx:16
+#: src/page/User/EditUserInfoDialog.tsx:130
+msgid "粘贴网络链接..."
+msgstr "粘贴网络链接..."
+
+#: src/page/Setting/index.tsx:17
 msgid "系统"
 msgstr "系统"
 
@@ -846,7 +908,7 @@ msgstr "老板键"
 msgid "背景不透明度"
 msgstr "背景不透明度"
 
-#: src/page/Library/GameDetail.tsx:342
+#: src/page/Library/GameDetail.tsx:343
 #: src/page/Setting/InterfaceSetting.tsx:94
 msgid "背景图片"
 msgstr "背景图片"
@@ -875,7 +937,12 @@ msgstr "蔷薇粉"
 msgid "解压至目的地"
 msgstr "解压至目的地"
 
+#: src/page/Library/AddGameButton.tsx:72
+msgid "解压过程出错"
+msgstr "解压过程出错"
+
 #: src/components/custom/Entry.tsx:35
+#: src/page/Setting/index.tsx:46
 msgid "设置"
 msgstr "设置"
 
@@ -895,11 +962,11 @@ msgstr "请在库设置中添加首页展示项目"
 msgid "请输入 ID"
 msgstr "请输入 ID"
 
-#: src/page/Library/AddGameButton.tsx:104
+#: src/page/Library/AddGameButton.tsx:105
 msgid "请选择单个游戏启动文件"
 msgstr "请选择单个游戏启动文件"
 
-#: src/page/Library/AddGameButton.tsx:111
+#: src/page/Library/AddGameButton.tsx:112
 msgid "请选择多个游戏的目录"
 msgstr "请选择多个游戏的目录"
 
@@ -935,11 +1002,15 @@ msgstr "跳转到设置页"
 msgid "跳转到首页"
 msgstr "跳转到首页"
 
+#: src/page/User/EditUserInfoDialog.tsx:95
+msgid "身份设置"
+msgstr "身份设置"
+
 #: src/page/User/index.tsx:69
 msgid "辛苦了，开启一段精彩的故事吧。"
 msgstr "辛苦了，开启一段精彩的故事吧。"
 
-#: src/page/Library/GameDetail.tsx:184
+#: src/page/Library/GameDetail.tsx:185
 msgid "返回库"
 msgstr "返回库"
 
@@ -971,6 +1042,10 @@ msgstr "选中游戏时按此键直接启动"
 msgid "选择"
 msgstr "选择"
 
+#: src/page/Library/AddGameButton.tsx:80
+msgid "选择压缩文件预览"
+msgstr "选择压缩文件预览"
+
 #: src/page/User/index.tsx:126
 msgid "通关"
 msgstr "通关"
@@ -987,6 +1062,10 @@ msgstr "配置随游戏或程序自动启动的辅助工具"
 #: src/page/Library/CollectionSidebar.tsx:45
 msgid "重命名失败"
 msgstr "重命名失败"
+
+#: src/page/Library/TopBar.tsx:199
+msgid "降序"
+msgstr "降序"
 
 #: src/page/Setting/CompanionManager.tsx:126
 msgid "随游戏"
@@ -1008,6 +1087,10 @@ msgstr "页面内容未定义：请检查 \"/\" 路径配置"
 msgid "首页"
 msgstr "首页"
 
-#: src/page/Library/GameDetail.tsx:324
+#: src/page/Library/GameDetail.tsx:325
 msgid "首页展示"
 msgstr "首页展示"
+
+#: src/page/Library/TopBar.tsx:255
+msgid "首页展示配置"
+msgstr "首页展示配置"

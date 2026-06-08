@@ -9,7 +9,7 @@ use tauri_plugin_fs::FsExt;
 use uuid::Uuid;
 
 use crate::{
-    config::GLOBAL_CONFIG,
+    config::read_config,
     error::AppError,
     infra::fs::{detect_game_exe, dir_size},
     theme::ThemeState,
@@ -125,7 +125,7 @@ pub async fn clear_app_data(pool: State<'_, SqlitePool>) -> Result<(), AppError>
     let _ = sqlx::query("VACUUM").execute(&*pool).await;
 
     // 清空资源目录并重建
-    let cfg = GLOBAL_CONFIG.read().unwrap();
+    let cfg = read_config()?;
     let dirs = [
         cfg.storage.meta_save_path.clone(),
         cfg.storage.backup_save_path.clone(),

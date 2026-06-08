@@ -1,7 +1,7 @@
 //! 游戏启动与生命周期管理
 
 use std::{
-    path::{Path, PathBuf},
+    path::PathBuf,
     process::{Command, Stdio},
     time::Instant,
 };
@@ -14,11 +14,11 @@ use uuid::Uuid;
 use crate::{
     backup::commands::backup_by_game_id,
     companion,
-    config::GLOBAL_CONFIG,
+    config::read_config,
     error::AppError,
     game::{
-        entity::{GameMeta, RunningGame},
         RUNNING_GAMES,
+        entity::{GameMeta, RunningGame},
     },
     infra::process::kill_by_name,
 };
@@ -50,7 +50,7 @@ pub async fn launch(pool: SqlitePool, game: GameMeta) -> Result<(), AppError> {
 
     RUNNING_GAMES
         .lock()
-        .unwrap()
+        .map_err(|e| AppError::Lock(e.to_string()))?
         .insert(game_id.clone(), RunningGame { pid });
 
     // ── 3. 异步监听进程退出 ───────────────────────────────────────────────────
@@ -65,14 +65,25 @@ pub async fn launch(pool: SqlitePool, game: GameMeta) -> Result<(), AppError> {
             let duration_minutes = (start_instant.elapsed().as_secs() / 60) as i64;
 
             // 自动备份
-            if GLOBAL_CONFIG.read().unwrap().storage.auto_backup {
+            let auto_backup = read_config()
+                .map(|cfg| cfg.storage.auto_backup)
+                .unwrap_or_else(|e| {
+                    error!("读取自动备份配置失败: {}", e);
+                    false
+                });
+            if auto_backup {
                 if let Err(e) = backup_by_game_id(pool.clone(), game_id_clone.clone()).await {
                     error!("自动备份游戏 {} 失败: {}", game_id_clone, e);
                 }
             }
 
             // 清理运行状态
-            RUNNING_GAMES.lock().unwrap().remove(&game_id_clone);
+            match RUNNING_GAMES.lock() {
+                Ok(mut running) => {
+                    running.remove(&game_id_clone);
+                }
+                Err(e) => error!("清理运行中游戏状态失败: {}", e),
+            }
 
             // 关闭随游戏启动的连携程序
             for name in &companion_names {
@@ -80,10 +91,7 @@ pub async fn launch(pool: SqlitePool, game: GameMeta) -> Result<(), AppError> {
             }
 
             // 写入会话记录
-            let mut tx = pool_clone
-                .begin()
-                .await
-                .map_err(AppError::from)?;
+            let mut tx = pool_clone.begin().await.map_err(AppError::from)?;
 
             sqlx::query(
                 "INSERT INTO game_play_sessions \

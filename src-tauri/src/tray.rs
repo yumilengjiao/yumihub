@@ -3,22 +3,33 @@
 use std::error::Error;
 
 use tauri::{
+    AppHandle, Manager,
     menu::{Menu, MenuItem},
     tray::{MouseButton, TrayIconBuilder, TrayIconEvent},
-    AppHandle, Manager,
 };
+
+use crate::error::AppError;
 
 pub fn init(handle: &AppHandle) -> Result<(), Box<dyn Error>> {
     let quit = MenuItem::with_id(handle, "quit", "退出", true, None::<&str>)?;
     let show = MenuItem::with_id(handle, "show", "显示窗口", true, None::<&str>)?;
     let menu = Menu::with_items(handle, &[&show, &quit])?;
 
+    let icon = handle
+        .default_window_icon()
+        .ok_or_else(|| AppError::Generic("未找到默认托盘图标".into()))?
+        .clone();
+
     TrayIconBuilder::with_id("main-tray")
-        .icon(handle.default_window_icon().unwrap().clone())
+        .icon(icon)
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_tray_icon_event(|tray, event| {
-            if let TrayIconEvent::Click { button: MouseButton::Left, .. } = event {
+            if let TrayIconEvent::Click {
+                button: MouseButton::Left,
+                ..
+            } = event
+            {
                 show_main_window(tray.app_handle());
             }
         })

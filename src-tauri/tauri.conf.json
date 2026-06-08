@@ -44,7 +44,7 @@
         "tray",
         "window"
       ],
-      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: https://asset.localhost http://asset.localhost data: blob: *;"
+      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: https://asset.localhost http://asset.localhost data: blob: https://vndb.org https://*.vndb.org https://bgm.tv https://*.bgm.tv https://ymgal.games https://*.ymgal.games https://*.githubusercontent.com;"
     }
   },
   "bundle": {

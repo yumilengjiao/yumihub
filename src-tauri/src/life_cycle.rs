@@ -9,35 +9,40 @@ use tauri::{App, AppHandle, Manager};
 use tauri_plugin_log::log;
 
 #[cfg(target_os = "macos")]
-use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
+use window_vibrancy::{NSVisualEffectMaterial, apply_vibrancy};
 
 #[cfg(target_os = "windows")]
 use window_vibrancy::apply_acrylic;
 
-use crate::{companion, config, db, resource, screenshot, shortcut, sys, theme, tray};
+use crate::{
+    companion, config, db, error::AppError, resource, screenshot, shortcut, sys, theme, tray,
+};
 
 /// 程序启动初始化（在 Tauri setup 回调中调用）
 pub fn init(app: &mut App) -> Result<(), Box<dyn Error>> {
-    let win = app.get_webview_window("main").unwrap();
+    let win = app
+        .get_webview_window("main")
+        .ok_or_else(|| AppError::Generic("主窗口未创建".into()))?;
 
     // 毛玻璃效果
     #[cfg(target_os = "macos")]
     apply_vibrancy(&win, NSVisualEffectMaterial::HudWindow, None, None)
-        .expect("apply_vibrancy 失败");
+        .map_err(|e| AppError::Generic(format!("apply_vibrancy 失败: {}", e)))?;
 
     #[cfg(target_os = "windows")]
-    apply_acrylic(&win, None).expect("apply_acrylic 失败");
+    apply_acrylic(&win, None)
+        .map_err(|e| AppError::Generic(format!("apply_acrylic 失败: {}", e)))?;
 
     let handle = app.handle();
 
     // 按依赖顺序初始化模块
-    db::init(handle); // 1. 数据库（其他模块依赖 Pool）
+    db::init(handle)?; // 1. 数据库（其他模块依赖 Pool）
     sys::init(handle); // 2. 系统监控 + 权限恢复
     config::init(handle)?; // 3. 配置（依赖 Pool）
     tray::init(handle)?; // 4. 托盘
     companion::init(handle); // 5. 连携程序
     shortcut::init(handle); // 6. 快捷键
-    screenshot::init(handle); // 7. 截图目录
+    screenshot::init(handle)?; // 7. 截图目录
     resource::init(handle); // 8. 资源下载监听
     theme::init(handle)?; // 9. 主题
 

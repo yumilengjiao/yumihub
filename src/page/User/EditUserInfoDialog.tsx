@@ -92,7 +92,7 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
         {/* Header */}
         <div className="h-24 bg-zinc-300 dark:bg-zinc-800 flex items-center justify-between px-10 text-white">
           <div className="flex flex-col">
-            <span className="text-xs font-black italic text-zinc-500 uppercase tracking-widest">Identity Settings</span>
+            <span className="text-xs font-black italic text-zinc-500 uppercase tracking-widest"><Trans>身份设置</Trans></span>
             <span className="text-xl font-black italic text-zinc-500 uppercase tracking-tighter"><Trans>修改用户信息</Trans></span>
           </div>
           <X className="cursor-pointer opacity-40 hover:opacity-100 transition-opacity" onClick={onClose} />
@@ -127,7 +127,7 @@ const EditUserInfoDialog: React.FC<EditUserInfoDialogProps> = ({ isOpen, onClose
               <div className="relative flex items-center">
                 <LinkIcon size={14} className="absolute left-3 text-zinc-400" />
                 <Input
-                  placeholder="粘贴网络链接..."
+                  placeholder={t`粘贴网络链接...`}
                   value={isNetworkUrl(formData.avatar) ? formData.avatar : ""}
                   onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
                   className="pl-9 h-full bg-transparent border-none text-[11px] font-bold placeholder:text-zinc-300 focus-visible:ring-0"

@@ -77,34 +77,33 @@ export default function GameDetail() {
     if (!inputId) return toast.error(t`请输入 ID`)
     const currentMode = syncMode
     const token = config.auth.bangumiToken
-    const promise = currentMode === 'bangumi' ? requestBangumiById(inputId, token) : requestVNDBById(inputId)
+    const toastId = toast.loading(t`正在同步...`)
 
-    toast.promise(promise, {
-      loading: t`正在同步...`,
-      success: (newData: any) => { // 先用 any 接收
-        // 校验是否为空
+    try {
+      let updatedData: GameMeta
+      if (currentMode === 'bangumi') {
+        const newData = await requestBangumiById(inputId, token)
         if (!newData) {
-          throw new Error("未找到对应数据")
+          throw new Error(t`未找到对应数据`)
         }
-
-        let updatedData: GameMeta
-
-        // 直接判断发起请求时用的模式
-        if (currentMode === 'bangumi') {
-          updatedData = transBangumiToGameMeta(game, newData)
-        } else {
-          updatedData = transVNDBToGameMeta(game, newData)
+        updatedData = transBangumiToGameMeta(game, newData)
+      } else {
+        const newData = await requestVNDBById(inputId)
+        if (!newData) {
+          throw new Error(t`未找到对应数据`)
         }
-        updatedData.localBackground = ""
-        updatedData.localCover = ""
+        updatedData = transVNDBToGameMeta(game, newData)
+      }
 
-        setGame(updatedData)
-        setGameMeta(updatedData)
+      updatedData.localBackground = ""
+      updatedData.localCover = ""
 
-        return t`同步成功`
-      },
-      error: (err: any) => t`同步失败: ` + (err?.message || err)
-    })
+      await setGameMeta(updatedData)
+      setGame(updatedData)
+      toast.success(t`同步成功`, { id: toastId })
+    } catch (err: any) {
+      toast.error(t`同步失败: ` + (err?.message || err), { id: toastId })
+    }
   }
 
   const pickPath = async (field: keyof GameMeta) => {
@@ -122,22 +121,27 @@ export default function GameDetail() {
     }
   }
 
-  const updateField = <K extends keyof GameMeta>(field: K, value: GameMeta[K]) => {
+  const updateField = async <K extends keyof GameMeta>(field: K, value: GameMeta[K]) => {
+    const previousGame = game
     const updatedGame = { ...game, [field]: value }
     setGame(updatedGame)
-    setGameMeta(updatedGame)
+    try {
+      await setGameMeta(updatedGame)
 
-    if (field === 'isDisplayed') {
-      updateConfig((prev) => {
-        const currentOrder = prev.basic.gameDisplayOrder || []
-        if (value === true) {
-          if (!currentOrder.includes(game.id)) {
-            prev.basic.gameDisplayOrder = [...currentOrder, game.id]
+      if (field === 'isDisplayed') {
+        updateConfig((prev) => {
+          const currentOrder = prev.basic.gameDisplayOrder || []
+          if (value === true) {
+            if (!currentOrder.includes(game.id)) {
+              prev.basic.gameDisplayOrder = [...currentOrder, game.id]
+            }
+          } else {
+            prev.basic.gameDisplayOrder = currentOrder.filter(orderId => orderId !== game.id)
           }
-        } else {
-          prev.basic.gameDisplayOrder = currentOrder.filter(orderId => orderId !== game.id)
-        }
-      })
+        })
+      }
+    } catch {
+      setGame(previousGame)
     }
   }
 

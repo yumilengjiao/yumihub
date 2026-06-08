@@ -7,7 +7,7 @@ use tauri::async_runtime;
 use tauri_plugin_log::log::error;
 
 use crate::{
-    config::GLOBAL_CONFIG,
+    config::read_config,
     error::AppError,
     infra::archive::{extract_zip, zip_dir},
 };
@@ -21,11 +21,10 @@ pub async fn backup_by_game_id(pool: SqlitePool, game_id: String) -> Result<(), 
         .map_err(AppError::from)?;
 
     let save_path: Option<String> = row.get("save_data_path");
-    let save_path = save_path.ok_or_else(|| {
-        AppError::Resolve("none".into(), "该游戏未设置存档路径".into())
-    })?;
+    let save_path =
+        save_path.ok_or_else(|| AppError::Resolve("none".into(), "该游戏未设置存档路径".into()))?;
 
-    let backup_root = GLOBAL_CONFIG.read().unwrap().storage.backup_save_path.clone();
+    let backup_root = read_config()?.storage.backup_save_path.clone();
     let zip_dst = backup_root.join(format!("game_{}.zip", game_id));
     let src = PathBuf::from(save_path);
 
@@ -43,7 +42,7 @@ pub async fn backup_all(pool: &SqlitePool) -> Result<(), AppError> {
         .await
         .map_err(AppError::from)?;
 
-    let backup_root = GLOBAL_CONFIG.read().unwrap().storage.backup_save_path.clone();
+    let backup_root = read_config()?.storage.backup_save_path.clone();
 
     for row in games {
         let game_id: String = row.get("id");
@@ -82,7 +81,7 @@ pub async fn restore_by_game_id(pool: &SqlitePool, game_id: &str) -> Result<(), 
         .map(PathBuf::from)
         .ok_or_else(|| AppError::Resolve("none".into(), "该游戏未设置存档路径".into()))?;
 
-    let backup_root = GLOBAL_CONFIG.read().unwrap().storage.backup_save_path.clone();
+    let backup_root = read_config()?.storage.backup_save_path.clone();
     let zip_src = backup_root.join(format!("game_{}.zip", game_id));
 
     if !zip_src.exists() {
@@ -103,7 +102,7 @@ pub async fn restore_all(pool: &SqlitePool) -> Result<(), AppError> {
         .await
         .map_err(AppError::from)?;
 
-    let backup_root = GLOBAL_CONFIG.read().unwrap().storage.backup_save_path.clone();
+    let backup_root = read_config()?.storage.backup_save_path.clone();
 
     for row in games {
         let game_id: String = row.get("id");

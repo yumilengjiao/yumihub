@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "test": "bun test",
     "tauri": "tauri",
     "el": "bunx lingui extract",
     "cl": "bunx lingui compile --typescript"
@@ -47,7 +48,6 @@
     "lucide-react": "^0.562.0",
     "nanoid": "^5.1.6",
     "normalize.css": "^8.0.1",
-    "npm": "^11.8.0",
     "react": "^19.1.0",
     "react-day-picker": "^9.13.0",
     "react-dom": "^19.1.0",

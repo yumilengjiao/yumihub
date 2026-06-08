@@ -5,16 +5,15 @@ use tauri::{AppHandle, Manager};
 use tauri_plugin_log::log::{error, info};
 
 use crate::{
-    config::{
-        entity::Config,
-        CONFIG_PATH, GLOBAL_CONFIG,
-    },
+    config::{CONFIG_PATH, entity::Config, read_config, write_config},
     error::{AppError, FileAction},
 };
 
 /// 从磁盘加载配置，文件不存在时用默认值创建
 pub fn load(app_handle: AppHandle) -> Result<(), AppError> {
-    let config_path = CONFIG_PATH.get().expect("CONFIG_PATH 未初始化");
+    let config_path = CONFIG_PATH
+        .get()
+        .ok_or_else(|| AppError::Generic("CONFIG_PATH 未初始化".into()))?;
 
     // 各资源目录
     let base_dir = app_handle
@@ -36,7 +35,7 @@ pub fn load(app_handle: AppHandle) -> Result<(), AppError> {
     }
 
     {
-        let mut cfg = GLOBAL_CONFIG.write().unwrap();
+        let mut cfg = write_config()?;
         cfg.storage.backup_save_path = backup_dir;
         cfg.storage.meta_save_path = assets_dir;
         cfg.storage.screenshot_path = screenshots_dir;
@@ -59,7 +58,7 @@ pub fn load(app_handle: AppHandle) -> Result<(), AppError> {
 
     match serde_json::from_str::<Config>(&text) {
         Ok(cfg) => {
-            *GLOBAL_CONFIG.write().unwrap() = cfg;
+            *write_config()? = cfg;
         }
         Err(e) => {
             error!("配置文件解析失败，使用默认值: {}", e);
@@ -95,7 +94,7 @@ pub fn save(app_handle: &AppHandle) -> Result<(), AppError> {
                     .await
             });
 
-            let mut cfg = GLOBAL_CONFIG.write().unwrap();
+            let mut cfg = write_config()?;
             let order = &mut cfg.basic.game_display_order;
             if order.first() != Some(&id) {
                 order.retain(|x| x != &id);
@@ -104,10 +103,12 @@ pub fn save(app_handle: &AppHandle) -> Result<(), AppError> {
         }
     }
 
-    let config_path = CONFIG_PATH.get().expect("CONFIG_PATH 未初始化");
+    let config_path = CONFIG_PATH
+        .get()
+        .ok_or_else(|| AppError::Generic("CONFIG_PATH 未初始化".into()))?;
     let json = {
-        let cfg = GLOBAL_CONFIG.read().unwrap();
-        serde_json::to_string_pretty(&*cfg).unwrap()
+        let cfg = read_config()?;
+        serde_json::to_string_pretty(&*cfg).map_err(|e| AppError::Generic(e.to_string()))?
     };
 
     std::fs::write(config_path, json).map_err(|e| AppError::Config {

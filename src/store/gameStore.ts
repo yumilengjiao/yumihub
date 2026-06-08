@@ -1,6 +1,7 @@
 import { Cmds } from '@/lib/enum'
 import { GameMeta, GameMetaList } from '@/types/game'
 import { invoke } from '@tauri-apps/api/core'
+import { t } from '@lingui/core/macro'
 import { toast } from 'sonner'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
@@ -49,16 +50,34 @@ const useGameStore = create<GameStoreParams>()(
      * @param game - 要用于修改的游戏数据
      */
     setGameMeta: async (updatedGame: GameMeta) => {
+      const previousGame = get().gameMetaList.find((g) => g.id === updatedGame.id)
+      const previousSelectedGame = get().selectedGame
+
       set((state) => {
         const gameMetaList = state.gameMetaList.map((g) =>
           g.id === updatedGame.id ? updatedGame : g
         )
         state.gameMetaList = gameMetaList
+        if (state.selectedGame?.id === updatedGame.id) {
+          state.selectedGame = updatedGame
+        }
       })
       try {
         await invoke(Cmds.UPDATE_GAME, { game: updatedGame })
       } catch (error) {
+        set((state) => {
+          if (previousGame) {
+            state.gameMetaList = state.gameMetaList.map((g) =>
+              g.id === previousGame.id ? previousGame : g
+            )
+          }
+          if (previousSelectedGame?.id === updatedGame.id) {
+            state.selectedGame = previousSelectedGame
+          }
+        })
+        toast.error(t`同步失败: ` + String(error))
         console.error("同步失败:", error)
+        throw error
       }
     },
 
@@ -120,9 +139,9 @@ const useGameStore = create<GameStoreParams>()(
         set((state) => {
           state.gameMetaList = []
         })
-        toast.success("成功删除所有游戏信息")
+        toast.success(t`成功删除所有游戏信息`)
       } catch (error) {
-        toast.error("删除游戏信息失败")
+        toast.error(t`删除游戏信息失败`)
       }
     },
   }))

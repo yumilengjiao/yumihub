@@ -19,7 +19,7 @@
           "url": "https://*.ymgal.games/*"
         },
         {
-          "url": "https://**"
+          "url": "https://api.github.com/*"
         }
       ]
     }

@@ -1,15 +1,15 @@
 use sqlx::{Pool, Row, Sqlite};
 use tauri::State;
-use tauri_plugin_log::log::{debug, info, warn};
+use tauri_plugin_log::log::{info, warn};
 
 use crate::{
-    config::GLOBAL_CONFIG,
+    config::{read_config, write_config},
     error::AppError,
     game::{
         commands::launch,
         entity::{GameEvent, GameMeta, GameMetaList, PlaySession, ResourceTarget},
     },
-    message::{traits::MessageHub, GAME_HUB},
+    message::{GAME_HUB, traits::MessageHub},
 };
 
 #[tauri::command]
@@ -83,11 +83,7 @@ pub async fn add_new_game_list(
 
     tx.commit().await.map_err(AppError::from)?;
 
-    let allow = GLOBAL_CONFIG
-        .read()
-        .map_err(|e| AppError::Lock(e.to_string()))?
-        .storage
-        .allow_downloading_resources;
+    let allow = read_config()?.storage.allow_downloading_resources;
     if allow {
         for game in games {
             GAME_HUB.publish(GameEvent::GameResourceTask {
@@ -196,7 +192,7 @@ pub async fn delete_game_by_id(pool: State<'_, Pool<Sqlite>>, id: String) -> Res
     tx.commit().await.map_err(AppError::from)?;
 
     // 从显示顺序中移除
-    let mut cfg = GLOBAL_CONFIG.write().unwrap();
+    let mut cfg = write_config()?;
     let screenshot_dir = cfg.storage.screenshot_path.clone();
     let resource_dirs = [
         cfg.storage.meta_save_path.clone(),
@@ -257,7 +253,7 @@ pub async fn delete_all_games(pool: State<'_, Pool<Sqlite>>) -> Result<(), AppEr
         .map_err(AppError::from)?;
     tx.commit().await.map_err(AppError::from)?;
 
-    let cfg = GLOBAL_CONFIG.read().unwrap();
+    let cfg = read_config()?;
     let dirs = [
         &cfg.storage.meta_save_path,
         &cfg.storage.backup_save_path,
@@ -333,11 +329,7 @@ async fn insert_game(pool: &Pool<Sqlite>, game: &GameMeta) -> Result<(), AppErro
 }
 
 fn trigger_resource_download(game: &GameMeta, target: ResourceTarget) -> Result<(), AppError> {
-    let allow = GLOBAL_CONFIG
-        .read()
-        .map_err(|e| AppError::Lock(e.to_string()))?
-        .storage
-        .allow_downloading_resources;
+    let allow = read_config()?.storage.allow_downloading_resources;
     if allow {
         GAME_HUB.publish(GameEvent::GameResourceTask {
             meta: game.clone(),

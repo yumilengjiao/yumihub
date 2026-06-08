@@ -9,9 +9,9 @@ use tauri_plugin_log::log::{debug, error, warn};
 
 use crate::{
     companion,
-    config::GLOBAL_CONFIG,
+    config::read_config,
     error::AppError,
-    game::{entity::GameMeta, RUNNING_GAMES},
+    game::{RUNNING_GAMES, entity::GameMeta},
     infra::process::{kill_by_pid, toggle_windows_by_pids},
     screenshot,
     shortcut::entity::ShortcutSetting,
@@ -22,11 +22,7 @@ pub async fn refresh_shortcuts<R: Runtime>(handle: &AppHandle<R>) -> Result<(), 
     let gs = handle.global_shortcut();
 
     // 关闭时注销所有，直接返回
-    let enabled = GLOBAL_CONFIG
-        .read()
-        .map_err(|e| AppError::Lock(e.to_string()))?
-        .system
-        .hotkey_activation;
+    let enabled = read_config()?.system.hotkey_activation;
 
     gs.unregister_all()
         .map_err(|e| AppError::Generic(e.to_string()))?;
@@ -108,7 +104,7 @@ async fn dispatch<R: Runtime>(handle: &AppHandle<R>, id: &str) -> Result<(), App
 
                 let mut pids: Vec<u32> = RUNNING_GAMES
                     .lock()
-                    .unwrap()
+                    .map_err(|e| AppError::Lock(e.to_string()))?
                     .values()
                     .map(|g| g.pid)
                     .collect();
@@ -124,7 +120,7 @@ async fn dispatch<R: Runtime>(handle: &AppHandle<R>, id: &str) -> Result<(), App
         "emergency_stop" => {
             let pids: Vec<u32> = RUNNING_GAMES
                 .lock()
-                .unwrap()
+                .map_err(|e| AppError::Lock(e.to_string()))?
                 .values()
                 .map(|g| g.pid)
                 .collect();
@@ -132,7 +128,10 @@ async fn dispatch<R: Runtime>(handle: &AppHandle<R>, id: &str) -> Result<(), App
             for pid in pids {
                 kill_by_pid(pid);
             }
-            RUNNING_GAMES.lock().unwrap().clear();
+            RUNNING_GAMES
+                .lock()
+                .map_err(|e| AppError::Lock(e.to_string()))?
+                .clear();
 
             companion::exit();
 
@@ -146,7 +145,12 @@ async fn dispatch<R: Runtime>(handle: &AppHandle<R>, id: &str) -> Result<(), App
         // 截图
         "screenshot" => {
             let pool_inner = pool.inner().clone();
-            let game_id = RUNNING_GAMES.lock().unwrap().keys().next().cloned();
+            let game_id = RUNNING_GAMES
+                .lock()
+                .map_err(|e| AppError::Lock(e.to_string()))?
+                .keys()
+                .next()
+                .cloned();
             let app = handle.clone();
 
             tauri::async_runtime::spawn(async move {

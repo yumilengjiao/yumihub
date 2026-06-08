@@ -11,6 +11,7 @@ import ArchivePreviewDialog from './ArchivePreviewDialog';
 import { invoke } from '@tauri-apps/api/core';
 import { Cmds } from '@/lib/enum';
 import { t } from "@lingui/core/macro"
+import { Trans } from '@lingui/react/macro';
 
 interface AddGameButtonProps {
   className?: string;
@@ -63,12 +64,12 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
         return parentDir;
       })(),
       {
-        loading: '📦 正在后台解压任务，请稍候...',
+        loading: t`正在后台解压任务，请稍候...`,
         // 解决 'dir' is never read 警告：在消息中使用 dir
-        success: (dir) => `✅ 成功解压至目录: ${dir}`,
+        success: (dir) => t`成功解压至目录: ${dir}`,
         error: (e) => {
           console.error("解压异常:", e);
-          return typeof e === 'string' ? e : (e.details || "解压过程出错");
+          return typeof e === 'string' ? e : (e.details || t`解压过程出错`);
         },
       }
     );
@@ -76,7 +77,7 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
   // --- 导入压缩包 ---
   const onImportArchive = async () => {
     const selected = await open({
-      title: "选择压缩文件预览",
+      title: t`选择压缩文件预览`,
       filters: [{ name: 'Archive', extensions: ['zip', 'rar'] }]
     });
     if (!selected) return;
@@ -170,19 +171,19 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
             >
               <OptionButton
                 icon={<FilePlus size={22} strokeWidth={2.5} />}
-                label="SINGLE"
+                label={<Trans>单个</Trans>}
                 onClick={() => handleAction(onImportSingle)}
               />
               <div className="w-px h-6 bg-border shrink-0" />
               <OptionButton
                 icon={<FolderSearch size={22} strokeWidth={2.5} />}
-                label="BATCH"
+                label={<Trans>批量</Trans>}
                 onClick={() => handleAction(onImportBatch)}
               />
               <div className="w-px h-6 bg-border shrink-0" />
               <OptionButton
                 icon={<PackagePlus size={22} strokeWidth={2.5} />}
-                label="ARCHIVE"
+                label={<Trans>压缩包</Trans>}
                 onClick={() => handleAction(onImportArchive)}
               />
             </motion.div>
@@ -209,7 +210,7 @@ const AddGameButton: React.FC<AddGameButtonProps> = ({ className }) => {
   );
 };
 
-const OptionButton: React.FC<{ icon: React.ReactNode; label: string; onClick: () => void }> = ({
+const OptionButton: React.FC<{ icon: React.ReactNode; label: React.ReactNode; onClick: () => void }> = ({
   icon, label, onClick
 }) => (
   <button
