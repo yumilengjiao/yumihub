@@ -52,6 +52,7 @@ export enum Cmds {
 
   // 系统工具
   GET_START_UP_PATH = "get_start_up_path",
+  GET_PATH_KINDS = "get_path_kinds",
   GET_SYSTEM_FONTS = "get_system_fonts",
   GET_GAME_SIZE = "get_game_size",
   GET_DISKS = "get_disks",

@@ -124,6 +124,7 @@ pub fn run() {
             commands::remove_game_from_collection,
             // ── 系统工具 ──────────────────────────────
             commands::get_start_up_path,
+            commands::get_path_kinds,
             commands::get_system_fonts,
             commands::get_game_size,
             commands::get_disks,

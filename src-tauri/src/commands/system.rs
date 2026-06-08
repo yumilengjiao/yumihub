@@ -2,6 +2,7 @@ use std::path::Path;
 
 use custom_theme::schema::ir::ThemeIr;
 use font_kit::source::SystemSource;
+use serde::Serialize;
 use sqlx::{Row, SqlitePool};
 use sysinfo::Disks;
 use tauri::{AppHandle, Manager, Runtime, State};
@@ -15,10 +16,37 @@ use crate::{
     theme::ThemeState,
 };
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PathKind {
+    path: String,
+    kind: String,
+}
+
 /// 根据游戏父目录推断启动程序路径
 #[tauri::command]
 pub fn get_start_up_path(parent_path: String) -> Result<String, AppError> {
     detect_game_exe(&parent_path)
+}
+
+/// 判断拖入路径是文件还是目录
+#[tauri::command]
+pub fn get_path_kinds(paths: Vec<String>) -> Vec<PathKind> {
+    paths
+        .into_iter()
+        .map(|path| {
+            let kind = match std::fs::metadata(&path) {
+                Ok(meta) if meta.is_dir() => "directory",
+                Ok(meta) if meta.is_file() => "file",
+                _ => "unknown",
+            };
+
+            PathKind {
+                path,
+                kind: kind.into(),
+            }
+        })
+        .collect()
 }
 
 /// 获取系统已安装字体（过滤掉 @ 开头的垂直字体）

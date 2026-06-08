@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { convertFileSrc } from "@tauri-apps/api/core"
 import TopBar from "./TopBar"
 import AddGameButton from "./AddGameButton"
+import DragGameImporter from "./DragGameImporter"
 import CollectionSidebar from "./CollectionSidebar"
 import { useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
@@ -91,6 +92,7 @@ export default function Library() {
         />
 
         <AddGameButton />
+        <DragGameImporter />
 
         <div className="w-full shrink-0 p-2">
           <TopBar
