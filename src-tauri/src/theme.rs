@@ -50,11 +50,10 @@ fn extract_version(content: &str) -> Option<String> {
         // 找冒号后面的第一个 "..." 值
         if let Some(colon_pos) = line.find(':') {
             let after_colon = line[colon_pos + 1..].trim();
-            if after_colon.starts_with('"') {
-                let inner = &after_colon[1..];
-                if let Some(end) = inner.find('"') {
-                    return Some(inner[..end].to_string());
-                }
+            if let Some(inner) = after_colon.strip_prefix('"')
+                && let Some(end) = inner.find('"')
+            {
+                return Some(inner[..end].to_string());
             }
         }
     }

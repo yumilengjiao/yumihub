@@ -10,7 +10,7 @@ use std::{
 
 use unrar::Archive as RarArchive;
 use walkdir::WalkDir;
-use zip::{write::FileOptions, ZipArchive, ZipWriter};
+use zip::{ZipArchive, ZipWriter, write::FileOptions};
 
 use crate::error::AppError;
 
@@ -78,16 +78,18 @@ pub fn extract_zip(zip_path: &Path, extract_to: &Path) -> Result<PathBuf, AppErr
     let mut first_dir: Option<String> = None;
 
     for i in 0..archive.len() {
-        let mut file = archive.by_index(i).map_err(|e| AppError::Fs(e.to_string()))?;
+        let mut file = archive
+            .by_index(i)
+            .map_err(|e| AppError::Fs(e.to_string()))?;
         let enclosed = match file.enclosed_name() {
             Some(p) => p.to_owned(),
             None => continue,
         };
 
-        if first_dir.is_none() {
-            if let Some(comp) = enclosed.components().next() {
-                first_dir = Some(comp.as_os_str().to_string_lossy().into_owned());
-            }
+        if first_dir.is_none()
+            && let Some(comp) = enclosed.components().next()
+        {
+            first_dir = Some(comp.as_os_str().to_string_lossy().into_owned());
         }
 
         let out = extract_to.join(&enclosed);
@@ -123,10 +125,10 @@ pub fn extract_rar(rar_path: &Path, extract_to: &Path) -> Result<PathBuf, AppErr
         .map_err(|e| AppError::Fs(e.to_string()))?
     {
         let filename = header.entry().filename.clone();
-        if first_dir.is_none() {
-            if let Some(comp) = filename.components().next() {
-                first_dir = Some(comp.as_os_str().to_string_lossy().into_owned());
-            }
+        if first_dir.is_none()
+            && let Some(comp) = filename.components().next()
+        {
+            first_dir = Some(comp.as_os_str().to_string_lossy().into_owned());
         }
         archive = header
             .extract_with_base(extract_to)

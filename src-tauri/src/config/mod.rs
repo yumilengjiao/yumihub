@@ -58,10 +58,10 @@ pub fn init(app_handle: &AppHandle) -> Result<(), Box<dyn Error>> {
     let config = read_config()?;
 
     // 静默启动
-    if config.basic.silent_start {
-        if let Some(win) = app_handle.get_webview_window("main") {
-            let _ = win.hide();
-        }
+    if config.basic.silent_start
+        && let Some(win) = app_handle.get_webview_window("main")
+    {
+        let _ = win.hide();
     }
 
     // 日志等级

@@ -1,4 +1,5 @@
 import { VNDBReq, VNDBResponse, VNDBResult } from "@/types/api"
+import { VNDB_FIELDS } from "@/lib/resolve"
 import { fetch } from "@tauri-apps/plugin-http"
 
 export const requestVNDB = async (param: VNDBReq): Promise<VNDBResponse | null> => {
@@ -23,8 +24,7 @@ export const requestVNDB = async (param: VNDBReq): Promise<VNDBResponse | null> 
 export const requestVNDBById = async (id: string): Promise<VNDBResult | null> => {
   const param = {
     filters: ["id", "=", id],
-    fields:
-      "title, image.url, alttitle, titles.lang, titles.title, titles.official, olang, length, average, description, screenshots.url, developers.name",
+    fields: VNDB_FIELDS,
   }
   try {
     const response = await fetch(import.meta.env.VITE_API_VNDB_VN_URL, {

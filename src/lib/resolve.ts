@@ -1,6 +1,9 @@
 import { BangumiReq, BangumiSubject, VNDBReq, VNDBResult } from "@/types/api"
 import { GameMeta } from "@/types/game"
 
+export const VNDB_FIELDS =
+  "title, image.url, alttitle, titles.lang, titles.title, titles.official, olang, length, average, description, screenshots.url, developers.name"
+
 export const createVNDBParams = (name: string): VNDBReq => ({
   filters: [
     "and",
@@ -13,8 +16,7 @@ export const createVNDBParams = (name: string): VNDBReq => ({
     ],
   ],
   sort: "searchrank",
-  fields:
-    "title, image.url, alttitle, titles.lang, titles.title, titles.official, olang, length, average, description, screenshots.url, developers.name",
+  fields: VNDB_FIELDS,
 })
 
 export const createBangumiParams = (name: string): BangumiReq => ({

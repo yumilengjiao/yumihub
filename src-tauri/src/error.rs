@@ -11,7 +11,6 @@ use thiserror::Error;
 pub enum FileAction {
     Read,
     Write,
-    Create,
 }
 
 #[derive(Debug, Error, Serialize)]

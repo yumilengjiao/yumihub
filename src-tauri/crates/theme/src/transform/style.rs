@@ -2,8 +2,6 @@
 //! 负责AST中的种种属性映射为taiwind的utility classes
 //! 以及将各种taiwind无法在运行期间识别的布局信息识别并完善到inline_style中
 
-use std::fmt::format;
-
 use serde_json::json;
 
 use crate::{
@@ -11,7 +9,7 @@ use crate::{
         ast::{AstNode, AstThemeConfig, NodeType},
         ctx::ThemeContext,
     },
-    transform::{style, util, walk_node},
+    transform::{util, walk_node},
 };
 
 /// 样式参数解析入口

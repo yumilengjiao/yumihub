@@ -5,7 +5,6 @@ use crate::{
     schema::{ctx::ThemeContext, ir::ThemeIr},
 };
 
-mod constant;
 pub mod errors;
 mod parse;
 pub mod schema;

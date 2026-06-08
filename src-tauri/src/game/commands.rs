@@ -71,10 +71,10 @@ pub async fn launch(pool: SqlitePool, game: GameMeta) -> Result<(), AppError> {
                     error!("读取自动备份配置失败: {}", e);
                     false
                 });
-            if auto_backup {
-                if let Err(e) = backup_by_game_id(pool.clone(), game_id_clone.clone()).await {
-                    error!("自动备份游戏 {} 失败: {}", game_id_clone, e);
-                }
+            if auto_backup
+                && let Err(e) = backup_by_game_id(pool.clone(), game_id_clone.clone()).await
+            {
+                error!("自动备份游戏 {} 失败: {}", game_id_clone, e);
             }
 
             // 清理运行状态

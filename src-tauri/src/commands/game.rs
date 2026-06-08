@@ -149,10 +149,10 @@ pub async fn update_game(pool: State<'_, Pool<Sqlite>>, game: GameMeta) -> Resul
     .await
     .map_err(AppError::from)?;
 
-    if let Some(target) = resource_target {
-        if game.cover.starts_with("http") || game.background.starts_with("http") {
-            trigger_resource_download(&game, target)?;
-        }
+    if let Some(target) = resource_target
+        && (game.cover.starts_with("http") || game.background.starts_with("http"))
+    {
+        trigger_resource_download(&game, target)?;
     }
 
     Ok(())

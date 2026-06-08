@@ -25,6 +25,6 @@ pub fn run(ast: &mut AstThemeConfig, ctx: &mut ThemeContext) {
     }
 }
 
-fn clear_props(ast: &mut AstNode, _ctx: &mut ThemeContext) {
+fn clear_props(_ast: &mut AstNode, _ctx: &mut ThemeContext) {
     // ast.props = None;
 }
