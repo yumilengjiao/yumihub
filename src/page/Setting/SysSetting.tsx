@@ -1,15 +1,26 @@
 import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
-import { RefreshCw, ExternalLink, CheckCircle2 } from "lucide-react"
+import { RefreshCw, Download, CheckCircle2 } from "lucide-react"
 import useConfigStore from "@/store/configStore"
 import { SelectRow, SliderRow, SwitchRow } from "@/components/common/SettingRow"
 import { SettingSection } from "./SettingSection"
 import { useUpdateChecker } from "@/hooks/useUpdateChecker"
-import { openUrl } from "@tauri-apps/plugin-opener"
 
 export default function SysSetting() {
   const { config, updateConfig } = useConfigStore()
-  const { checking, updateInfo, lastChecked, checkUpdate } = useUpdateChecker()
+  const {
+    checking,
+    installing,
+    status,
+    updateInfo,
+    lastChecked,
+    progress,
+    error,
+    checkUpdate,
+    installUpdate,
+  } = useUpdateChecker()
+  const progressValue = progress?.percent ?? (status === 'installing' || status === 'ready' ? 100 : 0)
+  const updateBusy = checking || installing
 
   const closeOpts = [
     { label: t`最小化到托盘`, value: "Hide" },
@@ -79,11 +90,12 @@ export default function SysSetting() {
                 v{updateInfo.latestVersion} <Trans>可用</Trans>
               </span>
               <button
-                onClick={() => openUrl(updateInfo.releaseUrl)}
-                className="flex items-center gap-1.5 text-xs font-semibold text-custom-500 hover:text-custom-400 transition-colors"
+                onClick={installUpdate}
+                disabled={updateBusy}
+                className="flex items-center gap-1.5 text-xs font-semibold text-custom-500 hover:text-custom-400 transition-colors disabled:opacity-50"
               >
-                <ExternalLink size={13} />
-                <Trans>前往下载</Trans>
+                <Download size={13} />
+                {installing ? <Trans>安装中...</Trans> : <Trans>下载并安装</Trans>}
               </button>
             </div>
           ) : updateInfo && !updateInfo.hasUpdate ? (
@@ -94,10 +106,37 @@ export default function SysSetting() {
           ) : null}
         </div>
 
+        {(installing || status === 'ready') && (
+          <div className="px-6 pb-2">
+            <div className="flex items-center justify-between mb-2 text-xs text-zinc-400">
+              <span>
+                {status === 'downloading'
+                  ? <Trans>正在下载更新</Trans>
+                  : status === 'installing'
+                    ? <Trans>正在安装更新</Trans>
+                    : <Trans>更新完成，正在重启</Trans>}
+              </span>
+              <span>{progress?.percent != null ? `${progress.percent}%` : <Trans>计算中...</Trans>}</span>
+            </div>
+            <div className="h-2 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-custom-500 transition-all duration-200"
+                style={{ width: `${progressValue}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="px-6 pb-2 text-xs text-red-500">
+            {error}
+          </div>
+        )}
+
         <div className="px-6 p-5">
           <button
             onClick={checkUpdate}
-            disabled={checking}
+            disabled={updateBusy}
             className="flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors disabled:opacity-50"
           >
             <RefreshCw size={14} className={checking ? 'animate-spin' : ''} />

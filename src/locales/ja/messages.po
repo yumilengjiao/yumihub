@@ -38,7 +38,7 @@ msgid "\"{name}\" 已创建"
 msgstr "\"{name}\" が作成されました"
 
 #. placeholder {0}: keyword ? t`无匹配项` : t`库中无数据`
-#: src/page/Library/index.tsx:160
+#: src/page/Library/index.tsx:161
 msgid "{0}"
 msgstr "{0}"
 
@@ -59,32 +59,36 @@ msgstr "ワンクリックスマートマッチング"
 msgid "一键还原所有存档"
 msgstr "ワンクリックで全セーブデータをリストア"
 
-#: src/page/Setting/SysSetting.tsx:70
+#: src/page/Setting/SysSetting.tsx:81
 msgid "上次检查"
 msgstr "前回のチェック"
 
 #: src/components/custom/Title.tsx:47
-#: src/page/User/index.tsx:68
+#: src/page/User/index.tsx:53
 msgid "下午好"
 msgstr "こんにちは"
+
+#: src/page/Setting/SysSetting.tsx:98
+msgid "下载并安装"
+msgstr "ダウンロードしてインストール"
 
 #: src/page/Library/CollectionSidebar.tsx:146
 msgid "个"
 msgstr "件"
 
-#: src/page/User/index.tsx:67
+#: src/page/User/index.tsx:52
 msgid "中午好"
 msgstr "こんにちは"
 
-#: src/page/Setting/InterfaceSetting.tsx:65
+#: src/page/Setting/InterfaceSetting.tsx:73
 msgid "主题"
 msgstr "テーマ"
 
-#: src/page/Setting/InterfaceSetting.tsx:68
+#: src/page/Setting/InterfaceSetting.tsx:76
 msgid "主题文件"
 msgstr "テーマファイル"
 
-#: src/page/Setting/InterfaceSetting.tsx:81
+#: src/page/Setting/InterfaceSetting.tsx:89
 msgid "主题颜色"
 msgstr "テーマカラー"
 
@@ -109,7 +113,7 @@ msgstr "ユーザー情報を編集"
 msgid "全局匹配完成"
 msgstr "グローバルマッチング完了"
 
-#: src/page/Setting/BaseSetting.tsx:60
+#: src/page/Setting/BaseSetting.tsx:66
 msgid "全局快捷键"
 msgstr "グローバルショートカット"
 
@@ -121,15 +125,15 @@ msgstr "全ウィンドウをグローバルに非表示"
 msgid "全部游戏"
 msgstr "すべてのゲーム"
 
-#: src/page/Setting/SysSetting.tsx:60
+#: src/page/Setting/SysSetting.tsx:71
 msgid "关于与更新"
 msgstr "情報とアップデート"
 
-#: src/page/Setting/SysSetting.tsx:30
+#: src/page/Setting/SysSetting.tsx:41
 msgid "关闭按钮行为"
 msgstr "閉じるボタンの動作"
 
-#: src/page/Setting/InterfaceSetting.tsx:156
+#: src/page/Setting/InterfaceSetting.tsx:175
 msgid "其他"
 msgstr "その他"
 
@@ -137,15 +141,15 @@ msgstr "その他"
 msgid "内容预览"
 msgstr "内容プレビュー"
 
-#: src/page/Library/GameDetail.tsx:293
+#: src/page/Library/GameDetail.tsx:296
 msgid "最后运行"
 msgstr "最終実行"
 
-#: src/page/Setting/SysSetting.tsx:52
+#: src/page/Setting/SysSetting.tsx:63
 msgid "最大下载并发数"
 msgstr "最大ダウンロード同時実行数"
 
-#: src/page/Setting/SysSetting.tsx:15
+#: src/page/Setting/SysSetting.tsx:26
 msgid "最小化到托盘"
 msgstr "トレイに最小化"
 
@@ -182,15 +186,15 @@ msgstr "すべてのゲーム記録、設定、ローカルリソースを削除
 msgid "删除游戏信息失败"
 msgstr "ゲーム情報の削除に失敗しました"
 
-#: src/page/Library/GameDetail.tsx:229
+#: src/page/Library/GameDetail.tsx:232
 msgid "制作商"
 msgstr "メーカー"
 
 #: src/page/Setting/SysSetting.tsx:86
-msgid "前往下载"
-msgstr "ダウンロードへ"
+#~ msgid "前往下载"
+#~ msgstr "ダウンロードへ"
 
-#: src/page/Setting/BaseSetting.tsx:51
+#: src/page/Setting/BaseSetting.tsx:57
 msgid "功能扩展"
 msgstr "機能拡張"
 
@@ -198,7 +202,7 @@ msgstr "機能拡張"
 msgid "加入收藏夹"
 msgstr "コレクションに追加"
 
-#: src/page/User/index.tsx:455
+#: src/page/User/JourneyPanel.tsx:39
 msgid "加载中..."
 msgstr "読み込み中..."
 
@@ -219,7 +223,7 @@ msgstr "マッチングが中断されました"
 msgid "升序"
 msgstr "昇順"
 
-#: src/page/User/index.tsx:67
+#: src/page/User/index.tsx:52
 msgid "午饭吃了吗？记得休息一下。"
 msgstr "昼ごはんは食べましたか？少し休憩してくださいね。"
 
@@ -227,7 +231,7 @@ msgstr "昼ごはんは食べましたか？少し休憩してくださいね。
 msgid "单个"
 msgstr "単体"
 
-#: src/page/Setting/InterfaceSetting.tsx:158
+#: src/page/Setting/InterfaceSetting.tsx:177
 msgid "卡片不透明度"
 msgstr "カードの不透明度"
 
@@ -254,16 +258,16 @@ msgstr "キャンセル"
 msgid "可开启写入文件。"
 msgstr "ファイルへの書き込みを有効にできます。"
 
-#: src/page/Setting/SysSetting.tsx:79
+#: src/page/Setting/SysSetting.tsx:90
 msgid "可用"
 msgstr "利用可能"
 
-#: src/page/Library/GameDetail.tsx:102
+#: src/page/Library/GameDetail.tsx:105
 #: src/store/gameStore.ts:78
 msgid "同步失败: "
 msgstr "同期失敗: "
 
-#: src/page/Library/GameDetail.tsx:100
+#: src/page/Library/GameDetail.tsx:103
 msgid "同步成功"
 msgstr "同期成功"
 
@@ -271,7 +275,7 @@ msgstr "同期成功"
 msgid "同步配置到后端失败"
 msgstr "設定をバックエンドへ同期できませんでした"
 
-#: src/page/Library/GameDetail.tsx:250
+#: src/page/Library/GameDetail.tsx:253
 msgid "启动"
 msgstr "起動"
 
@@ -287,6 +291,10 @@ msgstr "起動パラメータ（オプション）、例: --windowed"
 msgid "启动时不显示主窗口，在托盘中运行"
 msgstr "起動時にメインウィンドウを表示せず、トレイで実行"
 
+#: src/page/Setting/BaseSetting.tsx:50
+msgid "启动时检查更新"
+msgstr "起動時に更新を確認"
+
 #: src/page/Setting/CompanionManager.tsx:148
 msgid "启用"
 msgstr "有効"
@@ -299,7 +307,7 @@ msgstr "ここに個人トークンを貼り付けてください..."
 msgid "基础"
 msgstr "基本"
 
-#: src/page/Library/GameDetail.tsx:237
+#: src/page/Library/GameDetail.tsx:240
 #: src/page/Setting/ResourceSetting.tsx:82
 msgid "备份"
 msgstr "バックアップ"
@@ -312,11 +320,11 @@ msgstr "バックアップ失敗: "
 msgid "外观"
 msgstr "外観"
 
-#: src/page/User/index.tsx:70
+#: src/page/User/index.tsx:55
 msgid "夜深了，推完这节就快去睡觉吧。"
 msgstr "夜遅いです。この章が終わったら早く寝てください。"
 
-#: src/page/Setting/InterfaceSetting.tsx:42
+#: src/page/Setting/InterfaceSetting.tsx:46
 msgid "夜间模式"
 msgstr "ナイトモード"
 
@@ -336,9 +344,13 @@ msgstr "セーブデータバックアップディレクトリ"
 msgid "存档恢复完毕"
 msgstr "セーブデータの復元完了"
 
-#: src/page/Library/GameDetail.tsx:342
+#: src/page/Library/GameDetail.tsx:345
 msgid "存档目录"
 msgstr "セーブデータディレクトリ"
+
+#: src/page/Setting/SysSetting.tsx:98
+msgid "安装中..."
+msgstr "インストール中..."
 
 #: src/page/Library/TopBar.tsx:256
 msgid "完成"
@@ -357,7 +369,7 @@ msgstr "インポート失敗, ID: "
 msgid "导入成功"
 msgstr "インポート成功"
 
-#: src/page/Setting/SysSetting.tsx:53
+#: src/page/Setting/SysSetting.tsx:64
 msgid "封面和背景图片的并行下载数量上限"
 msgstr "カバー画像と背景画像の並列ダウンロード数の上限"
 
@@ -377,11 +389,11 @@ msgstr "表示順"
 msgid "已创建收藏夹并添加游戏"
 msgstr "コレクションを作成し、ゲームを追加しました"
 
-#: src/page/Setting/SysSetting.tsx:92
+#: src/page/Setting/SysSetting.tsx:104
 msgid "已是最新版本"
 msgstr "最新バージョンです"
 
-#: src/page/Library/GameDetail.tsx:282
+#: src/page/Library/GameDetail.tsx:285
 msgid "已游玩 (分钟)"
 msgstr "プレイ時間 (分)"
 
@@ -389,11 +401,15 @@ msgstr "プレイ時間 (分)"
 msgid "已载入本地图片预览"
 msgstr "ローカル画像プレビューを読み込みました"
 
-#: src/page/Library/index.tsx:160
+#: src/page/Library/index.tsx:161
 msgid "库中无数据"
 msgstr "ライブラリにデータがありません"
 
-#: src/page/Setting/SysSetting.tsx:47
+#: src/page/Setting/BaseSetting.tsx:51
+msgid "开启后启动时自动检查新版本，不会自动下载或安装"
+msgstr "有効にすると起動時に新バージョンを確認します。自動でダウンロードやインストールはしません"
+
+#: src/page/Setting/SysSetting.tsx:58
 msgid "开启后日志将写入文件，可在日志页面查看路径"
 msgstr "有効にするとログがファイルに保存され、ログページでパスを確認できます"
 
@@ -405,7 +421,7 @@ msgstr "起動時に自動起動"
 msgid "强制关闭游戏及所有连携程序"
 msgstr "ゲームおよび連携プログラムを強制終了"
 
-#: src/page/Setting/SysSetting.tsx:64
+#: src/page/Setting/SysSetting.tsx:75
 msgid "当前版本"
 msgstr "現在のバージョン"
 
@@ -417,7 +433,7 @@ msgstr "ショートカット設定"
 msgid "快速拉起最后一次关闭的游戏"
 msgstr "最後に閉じたゲームをすばやく起動"
 
-#: src/page/Library/GameDetail.tsx:240
+#: src/page/Library/GameDetail.tsx:243
 msgid "恢复"
 msgstr "復元"
 
@@ -450,7 +466,7 @@ msgstr "スクリーンショット保存ディレクトリ"
 msgid "托管"
 msgstr "連携"
 
-#: src/page/Library/GameDetail.tsx:341
+#: src/page/Library/GameDetail.tsx:344
 msgid "执行路径"
 msgstr "実行パス"
 
@@ -462,7 +478,11 @@ msgstr "一括"
 msgid "批量导入确认"
 msgstr "一括インポートの確認"
 
-#: src/page/Setting/SysSetting.tsx:46
+#: src/page/Library/DragGameImporter.tsx:74
+msgid "拖拽导入失败"
+msgstr "ドラッグインポートに失敗しました"
+
+#: src/page/Setting/SysSetting.tsx:57
 msgid "持久化日志"
 msgstr "ログの永続化"
 
@@ -503,7 +523,7 @@ msgstr "ログ内容を検索..."
 msgid "操作失败"
 msgstr "操作に失敗しました"
 
-#: src/page/Library/GameDetail.tsx:258
+#: src/page/Library/GameDetail.tsx:261
 msgid "收藏"
 msgstr "お気に入り"
 
@@ -533,7 +553,7 @@ msgstr "新しいコレクション"
 msgid "新收藏夹名称..."
 msgstr "新しいコレクション名..."
 
-#: src/page/User/index.tsx:66
+#: src/page/User/index.tsx:51
 msgid "新的一天，也要充满元气哦！"
 msgstr "新しい一日、元気いっぱいでいきましょう！"
 
@@ -541,7 +561,7 @@ msgstr "新しい一日、元気いっぱいでいきましょう！"
 msgid "无匹配日志"
 msgstr "一致するログがありません"
 
-#: src/page/Library/index.tsx:160
+#: src/page/Library/index.tsx:161
 msgid "无匹配项"
 msgstr "該当項目なし"
 
@@ -561,37 +581,37 @@ msgstr "ログの永続化が無効です。再起動後に記録は消去され
 msgid "日志目录"
 msgstr "ログディレクトリ"
 
-#: src/page/Setting/SysSetting.tsx:39
+#: src/page/Setting/SysSetting.tsx:50
 msgid "日志等级"
 msgstr "ログレベル"
 
-#: src/page/Setting/InterfaceSetting.tsx:41
+#: src/page/Setting/InterfaceSetting.tsx:45
 msgid "日间模式"
 msgstr "デイモード"
 
 #: src/components/custom/Title.tsx:46
-#: src/page/User/index.tsx:66
+#: src/page/User/index.tsx:51
 msgid "早上好"
 msgstr "おはようございます"
 
-#: src/page/User/index.tsx:136
+#: src/page/User/index.tsx:121
 msgid "时长"
 msgstr "プレイ時間"
 
-#: src/page/Setting/InterfaceSetting.tsx:75
+#: src/page/Setting/InterfaceSetting.tsx:83
 msgid "明暗模式"
 msgstr "ライト/ダークモード"
 
 #: src/components/custom/Title.tsx:48
-#: src/page/User/index.tsx:69
+#: src/page/User/index.tsx:54
 msgid "晚上好"
 msgstr "こんばんは"
 
-#: src/page/User/index.tsx:70
+#: src/page/User/index.tsx:55
 msgid "晚安"
 msgstr "おやすみなさい"
 
-#: src/page/Library/GameDetail.tsx:315
+#: src/page/Library/GameDetail.tsx:318
 msgid "暂无描述..."
 msgstr "説明はありません..."
 
@@ -603,17 +623,25 @@ msgstr "詳細な紹介はありません"
 msgid "暂无详细介绍。"
 msgstr "詳細な紹介はありません。"
 
-#: src/page/User/index.tsx:401
+#: src/page/User/DeveloperRadar.tsx:33
 msgid "暂无通关数据"
 msgstr "クリアデータはありません"
 
-#: src/page/Library/GameDetail.tsx:208
+#: src/page/Library/GameDetail.tsx:211
 msgid "更换封面"
 msgstr "カバーを変更"
 
 #: src/page/Library/ArchivePreviewDialog.tsx:133
 msgid "更改目录"
 msgstr "ディレクトリを変更"
+
+#: src/page/Setting/SysSetting.tsx:117
+msgid "更新完成，正在重启"
+msgstr "更新が完了しました。再起動しています"
+
+#: src/page/Library/DragGameImporter.tsx:52
+msgid "有 {unknownCount} 个拖入项目无法识别，已跳过"
+msgstr "ドラッグした項目のうち {unknownCount} 件を認識できなかったためスキップしました"
 
 #: src/page/Library/PendingCard.tsx:127
 msgid "未匹配数据"
@@ -627,11 +655,12 @@ msgstr "保存パスが見つかりません"
 msgid "未找到匹配数据"
 msgstr "マッチするデータが見つかりません"
 
-#: src/page/Library/GameDetail.tsx:88
+#: src/page/Library/GameDetail.tsx:87
+#: src/page/Library/GameDetail.tsx:93
 msgid "未找到对应数据"
 msgstr "該当データが見つかりません"
 
-#: src/page/User/index.tsx:389
+#: src/page/User/DeveloperRadar.tsx:21
 msgid "未知"
 msgstr "不明"
 
@@ -639,11 +668,11 @@ msgstr "不明"
 msgid "未绑定"
 msgstr "未バインド"
 
-#: src/page/Library/GameDetail.tsx:378
+#: src/page/Library/GameDetail.tsx:381
 msgid "未设定 (点击选择)"
 msgstr "未設定 (クリックで選択)"
 
-#: src/page/Setting/InterfaceSetting.tsx:110
+#: src/page/Setting/InterfaceSetting.tsx:118
 msgid "未设置"
 msgstr "未設定"
 
@@ -651,11 +680,11 @@ msgstr "未設定"
 msgid "未选择"
 msgstr "未選択"
 
-#: src/page/Setting/InterfaceSetting.tsx:117
+#: src/page/Setting/InterfaceSetting.tsx:125
 msgid "未选择图片"
 msgstr "画像が選択されていません"
 
-#: src/page/User/index.tsx:464
+#: src/page/User/JourneyPanel.tsx:48
 msgid "本月暂无截图记录"
 msgstr "今月のスクリーンショット記録はありません"
 
@@ -667,15 +696,15 @@ msgstr "今回の実行中のすべてのログ（最大2000件）"
 msgid "权限"
 msgstr "権限"
 
-#: src/page/User/index.tsx:68
+#: src/page/User/index.tsx:53
 msgid "来杯咖啡吧，又是努力的一天。"
 msgstr "コーヒーを一杯いかがですか？今日も一日頑張りましょう。"
 
-#: src/page/Setting/InterfaceSetting.tsx:32
+#: src/page/Setting/InterfaceSetting.tsx:36
 msgid "极光紫"
 msgstr "オーロラパープル"
 
-#: src/page/Setting/InterfaceSetting.tsx:36
+#: src/page/Setting/InterfaceSetting.tsx:40
 msgid "极客灰"
 msgstr "ギークグレー"
 
@@ -683,21 +712,25 @@ msgstr "ギークグレー"
 msgid "查询失败，请检查 ID 是否正确"
 msgstr "クエリに失敗しました。IDが正しいか確認してください"
 
-#: src/page/Library/GameDetail.tsx:331
+#: src/page/Library/GameDetail.tsx:334
 msgid "标记通关"
 msgstr "クリア済みにする"
 
-#: src/page/Setting/SysSetting.tsx:104
+#: src/page/Setting/SysSetting.tsx:143
 msgid "检查中..."
 msgstr "チェック中..."
 
-#: src/page/Setting/SysSetting.tsx:104
+#: src/page/Setting/SysSetting.tsx:143
 msgid "检查更新"
 msgstr "アップデートを確認"
 
 #: src/page/Library/PendingCard.tsx:239
 msgid "检索失败，请检查 ID 或网络"
 msgstr "検索に失敗しました。IDまたはネットワークを確認してください"
+
+#: src/page/Setting/SysSetting.tsx:114
+msgid "正在下载更新"
+msgstr "更新をダウンロード中"
 
 #: src/page/Library/GameDetail.tsx:80
 msgid "正在同步..."
@@ -711,6 +744,10 @@ msgstr "バックグラウンドで解凍中です。お待ちください..."
 msgid "正在备份存档..."
 msgstr "セーブデータをバックアップ中..."
 
+#: src/page/Setting/SysSetting.tsx:116
+msgid "正在安装更新"
+msgstr "更新をインストール中"
+
 #: src/page/Library/BigPendingCard.tsx:178
 msgid "正在导入游戏..."
 msgstr "ゲームをインポート中..."
@@ -723,7 +760,11 @@ msgstr "セーブデータを復元中..."
 msgid "正在计算资源并导入..."
 msgstr "リソースを計算してインポート中..."
 
-#: src/page/Setting/InterfaceSetting.tsx:35
+#: src/page/Library/DragGameImporter.tsx:65
+msgid "没有可导入的游戏路径"
+msgstr "インポート可能なゲームパスがありません"
+
+#: src/page/Setting/InterfaceSetting.tsx:39
 msgid "深海青"
 msgstr "ディープブルー"
 
@@ -775,7 +816,7 @@ msgstr "ポスターをクリックしてホームに追加"
 msgid "点击绑定区域后按下目标按键组合"
 msgstr "バインド領域をクリックした後、目的のキーコンビネーションを押してください"
 
-#: src/page/User/index.tsx:528
+#: src/page/User/JourneyPanel.tsx:109
 msgid "点击记录感想..."
 msgstr "クリックして感想を記録..."
 
@@ -783,7 +824,7 @@ msgstr "クリックして感想を記録..."
 msgid "点击选择可执行文件..."
 msgstr "クリックして実行ファイルを選択..."
 
-#: src/page/Setting/InterfaceSetting.tsx:33
+#: src/page/Setting/InterfaceSetting.tsx:37
 msgid "琥珀黄"
 msgstr "アンバーイエロー"
 
@@ -799,11 +840,11 @@ msgstr "ユーザー"
 msgid "用户信息同步成功"
 msgstr "ユーザー情報の同期に成功しました"
 
-#: src/page/Setting/InterfaceSetting.tsx:87
+#: src/page/Setting/InterfaceSetting.tsx:95
 msgid "界面字体"
 msgstr "インターフェースフォント"
 
-#: src/page/Setting/InterfaceSetting.tsx:30
+#: src/page/Setting/InterfaceSetting.tsx:34
 msgid "皇家蓝"
 msgstr "ロイヤルブルー"
 
@@ -815,7 +856,7 @@ msgstr "ディレクトリ設定"
 msgid "直接确认"
 msgstr "直接確認"
 
-#: src/page/Setting/SysSetting.tsx:16
+#: src/page/Setting/SysSetting.tsx:27
 msgid "直接退出"
 msgstr "直接終了"
 
@@ -859,11 +900,11 @@ msgstr "無効"
 msgid "程序名称"
 msgstr "プログラム名"
 
-#: src/page/Library/GameDetail.tsx:291
+#: src/page/Library/GameDetail.tsx:294
 msgid "空间占用"
 msgstr "占有容量"
 
-#: src/page/Setting/SysSetting.tsx:28
+#: src/page/Setting/SysSetting.tsx:39
 msgid "窗口行为"
 msgstr "ウィンドウ動作"
 
@@ -871,7 +912,7 @@ msgstr "ウィンドウ動作"
 msgid "等待日志输出..."
 msgstr "ログ出力を待機中..."
 
-#: src/page/Library/GameDetail.tsx:309
+#: src/page/Library/GameDetail.tsx:312
 msgid "简介"
 msgstr "紹介"
 
@@ -883,8 +924,8 @@ msgstr "画像URLを貼り付け..."
 msgid "系统"
 msgstr "システム"
 
-#: src/page/Setting/InterfaceSetting.tsx:16
-#: src/page/Setting/InterfaceSetting.tsx:21
+#: src/page/Setting/InterfaceSetting.tsx:19
+#: src/page/Setting/InterfaceSetting.tsx:25
 msgid "系统默认"
 msgstr "システムデフォルト"
 
@@ -896,7 +937,7 @@ msgstr "緊急停止"
 msgid "网络请求失败"
 msgstr "ネットワークリクエスト失敗"
 
-#: src/page/Setting/InterfaceSetting.tsx:29
+#: src/page/Setting/InterfaceSetting.tsx:33
 msgid "翡翠绿"
 msgstr "エメラルドグリーン"
 
@@ -904,20 +945,20 @@ msgstr "エメラルドグリーン"
 msgid "老板键"
 msgstr "ボスキー"
 
-#: src/page/Setting/InterfaceSetting.tsx:141
+#: src/page/Setting/InterfaceSetting.tsx:160
 msgid "背景不透明度"
 msgstr "背景の不透明度"
 
-#: src/page/Library/GameDetail.tsx:343
-#: src/page/Setting/InterfaceSetting.tsx:94
+#: src/page/Library/GameDetail.tsx:346
+#: src/page/Setting/InterfaceSetting.tsx:102
 msgid "背景图片"
 msgstr "背景画像"
 
-#: src/page/Setting/InterfaceSetting.tsx:148
+#: src/page/Setting/InterfaceSetting.tsx:167
 msgid "背景模糊"
 msgstr "背景ぼかし"
 
-#: src/page/Setting/InterfaceSetting.tsx:34
+#: src/page/Setting/InterfaceSetting.tsx:38
 msgid "能量橙"
 msgstr "エナジーオレンジ"
 
@@ -929,7 +970,7 @@ msgstr "カバーと背景を自動ダウンロード"
 msgid "自动滚动"
 msgstr "自動スクロール"
 
-#: src/page/Setting/InterfaceSetting.tsx:31
+#: src/page/Setting/InterfaceSetting.tsx:35
 msgid "蔷薇粉"
 msgstr "ローズピンク"
 
@@ -940,6 +981,10 @@ msgstr "目的地に解凍"
 #: src/page/Library/AddGameButton.tsx:72
 msgid "解压过程出错"
 msgstr "解凍中にエラーが発生しました"
+
+#: src/page/Setting/SysSetting.tsx:119
+msgid "计算中..."
+msgstr "計算中..."
 
 #: src/components/custom/Entry.tsx:35
 #: src/page/Setting/index.tsx:46
@@ -970,7 +1015,7 @@ msgstr "単一のゲーム起動ファイルを選択してください"
 msgid "请选择多个游戏的目录"
 msgstr "複数のゲームディレクトリを選択してください"
 
-#: src/page/Setting/SysSetting.tsx:37
+#: src/page/Setting/SysSetting.tsx:48
 msgid "调试与性能"
 msgstr "デバッグとパフォーマンス"
 
@@ -978,11 +1023,11 @@ msgstr "デバッグとパフォーマンス"
 msgid "资源下载"
 msgstr "リソースダウンロード"
 
-#: src/page/Setting/SysSetting.tsx:40
+#: src/page/Setting/SysSetting.tsx:51
 msgid "越低等级记录越多，Debug 以上仅在开发时使用"
 msgstr "レベルが低いほど多くの記録を残します。Debug以上は開発時のみ使用します"
 
-#: src/page/Setting/InterfaceSetting.tsx:40
+#: src/page/Setting/InterfaceSetting.tsx:44
 msgid "跟随系统"
 msgstr "システムに従う"
 
@@ -1006,11 +1051,11 @@ msgstr "ホームへジャンプ"
 msgid "身份设置"
 msgstr "ID設定"
 
-#: src/page/User/index.tsx:69
+#: src/page/User/index.tsx:54
 msgid "辛苦了，开启一段精彩的故事吧。"
 msgstr "お疲れ様でした。素敵な物語を始めましょう。"
 
-#: src/page/Library/GameDetail.tsx:185
+#: src/page/Library/GameDetail.tsx:188
 msgid "返回库"
 msgstr "ライブラリに戻る"
 
@@ -1026,7 +1071,7 @@ msgstr "まだコレクションがありません"
 msgid "还没有收藏夹，先新建一个吧"
 msgstr "コレクションがありません。まず作成しましょう"
 
-#: src/page/Setting/BaseSetting.tsx:54
+#: src/page/Setting/BaseSetting.tsx:60
 msgid "连携启动程序"
 msgstr "連携起動プログラム"
 
@@ -1038,7 +1083,7 @@ msgstr "連携プログラム管理"
 msgid "选中游戏时按此键直接启动"
 msgstr "ゲーム選択時にこのキーで直接起動"
 
-#: src/page/Setting/InterfaceSetting.tsx:126
+#: src/page/Setting/InterfaceSetting.tsx:142
 msgid "选择"
 msgstr "選択"
 
@@ -1046,15 +1091,15 @@ msgstr "選択"
 msgid "选择压缩文件预览"
 msgstr "プレビューするアーカイブを選択"
 
-#: src/page/User/index.tsx:126
+#: src/page/User/index.tsx:111
 msgid "通关"
 msgstr "クリア"
 
-#: src/page/Setting/BaseSetting.tsx:61
+#: src/page/Setting/BaseSetting.tsx:67
 msgid "配置老板键、截图、启动等全局热键"
 msgstr "ボスキー、スクリーンショット、起動などのグローバルホットキーを設定"
 
-#: src/page/Setting/BaseSetting.tsx:55
+#: src/page/Setting/BaseSetting.tsx:61
 #: src/page/Setting/CompanionManager.tsx:72
 msgid "配置随游戏或程序自动启动的辅助工具"
 msgstr "ゲームまたはプログラムと共に自動起動する補助ツールを設定"
@@ -1087,7 +1132,7 @@ msgstr "ページ内容が未定義です：\"/\" パス設定を確認してく
 msgid "首页"
 msgstr "ホーム"
 
-#: src/page/Library/GameDetail.tsx:325
+#: src/page/Library/GameDetail.tsx:328
 msgid "首页展示"
 msgstr "ホーム表示"
 

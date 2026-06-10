@@ -15,7 +15,7 @@ const DEFAULT_CONFIG: Config = {
   basic: {
     autoStart: false,
     silentStart: false,
-    autoCheckUpdate: false,
+    autoCheckUpdate: true,
     gameDisplayOrder: [],
     language: "zh",
   },

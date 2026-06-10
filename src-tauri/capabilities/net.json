@@ -20,6 +20,9 @@
         },
         {
           "url": "https://api.github.com/*"
+        },
+        {
+          "url": "https://gitee.com/api/v5/*"
         }
       ]
     }

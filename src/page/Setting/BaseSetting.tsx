@@ -46,6 +46,12 @@ export default function BaseSetting() {
           checked={config.basic.silentStart}
           onCheckedChange={v => updateConfig(d => { d.basic.silentStart = v })}
         />
+        <SwitchRow
+          label={t`启动时检查更新`}
+          description={t`开启后启动时自动检查新版本，不会自动下载或安装`}
+          checked={config.basic.autoCheckUpdate}
+          onCheckedChange={v => updateConfig(d => { d.basic.autoCheckUpdate = v })}
+        />
       </SettingSection>
 
       <SettingSection title={t`功能扩展`}>

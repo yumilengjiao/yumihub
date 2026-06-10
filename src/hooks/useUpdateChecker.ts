@@ -1,61 +1,268 @@
 import { useState, useEffect, useCallback } from 'react'
-import { fetch } from '@tauri-apps/plugin-http'
 import { getVersion } from '@tauri-apps/api/app'
+import { check, type DownloadEvent, type Update } from '@tauri-apps/plugin-updater'
+import { relaunch } from '@tauri-apps/plugin-process'
+import { toast } from 'sonner'
+
+export type UpdateStatus =
+  | 'idle'
+  | 'checking'
+  | 'available'
+  | 'latest'
+  | 'downloading'
+  | 'installing'
+  | 'ready'
+  | 'error'
+
 export interface UpdateInfo {
   hasUpdate: boolean
   currentVersion: string
   latestVersion: string
-  releaseUrl: string
   releaseNotes: string
+  releaseDate?: string
 }
-export function useUpdateChecker() {
-  const [checking, setChecking] = useState(false)
-  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null)
-  const [lastChecked, setLastChecked] = useState<Date | null>(null)
-  const checkUpdate = useCallback(async () => {
-    setChecking(true)
-    try {
-      const current = await getVersion()
-      const res = await fetch(
-        'https://api.github.com/repos/yumilengjiao/yumihub/releases/latest',
-        { method: 'GET', headers: { 'User-Agent': 'YumiHub-UpdateChecker' } }
-      )
-      // 1. 优先检查 HTTP 状态码，处理 404 (无Release) 和 403 (限流) 等情况
-      if (!res.ok) {
-        console.warn(`检查更新失败: GitHub API 返回状态码 ${res.status}`)
-        return
-      }
-      const data = await res.json()
-      // 2. 运行时校验关键数据是否存在，避免 undefined.replace 报错
-      if (!data || !data.tag_name) {
-        console.warn('检查更新失败: 返回的数据结构异常，缺少 tag_name')
-        return
-      }
-      const latest = data.tag_name.replace(/^v/, '')
-      const hasUpdate = compareVersions(latest, current) > 0
-      setUpdateInfo({
-        hasUpdate,
-        currentVersion: current,
-        latestVersion: latest,
-        releaseUrl: data.html_url || '',
-        releaseNotes: data.body || '',
-      })
-      setLastChecked(new Date())
-    } catch (e) {
-      console.error('检查更新失败:', e)
-    } finally {
-      setChecking(false)
+
+export interface UpdateProgress {
+  downloaded: number
+  total?: number
+  percent?: number
+}
+
+interface UpdateCheckerOptions {
+  autoCheck?: boolean
+  notify?: boolean
+}
+
+interface UpdateSnapshot {
+  checking: boolean
+  installing: boolean
+  status: UpdateStatus
+  updateInfo: UpdateInfo | null
+  lastChecked: Date | null
+  progress: UpdateProgress | null
+  error: string | null
+}
+
+const initialSnapshot: UpdateSnapshot = {
+  checking: false,
+  installing: false,
+  status: 'idle',
+  updateInfo: null,
+  lastChecked: null,
+  progress: null,
+  error: null,
+}
+
+let snapshot: UpdateSnapshot = initialSnapshot
+let cachedUpdate: Update | null = null
+let inFlightCheck: Promise<UpdateInfo | null> | null = null
+let inFlightInstall: Promise<void> | null = null
+
+const listeners = new Set<() => void>()
+
+export function useUpdateChecker(options: UpdateCheckerOptions = {}) {
+  const { autoCheck = false, notify = false } = options
+  const [state, setState] = useState(snapshot)
+
+  useEffect(() => {
+    const listener = () => setState(snapshot)
+    listeners.add(listener)
+    return () => {
+      listeners.delete(listener)
     }
   }, [])
-  useEffect(() => { checkUpdate() }, [checkUpdate]) // 建议补全依赖项，消除 ESLint 警告
-  return { checking, updateInfo, lastChecked, checkUpdate }
-}
-function compareVersions(a: string, b: string): number {
-  const pa = a.split('.').map(Number)
-  const pb = b.split('.').map(Number)
-  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-    const diff = (pa[i] ?? 0) - (pb[i] ?? 0)
-    if (diff !== 0) return diff
+
+  const checkUpdate = useCallback(async () => {
+    try {
+      const info = await checkForUpdates({ notify })
+      return info
+    } catch (e) {
+      console.error('检查更新失败:', e)
+      return null
+    }
+  }, [notify])
+
+  const installUpdate = useCallback(async () => {
+    try {
+      await downloadAndInstallUpdate()
+    } catch (e) {
+      console.error('安装更新失败:', e)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (autoCheck) {
+      checkUpdate()
+    }
+  }, [autoCheck, checkUpdate])
+
+  return {
+    ...state,
+    checkUpdate,
+    installUpdate,
   }
-  return 0
+}
+
+async function checkForUpdates({ notify = false }: { notify?: boolean } = {}): Promise<UpdateInfo | null> {
+  if (inFlightCheck) return inFlightCheck
+
+  inFlightCheck = doCheckForUpdates({ notify }).finally(() => {
+    inFlightCheck = null
+  })
+
+  return inFlightCheck
+}
+
+async function doCheckForUpdates({ notify }: { notify?: boolean }): Promise<UpdateInfo | null> {
+  patchSnapshot({
+    checking: true,
+    status: 'checking',
+    error: null,
+  })
+
+  try {
+    const currentVersion = await getVersion()
+    const update = await check()
+    const info: UpdateInfo = update
+      ? {
+          hasUpdate: true,
+          currentVersion: update.currentVersion || currentVersion,
+          latestVersion: update.version,
+          releaseNotes: update.body || '',
+          releaseDate: update.date,
+        }
+      : {
+          hasUpdate: false,
+          currentVersion,
+          latestVersion: currentVersion,
+          releaseNotes: '',
+        }
+
+    cachedUpdate = update
+    patchSnapshot({
+      checking: false,
+      status: update ? 'available' : 'latest',
+      updateInfo: info,
+      lastChecked: new Date(),
+      progress: null,
+    })
+
+    if (notify && update) {
+      toast.info(`发现新版本 v${update.version}`, {
+        id: 'app-update-available',
+        description: '可在设置页下载并安装，安装完成后会自动重启。',
+        duration: 10000,
+        dismissible: true,
+      })
+    }
+
+    return info
+  } catch (e) {
+    const message = normalizeError(e)
+    patchSnapshot({
+      checking: false,
+      status: 'error',
+      error: message,
+    })
+    if (notify) toast.error('检查更新失败', { description: message })
+    throw e
+  }
+}
+
+async function downloadAndInstallUpdate(): Promise<void> {
+  if (inFlightInstall) return inFlightInstall
+
+  inFlightInstall = doDownloadAndInstallUpdate().finally(() => {
+    inFlightInstall = null
+  })
+
+  return inFlightInstall
+}
+
+async function doDownloadAndInstallUpdate(): Promise<void> {
+  try {
+    const update = cachedUpdate ?? await ensureUpdate()
+    if (!update) {
+      toast.info('当前已是最新版本')
+      return
+    }
+
+    let downloaded = 0
+    let total: number | undefined
+
+    patchSnapshot({
+      installing: true,
+      status: 'downloading',
+      progress: { downloaded: 0 },
+      error: null,
+    })
+
+    await update.downloadAndInstall((event: DownloadEvent) => {
+      if (event.event === 'Started') {
+        downloaded = 0
+        total = event.data.contentLength
+        patchSnapshot({
+          status: 'downloading',
+          progress: toProgress(downloaded, total),
+        })
+      }
+
+      if (event.event === 'Progress') {
+        downloaded += event.data.chunkLength
+        patchSnapshot({
+          status: 'downloading',
+          progress: toProgress(downloaded, total),
+        })
+      }
+
+      if (event.event === 'Finished') {
+        patchSnapshot({
+          status: 'installing',
+          progress: toProgress(total ?? downloaded, total),
+        })
+      }
+    })
+
+    patchSnapshot({
+      installing: false,
+      status: 'ready',
+      progress: toProgress(total ?? downloaded, total),
+    })
+    toast.success('更新安装完成，正在重启')
+
+    await relaunch()
+  } catch (e) {
+    const message = normalizeError(e)
+    patchSnapshot({
+      installing: false,
+      status: 'error',
+      error: message,
+    })
+    toast.error('安装更新失败', { description: message })
+    throw e
+  }
+}
+
+async function ensureUpdate(): Promise<Update | null> {
+  await checkForUpdates()
+  return cachedUpdate
+}
+
+function patchSnapshot(patch: Partial<UpdateSnapshot>) {
+  snapshot = { ...snapshot, ...patch }
+  listeners.forEach(listener => listener())
+}
+
+function toProgress(downloaded: number, total?: number): UpdateProgress {
+  const percent = total && total > 0
+    ? Math.min(100, Math.round((downloaded / total) * 100))
+    : undefined
+
+  return { downloaded, total, percent }
+}
+
+function normalizeError(error: unknown): string {
+  if (error instanceof Error) return error.message
+  if (typeof error === 'string') return error
+  return '未知错误'
 }

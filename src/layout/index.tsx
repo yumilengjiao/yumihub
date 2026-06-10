@@ -1,5 +1,5 @@
 import { toast, Toaster } from "sonner"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { invoke } from "@tauri-apps/api/core"
 import { debug, attachLogger } from "@tauri-apps/plugin-log"
 import { i18n } from "@lingui/core"
@@ -24,6 +24,7 @@ const LEVEL_MAP: Record<number, LogLevel> = {
 }
 
 export default function Layout() {
+  const [configReady, setConfigReady] = useState(false)
   const { setUser } = useUserStore()
   const { setGameMetaList } = useGameStore()
   const { updateConfig } = useConfigStore()
@@ -32,11 +33,12 @@ export default function Layout() {
   const { fetchTheme } = useThemeStore()
   const { addLog } = useLogStore()
   const fontFamily = useConfigStore(s => s.config.interface.fontFamily)
+  const autoCheckUpdate = useConfigStore(s => s.config.basic.autoCheckUpdate)
   const layoutTree = useThemeStore(t => t.theme?.layout.global)
 
   useThemeSync()
   useShortcutHandler()
-  useUpdateChecker()
+  useUpdateChecker({ autoCheck: configReady && autoCheckUpdate, notify: true })
 
   // ── 启动时就挂载日志收集器，确保全程捕获 ─────────────────────────────────
   useEffect(() => {
@@ -76,6 +78,7 @@ export default function Layout() {
 
         i18n.activate(config.basic.language)
         updateConfig(draft => Object.assign(draft, config))
+        setConfigReady(true)
 
         document.documentElement.classList.add(config.interface.themeColor)
 

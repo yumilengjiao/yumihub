@@ -47,7 +47,7 @@ impl Default for Basic {
         Self {
             auto_start: false,
             silent_start: false,
-            auto_check_update: false,
+            auto_check_update: true,
             language: "zh".into(),
             game_display_order: Vec::new(),
         }
