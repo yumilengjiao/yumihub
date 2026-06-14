@@ -1,45 +1,46 @@
 name: Release
-
 on:
   push:
     tags:
       - "v*"
   workflow_dispatch:
-
 jobs:
-  release:
+  publish-tauri:
     permissions:
       contents: write
     runs-on: windows-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Bun
+      - name: setup bun
         uses: oven-sh/setup-bun@v2
+        with:
+          node-version: latest
 
-      - name: Setup Rust
+      - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - name: install frontend dependencies
+        run: bun install
 
-      - name: Compile catalogs
-        run: bun run cl
+      - name: Debug signing key
+        run: |
+          $keyLen = if ($env:TAURI_SIGNING_PRIVATE_KEY) { $env:TAURI_SIGNING_PRIVATE_KEY.Length } else { 0 }
+          $passLen = if ($env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD) { $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD.Length } else { 0 }
+          echo "TAURI_SIGNING_PRIVATE_KEY length: $keyLen"
+          echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD length: $passLen"
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
-      - name: Build and publish release
-        uses: tauri-apps/tauri-action@v0
+      - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          tagName: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', github.run_number) }}
-          releaseName: "YumiHub ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', github.run_number) }}"
-          releaseBody: "YumiHub release with updater metadata."
-          releaseDraft: false
+          tagName: app-v__VERSION__
+          releaseName: 'App v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: true
           prerelease: false
-          includeUpdaterJson: true
-          updaterJsonPreferNsis: true
-          tauriScript: bun tauri

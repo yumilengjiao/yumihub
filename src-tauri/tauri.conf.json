@@ -62,10 +62,13 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDk2M0JFN0IzMkZEQzdBRjYKUldUMmV0d3ZzK2M3bGhoYUlVaGZpZ2ljOXBiV0NkbkxlL0lqaXVzaUhOKzA0dFpEcG9XUGZNS1UK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEQ0MTJEMEM5NTNENDJFQjgKUldTNEx0UlR5ZEFTMU9DQ3B3aXJpa1hGYzR0dTJrMCtRVGI0aDRhTi9UbWJ5SFJFMGZ6SXRKdW0K",
       "endpoints": [
         "https://github.com/yumilengjiao/yumihub/releases/latest/download/latest.json"
-      ]
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
     }
   }
 }

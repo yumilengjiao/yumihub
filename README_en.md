@@ -104,7 +104,7 @@ You can read [PROTOCOL](./docs/PROTOCOL.md) to learn how to write your own custo
 5. **Build package**:
 
    ```shell
-   bun tauri build
+   bun tauri build --no-sign
    ```
 
 ## 💪 Support

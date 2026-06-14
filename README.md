@@ -102,7 +102,7 @@ YumiHub 是一个基于 Tauri 开发的本地游戏 (Galgame) 库管理工具，
 5. **打包构建**:
 
     ```
-    bun tauri build
+    bun tauri build --no-sign
     ```
 
 ## 💪 支持
