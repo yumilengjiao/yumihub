@@ -39,8 +39,28 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          tagName: app-v__VERSION__
-          releaseName: 'App v__VERSION__'
+          tagName: v__VERSION__
+          releaseName: 'v__VERSION__'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
+
+      - name: Patch latest.json with Cloudflare Worker
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $version = (Get-Content src-tauri/tauri.conf.json | ConvertFrom-Json).version
+          $tag = "v$version"
+
+          # 下载 latest.json
+          gh release download $tag --pattern "latest.json" --clobber
+
+          # 替换 url
+          $json = Get-Content latest.json -Raw | ConvertFrom-Json
+          foreach ($platform in $json.platforms.PSObject.Properties) {
+            $json.platforms.$($platform.Name).url = $json.platforms.$($platform.Name).url -replace "https://github.com", "https://yumihub-updator.1554517392.workers.dev"
+          }
+          $json | ConvertTo-Json -Depth 10 | Set-Content latest.json
+
+          # 覆盖上传
+          gh release upload $tag latest.json --clobber
