@@ -31,13 +31,13 @@ export default function InterfaceSetting() {
 
   const colorOptions: SelectOption[] = [
     { label: t`翡翠绿`, value: "theme-emerald", color: "#10b981" },
-    { label: t`皇家蓝`, value: "theme-blue",    color: "#3b82f6" },
-    { label: t`蔷薇粉`, value: "theme-rose",    color: "#f43f5e" },
-    { label: t`极光紫`, value: "theme-violet",  color: "#8b5cf6" },
-    { label: t`琥珀黄`, value: "theme-amber",   color: "#f59e0b" },
-    { label: t`能量橙`, value: "theme-orange",  color: "#f97316" },
-    { label: t`深海青`, value: "theme-cyan",    color: "#06b6d4" },
-    { label: t`极客灰`, value: "theme-slate",   color: "#64748b" },
+    { label: t`皇家蓝`, value: "theme-blue", color: "#3b82f6" },
+    { label: t`蔷薇粉`, value: "theme-rose", color: "#f43f5e" },
+    { label: t`极光紫`, value: "theme-violet", color: "#8b5cf6" },
+    { label: t`琥珀黄`, value: "theme-amber", color: "#f59e0b" },
+    { label: t`能量橙`, value: "theme-orange", color: "#f97316" },
+    { label: t`深海青`, value: "theme-cyan", color: "#06b6d4" },
+    { label: t`极客灰`, value: "theme-slate", color: "#64748b" },
   ]
 
   const modeOptions: SelectOption[] = [
@@ -160,7 +160,7 @@ export default function InterfaceSetting() {
           label={t`背景不透明度`}
           min={0.1} max={1} step={0.01}
           value={bg.opacity}
-          unit="%"
+          unit={bg.opacity === 1 ? " " : "%"}
           onChange={v => updateConfig(d => { d.interface.globalBackground.opacity = v })}
         />
         <SliderRow
