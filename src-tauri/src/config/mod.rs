@@ -4,9 +4,9 @@
 //! 监听配置变更事件并分发到各子系统。
 
 use std::{
-    error::Error,
-    path::PathBuf,
-    sync::{OnceLock, RwLock, RwLockReadGuard, RwLockWriteGuard},
+        error::Error,
+        path::PathBuf,
+        sync::{OnceLock, RwLock, RwLockReadGuard, RwLockWriteGuard},
 };
 
 use lazy_static::lazy_static;
@@ -29,53 +29,53 @@ pub static ref CONFIG_PATH: OnceLock<PathBuf> = OnceLock::new();
 }
 
 pub fn read_config() -> Result<RwLockReadGuard<'static, Config>, AppError> {
-    GLOBAL_CONFIG
-        .read()
-        .map_err(|e| AppError::Lock(e.to_string()))
+        GLOBAL_CONFIG
+                .read()
+                .map_err(|e| AppError::Lock(e.to_string()))
 }
 
 pub fn write_config() -> Result<RwLockWriteGuard<'static, Config>, AppError> {
-    GLOBAL_CONFIG
-        .write()
-        .map_err(|e| AppError::Lock(e.to_string()))
+        GLOBAL_CONFIG
+                .write()
+                .map_err(|e| AppError::Lock(e.to_string()))
 }
 
 /// config 模块入口，在 life_cycle::init 中调用
 pub fn init(app_handle: &AppHandle) -> Result<(), Box<dyn Error>> {
-    // 设置路径
-    if CONFIG_PATH
-        .set(app_handle.path().app_local_data_dir()?.join("config.json"))
-        .is_err()
-    {
-        return Err(Box::new(AppError::Generic(
-            "CONFIG_PATH 不能重复初始化".into(),
-        )));
-    }
+        // 设置路径
+        if CONFIG_PATH
+                .set(app_handle.path().app_local_data_dir()?.join("config.json"))
+                .is_err()
+        {
+                return Err(Box::new(AppError::Generic(
+                        "CONFIG_PATH 不能重复初始化".into(),
+                )));
+        }
 
-    // 从磁盘加载（或写入默认值）
-    fs::load(app_handle.clone())?;
+        // 从磁盘加载（或写入默认值）
+        fs::load(app_handle.clone())?;
 
-    let config = read_config()?;
+        let config = read_config()?;
 
-    // 静默启动
-    if config.basic.silent_start
-        && let Some(win) = app_handle.get_webview_window("main")
-    {
-        let _ = win.hide();
-    }
+        // 静默启动
+        if config.basic.silent_start
+                && let Some(win) = app_handle.get_webview_window("main")
+        {
+                let _ = win.hide();
+        }
 
-    // 日志等级
-    serve::apply_log_level(
-        app_handle,
-        config.system.log_level.clone(),
-        config.system.persist_log,
-    );
+        // 日志等级
+        serve::apply_log_level(
+                app_handle,
+                config.system.log_level.clone(),
+                config.system.persist_log,
+        );
 
-    // 文件权限
-    serve::apply_background_permission(app_handle, &config.interface.global_background.path);
+        // 文件权限
+        serve::apply_background_permission(app_handle, &config.interface.global_background.path);
 
-    // 启动消息监听循环
-    serve::start_listener(app_handle.clone());
+        // 启动消息监听循环
+        serve::start_listener(app_handle.clone());
 
-    Ok(())
+        Ok(())
 }

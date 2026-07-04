@@ -6,14 +6,12 @@
 use lazy_static::lazy_static;
 
 use crate::{
-    config::entity::ConfigMessageHub,
-    game::entity::GameMessageHub,
-    message::traits::MessageHub,
+        config::entity::ConfigMessageHub, game::entity::GameMessageHub, message::traits::MessageHub,
 };
 
 pub mod traits;
 
 lazy_static! {
-    pub static ref GAME_HUB: GameMessageHub = GameMessageHub::new(1024);
-    pub static ref CONFIG_HUB: ConfigMessageHub = ConfigMessageHub::new(512);
+        pub static ref GAME_HUB: GameMessageHub = GameMessageHub::new(1024);
+        pub static ref CONFIG_HUB: ConfigMessageHub = ConfigMessageHub::new(512);
 }

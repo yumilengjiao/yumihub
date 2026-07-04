@@ -1,0 +1,4 @@
+tab_spaces = 8
+fn_params_layout = "Vertical"
+match_arm_leading_pipes = "Always"
+match_block_trailing_comma = true

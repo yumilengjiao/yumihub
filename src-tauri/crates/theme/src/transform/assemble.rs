@@ -3,6 +3,9 @@
 
 use crate::schema::{ast::AstThemeConfig, ctx::ThemeContext, ir::ThemeIr};
 
-pub fn run(ast: AstThemeConfig, _ctx: &mut ThemeContext) -> ThemeIr {
-    ThemeIr::from(ast)
+pub fn run(
+        ast: AstThemeConfig,
+        _ctx: &mut ThemeContext,
+) -> ThemeIr {
+        ThemeIr::from(ast)
 }

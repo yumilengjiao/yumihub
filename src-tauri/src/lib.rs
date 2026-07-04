@@ -48,101 +48,101 @@ mod user;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
-        .plugin(tauri_plugin_shell::init())
-        .plugin(tauri_plugin_process::init())
-        .plugin(tauri_plugin_notification::init())
-        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
-        .plugin(tauri_plugin_fs::init())
-        .plugin(tauri_plugin_autostart::Builder::new().build())
-        .plugin(tauri_plugin_updater::Builder::new().build())
-        .plugin(tauri_plugin_system_info::init())
-        .plugin(tauri_plugin_http::init())
-        .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_opener::init())
-        .plugin(
-            tauri_plugin_log::Builder::new()
-                // 初始 Info，config 加载后通过 set_max_level 动态调整
-                .level(tauri_plugin_log::log::LevelFilter::Info)
-                // sqlx 查询日志噪音太多，始终只显示 Warn 以上
-                .level_for("sqlx", tauri_plugin_log::log::LevelFilter::Warn)
-                // tao 内部 Windows 事件循环噪音，只显示 Error
-                .level_for("tao", tauri_plugin_log::log::LevelFilter::Error)
-                .target(tauri_plugin_log::Target::new(
-                    tauri_plugin_log::TargetKind::Webview,
-                ))
-                .build(),
-        )
-        .manage(ThemeState {
-            active: Mutex::new(None),
-            all_names: Mutex::new(Vec::new()),
-            default_theme_updated: Mutex::new(false),
-            non_default_theme_outdated: Mutex::new(false),
-        })
-        .setup(life_cycle::init)
-        .invoke_handler(tauri::generate_handler![
-            // ── 用户 ──────────────────────────────────
-            commands::get_user_info,
-            commands::update_user_info,
-            // ── 游戏 ──────────────────────────────────
-            commands::get_game_meta_list,
-            commands::get_game_meta_by_id,
-            commands::add_new_game,
-            commands::add_new_game_list,
-            commands::update_game,
-            commands::delete_game_by_id,
-            commands::delete_all_games,
-            commands::start_game,
-            commands::get_sessions,
-            commands::get_sessions_by_year,
-            // ── 压缩包 ────────────────────────────────
-            commands::get_archive_list,
-            commands::extract_archive,
-            // ── 截图 ──────────────────────────────────
-            commands::get_screenshots_by_year_month,
-            commands::update_screenshot_by_id,
-            commands::delete_screenshot_by_id,
-            // ── 配置 ──────────────────────────────────
-            commands::get_config,
-            commands::update_config,
-            // ── 快捷键 ────────────────────────────────
-            commands::get_shortcuts,
-            commands::update_shortcuts,
-            // ── 备份 ──────────────────────────────────
-            commands::backup_archive,
-            commands::backup_archive_by_id,
-            commands::restore_archive_by_id,
-            commands::restore_all_archives,
-            // ── 连携程序 ──────────────────────────────
-            commands::get_companions,
-            commands::update_companions,
-            // ── 收藏夹 ────────────────────────────────
-            commands::get_collections,
-            commands::get_collection_game_ids,
-            commands::create_collection,
-            commands::delete_collection,
-            commands::rename_collection,
-            commands::add_game_to_collection,
-            commands::remove_game_from_collection,
-            // ── 系统工具 ──────────────────────────────
-            commands::get_start_up_path,
-            commands::get_path_kinds,
-            commands::get_system_fonts,
-            commands::get_game_size,
-            commands::get_disks,
-            commands::get_disk_usage,
-            commands::get_log_dir,
-            commands::authorize_path_access,
-            commands::clear_app_data,
-            commands::get_theme,
-            commands::get_all_theme_names,
-            commands::get_default_theme_updated,
-            commands::get_non_default_theme_outdated,
-        ])
-        .build(tauri::generate_context!())
-        .expect("构建 Tauri 应用失败")
-        .run(|handle, event| match event {
-            RunEvent::Exit | RunEvent::ExitRequested { .. } => life_cycle::exit(handle),
-            _ => {}
-        })
+        tauri::Builder::default()
+                .plugin(tauri_plugin_shell::init())
+                .plugin(tauri_plugin_process::init())
+                .plugin(tauri_plugin_notification::init())
+                .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+                .plugin(tauri_plugin_fs::init())
+                .plugin(tauri_plugin_autostart::Builder::new().build())
+                .plugin(tauri_plugin_updater::Builder::new().build())
+                .plugin(tauri_plugin_system_info::init())
+                .plugin(tauri_plugin_http::init())
+                .plugin(tauri_plugin_dialog::init())
+                .plugin(tauri_plugin_opener::init())
+                .plugin(tauri_plugin_log::Builder::new()
+                        // 初始 Info，config 加载后通过 set_max_level 动态调整
+                        .level(tauri_plugin_log::log::LevelFilter::Info)
+                        // sqlx 查询日志噪音太多，始终只显示 Warn 以上
+                        .level_for("sqlx", tauri_plugin_log::log::LevelFilter::Warn)
+                        // tao 内部 Windows 事件循环噪音，只显示 Error
+                        .level_for("tao", tauri_plugin_log::log::LevelFilter::Error)
+                        .target(tauri_plugin_log::Target::new(
+                                tauri_plugin_log::TargetKind::Webview,
+                        ))
+                        .build())
+                .manage(ThemeState {
+                        active: Mutex::new(None),
+                        all_names: Mutex::new(Vec::new()),
+                        default_theme_updated: Mutex::new(false),
+                        non_default_theme_outdated: Mutex::new(false),
+                })
+                .setup(life_cycle::init)
+                .invoke_handler(tauri::generate_handler![
+                        // ── 用户 ──────────────────────────────────
+                        commands::get_user_info,
+                        commands::update_user_info,
+                        // ── 游戏 ──────────────────────────────────
+                        commands::get_game_meta_list,
+                        commands::get_game_meta_by_id,
+                        commands::add_new_game,
+                        commands::add_new_game_list,
+                        commands::update_game,
+                        commands::delete_game_by_id,
+                        commands::delete_all_games,
+                        commands::start_game,
+                        commands::get_sessions,
+                        commands::get_sessions_by_year,
+                        // ── 压缩包 ────────────────────────────────
+                        commands::get_archive_list,
+                        commands::extract_archive,
+                        // ── 截图 ──────────────────────────────────
+                        commands::get_screenshots_by_year_month,
+                        commands::update_screenshot_by_id,
+                        commands::delete_screenshot_by_id,
+                        // ── 配置 ──────────────────────────────────
+                        commands::get_config,
+                        commands::update_config,
+                        // ── 快捷键 ────────────────────────────────
+                        commands::get_shortcuts,
+                        commands::update_shortcuts,
+                        // ── 备份 ──────────────────────────────────
+                        commands::backup_archive,
+                        commands::backup_archive_by_id,
+                        commands::restore_archive_by_id,
+                        commands::restore_all_archives,
+                        // ── 连携程序 ──────────────────────────────
+                        commands::get_companions,
+                        commands::update_companions,
+                        // ── 收藏夹 ────────────────────────────────
+                        commands::get_collections,
+                        commands::get_collection_game_ids,
+                        commands::create_collection,
+                        commands::delete_collection,
+                        commands::rename_collection,
+                        commands::add_game_to_collection,
+                        commands::remove_game_from_collection,
+                        // ── 系统工具 ──────────────────────────────
+                        commands::get_start_up_path,
+                        commands::get_path_kinds,
+                        commands::get_system_fonts,
+                        commands::get_game_size,
+                        commands::get_disks,
+                        commands::get_disk_usage,
+                        commands::get_log_dir,
+                        commands::authorize_path_access,
+                        commands::clear_app_data,
+                        commands::get_theme,
+                        commands::get_all_theme_names,
+                        commands::get_default_theme_updated,
+                        commands::get_non_default_theme_outdated,
+                ])
+                .build(tauri::generate_context!())
+                .expect("构建 Tauri 应用失败")
+                .run(|handle, event| match event {
+                        | RunEvent::Exit | RunEvent::ExitRequested { .. } => {
+                                life_cycle::exit(handle)
+                        },
+                        | _ => {},
+                })
 }

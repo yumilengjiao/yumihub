@@ -3,49 +3,49 @@
 use std::error::Error;
 
 use tauri::{
-    AppHandle, Manager,
-    menu::{Menu, MenuItem},
-    tray::{MouseButton, TrayIconBuilder, TrayIconEvent},
+        AppHandle, Manager,
+        menu::{Menu, MenuItem},
+        tray::{MouseButton, TrayIconBuilder, TrayIconEvent},
 };
 
 use crate::error::AppError;
 
 pub fn init(handle: &AppHandle) -> Result<(), Box<dyn Error>> {
-    let quit = MenuItem::with_id(handle, "quit", "退出", true, None::<&str>)?;
-    let show = MenuItem::with_id(handle, "show", "显示窗口", true, None::<&str>)?;
-    let menu = Menu::with_items(handle, &[&show, &quit])?;
+        let quit = MenuItem::with_id(handle, "quit", "退出", true, None::<&str>)?;
+        let show = MenuItem::with_id(handle, "show", "显示窗口", true, None::<&str>)?;
+        let menu = Menu::with_items(handle, &[&show, &quit])?;
 
-    let icon = handle
-        .default_window_icon()
-        .ok_or_else(|| AppError::Generic("未找到默认托盘图标".into()))?
-        .clone();
+        let icon = handle
+                .default_window_icon()
+                .ok_or_else(|| AppError::Generic("未找到默认托盘图标".into()))?
+                .clone();
 
-    TrayIconBuilder::with_id("main-tray")
-        .icon(icon)
-        .menu(&menu)
-        .show_menu_on_left_click(false)
-        .on_tray_icon_event(|tray, event| {
-            if let TrayIconEvent::Click {
-                button: MouseButton::Left,
-                ..
-            } = event
-            {
-                show_main_window(tray.app_handle());
-            }
-        })
-        .on_menu_event(|app, event| match event.id.as_ref() {
-            "quit" => app.exit(0),
-            "show" => show_main_window(app),
-            _ => {}
-        })
-        .build(handle)?;
+        TrayIconBuilder::with_id("main-tray")
+                .icon(icon)
+                .menu(&menu)
+                .show_menu_on_left_click(false)
+                .on_tray_icon_event(|tray, event| {
+                        if let TrayIconEvent::Click {
+                                button: MouseButton::Left,
+                                ..
+                        } = event
+                        {
+                                show_main_window(tray.app_handle());
+                        }
+                })
+                .on_menu_event(|app, event| match event.id.as_ref() {
+                        | "quit" => app.exit(0),
+                        | "show" => show_main_window(app),
+                        | _ => {},
+                })
+                .build(handle)?;
 
-    Ok(())
+        Ok(())
 }
 
 fn show_main_window(app: &AppHandle) {
-    if let Some(win) = app.get_webview_window("main") {
-        let _ = win.show();
-        let _ = win.set_focus();
-    }
+        if let Some(win) = app.get_webview_window("main") {
+                let _ = win.show();
+                let _ = win.set_focus();
+        }
 }

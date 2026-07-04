@@ -10,29 +10,29 @@ use crate::schema::ast::{AstNode, AstPageConfig, AstThemeConfig};
 /// * `layout`: 布局信息
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct ThemeIr {
-    pub config: MetaConfig,
-    pub layout: Layout,
+        pub config: MetaConfig,
+        pub layout: Layout,
 }
 
 impl From<AstThemeConfig> for ThemeIr {
-    fn from(ast: AstThemeConfig) -> Self {
-        Self {
-            config: MetaConfig {
-                version: ast.config.version,
-                theme_name: ast.config.theme_name,
-            },
-            layout: Layout {
-                // 如果 global 是 None，我们给它一个默认的空 Node
-                global: ast.layout.global.map(Node::from).unwrap_or_default(),
-                pages: ast
-                    .layout
-                    .pages
-                    .into_iter()
-                    .map(|(k, v)| (k, PageConfig::from(v)))
-                    .collect(),
-            },
+        fn from(ast: AstThemeConfig) -> Self {
+                Self {
+                        config: MetaConfig {
+                                version: ast.config.version,
+                                theme_name: ast.config.theme_name,
+                        },
+                        layout: Layout {
+                                // 如果 global 是 None，我们给它一个默认的空 Node
+                                global: ast.layout.global.map(Node::from).unwrap_or_default(),
+                                pages: ast
+                                        .layout
+                                        .pages
+                                        .into_iter()
+                                        .map(|(k, v)| (k, PageConfig::from(v)))
+                                        .collect(),
+                        },
+                }
         }
-    }
 }
 
 /// 配置文件元信息
@@ -43,8 +43,8 @@ impl From<AstThemeConfig> for ThemeIr {
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct MetaConfig {
-    pub version: String,
-    pub theme_name: String,
+        pub version: String,
+        pub theme_name: String,
 }
 
 /// 布局配置信息
@@ -54,8 +54,8 @@ pub struct MetaConfig {
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Layout {
-    pub global: Node,
-    pub pages: HashMap<String, PageConfig>,
+        pub global: Node,
+        pub pages: HashMap<String, PageConfig>,
 }
 
 /// 每个路由界面的配置信息
@@ -65,17 +65,17 @@ pub struct Layout {
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct PageConfig {
-    pub name: String,
-    pub content: Node,
+        pub name: String,
+        pub content: Node,
 }
 
 impl From<AstPageConfig> for PageConfig {
-    fn from(ast: AstPageConfig) -> Self {
-        Self {
-            name: ast.name,
-            content: Node::from(ast.content),
+        fn from(ast: AstPageConfig) -> Self {
+                Self {
+                        name: ast.name,
+                        content: Node::from(ast.content),
+                }
         }
-    }
 }
 
 /// 事件
@@ -84,8 +84,8 @@ impl From<AstPageConfig> for PageConfig {
 /// * `params`:  传递给命令的参数
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Action {
-    pub command: String,
-    pub params: Option<Value>,
+        pub command: String,
+        pub params: Option<Value>,
 }
 
 /// 节点,所有元素都是AstNode
@@ -100,62 +100,61 @@ pub struct Action {
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Node {
-    pub id: u32,
-    pub nt: String,
-    pub class_name: String,
-    pub style: HashMap<String, Value>, // 这里写的是taiwind的类
-    pub children: Option<Vec<Node>>,
-    pub props: Value,
-    pub actions: Option<Vec<Action>>,
-    pub hooks: Option<Vec<String>>,
+        pub id: u32,
+        pub nt: String,
+        pub class_name: String,
+        pub style: HashMap<String, Value>, // 这里写的是taiwind的类
+        pub children: Option<Vec<Node>>,
+        pub props: Value,
+        pub actions: Option<Vec<Action>>,
+        pub hooks: Option<Vec<String>>,
 }
 
 impl From<AstNode> for Node {
-    fn from(ast: AstNode) -> Self {
-        // 处理 ID: u32 -> String (如果不存在则给个占位符)
-        let id = ast.id.unwrap();
+        fn from(ast: AstNode) -> Self {
+                // 处理 ID: u32 -> String (如果不存在则给个占位符)
+                let id = ast.id.unwrap();
 
-        // 处理 NodeType: Option<NodeType> -> String
-        let nt = match ast.nt {
-            Some(nt) => format!("{:?}", nt).to_lowercase(),
-            None => "node".to_string(),
-        };
+                // 处理 NodeType: Option<NodeType> -> String
+                let nt = match ast.nt {
+                        | Some(nt) => format!("{:?}", nt).to_lowercase(),
+                        | None => "node".to_string(),
+                };
 
-        // 处理 class_list (对应 AST 的 class_list)
-        let class_name = ast.class_name.unwrap_or_default().join(" ");
+                // 处理 class_list (对应 AST 的 class_list)
+                let class_name = ast.class_name.unwrap_or_default().join(" ");
 
-        // 处理 Style (对应 AST 的 inline_style)
-        let style = ast.inline_style.unwrap_or_default();
+                // 处理 Style (对应 AST 的 inline_style)
+                let style = ast.inline_style.unwrap_or_default();
 
-        // 处理props
-        let props = ast.props.unwrap_or_default();
+                // 处理props
+                let props = ast.props.unwrap_or_default();
 
-        // 递归处理 Children
-        let children = ast
-            .children
-            .map(|children_vec| children_vec.into_iter().map(Node::from).collect());
+                // 递归处理 Children
+                let children = ast
+                        .children
+                        .map(|children_vec| children_vec.into_iter().map(Node::from).collect());
 
-        // 转移 Action 和 Hook (完全匹配，直接 map 即可)
-        let actions = Some(
-            ast.actions
-                .unwrap_or_default() // 获取 Vec<AstAction>
-                .into_iter() // 转换为消耗所有权的迭代器
-                .map(|action| Action {
-                    command: action.command,
-                    params: action.params,
-                })
-                .collect::<Vec<Action>>(),
-        );
+                // 转移 Action 和 Hook (完全匹配，直接 map 即可)
+                let actions = Some(ast
+                        .actions
+                        .unwrap_or_default() // 获取 Vec<AstAction>
+                        .into_iter() // 转换为消耗所有权的迭代器
+                        .map(|action| Action {
+                                command: action.command,
+                                params: action.params,
+                        })
+                        .collect::<Vec<Action>>());
 
-        Node {
-            id,
-            nt,
-            class_name,
-            style,
-            children,
-            props,
-            actions,
-            hooks: ast.hooks,
+                Node {
+                        id,
+                        nt,
+                        class_name,
+                        style,
+                        children,
+                        props,
+                        actions,
+                        hooks: ast.hooks,
+                }
         }
-    }
 }

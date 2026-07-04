@@ -1,8 +1,8 @@
 //! 游戏模块
 
 use std::{
-    collections::HashMap,
-    sync::{Arc, Mutex},
+        collections::HashMap,
+        sync::{Arc, Mutex},
 };
 
 use lazy_static::lazy_static;

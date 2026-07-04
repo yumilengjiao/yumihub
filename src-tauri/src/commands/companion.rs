@@ -5,29 +5,29 @@ use crate::{companion::entity::Companion, error::AppError};
 
 #[tauri::command]
 pub async fn get_companions(pool: State<'_, Pool<Sqlite>>) -> Result<Vec<Companion>, AppError> {
-    sqlx::query_as::<_, Companion>(
-        "SELECT id, name, path, args, is_enabled, is_window_managed, \
+        sqlx::query_as::<_, Companion>(
+                "SELECT id, name, path, args, is_enabled, is_window_managed, \
          trigger_mode, sort_order, description FROM companions",
-    )
-    .fetch_all(&*pool)
-    .await
-    .map_err(AppError::from)
+        )
+        .fetch_all(&*pool)
+        .await
+        .map_err(AppError::from)
 }
 
 #[tauri::command]
 pub async fn update_companions(
-    companions: Vec<Companion>,
-    pool: State<'_, Pool<Sqlite>>,
+        companions: Vec<Companion>,
+        pool: State<'_, Pool<Sqlite>>,
 ) -> Result<(), AppError> {
-    let mut tx = pool.begin().await.map_err(AppError::from)?;
+        let mut tx = pool.begin().await.map_err(AppError::from)?;
 
-    sqlx::query("DELETE FROM companions")
-        .execute(&mut *tx)
-        .await
-        .map_err(AppError::from)?;
+        sqlx::query("DELETE FROM companions")
+                .execute(&mut *tx)
+                .await
+                .map_err(AppError::from)?;
 
-    for c in companions {
-        sqlx::query(
+        for c in companions {
+                sqlx::query(
             "INSERT INTO companions \
              (name, path, args, is_enabled, is_window_managed, trigger_mode, sort_order, description) \
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
@@ -38,7 +38,7 @@ pub async fn update_companions(
         .execute(&mut *tx)
         .await
         .map_err(AppError::from)?;
-    }
+        }
 
-    tx.commit().await.map_err(AppError::from)
+        tx.commit().await.map_err(AppError::from)
 }

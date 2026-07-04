@@ -7,7 +7,10 @@ pub trait MessageEvent: Clone + Send + 'static {}
 
 /// 消息中心 trait
 pub trait MessageHub<T: MessageEvent> {
-    fn new(capacity: usize) -> Self;
-    fn subscribe(&self) -> Receiver<T>;
-    fn publish(&self, event: T);
+        fn new(capacity: usize) -> Self;
+        fn subscribe(&self) -> Receiver<T>;
+        fn publish(
+                &self,
+                event: T,
+        );
 }

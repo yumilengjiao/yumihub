@@ -11,8 +11,8 @@ use std::collections::HashMap;
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AstThemeConfig {
-    pub config: AstMetaConfig,
-    pub layout: AstLayout,
+        pub config: AstMetaConfig,
+        pub layout: AstLayout,
 }
 
 /// 配置文件元信息
@@ -23,9 +23,9 @@ pub struct AstThemeConfig {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AstMetaConfig {
-    pub version: String,
-    pub theme_name: String,
-    pub variables: Option<HashMap<String, Value>>,
+        pub version: String,
+        pub theme_name: String,
+        pub variables: Option<HashMap<String, Value>>,
 }
 
 /// 布局配置信息
@@ -35,8 +35,8 @@ pub struct AstMetaConfig {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AstLayout {
-    pub global: Option<AstNode>,
-    pub pages: HashMap<String, AstPageConfig>,
+        pub global: Option<AstNode>,
+        pub pages: HashMap<String, AstPageConfig>,
 }
 
 /// 每个路由界面的配置信息
@@ -46,44 +46,44 @@ pub struct AstLayout {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AstPageConfig {
-    pub name: String,
-    pub content: AstNode,
+        pub name: String,
+        pub content: AstNode,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum NodeType {
-    // 普通节点
-    Node,
-    // 控制列数
-    Row,
-    // 控制行数
-    Col,
-    // 展示背景,可展示游戏背景
-    Background,
-    // 侧边栏
-    SideBar,
-    // 顶部操作栏
-    TitleBar,
-    // 路由的插槽，所有路由页面的展示由此组件控制，原则上这个组件只出现一次
-    Page,
+        // 普通节点
+        Node,
+        // 控制列数
+        Row,
+        // 控制行数
+        Col,
+        // 展示背景,可展示游戏背景
+        Background,
+        // 侧边栏
+        SideBar,
+        // 顶部操作栏
+        TitleBar,
+        // 路由的插槽，所有路由页面的展示由此组件控制，原则上这个组件只出现一次
+        Page,
 
-    // 游戏展示架
-    GameShelf,
-    // 就是一个展示问题加图标的按钮，只不过有些特殊功能
-    Entry,
-    // 按钮可以用来触发所有支持的行为，本身没有样式
-    #[serde(alias = "Button")]
-    AppButton,
-    // 图标组件，可使用所有Lucide的所有图标
-    #[serde(alias = "Icon")]
-    AppIcon,
-    // 用于展示用户头像
-    Avatar,
-    Title,
-    #[serde(alias = "WTIcon")]
-    WindowToggleIcon,
-    // 文本内容
-    Description,
+        // 游戏展示架
+        GameShelf,
+        // 就是一个展示问题加图标的按钮，只不过有些特殊功能
+        Entry,
+        // 按钮可以用来触发所有支持的行为，本身没有样式
+        #[serde(alias = "Button")]
+        AppButton,
+        // 图标组件，可使用所有Lucide的所有图标
+        #[serde(alias = "Icon")]
+        AppIcon,
+        // 用于展示用户头像
+        Avatar,
+        Title,
+        #[serde(alias = "WTIcon")]
+        WindowToggleIcon,
+        // 文本内容
+        Description,
 }
 
 /// 节点,所有元素都是AstNode
@@ -98,15 +98,15 @@ pub enum NodeType {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AstNode {
-    pub id: Option<u32>,
-    pub nt: Option<NodeType>,
-    pub class_name: Option<Vec<String>>, // 这里写的是taiwind的类
-    pub inline_style: Option<HashMap<String, Value>>,
-    pub props: Option<Value>,
-    pub children: Option<Vec<AstNode>>,
-    pub consume: Option<Vec<String>>,
-    pub actions: Option<Vec<Action>>,
-    pub hooks: Option<Vec<String>>,
+        pub id: Option<u32>,
+        pub nt: Option<NodeType>,
+        pub class_name: Option<Vec<String>>, // 这里写的是taiwind的类
+        pub inline_style: Option<HashMap<String, Value>>,
+        pub props: Option<Value>,
+        pub children: Option<Vec<AstNode>>,
+        pub consume: Option<Vec<String>>,
+        pub actions: Option<Vec<Action>>,
+        pub hooks: Option<Vec<String>>,
 }
 
 /// 事件
@@ -116,6 +116,6 @@ pub struct AstNode {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Action {
-    pub command: String,
-    pub params: Option<Value>,
+        pub command: String,
+        pub params: Option<Value>,
 }
